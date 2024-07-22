@@ -75,4 +75,23 @@ public class CommonUtils {
         return isUpperCase ? sb.toString() : sb.toString().toLowerCase();
     }
 
+
+    /**
+     * 랜덤한 한글 6글자가 올 수 있도록 하는 메서드.
+     *
+     * @return 랜덤한 한글 6글자
+     */
+    public static String generateRandomKoreanString() {
+        StringBuilder sb = new StringBuilder(6);
+        SecureRandom secureRandom = new SecureRandom();
+        char base = 0xAC00; // '가'의 유니코드 값
+        char last = 0xD7A3; // '힣'의 유니코드 값
+        int koreanRange = last - base + 1;
+
+        for (int i = 0; i < 6; i++) {
+            char randomKoreanChar = (char) (base + secureRandom.nextInt(koreanRange));
+            sb.append(randomKoreanChar);
+        }
+        return sb.toString();
+    }
 }
