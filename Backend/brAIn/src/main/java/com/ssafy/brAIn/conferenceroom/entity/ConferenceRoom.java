@@ -1,4 +1,4 @@
-package com.ssafy.brAIn.ConferenceRoom.entity;
+package com.ssafy.brAIn.conferenceroom.entity;
 
 import com.ssafy.brAIn.util.CommonUtils;
 import jakarta.persistence.Entity;

@@ -1,6 +1,6 @@
-package com.ssafy.brAIn.ConferenceRoom.repository;
+package com.ssafy.brAIn.conferenceroom.repository;
 
-import com.ssafy.brAIn.ConferenceRoom.entity.ConferenceRoom;
+import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
