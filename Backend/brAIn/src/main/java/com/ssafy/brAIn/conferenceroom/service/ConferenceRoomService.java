@@ -1,8 +1,8 @@
-package com.ssafy.brAIn.ConferenceRoom.service;
+package com.ssafy.brAIn.conferenceroom.service;
 
-import com.ssafy.brAIn.ConferenceRoom.dto.ConferenceRoomRequest;
-import com.ssafy.brAIn.ConferenceRoom.entity.ConferenceRoom;
-import com.ssafy.brAIn.ConferenceRoom.repository.ConferenceRoomRepository;
+import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomRequest;
+import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
+import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

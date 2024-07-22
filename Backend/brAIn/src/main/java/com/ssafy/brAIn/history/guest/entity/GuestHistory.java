@@ -1,6 +1,7 @@
 package com.ssafy.brAIn.history.guest.entity;
 
-import com.ssafy.brAIn.ConferenceRoom.entity.ConferenceRoom;
+import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
+import com.ssafy.brAIn.guest.entity.Guest;
 import com.ssafy.brAIn.util.CommonUtils;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,6 +9,7 @@ import lombok.*;
 @Getter
 @Embeddable
 @EqualsAndHashCode
+@Entity
 public class GuestHistory {
 
     @EmbeddedId
