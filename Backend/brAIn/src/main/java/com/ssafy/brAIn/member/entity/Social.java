@@ -1,0 +1,7 @@
+package com.ssafy.brAIn.member.entity;
+
+public enum Social {
+
+    Google, Kakao, None
+    
+}
