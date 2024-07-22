@@ -16,8 +16,8 @@ import java.io.Serializable;
 public class MemberHistoryId implements Serializable {
 
     @Column(name = "member_id")
-    private Long memberId;
+    private int memberId;
 
     @Column(name = "room_id")
-    private Long roomId;
+    private int roomId;
 }

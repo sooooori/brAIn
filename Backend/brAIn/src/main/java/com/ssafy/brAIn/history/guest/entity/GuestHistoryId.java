@@ -16,9 +16,9 @@ public class GuestHistoryId {
 
     @Id
     @Column(name = "guest_id")
-    private Long guestId;
+    private int guestId;
 
     @Id
     @Column(name = "room_id")
-    private Long roomId;
+    private int roomId;
 }
