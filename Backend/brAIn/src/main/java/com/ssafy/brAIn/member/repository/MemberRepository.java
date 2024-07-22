@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Integer> {
-    // email로 member 찾을수 있도록
-    //Member findByMember(String email);
+
+    // 이메일 중복 검사 위한 메서드 추가
+    boolean existsByEmail(String email);
+
 }
