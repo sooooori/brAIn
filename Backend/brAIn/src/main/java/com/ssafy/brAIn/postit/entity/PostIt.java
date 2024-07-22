@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Postit {
+public class PostIt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class Postit {
 
 
     @Builder
-    public Postit(String content,ConferenceRoom room, Member member) {
+    public PostIt(String content, ConferenceRoom room, Member member) {
         this.content = content;
         this.room = room;
         this.member = member;
@@ -39,7 +39,7 @@ public class Postit {
     }
 
     @Builder
-    public Postit(String content,ConferenceRoom room, Guest guest) {
+    public PostIt(String content, ConferenceRoom room, Guest guest) {
         this.content = content;
         this.room = room;
         this.guest=guest;
