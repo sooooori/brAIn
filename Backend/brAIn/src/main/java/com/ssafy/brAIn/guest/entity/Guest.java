@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 public class Guest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "guest_id", updatable = false)
+    @Column(name = "id", updatable = false)
     private Integer id;
 
-    @Column(name = "guest_name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 }

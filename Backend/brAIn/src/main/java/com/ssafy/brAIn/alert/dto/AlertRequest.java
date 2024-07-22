@@ -2,6 +2,7 @@ package com.ssafy.brAIn.alert.dto;
 
 import com.ssafy.brAIn.alert.entity.Alert;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
+import com.ssafy.brAIn.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
