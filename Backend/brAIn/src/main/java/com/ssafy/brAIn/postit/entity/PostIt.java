@@ -1,5 +1,8 @@
 package com.ssafy.brAIn.postit.entity;
 
+import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
+import com.ssafy.brAIn.guest.entity.Guest;
+import com.ssafy.brAIn.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

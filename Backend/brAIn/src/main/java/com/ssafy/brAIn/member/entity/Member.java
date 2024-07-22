@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id", updatable = false)
+    @Column(name = "id", updatable = false)
     private Integer id;
 
     @Column(name = "email", nullable = false, unique = true)
@@ -35,7 +35,7 @@ public class Member {
     @Column(name = "photo")
     private String photo;
 
-    @Column(name = "email")
+    @Column(name = "locked")
     private Boolean locked;
 
     @Column(name = "loginCount")
