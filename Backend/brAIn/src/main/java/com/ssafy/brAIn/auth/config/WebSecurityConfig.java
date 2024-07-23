@@ -47,7 +47,8 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
                 .authorizeHttpRequests(auth -> auth // 인증, 인가 설정
                         .requestMatchers(
-                                new AntPathRequestMatcher("/api/v1/members/join")
+                                new AntPathRequestMatcher("/api/v1/members/join"),
+                                new AntPathRequestMatcher("/")
                         ).permitAll()
                         .anyRequest().authenticated())
                 .formLogin(AbstractHttpConfigurer::disable) // 폼 기반 로그인 비활성화

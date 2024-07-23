@@ -6,22 +6,20 @@ import com.ssafy.brAIn.member.entity.Social;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 public class MemberRequest {
 
     private String email;
     private String password;
     private String name;
 
-    public Member toEntity() {
+    public Member toEntity(String encodedPassword) {
         return Member.builder()
                 .email(this.email)
-                .password(this.password)
+                .password(encodedPassword)
                 .role(Role.USER)
                 .social(Social.None)
                 .name(this.name)

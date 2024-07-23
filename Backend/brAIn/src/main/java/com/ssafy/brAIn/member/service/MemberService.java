@@ -21,7 +21,7 @@ public class MemberService {
             throw new BadRequestException("Email is already in use");
         }
         // 비밀번호 암호화
-        memberRequest.setPassword(bCryptPasswordEncoder.encode(memberRequest.getPassword()));
-        memberRepository.save(memberRequest.toEntity());
+        String encodedPassword = bCryptPasswordEncoder.encode(memberRequest.getPassword());
+        memberRepository.save(memberRequest.toEntity(encodedPassword));
     }
 }
