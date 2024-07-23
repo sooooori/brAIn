@@ -8,7 +8,6 @@ import lombok.*;
 
 @Getter
 @Embeddable
-@EqualsAndHashCode
 @Entity
 public class GuestHistory {
 
