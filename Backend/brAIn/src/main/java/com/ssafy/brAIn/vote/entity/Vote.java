@@ -1,4 +1,4 @@
-package com.ssafy.brAIn.like.entity;
+package com.ssafy.brAIn.vote.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -8,10 +8,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Like {
+public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
-    private Long id;
-
+    private Integer id;
 }
