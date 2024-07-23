@@ -6,10 +6,12 @@ import com.ssafy.brAIn.member.entity.Social;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 public class MemberRequest {
 
     private String email;
@@ -24,7 +26,7 @@ public class MemberRequest {
                 .social(Social.None)
                 .name(this.name)
                 .photo(null)
-                .locked(false)
+                .locked(true)
                 .loginFailCount(0)
                 .build();
     }

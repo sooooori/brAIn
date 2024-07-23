@@ -5,11 +5,17 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,7 +60,24 @@ public class Member {
         this.loginFailCount = loginFailCount;
     }
 
-    public Member update(Member member) {
-        return this;
+    // UserDetials 메소드 재정의
+
+    // 권한 반환
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    // 이메일 반환
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    // 계정 잠김여부 반환
+    // true -> 만료되지 않음
+    @Override
+    public boolean isAccountNonLocked() {
+        return locked;
     }
 }
