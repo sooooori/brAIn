@@ -5,11 +5,18 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
@@ -29,7 +36,7 @@ public class Member {
     @Column(name = "social")
     private Social social;
 
-    @Column(name = "member_name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "photo")
@@ -38,11 +45,11 @@ public class Member {
     @Column(name = "locked")
     private Boolean locked;
 
-    @Column(name = "loginCount")
-    private Integer login_fail_count;
+    @Column(name = "loginFailCount")
+    private Integer loginFailCount;
 
     @Builder
-    public Member(String email, String password, Role role, Social social, String name, String photo, Boolean locked, Integer login_fail_count) {
+    public Member(String email, String password, Role role, Social social, String name, String photo, Boolean locked, Integer loginFailCount) {
         this.email = email;
         this.password = password;
         this.role = role;
@@ -50,17 +57,27 @@ public class Member {
         this.name = name;
         this.photo = photo;
         this.locked = locked;
-        this.login_fail_count = login_fail_count;
+        this.loginFailCount = loginFailCount;
     }
 
-    public Member update(Member member) {
-        this.password = member.password;
-        this.role = member.role;
-        this.social = member.social;
-        this.name = member.name;
-        this.photo = member.photo;
-        this.locked = member.locked;
-        this.login_fail_count = member.login_fail_count;
-        return this;
+    // UserDetials 메소드 재정의
+
+    // 권한 반환
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    // 이메일 반환
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    // 계정 잠김여부 반환
+    // true -> 만료되지 않음
+    @Override
+    public boolean isAccountNonLocked() {
+        return locked;
     }
 }

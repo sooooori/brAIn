@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class GuestService {
 
-    @Autowired
     private final GuestRepository guestRepository;
 
     public Guest save(Guest guest) {

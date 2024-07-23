@@ -10,26 +10,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class MemberDto {
+public class MemberRequest {
 
     private String email;
     private String password;
-    private Role role;
-    private Social social;
     private String name;
-    private String photo;
-    private Boolean locked;
-    private Integer login_fail_count;
 
-    public Member toMember() {
+    public Member toEntity(String encodedPassword) {
         return Member.builder()
-                .email(email)
-                .role(role)
-                .social(social)
-                .name(name)
-                .photo(photo)
-                .locked(locked)
-                .login_fail_count(login_fail_count)
+                .email(this.email)
+                .password(encodedPassword)
+                .role(Role.USER)
+                .social(Social.None)
+                .name(this.name)
+                .photo(null)
+                .locked(true)
+                .loginFailCount(0)
                 .build();
     }
 }
