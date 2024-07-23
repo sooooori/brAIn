@@ -3,7 +3,6 @@ package com.ssafy.brAIn.member.service;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

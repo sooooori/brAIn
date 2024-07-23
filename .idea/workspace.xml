@@ -5,21 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a180e8cb-d5a7-4d23-8d2c-abe79b8ae94c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/S11P12B203.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/brAIn.main.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/brAIn/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/brAIn/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/auth/config/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/auth/config/WebSecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/auth/jwt/JwtTokenUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/auth/jwt/JwtTokenUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/exception/GlobalExceptionHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/member/dto/MemberRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/member/dto/MemberRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/member/entity/Member.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/member/entity/Member.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/member/repository/MemberRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/member/repository/MemberRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/member/service/MemberDetailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/member/service/MemberDetailService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/member/service/MemberService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/brAIn/src/main/java/com/ssafy/brAIn/member/service/MemberService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/brAIn/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/brAIn/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +92,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1721693398231</updated>
-      <workItem from="1721693400955" duration="6441000" />
+      <workItem from="1721693400955" duration="9707000" />
     </task>
     <servers />
   </component>

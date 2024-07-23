@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("message", "Sever Error", "code", 500));
+                .body(Map.of("message", "Server Error", "code", 500));
     }
 
     // 인증안됨
@@ -29,13 +29,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Map<String, Object>> handleBadRequestException(BadRequestException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("message", "Bad Request", "code", 400));
+                .body(Map.of("message", e.getMessage(), "code", 400));
     }
 
     // 낫파운드
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNotFoundException(NotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("message", "Not Found", "code", 404));
+                .body(Map.of("message", e.getMessage(), "code", 404));
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Map<String, Object>> handleForbiddenException(ForbiddenException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("message", e.getMessage(), "code", 403));
     }
 }
