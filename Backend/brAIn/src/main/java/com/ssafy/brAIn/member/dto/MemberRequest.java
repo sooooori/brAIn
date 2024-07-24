@@ -23,7 +23,7 @@ public class MemberRequest {
                 .role(Role.USER)
                 .social(Social.None)
                 .name(this.name)
-                .photo(null)
+                .photo("null")
                 .locked(true)
                 .loginFailCount(0)
                 .build();

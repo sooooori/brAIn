@@ -60,7 +60,7 @@ public class Member implements UserDetails {
         this.loginFailCount = loginFailCount;
     }
 
-    // UserDetials 메소드 재정의
+    // UserDetials 재정의
 
     // 권한 반환
     @Override
@@ -75,7 +75,6 @@ public class Member implements UserDetails {
     }
 
     // 계정 잠김여부 반환
-    // true -> 만료되지 않음
     @Override
     public boolean isAccountNonLocked() {
         return locked;
