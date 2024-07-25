@@ -41,8 +41,8 @@ public class MessageController {
 
     //대기 방 입장했을 때, 렌더링 시 호출하면 될듯(useEffect 내부에서 publish)
     @MessageMapping("enter.waiting.{roomId}")
-    public void enterWaiting(@DestinationVariable String roomId)  {
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit("enter waiting room"));
+    public void enterWaitingRoom(@DestinationVariable String roomId)  {
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit("enter waitingRoom"));
     }
 
     //회의 중간에 입장 시,
@@ -51,13 +51,23 @@ public class MessageController {
         String token=accessor.getFirstNativeHeader("Authorization");
 //        String nickname=token.getNickname();
         String nickname="user"+(int)(Math.random()*100);
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit("enter mid",nickname));
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit("enter conferences",nickname));
+    }
+
+    //대기 방 퇴장
+    @MessageMapping("enter.waiting.{roomId}")
+    public void exitWaitingRoom(@DestinationVariable String roomId)  {
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit("exit waitingRoom"));
     }
 
     // 회의 중 퇴장
     @MessageMapping("exit.conferences.{roomId}")
-    public void exitConference(@DestinationVariable String roomId)  {
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,"exit");
+    public void exitConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
+        String token=accessor.getFirstNativeHeader("Authorization");
+//        String nickname=token.getNickname();
+        String nickname="user"+(int)(Math.random()*100);
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit("exit conferences",nickname));
+
     }
 
 }
