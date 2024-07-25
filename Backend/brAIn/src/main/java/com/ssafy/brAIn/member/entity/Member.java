@@ -19,13 +19,13 @@ public class Member implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "id")
     private Integer id;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
     @Enumerated(value = EnumType.STRING)
@@ -36,7 +36,7 @@ public class Member implements UserDetails {
     @Column(name = "social")
     private Social social;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "photo")
@@ -48,8 +48,11 @@ public class Member implements UserDetails {
     @Column(name = "loginFailCount")
     private Integer loginFailCount;
 
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
     @Builder
-    public Member(String email, String password, Role role, Social social, String name, String photo, Boolean locked, Integer loginFailCount) {
+    public Member(String email, String password, Role role, Social social, String name, String photo, Boolean locked, Integer loginFailCount, String refreshToken) {
         this.email = email;
         this.password = password;
         this.role = role;
@@ -58,9 +61,15 @@ public class Member implements UserDetails {
         this.photo = photo;
         this.locked = locked;
         this.loginFailCount = loginFailCount;
+        this.refreshToken = refreshToken;
     }
 
-    // UserDetials 메소드 재정의
+    // refreshTOken 업데이트
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    // UserDetials 재정의
 
     // 권한 반환
     @Override
@@ -75,7 +84,6 @@ public class Member implements UserDetails {
     }
 
     // 계정 잠김여부 반환
-    // true -> 만료되지 않음
     @Override
     public boolean isAccountNonLocked() {
         return locked;
