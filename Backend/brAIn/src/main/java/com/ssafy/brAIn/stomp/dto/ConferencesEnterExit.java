@@ -7,11 +7,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WaitingRoomEnter {
+public class ConferencesEnterExit {
 
     private String type;
+    private String nickname;
 
-    public WaitingRoomEnter(String type) {
+    public ConferencesEnterExit(String type, String nickname) {
         this.type = type;
+        this.nickname = nickname;
     }
 }
