@@ -1,7 +1,7 @@
 package com.ssafy.brAIn.stomp.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.brAIn.stomp.dto.GroupPost;
+import com.ssafy.brAIn.util.RedisUtils;
 import org.springframework.stereotype.Service;
 
 @Service
