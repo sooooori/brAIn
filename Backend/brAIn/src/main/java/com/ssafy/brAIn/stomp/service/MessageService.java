@@ -21,6 +21,12 @@ public class MessageService {
         redisUtils.setData(key,content,3600L);
     }
 
+    public void enterWaitingRoom(String roomId,String username) {
+
+        String key=roomId + ":" + username;
+        redisUtils.setData(key,"",3600L);
+    }
+
 
 
 

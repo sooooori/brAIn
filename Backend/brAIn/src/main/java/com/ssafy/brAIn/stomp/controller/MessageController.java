@@ -34,15 +34,18 @@ public class MessageController {
     }
 
     @MessageMapping("next.round.{roomId}")
-    public void nextRound(Round curRound, @DestinationVariable String roomId) throws IOException {
+    public void nextRound(Round curRound, @DestinationVariable String roomId) {
 
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, curRound);
     }
 
     //대기 방 입장했을 때, 렌더링 시 호출하면 될듯(useEffect 내부에서 publish)
     @MessageMapping("enter.waiting.{roomId}")
-    public void enterWaitingRoom(@DestinationVariable String roomId)  {
+    public void enterWaitingRoom(@DestinationVariable String roomId, StompHeaderAccessor accessor){
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit("enter waitingRoom"));
+        String authorization = accessor.getFirstNativeHeader("Authorization");
+//        String username=authorization.getUsername();
+
     }
 
     //회의 중간에 입장 시,
@@ -55,7 +58,7 @@ public class MessageController {
     }
 
     //대기 방 퇴장
-    @MessageMapping("enter.waiting.{roomId}")
+    @MessageMapping("exit.waiting.{roomId}")
     public void exitWaitingRoom(@DestinationVariable String roomId)  {
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit("exit waitingRoom"));
     }
@@ -69,5 +72,8 @@ public class MessageController {
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit("exit conferences",nickname));
 
     }
+
+
+
 
 }
