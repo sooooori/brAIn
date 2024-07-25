@@ -2,12 +2,14 @@ package com.ssafy.brAIn.auth.jwt;
 
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.entity.Role;
+import com.ssafy.brAIn.member.service.MemberService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -35,9 +37,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 쿠키에 저장된 토큰 찾기
         String  jwtCookie = "";
-        for (int i = 0; i < cookies.length; i++){
-            if (cookies[i].getName().equals("jwtToken")){
-                jwtCookie = cookies[i].getValue();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("accessToken")) {
+                jwtCookie = cookie.getValue();
             }
         }
 

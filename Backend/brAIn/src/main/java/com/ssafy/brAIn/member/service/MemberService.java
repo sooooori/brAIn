@@ -2,6 +2,7 @@ package com.ssafy.brAIn.member.service;
 
 import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.member.dto.MemberRequest;
+import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,5 +24,13 @@ public class MemberService {
         // 비밀번호 암호화
         String encodedPassword = bCryptPasswordEncoder.encode(memberRequest.getPassword());
         memberRepository.save(memberRequest.toEntity(encodedPassword));
+    }
+
+    // refreshToken 저장
+    public void updateRefreshToken(String email, String refreshToken) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found"));
+        member.updateRefreshToken(refreshToken);
+        memberRepository.save(member);
     }
 }

@@ -1,8 +1,12 @@
 package com.ssafy.brAIn.member.controller;
 
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
+import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.member.dto.MemberRequest;
+import com.ssafy.brAIn.member.entity.Member;
+import com.ssafy.brAIn.member.service.MemberDetailService;
 import com.ssafy.brAIn.member.service.MemberService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,6 +31,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final MemberDetailService memberDetailService;
 
     // 회원가입
     @PostMapping("/join")
@@ -37,9 +42,7 @@ public class MemberController {
 
     // 로그인
     @PostMapping("/login")
-    public String login(@RequestBody Map<String, String> data,
-                        HttpServletResponse response
-                        ) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> data, HttpServletResponse response) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 data.get("email"), data.get("password")
         );
@@ -47,16 +50,59 @@ public class MemberController {
         Authentication auth = authenticationManagerBuilder.getObject().authenticate(authToken);
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        var jwtToken = JwtUtil.createToken(SecurityContextHolder.getContext().getAuthentication());
+        String accessToken = JwtUtil.createAccessToken(SecurityContextHolder.getContext().getAuthentication());
+        String refreshToken = JwtUtil.createRefreshToken(SecurityContextHolder.getContext().getAuthentication());
+
+        // refreshToken 저장
+        memberService.updateRefreshToken(data.get("email"), refreshToken);
 
         // 쿠키에 저장
-        Cookie cookie = new Cookie("jwtToken", jwtToken);
-        cookie.setMaxAge(1200); // 1200초 설정
+        Cookie cookie = new Cookie("accessToken", accessToken);
+        cookie.setMaxAge(600); // 10분 설정
         cookie.setHttpOnly(true); // 자바스크립트 공격 어렵게
         cookie.setPath("/"); // 쿠키가 전송될 URL
         response.addCookie(cookie);
 
         // token 발급
-        return jwtToken;
+        return ResponseEntity.ok(Map.of("refreshToken", refreshToken));
+    }
+
+    // 토큰 재발급
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestBody Map<String, String> data, HttpServletResponse response) {
+        String refreshToken = data.get("refreshToken");
+        Claims claims;
+        try {
+            claims = JwtUtil.extractToken(refreshToken);
+        } catch (Exception e) {
+            throw new BadRequestException("Invalid refresh token");
+        }
+
+        String email = claims.get("email").toString();
+        Member member = memberDetailService.loadUserByUsername(email);
+
+        String newAccessToken = JwtUtil.createAccessToken(new UsernamePasswordAuthenticationToken(member, null));
+
+        // 새 accessToken을 쿠키에 저장
+        Cookie cookie = new Cookie("accessToken", newAccessToken);
+        cookie.setMaxAge(600); // 10분 설정
+        cookie.setHttpOnly(true); // 자바스크립트 공격 어렵게
+        cookie.setPath("/"); // 쿠키가 전송될 URL
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+    }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        Cookie cookie = new Cookie("accessToken", null);
+        cookie.setMaxAge(0); // 쿠키 제거
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 }

@@ -48,8 +48,11 @@ public class Member implements UserDetails {
     @Column(name = "loginFailCount")
     private Integer loginFailCount;
 
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
     @Builder
-    public Member(String email, String password, Role role, Social social, String name, String photo, Boolean locked, Integer loginFailCount) {
+    public Member(String email, String password, Role role, Social social, String name, String photo, Boolean locked, Integer loginFailCount, String refreshToken) {
         this.email = email;
         this.password = password;
         this.role = role;
@@ -58,6 +61,12 @@ public class Member implements UserDetails {
         this.photo = photo;
         this.locked = locked;
         this.loginFailCount = loginFailCount;
+        this.refreshToken = refreshToken;
+    }
+
+    // refreshTOken 업데이트
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     // UserDetials 재정의
