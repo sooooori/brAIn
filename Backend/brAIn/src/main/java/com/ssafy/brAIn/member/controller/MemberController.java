@@ -56,21 +56,34 @@ public class MemberController {
         // refreshToken 저장
         memberService.updateRefreshToken(data.get("email"), refreshToken);
 
-        // 쿠키에 저장
-        Cookie cookie = new Cookie("accessToken", accessToken);
+        // refreshToken 쿠키에 저장
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setMaxAge(600); // 10분 설정
         cookie.setHttpOnly(true); // 자바스크립트 공격 어렵게
         cookie.setPath("/"); // 쿠키가 전송될 URL
         response.addCookie(cookie);
 
-        // token 발급
-        return ResponseEntity.ok(Map.of("refreshToken", refreshToken));
+        // accessToken 발급
+        return ResponseEntity.ok(Map.of("accessToken", accessToken));
     }
 
     // 토큰 재발급
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@RequestBody Map<String, String> data, HttpServletResponse response) {
-        String refreshToken = data.get("refreshToken");
+    public ResponseEntity<?> refresh(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refreshToken")) {
+                    refreshToken = cookie.getValue();
+                }
+            }
+        }
+
+        if (refreshToken == null) {
+            throw new BadRequestException("Refresh token is missing");
+        }
+
         Claims claims;
         try {
             claims = JwtUtil.extractToken(refreshToken);
@@ -82,21 +95,23 @@ public class MemberController {
         Member member = memberDetailService.loadUserByUsername(email);
 
         String newAccessToken = JwtUtil.createAccessToken(new UsernamePasswordAuthenticationToken(member, null));
+        String newRefreshToken = JwtUtil.createRefreshToken(new UsernamePasswordAuthenticationToken(member, null));
 
-        // 새 accessToken을 쿠키에 저장
-        Cookie cookie = new Cookie("accessToken", newAccessToken);
-        cookie.setMaxAge(600); // 10분 설정
+        // 새 refreshToken을 쿠키에 저장
+        Cookie cookie = new Cookie("refreshToken", newRefreshToken);
+        cookie.setMaxAge(1209600); // 14일 설정
         cookie.setHttpOnly(true); // 자바스크립트 공격 어렵게
         cookie.setPath("/"); // 쿠키가 전송될 URL
         response.addCookie(cookie);
 
+        // 새 accessToken을 응답 본문에 포함
         return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
     }
 
     // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-        Cookie cookie = new Cookie("accessToken", null);
+        Cookie cookie = new Cookie("refreshToken", null);
         cookie.setMaxAge(0); // 쿠키 제거
         cookie.setHttpOnly(true);
         cookie.setPath("/");

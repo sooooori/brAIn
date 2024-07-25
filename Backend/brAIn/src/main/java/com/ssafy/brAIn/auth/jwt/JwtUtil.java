@@ -44,6 +44,7 @@ public class JwtUtil {
         Member user = (Member) auth.getPrincipal();
         String refreshToken = Jwts.builder()
                 .claim("email", user.getEmail())
+                .claim("role", user.getRole().name())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration)) // 14일
                 .signWith(key)

@@ -38,7 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // 쿠키에 저장된 토큰 찾기
         String  jwtCookie = "";
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("accessToken")) {
+            if (cookie.getName().equals("refreshToken")) {
                 jwtCookie = cookie.getValue();
             }
         }
@@ -55,13 +55,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 사용자 정보 추출
         String email = claim.get("email").toString();
-        String name = claim.get("name").toString();
         String role = claim.get("role").toString();
 
         // 객체 생성
         Member member = Member.builder()
                 .email(email)
-                .name(name)
                 .role(Role.valueOf(role))
                 .build();
 
