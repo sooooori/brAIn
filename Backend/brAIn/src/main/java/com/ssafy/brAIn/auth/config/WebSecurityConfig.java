@@ -1,12 +1,9 @@
 package com.ssafy.brAIn.auth.config;
 
 import com.ssafy.brAIn.auth.jwt.JwtFilter;
-import com.ssafy.brAIn.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -43,9 +40,9 @@ public class WebSecurityConfig {
                     requests.requestMatchers(  // 허용 URL
                             "/api/v1/members/join",
                             "/api/v1/members/login",
-                            "api/v1/members/refresh"
+                            "/api/v1/members/refresh"
                             ).permitAll();
-                    requests.requestMatchers(HttpMethod.POST, "/api/v1/**").authenticated(); // 인증이 필요한 URL
+                    requests.anyRequest().authenticated(); // 모든 URL 인증 필요
                 })
                 .sessionManagement(  // 세션방식 해제
                         sessionManagement ->

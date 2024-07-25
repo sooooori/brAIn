@@ -3,6 +3,7 @@ package com.ssafy.brAIn.member.controller;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.member.dto.MemberRequest;
+import com.ssafy.brAIn.member.dto.MemberResponse;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.service.MemberDetailService;
 import com.ssafy.brAIn.member.service.MemberService;
@@ -11,18 +12,16 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,23 +43,26 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> data, HttpServletResponse response) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                // 사용자 인증을 위한 토큰 생성 (이메일, 비밀번호 사용)
                 data.get("email"), data.get("password")
         );
-        // 이메일, 비번 DB와 비교
+
+        // 인증 수행 (이메일과 비밀번호를 DB와 비교)
         Authentication auth = authenticationManagerBuilder.getObject().authenticate(authToken);
         SecurityContextHolder.getContext().setAuthentication(auth);
 
+        // Access Token 및 Refresh Token 생성
         String accessToken = JwtUtil.createAccessToken(SecurityContextHolder.getContext().getAuthentication());
         String refreshToken = JwtUtil.createRefreshToken(SecurityContextHolder.getContext().getAuthentication());
 
-        // refreshToken 저장
+        // refreshToken DB에 저장
         memberService.updateRefreshToken(data.get("email"), refreshToken);
 
         // refreshToken 쿠키에 저장
         Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setMaxAge(600); // 10분 설정
-        cookie.setHttpOnly(true); // 자바스크립트 공격 어렵게
-        cookie.setPath("/"); // 쿠키가 전송될 URL
+        cookie.setMaxAge(1209600); // 14일 설정
+        cookie.setHttpOnly(true); // 자바스크립트 공격 방지
+        cookie.setPath("/"); // 쿠키가 전송될 URL 설정(모든 URL)
         response.addCookie(cookie);
 
         // accessToken 발급
@@ -72,6 +74,8 @@ public class MemberController {
     public ResponseEntity<?> refresh(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = null;
         Cookie[] cookies = request.getCookies();
+
+        // 쿠키에서 refreshToken 추출
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("refreshToken")) {
@@ -80,20 +84,24 @@ public class MemberController {
             }
         }
 
+        // 없을 때 예외
         if (refreshToken == null) {
             throw new BadRequestException("Refresh token is missing");
         }
 
         Claims claims;
         try {
+            // Refresh Token 검증 및 클레임 추출
             claims = JwtUtil.extractToken(refreshToken);
         } catch (Exception e) {
             throw new BadRequestException("Invalid refresh token");
         }
 
+        // 클레임에서 이메일로 정보 추출
         String email = claims.get("email").toString();
         Member member = memberDetailService.loadUserByUsername(email);
 
+        // 새로운 Access Token 및 Refresh Token 생성
         String newAccessToken = JwtUtil.createAccessToken(new UsernamePasswordAuthenticationToken(member, null));
         String newRefreshToken = JwtUtil.createRefreshToken(new UsernamePasswordAuthenticationToken(member, null));
 
@@ -104,20 +112,36 @@ public class MemberController {
         cookie.setPath("/"); // 쿠키가 전송될 URL
         response.addCookie(cookie);
 
-        // 새 accessToken을 응답 본문에 포함
+        // 새 accessToken을 응답 본문에 포함하여 발급
         return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
     }
 
     // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        // Refresh Token 쿠키 제거
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setMaxAge(0); // 쿠키 제거
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         response.addCookie(cookie);
 
+        // SecurityContext 초기화 (로그아웃 처리)
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+    }
+
+    // 이메일로 사용자 정보 조회
+    @GetMapping("/email")
+    public ResponseEntity<?> getEmail(@RequestParam String email) {
+        // 이메일로 사용자 정보 조회
+        Optional<Member> member = memberService.findByEmail(email);
+        if (member.isPresent()) {
+            // MemberResponse Dto로 필요한 정보만 반환
+            MemberResponse memberResponse = MemberResponse.fromEntity(member.get());
+            return ResponseEntity.ok(Map.of("member", memberResponse));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Member not found");
+        }
     }
 }

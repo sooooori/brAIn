@@ -22,18 +22,19 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
-    private static final long accessTokenExpiration = 600000; // 10분
+    private static final long accessTokenExpiration = 600000; // 10분 (1000 = 1초)
     private static final long refreshTokenExpiration = 1209600000; // 14일
 
     // accessToken 생성
     public static String createAccessToken(Authentication auth) {
         Member user = (Member) auth.getPrincipal();
         String accessToken = Jwts.builder()
+                // accessToken에 담을 정보(클레임)
                 .claim("email", user.getEmail())
                 .claim("name", user.getName())
                 .claim("role", user.getRole().name())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + accessTokenExpiration)) // 유효기간 10분(1000 = 1초)
+                .expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
                 .signWith(key)
                 .compact();
         return accessToken;
@@ -43,6 +44,7 @@ public class JwtUtil {
     public static String createRefreshToken(Authentication auth) {
         Member user = (Member) auth.getPrincipal();
         String refreshToken = Jwts.builder()
+                // refreshToken에 담을 정보(클레임)
                 .claim("email", user.getEmail())
                 .claim("role", user.getRole().name())
                 .issuedAt(new Date(System.currentTimeMillis()))

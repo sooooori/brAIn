@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class MemberService {
@@ -32,5 +34,10 @@ public class MemberService {
                 .orElseThrow(() -> new BadRequestException("User not found"));
         member.updateRefreshToken(refreshToken);
         memberRepository.save(member);
+    }
+
+    // 이메일로 사용자 정보 조회
+    public Optional<Member> findByEmail(String email) {
+        return memberRepository.findByEmail(email);
     }
 }
