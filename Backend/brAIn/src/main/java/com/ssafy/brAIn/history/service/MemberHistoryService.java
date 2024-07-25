@@ -1,7 +1,7 @@
-package com.ssafy.brAIn.history.member.service;
+package com.ssafy.brAIn.history.service;
 
-import com.ssafy.brAIn.history.member.entity.MemberHistory;
-import com.ssafy.brAIn.history.member.repository.MemberHistoryRepository;
+import com.ssafy.brAIn.history.entity.MemberHistory;
+import com.ssafy.brAIn.history.repository.MemberHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

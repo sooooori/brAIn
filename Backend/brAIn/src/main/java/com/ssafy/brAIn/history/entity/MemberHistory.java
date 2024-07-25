@@ -1,8 +1,8 @@
-package com.ssafy.brAIn.history.member.entity;
+package com.ssafy.brAIn.history.entity;
 
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
-import com.ssafy.brAIn.history.member.model.Role;
-import com.ssafy.brAIn.history.member.model.Status;
+import com.ssafy.brAIn.history.model.Role;
+import com.ssafy.brAIn.history.model.Status;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.util.CommonUtils;
 import jakarta.persistence.*;
