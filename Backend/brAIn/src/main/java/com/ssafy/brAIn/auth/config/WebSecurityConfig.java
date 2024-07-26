@@ -11,6 +11,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -31,7 +36,8 @@ public class WebSecurityConfig {
         return httpSecurity
                 .httpBasic(AbstractHttpConfigurer::disable)  // 기본인증 해제
                 .csrf(AbstractHttpConfigurer::disable)       // csrf 해제
-                .cors(AbstractHttpConfigurer::disable)       // cors 해제
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // cors 설정
+//                .cors(AbstractHttpConfigurer::disable)       // cors 해제
                 .formLogin(AbstractHttpConfigurer::disable)  // 폼로그인 해제
                 .logout(logout -> logout
                         .invalidateHttpSession(true)  // 로그아웃하면 모든데이터 삭제
@@ -51,5 +57,19 @@ public class WebSecurityConfig {
                 // 필터 적용 (유효토큰 확인)
                 .addFilterBefore(jwtFilter, ExceptionTranslationFilter.class)
                 .build();
+    }
+
+    // CORS 설정 빈
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 클라이언트 도메인
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

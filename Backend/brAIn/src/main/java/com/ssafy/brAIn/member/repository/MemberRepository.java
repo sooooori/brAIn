@@ -14,5 +14,4 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
 
     // 이메일로 사용자 정보 가져오기
     Optional<Member> findByEmail(String email);
-
 }
