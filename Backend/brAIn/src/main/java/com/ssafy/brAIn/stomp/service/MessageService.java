@@ -1,6 +1,8 @@
 package com.ssafy.brAIn.stomp.service;
 
+import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
+import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
 import com.ssafy.brAIn.history.member.entity.MemberHistory;
 import com.ssafy.brAIn.history.member.entity.MemberHistoryId;
 import com.ssafy.brAIn.history.member.model.Status;
@@ -11,6 +13,7 @@ import com.ssafy.brAIn.stomp.request.RequestGroupPost;
 import com.ssafy.brAIn.stomp.response.ResponseGroupPost;
 import com.ssafy.brAIn.util.RedisUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -22,13 +25,16 @@ public class MessageService {
 
     private final MemberHistoryRepository memberHistoryRepository;
     private final MemberRepository memberRepository;
+    private final ConferenceRoomRepository conferenceRoomRepository;
 
-    public MessageService(RedisUtils redisUtils
-                          , MemberRepository memberRepository
-                            , MemberHistoryRepository memberHistoryRepository) {
+    public MessageService(RedisUtils redisUtils,
+                          MemberRepository memberRepository,
+                          MemberHistoryRepository memberHistoryRepository,
+                          ConferenceRoomRepository conferenceRoomRepository) {
         this.redisUtils = redisUtils;
         this.memberHistoryRepository = memberHistoryRepository;
         this.memberRepository = memberRepository;
+        this.conferenceRoomRepository=conferenceRoomRepository;
     }
 
     public void sendPost(Integer roomId, RequestGroupPost groupPost) {
@@ -53,6 +59,7 @@ public class MessageService {
     }
 
     //멤버가 회의 중 나갔을 때 history 테이블 업데이트
+    @Transactional
     public void historyUpdate(Integer roomId,String email) {
         Optional<Member> member=memberRepository.findByEmail(email);
         if(member.isEmpty())return;
@@ -63,8 +70,11 @@ public class MessageService {
     }
 
     //다음 단계로 이동 시, 회의 룸 업데이트 해야함.
-    public void updateStep(Integer RoomId, int step) {
-
+    @Transactional
+    public void updateStep(Integer RoomId, Step step) {
+        Optional<ConferenceRoom> conferenceRoom=conferenceRoomRepository.findById(RoomId);
+        if(conferenceRoom.isEmpty())return;
+        conferenceRoom.get().updateStep(step.next());
     }
 
 

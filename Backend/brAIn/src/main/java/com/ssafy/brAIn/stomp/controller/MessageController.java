@@ -1,11 +1,12 @@
 package com.ssafy.brAIn.stomp.controller;
 
+import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.stomp.dto.*;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
 import com.ssafy.brAIn.stomp.response.ConferencesEnterExit;
 import com.ssafy.brAIn.stomp.response.ResponseGroupPost;
 import com.ssafy.brAIn.stomp.response.Round;
-import com.ssafy.brAIn.stomp.response.Step;
+import com.ssafy.brAIn.stomp.response.ResponseStep;
 import com.ssafy.brAIn.stomp.service.MessageService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -86,6 +87,15 @@ public class MessageController {
         String email="123@naver.com";
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit(MessageType.EXIT_CONFERENCES,nickname));
         messageService.historyUpdate(Integer.parseInt(roomId),email);
+    }
+
+    //회의 다음단계 시작
+    @Secured("ROLE_CHIEF")
+    @MessageMapping("next.step.{roomId}")
+    public void nextStep(@Payload Step step, @DestinationVariable String roomId) {
+
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseStep(MessageType.NEXT_STEP,step.next()));
+        messageService.updateStep(Integer.parseInt(roomId),step.next());
     }
 
 

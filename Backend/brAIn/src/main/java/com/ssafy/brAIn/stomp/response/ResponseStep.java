@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.stomp.response;
 
+import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.stomp.dto.MessageType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,12 +9,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Step {
+public class ResponseStep {
 
     private MessageType type;
-    private int curStep;
+    private Step curStep;
 
-    public Step(MessageType type, int curStep) {
+    public ResponseStep(MessageType type, Step curStep) {
         this.type = type;
         this.curStep = curStep;
     }
