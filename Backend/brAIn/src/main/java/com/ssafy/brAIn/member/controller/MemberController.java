@@ -11,6 +11,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -41,9 +43,9 @@ public class MemberController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> data, HttpServletResponse response) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> data, HttpServletResponse response) throws IOException {
+        // 사용자 인증을 위한 토큰 생성 (이메일, 비밀번호 사용)
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                // 사용자 인증을 위한 토큰 생성 (이메일, 비밀번호 사용)
                 data.get("email"), data.get("password")
         );
 
@@ -51,22 +53,10 @@ public class MemberController {
         Authentication auth = authenticationManagerBuilder.getObject().authenticate(authToken);
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        // Access Token 및 Refresh Token 생성
-        String accessToken = JwtUtil.createAccessToken(SecurityContextHolder.getContext().getAuthentication());
-        String refreshToken = JwtUtil.createRefreshToken(SecurityContextHolder.getContext().getAuthentication());
+        // 토큰 발급 (accessToken은 반환, refreshToken은 쿠키저장)
+        String accessToken = memberService.login(auth, response);
 
-        // refreshToken DB에 저장
-        memberService.updateRefreshToken(data.get("email"), refreshToken);
-
-        // refreshToken 쿠키에 저장
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setMaxAge(1209600); // 14일 설정
-        cookie.setHttpOnly(true); // 자바스크립트 공격 방지
-        cookie.setPath("/"); // 쿠키가 전송될 URL 설정(모든 URL)
-        response.addCookie(cookie);
-
-        // accessToken 발급
-        return ResponseEntity.ok(Map.of("accessToken", accessToken));
+        return ResponseEntity.ok(Map.of("accessToken", accessToken, "message", "Login successful"));
     }
 
     // 토큰 재발급
