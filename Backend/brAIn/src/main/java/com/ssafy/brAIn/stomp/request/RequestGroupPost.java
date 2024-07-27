@@ -1,4 +1,4 @@
-package com.ssafy.brAIn.stomp.dto;
+package com.ssafy.brAIn.stomp.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,14 +7,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GroupPost {
+public class RequestGroupPost {
 
-    private String type;
+
     private int round;
     private String content;
 
-    public GroupPost(String type, int round, String content) {
-        this.type = type;
+    public RequestGroupPost(int round, String content) {
         this.round = round;
         this.content = content;
     }

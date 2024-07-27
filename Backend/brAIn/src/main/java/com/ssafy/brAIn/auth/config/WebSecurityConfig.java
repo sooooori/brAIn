@@ -44,19 +44,24 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
-                .authorizeHttpRequests(auth -> auth // 인증, 인가 설정
-                        .requestMatchers(
-                                new AntPathRequestMatcher("/api/v1/members/join"),
-                                new AntPathRequestMatcher("/")
-                        ).permitAll()
-                        .anyRequest().authenticated())
-                .formLogin(AbstractHttpConfigurer::disable) // 폼 기반 로그인 비활성화
-                .logout(logout -> logout // 로그아웃 설정
-                        .logoutSuccessUrl("/api/v1/members/login")
-                        .invalidateHttpSession(true)
-                )
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
+//                .authorizeHttpRequests(auth -> auth // 인증, 인가 설정
+//                        .anyRequest().permitAll()
+//                        .requestMatchers(
+//                                new AntPathRequestMatcher("/api/v1/members/join"),
+//                                new AntPathRequestMatcher("/")
+//                        ).permitAll()
+//                        .anyRequest().authenticated())
+//                .formLogin(AbstractHttpConfigurer::disable) // 폼 기반 로그인 비활성화
+//                .logout(logout -> logout // 로그아웃 설정
+//                        .logoutSuccessUrl("/api/v1/members/login")
+//                        .invalidateHttpSession(true)
+//                )
+                .authorizeHttpRequests(auth->auth
+                        .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
+
+
                 .build();
     }
 

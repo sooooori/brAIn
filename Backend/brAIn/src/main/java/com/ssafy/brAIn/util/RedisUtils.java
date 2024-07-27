@@ -20,5 +20,9 @@ public class RedisUtils {
         redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
     }
 
+    public void removeDataInList(String key,String content) {
+        redisTemplate.opsForList().remove(key, 1, content);
+    }
+
 
 }
