@@ -3,10 +3,7 @@ package com.ssafy.brAIn.stomp.controller;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.stomp.dto.*;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
-import com.ssafy.brAIn.stomp.response.ConferencesEnterExit;
-import com.ssafy.brAIn.stomp.response.ResponseGroupPost;
-import com.ssafy.brAIn.stomp.response.Round;
-import com.ssafy.brAIn.stomp.response.ResponseStep;
+import com.ssafy.brAIn.stomp.response.*;
 import com.ssafy.brAIn.stomp.service.MessageService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -96,6 +93,18 @@ public class MessageController {
 
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseStep(MessageType.NEXT_STEP,step.next()));
         messageService.updateStep(Integer.parseInt(roomId),step.next());
+    }
+
+    //유저 준비 완료
+    @MessageMapping("state.user.{roomId}")
+    public void readyState(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
+        String token=accessor.getFirstNativeHeader("Authorization");
+//        String nickname=jwtFilter.getNickname(token);
+        String nickname="userA";
+
+        messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.READY);
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY,nickname));
+
     }
 
 

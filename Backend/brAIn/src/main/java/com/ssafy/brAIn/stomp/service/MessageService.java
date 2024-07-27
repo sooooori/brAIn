@@ -9,6 +9,7 @@ import com.ssafy.brAIn.history.member.model.Status;
 import com.ssafy.brAIn.history.member.repository.MemberHistoryRepository;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
+import com.ssafy.brAIn.stomp.dto.UserState;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
 import com.ssafy.brAIn.stomp.response.ResponseGroupPost;
 import com.ssafy.brAIn.util.RedisUtils;
@@ -75,6 +76,12 @@ public class MessageService {
         Optional<ConferenceRoom> conferenceRoom=conferenceRoomRepository.findById(RoomId);
         if(conferenceRoom.isEmpty())return;
         conferenceRoom.get().updateStep(step.next());
+    }
+
+    //유저 상태 레디스에 임시 저장
+    public void updateUserState(Integer RoomId, String nickname,UserState userState) {
+        String key=RoomId + ":" + nickname;
+        redisUtils.setData(key,userState.toString(),3600L);
     }
 
 
