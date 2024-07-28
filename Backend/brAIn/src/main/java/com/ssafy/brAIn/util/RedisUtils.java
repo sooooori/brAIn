@@ -43,5 +43,24 @@ public class RedisUtils {
         return new ArrayList<>(sortedSet);
     }
 
+    public Double getScoreFromSortedSet(String key, String value) {
+        ZSetOperations<String, Object> zSetOperations = redisTemplate.opsForZSet();
+        return zSetOperations.score(key, value);
+    }
+
+    public String getUserFromSortedSet(String key, long score) {
+        ZSetOperations<String, Object> zSetOperations = redisTemplate.opsForZSet();
+        Set<Object> resultSet = zSetOperations.rangeByScore(key, score, score);
+
+        if (resultSet != null && !resultSet.isEmpty()) {
+            return (String) resultSet.iterator().next();
+        }
+        return null;
+    }
+
+    public void updateValue(String key, Object newValue) {
+        redisTemplate.opsForValue().set(key, newValue);
+    }
+
 
 }

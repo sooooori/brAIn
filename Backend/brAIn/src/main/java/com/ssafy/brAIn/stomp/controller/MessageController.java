@@ -130,6 +130,19 @@ public class MessageController {
 
     }
 
+    //유저 답변 패스
+    @MessageMapping("state.user.pass.{rommId}")
+    public void passRound(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
+        String token=accessor.getFirstNativeHeader("Authorization");
+        //        String nickname=jwtFilter.getNickname(token);
+        String nickname="userA";
+        messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.PASS);
+        String nextMember=messageService.NextOrder(Integer.parseInt(roomId),nickname);
+        messageService.updateCurOrder(Integer.parseInt(roomId),nextMember);
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember));
+
+    }
+
 
 
 

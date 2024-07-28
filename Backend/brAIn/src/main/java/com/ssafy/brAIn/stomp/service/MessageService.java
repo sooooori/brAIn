@@ -122,19 +122,6 @@ public class MessageService {
     }
 
 
-    //회의 시작 후, 맴버 개인마다 요청을 보냄.(아직 미완성)
-    public void initConferences(Integer RoomId) {
-        String key=RoomId + ":" + "email";
-        List<String> users=redisUtils.getListFromKey(key)
-                .stream()
-                .map(Object::toString)
-                .toList();
-
-        List<Integer> order=makeRandomList(users.size());
-        List<String> nicknames = makeNickname(users.size());
-
-    }
-
     //닉네임 목록을 저장하는 데이터베이스 하나 만들면 좋을듯?(지금은 임시로 내부에서 만듦)
     private List<String> makeNickname(int size) {
         List<String> nicknames=new ArrayList<>();
@@ -160,8 +147,19 @@ public class MessageService {
 
     }
 
+    //현재 유저의 다음 순서의 사람을 가져온다.(닉네임)
+    public String NextOrder(Integer roomId,String curUser) {
+        String key=roomId + ":order" ;
+        Double curOrder= redisUtils.getScoreFromSortedSet(key,curUser);
 
+        return redisUtils.getUserFromSortedSet(key,(curOrder).longValue());
+    }
 
+    //현재 제출순서가 된 유저를 업데이트한다.
+    public void updateCurOrder(Integer roomId,String curUser) {
+        String key=roomId+":curOrder";
+        redisUtils.updateValue(key,curUser);
+    }
 
 
 

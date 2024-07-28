@@ -1,20 +1,23 @@
 package com.ssafy.brAIn.stomp.response;
 
-
 import com.ssafy.brAIn.stomp.dto.MessageType;
 import com.ssafy.brAIn.stomp.dto.UserState;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
-public class ResponseUserState {
+public class ResponseRoundState {
 
     private UserState type;
-    private String nickname;
+    private String curUser;
+    private String nextUser;
 
-    public ResponseUserState(UserState type, String nickname) {
+    public ResponseRoundState(UserState type, String curUser, String nextUser) {
         this.type = type;
-        this.nickname = nickname;
+        this.curUser = curUser;
+        this.nextUser = nextUser;
     }
 }
