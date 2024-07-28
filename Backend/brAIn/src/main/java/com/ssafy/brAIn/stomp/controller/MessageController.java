@@ -5,6 +5,7 @@ import com.ssafy.brAIn.stomp.dto.*;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
 import com.ssafy.brAIn.stomp.response.*;
 import com.ssafy.brAIn.stomp.service.MessageService;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -12,6 +13,8 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
+
+import java.util.List;
 
 
 @Controller
@@ -86,6 +89,26 @@ public class MessageController {
         messageService.historyUpdate(Integer.parseInt(roomId),email);
     }
 
+    //대기방에서 회의방 시작하기
+    @Secured("ROLE_CHIEF")
+    @MessageMapping("start.conferences.{roomId}")
+    public void startConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
+        String token=accessor.getFirstNativeHeader("Authorization");
+//        String chiefEmail=jwtUtil.getEmail(token);
+        String chiefEmail="123@naver.com";
+        List<String> users=messageService.startConferences(Integer.parseInt(roomId),chiefEmail).stream()
+                .map(Object::toString)
+                .toList();
+
+
+        MessagePostProcessor messagePostProcessor = message -> {
+            message.getMessageProperties().setHeader("Authorization", "회의 토큰");
+            return message;
+        };
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users));
+
+    }
+
     //회의 다음단계 시작
     @Secured("ROLE_CHIEF")
     @MessageMapping("next.step.{roomId}")
@@ -106,6 +129,9 @@ public class MessageController {
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY,nickname));
 
     }
+
+
+
 
 
 

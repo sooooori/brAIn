@@ -7,5 +7,6 @@ public enum MessageType {
     EXIT_CONFERENCES,
     NEXT_STEP,
     SUBMIT_POST_IT,
-    NEXT_ROUND;
+    NEXT_ROUND,
+    START_CONFERENCE;
 }

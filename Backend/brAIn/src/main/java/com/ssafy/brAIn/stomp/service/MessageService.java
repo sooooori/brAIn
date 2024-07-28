@@ -5,6 +5,7 @@ import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
 import com.ssafy.brAIn.history.member.entity.MemberHistory;
 import com.ssafy.brAIn.history.member.entity.MemberHistoryId;
+import com.ssafy.brAIn.history.member.model.Role;
 import com.ssafy.brAIn.history.member.model.Status;
 import com.ssafy.brAIn.history.member.repository.MemberHistoryRepository;
 import com.ssafy.brAIn.member.entity.Member;
@@ -16,7 +17,11 @@ import com.ssafy.brAIn.util.RedisUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageService {
@@ -47,15 +52,15 @@ public class MessageService {
     }
 
     //멤버가 대기방 입장 시, 레디스에 저장
-    public void enterWaitingRoom(Integer roomId,String username) {
+    public void enterWaitingRoom(Integer roomId,String email) {
 
-        String key=roomId + ":" + "username";
-        redisUtils.setData(key,username,3600L);
+        String key=roomId + ":" + "email";
+        redisUtils.setData(key,email,3600L);
     }
 
     //멤버가 대기방에서 나갔을 때, 레디스에서 삭제
     public void exitWaitingRoom(Integer roomId,String username) {
-        String key=roomId + ":" + "username";
+        String key=roomId + ":" + "email";
         redisUtils.removeDataInList(key,username);
     }
 
@@ -82,6 +87,77 @@ public class MessageService {
     public void updateUserState(Integer RoomId, String nickname,UserState userState) {
         String key=RoomId + ":" + nickname;
         redisUtils.setData(key,userState.toString(),3600L);
+    }
+
+    //방장이 회의 시작 요청을 보내면 현재 멤버들을 기록한다.
+    public List<Object> startConferences(Integer roomId,String chiefEmail) {
+        String key=roomId + ":" + "email";
+        List<String> users=redisUtils.getListFromKey(key)
+                .stream()
+                .map(Object::toString)
+                .toList();
+
+        List<Integer> order=makeRandomList(users.size());
+        List<String> nicknames = makeNickname(users.size());
+
+        for(int i=0;i<users.size();i++){
+            String userEmail = users.get(i);
+            Role role = userEmail.equals(chiefEmail) ? Role.CHIEF : Role.MEMBER;
+
+            MemberHistory memberHistory=MemberHistory.builder()
+                    .id(new MemberHistoryId(memberRepository.findByEmail(users.get(i)).get().getId(),roomId))
+                    .role(role)
+                    .status(Status.COME)
+                    .orders(order.get(i))
+                    .nickName(nicknames.get(i))
+                    .member(memberRepository.findByEmail(users.get(i)).get())
+                    .conferenceRoom(conferenceRoomRepository.getReferenceById(roomId))
+                    .build();
+
+            redisUtils.setSortedSet(roomId+":"+"order", order.get(i),nicknames.get(i) );
+            memberHistoryRepository.save(memberHistory);
+        }
+
+        return redisUtils.getSortedSet(roomId+":order");
+    }
+
+
+    //회의 시작 후, 맴버 개인마다 요청을 보냄.(아직 미완성)
+    public void initConferences(Integer RoomId) {
+        String key=RoomId + ":" + "email";
+        List<String> users=redisUtils.getListFromKey(key)
+                .stream()
+                .map(Object::toString)
+                .toList();
+
+        List<Integer> order=makeRandomList(users.size());
+        List<String> nicknames = makeNickname(users.size());
+
+    }
+
+    //닉네임 목록을 저장하는 데이터베이스 하나 만들면 좋을듯?(지금은 임시로 내부에서 만듦)
+    private List<String> makeNickname(int size) {
+        List<String> nicknames=new ArrayList<>();
+        for(int i=0;i<size;i++){
+            nicknames.add("호랑이"+i);
+        }
+
+        //랜덤으로 부여하기 위해 한번 섞어준다.
+        Collections.shuffle(nicknames);
+
+        return nicknames;
+    }
+
+    //유저들의 순서를 정하기 위한 함수
+    private List<Integer> makeRandomList(int size) {
+        List<Integer> order=new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            order.add(i);
+        }
+
+        Collections.shuffle(order);
+        return order;
+
     }
 
 
