@@ -39,7 +39,6 @@ public class WebSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)  // 기본인증 해제
                 .csrf(AbstractHttpConfigurer::disable)       // csrf 해제
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // cors 설정
-//                .cors(AbstractHttpConfigurer::disable)       // cors 해제
                 .formLogin(AbstractHttpConfigurer::disable)  // 폼로그인 해제
                 .logout(logout -> logout
                         .invalidateHttpSession(true)  // 로그아웃 시 세션 무효화

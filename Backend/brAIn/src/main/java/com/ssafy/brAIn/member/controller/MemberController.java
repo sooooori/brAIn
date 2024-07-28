@@ -11,7 +11,6 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -108,7 +107,7 @@ public class MemberController {
 
     // 로그아웃
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Refresh Token 쿠키 제거
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setMaxAge(0); // 쿠키 제거
@@ -118,6 +117,7 @@ public class MemberController {
 
         // SecurityContext 초기화 (로그아웃 처리)
         SecurityContextHolder.clearContext();
+
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
