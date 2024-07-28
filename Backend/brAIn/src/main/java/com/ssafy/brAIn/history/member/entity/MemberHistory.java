@@ -30,8 +30,8 @@ public class MemberHistory {
     @Column(name = "nickname")
     private String nickName;
 
-    @Column(name = "order")
-    private int order;
+    @Column(name = "orders")
+    private int orders;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("memberId")

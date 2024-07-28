@@ -1,7 +1,6 @@
 package com.ssafy.brAIn.postit.entity;
 
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
-import com.ssafy.brAIn.guest.entity.Guest;
 import com.ssafy.brAIn.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -28,10 +27,6 @@ public class PostIt {
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
 
-    @ManyToOne
-    @JoinColumn(name="guest_id", referencedColumnName = "id")
-    private Guest guest;
-
 
     @Builder
     public PostIt(String content, ConferenceRoom room, Member member) {
@@ -42,10 +37,9 @@ public class PostIt {
     }
 
     @Builder
-    public PostIt(String content, ConferenceRoom room, Guest guest) {
+    public PostIt(String content, ConferenceRoom room) {
         this.content = content;
         this.room = room;
-        this.guest=guest;
     }
 
 
