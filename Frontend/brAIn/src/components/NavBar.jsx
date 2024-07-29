@@ -5,40 +5,55 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import axios from 'axios'; // axios를 import
 import Cookies from 'js-cookie';
+import { useSelector, useDispatch } from 'react-redux'; // useSelector와 useDispatch import
+import { logout, login } from '../features/auth/authSlice';
+import { useEffect } from 'react';
 
 const NavBar = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    // Redux store에서 로그인 상태를 가져옵니다.
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+    const user = useSelector((state) => state.auth.user);
+
+    // Load the authentication state from localStorage and update Redux store
+    useEffect(() => {
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        const accessToken = localStorage.getItem('accessToken');
+        
+        if (storedUser && accessToken) {
+            dispatch(login(storedUser));
+        }
+    }, [dispatch]);
 
     const handleStartClick = () => {
         navigate('/loginoption');
-    };
-
-    // 로그인 상태를 확인하는 함수
-    const isLoggedIn = () => {
-        // Access Token이 localStorage에 저장되어 있으면 로그인된 상태로 간주
-        return localStorage.getItem('accessToken') !== null;
     };
 
     const handleLogout = async () => {
         try {
             const token = localStorage.getItem('accessToken');
             const refreshToken = Cookies.get('refreshToken');
-            await axios.post('http://localhost:8080/api/v1/members/logout', {refreshToken: refreshToken}, {
+            await axios.post('http://localhost:8080/api/v1/members/logout', { refreshToken: refreshToken }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
 
-            // 로컬 스토리지에서 accessToken 삭제
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('accessTokenExpiration');
-            Cookies.remove('refreshToken');
+            // Redux store에서 로그아웃 상태로 업데이트
+            dispatch(logout());
 
+            // 로컬 스토리지와 쿠키에서 인증 정보 삭제
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            Cookies.remove('refreshToken');
+            
             // 홈 페이지로 리다이렉트
             navigate('/');
         } catch (error) {
-            console.error('Logout failed', error);
-            // 로그아웃 실패 시 처리할 로직을 추가할 수 있습니다.
+            console.error('로그아웃 실패:', error);
+            // 로그아웃 실패 시 사용자에게 피드백을 줄 수 있습니다.
         }
     };
 
@@ -53,7 +68,7 @@ const NavBar = () => {
                 },
                 {
                     label: '취소',
-                    onClick: () => {}
+                    onClick: () => {} // 취소 시 아무 동작도 하지 않음
                 }
             ]
         });
@@ -68,21 +83,21 @@ const NavBar = () => {
                 </Link>
             </div>
             <div className="navbar-links">
-                <Button 
-                    variant="contained" 
-                    color="primary" 
-                    className="primary" 
-                    onClick={handleStartClick}
-                >
-                    brAIn 시작하기
-                </Button>
-
-                {isLoggedIn() && (
+                {!isAuthenticated ? (
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        className="primary" // CSS에서 정의된 클래스
+                        onClick={handleStartClick}
+                    >
+                        brAIn 시작하기
+                    </Button>
+                ) : (
                     <Button
                         variant="outlined"
                         color="secondary"
-                        className="logout" // css - 로그아웃 버튼에 logout 클래스 추가
-                        onClick={confirmLogout} // 로그아웃 버튼 클릭 시 confirmLogout 호출
+                        className="logout" // CSS에서 정의된 클래스
+                        onClick={confirmLogout}
                     >
                         로그아웃
                     </Button>
