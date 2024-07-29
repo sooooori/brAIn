@@ -94,15 +94,16 @@ public class MessageService {
 
     //다음 단계로 이동 시, 회의 룸 업데이트 해야함.
     @Transactional
-    public void updateStep(Integer RoomId, Step step) {
-        Optional<ConferenceRoom> conferenceRoom=conferenceRoomRepository.findById(RoomId);
+    public void updateStep(Integer roomId, Step step) {
+        Optional<ConferenceRoom> conferenceRoom=conferenceRoomRepository.findById(roomId);
         if(conferenceRoom.isEmpty())return;
         conferenceRoom.get().updateStep(step.next());
+        redisUtils.save(roomId+":curStep",step.next().toString());
     }
 
     //유저 상태 레디스에 임시 저장
-    public void updateUserState(Integer RoomId, String nickname,UserState userState) {
-        String key=RoomId + ":" + nickname;
+    public void updateUserState(Integer roomId, String nickname,UserState userState) {
+        String key=roomId + ":" + nickname;
         redisUtils.setData(key,userState.toString(),3600L);
     }
 

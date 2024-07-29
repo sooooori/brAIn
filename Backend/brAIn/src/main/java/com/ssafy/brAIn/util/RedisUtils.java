@@ -80,4 +80,8 @@ public class RedisUtils {
         return (String) redisTemplate.opsForValue().get(key);
     }
 
+    public void save(String key, String value) {
+        redisTemplate.opsForValue().set(key, value);
+    }
+
 }
