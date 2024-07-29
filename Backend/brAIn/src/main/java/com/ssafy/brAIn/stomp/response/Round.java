@@ -1,5 +1,6 @@
-package com.ssafy.brAIn.stomp.dto;
+package com.ssafy.brAIn.stomp.response;
 
+import com.ssafy.brAIn.stomp.dto.MessageType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,10 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Round {
 
-    private String type;
+    private MessageType type;
     private int round;
 
-    public Round(String type, int round) {
+    public Round(MessageType type, int round) {
         this.type = type;
         this.round = round;
     }

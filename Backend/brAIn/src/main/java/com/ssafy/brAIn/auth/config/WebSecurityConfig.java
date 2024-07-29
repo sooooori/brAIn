@@ -28,28 +28,28 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-        return httpSecurity
-                .httpBasic(AbstractHttpConfigurer::disable)  // 기본인증 해제
-                .csrf(AbstractHttpConfigurer::disable)       // csrf 해제
-                .cors(AbstractHttpConfigurer::disable)       // cors 해제
-                .formLogin(AbstractHttpConfigurer::disable)  // 폼로그인 해제
-                .logout(logout -> logout
-                        .invalidateHttpSession(true)  // 로그아웃하면 모든데이터 삭제
-                )
-                .authorizeHttpRequests(requests -> {
-                    requests.requestMatchers(  // 허용 URL
-                            "/api/v1/members/join",
-                            "/api/v1/members/login",
-                            "/api/v1/members/refresh"
-                            ).permitAll();
-                    requests.anyRequest().authenticated(); // 모든 URL 인증 필요
-                })
-                .sessionManagement(  // 세션방식 해제
-                        sessionManagement ->
-                                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                // 필터 적용 (유효토큰 확인)
-                .addFilterBefore(jwtFilter, ExceptionTranslationFilter.class)
+    // 특정 HTTP 요청에 대한 웹 기반 보안 구성
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
+//                .authorizeHttpRequests(auth -> auth // 인증, 인가 설정
+//                        .anyRequest().permitAll()
+//                        .requestMatchers(
+//                                new AntPathRequestMatcher("/api/v1/members/join"),
+//                                new AntPathRequestMatcher("/")
+//                        ).permitAll()
+//                        .anyRequest().authenticated())
+//                .formLogin(AbstractHttpConfigurer::disable) // 폼 기반 로그인 비활성화
+//                .logout(logout -> logout // 로그아웃 설정
+//                        .logoutSuccessUrl("/api/v1/members/login")
+//                        .invalidateHttpSession(true)
+//                )
+                .authorizeHttpRequests(auth->auth
+                        .anyRequest().permitAll())
+                .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
+
+
                 .build();
     }
 }
