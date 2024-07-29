@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/members")
 public class ConferenceRoomController {
-//    @GetMapping("/{roomId}")
-//    public ResponseEntity<?> getConferenceRoom(@PathVariable String roomId) {
-//        return ResponseEntity.status(200).body();
-//    }
+    @GetMapping("/{roomId}")
+    public ResponseEntity<?> getConferenceRoom(@PathVariable String roomId) {
+        return ResponseEntity.status(200).body(roomId);
+    }
 }
