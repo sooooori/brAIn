@@ -104,7 +104,7 @@ public class MessageService {
     //유저 상태 레디스에 임시 저장
     public void updateUserState(Integer roomId, String nickname,UserState userState) {
         String key=roomId + ":" + nickname;
-        redisUtils.setData(key,userState.toString(),3600L);
+        redisUtils.save(key,userState.toString());
     }
 
     //방장이 회의 시작 요청을 보내면 현재 멤버들을 기록한다.
