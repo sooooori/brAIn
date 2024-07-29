@@ -48,7 +48,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth->auth
                         .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
-
+//주석
 
                 .build();
     }
