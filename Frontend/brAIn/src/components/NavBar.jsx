@@ -1,9 +1,10 @@
-import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './NavBar.css'; // CSS 파일을 사용하여 스타일링
 import { Button } from '@mui/material';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import axios from 'axios'; // axios를 import
+import Cookies from 'js-cookie';
 
 const NavBar = () => {
     const navigate = useNavigate();
@@ -18,14 +19,27 @@ const NavBar = () => {
         return localStorage.getItem('accessToken') !== null;
     };
 
-    const handleLogout = () => {
-        // 로컬 스토리지에서 accessToken 삭제
-        localStorage.removeItem('accessToken');
-        // localStorage.removeItem('accessTokenExpiration');
-        // Cookies.remove('refreshToken'); //
+    const handleLogout = async () => {
+        try {
+            const token = localStorage.getItem('accessToken');
+            const refreshToken = Cookies.get('refreshToken');
+            await axios.post('http://localhost:8080/api/v1/members/logout', {refreshToken: refreshToken}, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
 
-        // 홈 페이지로 리다이렉트
-        navigate('/');
+            // 로컬 스토리지에서 accessToken 삭제
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('accessTokenExpiration');
+            Cookies.remove('refreshToken');
+
+            // 홈 페이지로 리다이렉트
+            navigate('/');
+        } catch (error) {
+            console.error('Logout failed', error);
+            // 로그아웃 실패 시 처리할 로직을 추가할 수 있습니다.
+        }
     };
 
     const confirmLogout = () => {
