@@ -168,13 +168,16 @@ public class MessageService {
     //현재 유저의 다음 순서의 사람을 가져온다.(닉네임)
     public String NextOrder(Integer roomId,String curUser) {
         String key=roomId + ":order" ;
-        Double curOrder= redisUtils.getScoreFromSortedSet(key,curUser);
+        int curOrder= redisUtils.getScoreFromSortedSet(key,curUser).intValue();
 
-        //현재 유저의 순서가 마지막 순서라면 다시 첫 번째 사람을 가져온다.
-        if(curOrder==redisUtils.getSortedSet(key).size()-1){
-            return redisUtils.getUserFromSortedSet(key,0);
+        int totalUser=redisUtils.getSortedSet(key).size();
+        int nextOrder=(curOrder+1)%totalUser;
+        while (true) {
+            if(!redisUtils.isValueInSet(roomId+":out",redisUtils.getUserFromSortedSet(key,nextOrder)))break;
+            nextOrder++;
+            nextOrder%=totalUser;
         }
-        return redisUtils.getUserFromSortedSet(key,(curOrder).longValue()+1);
+        return redisUtils.getUserFromSortedSet(key,nextOrder);
     }
 
     //현재 제출순서가 된 유저를 업데이트한다.

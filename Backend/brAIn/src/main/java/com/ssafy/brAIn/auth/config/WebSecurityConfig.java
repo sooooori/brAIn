@@ -5,6 +5,7 @@ import com.ssafy.brAIn.auth.oauth.OAuth2LoginSuccessHandler;
 import com.ssafy.brAIn.member.service.MemberDetailService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +36,7 @@ public class WebSecurityConfig {
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final MemberDetailService memberDetailService;
 
+
     // 패스워드 인코더로 사용할 빈 등록
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -45,8 +47,10 @@ public class WebSecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                .requestMatchers(new AntPathRequestMatcher("/static/**"));
+                .requestMatchers(new AntPathRequestMatcher("/static/**","ws://localhost:8080/**"));
     }
+
+
 
     // 특정 HTTP 요청에 대한 웹 기반 보안 구성
     @Bean
@@ -68,7 +72,9 @@ public class WebSecurityConfig {
 //                .authorizeHttpRequests(auth->auth
 //                        .anyRequest().permitAll())
 //                .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
+//                .build();
 //주석
+
 
         return http
                 .httpBasic(AbstractHttpConfigurer::disable)  // 기본인증 해제
@@ -86,7 +92,7 @@ public class WebSecurityConfig {
                             "/oauth/**",
                             "/**"
                             ).permitAll();
-                    requests.anyRequest().authenticated(); // 모든 URL 인증 필요
+                    requests.anyRequest().permitAll(); // 모든 URL 인증 필요
                 })
                 .sessionManagement(  // 세션방식 해제
                         sessionManagement ->
@@ -107,6 +113,7 @@ public class WebSecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 클라이언트 도메인
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true); // 필요 시 추가
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

@@ -8,5 +8,6 @@ public enum MessageType {
     NEXT_STEP,
     SUBMIT_POST_IT,
     NEXT_ROUND,
-    START_CONFERENCE;
+    START_CONFERENCE,
+    PLUS_TIME;
 }

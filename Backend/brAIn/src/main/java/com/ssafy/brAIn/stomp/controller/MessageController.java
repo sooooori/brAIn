@@ -149,7 +149,7 @@ public class MessageController {
     }
 
     //유저 답변 패스
-    @MessageMapping("state.user.pass.{rommId}")
+    @MessageMapping("state.user.pass.{roomId}")
     public void passRound(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
         String token=accessor.getFirstNativeHeader("Authorization");
         //        String nickname=jwtFilter.getNickname(token);
@@ -160,6 +160,13 @@ public class MessageController {
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember));
 
     }
+
+    //타이머 시간 추가
+    @MessageMapping("timer.modify.{roomId}")
+    public void modifyTimer(@DestinationVariable String roomId, @Payload Long time) {
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new Timer(MessageType.PLUS_TIME,time));
+    }
+
 
 
 
