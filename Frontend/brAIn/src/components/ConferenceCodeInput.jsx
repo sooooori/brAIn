@@ -1,19 +1,17 @@
 import React, { useRef } from "react";
+import PropTypes from 'prop-types'; // Optional: to validate props
 
-const ConferenceCodeInput = ({ inputs, setInputs, keyPress }) => {
-  // useRef의 초기값을 빈 배열로 설정합니다.
+const ConferenceCodeInput = ({ inputs = [], setInputs, keyPress }) => {
   const inputRefs = useRef([]);
 
   const handleChange = (index) => (e) => {
     const value = e.target.value;
 
     if (value === "" || /^[0-9]$/i.test(value)) {
-      // inputs 배열을 복사하여 새로운 값을 설정합니다.
       const newInputs = [...inputs];
       newInputs[index] = value;
       setInputs(newInputs);
 
-      // 현재 입력값이 있는 경우, 다음 입력 필드로 포커스를 이동합니다.
       if (value && index < inputs.length - 1) {
         inputRefs.current[index + 1]?.focus();
       }
@@ -21,11 +19,9 @@ const ConferenceCodeInput = ({ inputs, setInputs, keyPress }) => {
   };
 
   const handleKeyDown = (index) => (e) => {
-    // Backspace 키가 눌렸을 때, 현재 필드가 비어있고 이전 필드가 있는 경우 이전 필드로 포커스를 이동합니다.
     if (e.key === "Backspace" && !inputs[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
-    // Enter 키가 눌렸을 때, keyPress 함수를 호출합니다.
     if (e.key === "Enter") {
       keyPress();
     }
@@ -48,6 +44,13 @@ const ConferenceCodeInput = ({ inputs, setInputs, keyPress }) => {
       ))}
     </div>
   );
+};
+
+// Optional: PropTypes for validation
+ConferenceCodeInput.propTypes = {
+  inputs: PropTypes.array.isRequired,
+  setInputs: PropTypes.func.isRequired,
+  keyPress: PropTypes.func.isRequired,
 };
 
 export default ConferenceCodeInput;
