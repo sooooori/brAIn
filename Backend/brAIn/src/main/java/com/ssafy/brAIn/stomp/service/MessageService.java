@@ -14,6 +14,7 @@ import com.ssafy.brAIn.stomp.dto.UserState;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
 import com.ssafy.brAIn.stomp.response.ResponseGroupPost;
 import com.ssafy.brAIn.util.RedisUtils;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +50,17 @@ public class MessageService {
         String content=groupPost.getContent();
         String key = roomId + ":" + round;
         redisUtils.setData(key,content,3600L);
+    }
+
+    
+    //현재 유저가 마지막 순서인지 확인하는 메서드
+    public boolean isLastOrder(Integer roomId, String nickname) {
+        Double order=redisUtils.getScoreFromSortedSet(roomId+":order",nickname);
+        int lastOrder=redisUtils.getSortedSet(roomId+":order").size()-1;
+        if (order == lastOrder) {
+            return true;
+        }
+        return false;
     }
 
     //멤버가 대기방 입장 시, 레디스에 저장
@@ -114,6 +126,7 @@ public class MessageService {
                     .conferenceRoom(conferenceRoomRepository.getReferenceById(roomId))
                     .build();
 
+            //레디스에 유저들의 순서를 닉네임으로 저장
             redisUtils.setSortedSet(roomId+":"+"order", order.get(i),nicknames.get(i) );
             memberHistoryRepository.save(memberHistory);
         }

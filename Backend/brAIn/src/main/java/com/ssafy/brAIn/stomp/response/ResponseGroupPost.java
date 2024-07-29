@@ -16,8 +16,9 @@ public class ResponseGroupPost {
     private int nextRound;
     private String content;
 
-    public ResponseGroupPost(MessageType type, int curRound, int nextRound, String content) {
+    public ResponseGroupPost(MessageType type, String provider,int curRound, int nextRound, String content) {
         this.type = type;
+        this.provider = provider;
         this.curRound = curRound;
         this.nextRound = nextRound;
         this.content = content;

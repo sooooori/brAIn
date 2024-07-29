@@ -35,6 +35,7 @@ public class MessageController {
 
 
     //유저 답변 제출완료
+    //유저가 답변을 제출하면 자동으로 다음 사람으로 넘어가야 함.
     @MessageMapping("step1.submit.{roomId}")
     public void submitPost(RequestGroupPost groupPost, @DestinationVariable String roomId,StompHeaderAccessor accessor) {
 
@@ -43,9 +44,13 @@ public class MessageController {
         String nickname="userA";
         messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
 
-        messageService.
+        ResponseGroupPost responseGroupPost=null;
 
-        ResponseGroupPost responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT,groupPost.getRound(),groupPost.getContent());
+        if (messageService.isLastOrder(Integer.parseInt(roomId), nickname)) {
+            responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,groupPost.getRound(), groupPost.getRound()+1, groupPost.getContent());
+        }else{
+            responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,groupPost.getRound(), groupPost.getRound(), groupPost.getContent());
+        }
         messageService.sendPost(Integer.parseInt(roomId),groupPost);
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, responseGroupPost);
 
@@ -156,15 +161,7 @@ public class MessageController {
 
     }
 
-    //유저 답변 제출
-    @MessageMapping("state.user.submit.{roomId}")
-    public void submit(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
-        String token=accessor.getFirstNativeHeader("Authorization");
-        //        String nickname=jwtFilter.getNickname(token);
-        String nickname="userA";
-        messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
-        rabbitTemplate
-    }
+    
 
 
 
