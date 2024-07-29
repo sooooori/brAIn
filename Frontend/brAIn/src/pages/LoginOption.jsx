@@ -24,7 +24,7 @@ const LoginOption = () => {
     };
 
     const goToGoogleLogin = () => {
-        window.location.href = `http://localhost:8080/oauth2/authorization/google?redirect_uri=http://localhost:3000/oauth/redirect`;
+        window.location.href = `http://localhost:8080/oauth2/authorization/google?redirect_uri=http://localhost:5173/oauth/redirect`;
     };
 
     const goToKakaoLogin = () => {

@@ -39,7 +39,6 @@ public class WebSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)  // 기본인증 해제
                 .csrf(AbstractHttpConfigurer::disable)       // csrf 해제
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // cors 설정
-//                .cors(AbstractHttpConfigurer::disable)       // cors 해제
                 .formLogin(AbstractHttpConfigurer::disable)  // 폼로그인 해제
                 .logout(logout -> logout
                         .invalidateHttpSession(true)  // 로그아웃 시 세션 무효화
@@ -50,7 +49,8 @@ public class WebSecurityConfig {
                             "/api/v1/members/login",
                             "/api/v1/members/refresh",
                             "/oauth/**",
-                            "/**"
+                            "/accounts/**",
+                            "/login/**"
                             ).permitAll();
                     requests.anyRequest().authenticated(); // 모든 URL 인증 필요
                 })
@@ -72,7 +72,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 클라이언트 도메인
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
