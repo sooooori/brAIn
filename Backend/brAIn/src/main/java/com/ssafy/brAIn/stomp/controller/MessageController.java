@@ -103,8 +103,8 @@ public class MessageController {
 //        String email=jwtUtil.getEmail(token);
         String nickname="user"+(int)(Math.random()*100);
         String email="123@naver.com";
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit(MessageType.EXIT_CONFERENCES,nickname));
         messageService.historyUpdate(Integer.parseInt(roomId),email);
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit(MessageType.EXIT_CONFERENCES,nickname));
     }
 
     //대기방에서 회의방 시작하기
@@ -161,7 +161,7 @@ public class MessageController {
 
     }
 
-    
+
 
 
 

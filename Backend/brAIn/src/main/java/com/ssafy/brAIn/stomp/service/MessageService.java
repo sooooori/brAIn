@@ -82,9 +82,14 @@ public class MessageService {
         Optional<Member> member=memberRepository.findByEmail(email);
         if(member.isEmpty())return;
 
+        //DB업데이트
         MemberHistoryId memberHistoryId=new MemberHistoryId(roomId,member.get().getId());
         MemberHistory memberHistory= memberHistoryRepository.findById(memberHistoryId);
         memberHistory.historyStateUpdate(Status.OUT);
+
+        //redis에 나간유저를 저장해놓자.
+        redisUtils.setDataInSet(roomId+":out",memberHistory.getNickName(),7200L);
+
     }
 
     //다음 단계로 이동 시, 회의 룸 업데이트 해야함.
