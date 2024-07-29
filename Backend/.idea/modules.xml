@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Backend.iml" filepath="$PROJECT_DIR$/.idea/Backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/brAIn.iml" filepath="$PROJECT_DIR$/.idea/modules/brAIn.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/brAIn.main.iml" filepath="$PROJECT_DIR$/.idea/modules/brAIn.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/brAIn.test.iml" filepath="$PROJECT_DIR$/.idea/modules/brAIn.test.iml" />
     </modules>
   </component>
 </project>

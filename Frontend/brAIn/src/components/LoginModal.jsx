@@ -4,11 +4,12 @@ import { Button, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import SendNumberModal from './SendNumberModal'; // Import the SendNumberModal
-import ResetPasswordModal from './ResetPasswordModal'; // Import the ResetPasswordModal component
-import JoinModal from './JoinModal'; // Import the JoinModal component
+import { useDispatch } from 'react-redux';
+import { login } from '../features/auth/authSlice';
+import SendNumberModal from './SendNumberModal';
+import ResetPasswordModal from './ResetPasswordModal';
+import JoinModal from './JoinModal';
 
-// Custom styles for the modal
 const customStyles = {
     content: {
         top: '50%',
@@ -36,11 +37,12 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
     const [password, setPassword] = useState('');
     const [loginAttempts, setLoginAttempts] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
-    const [isSendNumberModalOpen, setIsSendNumberModalOpen] = useState(false); // State for SendNumberModal
-    const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false); // State for ResetPasswordModal
-    const [isJoinModalOpen, setIsJoinModalOpen] = useState(false); // State for JoinModal
+    const [isSendNumberModalOpen, setIsSendNumberModalOpen] = useState(false);
+    const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
+    const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -52,22 +54,13 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
 
         try {
             const response = await axios.post('http://localhost:8080/api/v1/members/login', { email, password });
-            // const { accessToken, refreshToken } = response.data;
-            // Access Token 가져오기
-            const { accessToken} = response.data;
+            const { accessToken } = response.data;
 
-            // Access Token 유효 기간 설정 (25분)
-            // const expirationTimeAccess = new Date(new Date().getTime() + 25 * 60 * 1000);
-            // const expirationTimeAccessString = expirationTimeAccess.toISOString();
             localStorage.setItem('accessToken', accessToken);
-            // localStorage.setItem('accessTokenExpiration', expirationTimeAccessString);
 
-            // Refresh Token 유효 기간 설정 (35분)
-            // const expirationDateRefresh = new Date(new Date().getTime() + 35 * 60 * 1000);
-            // Cookies.set('refreshToken', refreshToken);
-            // Cookies.set('refreshToken', refreshToken, { expires: expirationDateRefresh });
+            // Redux에 로그인 상태 업데이트
+            dispatch(login({ email }));
 
-            // 로그인 성공 후 메인 페이지로 이동
             navigate('/');
             onRequestClose();
         } catch (error) {
@@ -83,19 +76,18 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
     };
 
     const handlePasswordFind = () => {
-        setIsSendNumberModalOpen(true); // Open SendNumberModal
+        setIsSendNumberModalOpen(true);
     };
 
     const handleSignup = () => {
-        setIsJoinModalOpen(true); // Open JoinModal
+        setIsJoinModalOpen(true);
     };
 
     const handleVerificationSuccess = () => {
-        setIsSendNumberModalOpen(false); // Close SendNumberModal
-        setIsResetPasswordModalOpen(true); // Open ResetPasswordModal
+        setIsSendNumberModalOpen(false);
+        setIsResetPasswordModalOpen(true);
     };
 
-    // Reset state when LoginModal is closed
     const handleRequestClose = () => {
         setEmail('');
         setPassword('');
@@ -103,7 +95,7 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
         setErrorMessage('');
         setIsSendNumberModalOpen(false);
         setIsResetPasswordModalOpen(false);
-        setIsJoinModalOpen(false); // Close JoinModal
+        setIsJoinModalOpen(false);
         onRequestClose();
     };
 
@@ -111,7 +103,7 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
         <>
             <Modal
                 isOpen={isOpen}
-                onRequestClose={handleRequestClose} // Use the updated function here
+                onRequestClose={handleRequestClose}
                 contentLabel="Login Modal"
                 style={customStyles}
             >
@@ -122,27 +114,26 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
                 </div>
                 <form onSubmit={handleSubmit}>
                     <h2>로그인</h2>
-                    
                     <div>
                         <label>이메일</label>
                         <br />
-                        <input 
-                            type="email" 
-                            placeholder="이메일을 입력해주세요" 
-                            value={email} 
-                            onChange={(e) => setEmail(e.target.value)} 
-                            required 
+                        <input
+                            type="email"
+                            placeholder="이메일을 입력해주세요"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
                         />
                     </div>
                     <div>
                         <label>비밀번호</label>
                         <br />
-                        <input 
-                            type="password" 
-                            placeholder="비밀번호를 입력해주세요" 
-                            value={password} 
-                            onChange={(e) => setPassword(e.target.value)} 
-                            required 
+                        <input
+                            type="password"
+                            placeholder="비밀번호를 입력해주세요"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
                         {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                     </div>
@@ -157,7 +148,7 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
             <SendNumberModal
                 isOpen={isSendNumberModalOpen}
                 onRequestClose={() => setIsSendNumberModalOpen(false)}
-                onVerificationSuccess={handleVerificationSuccess} // Pass the callback to SendNumberModal
+                onVerificationSuccess={handleVerificationSuccess}
             />
 
             <ResetPasswordModal
