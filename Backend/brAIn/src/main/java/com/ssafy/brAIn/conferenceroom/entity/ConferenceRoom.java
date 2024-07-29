@@ -1,6 +1,7 @@
 package com.ssafy.brAIn.conferenceroom.entity;
 
 import com.ssafy.brAIn.util.CommonUtils;
+import com.ssafy.brAIn.util.MeetingUrlGenerator;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,9 +39,6 @@ public class ConferenceRoom {
     @Column(name = "timer")
     private Date timer;
 
-    @Column(name = "max_participate")
-    private Integer maxParticipate;
-
     @Column(name = "is_end")
     private Boolean isEnd;
 
@@ -64,18 +62,21 @@ public class ConferenceRoom {
     @Column(name = "assistant_id")
     private String assistantId;
 
-    @Column(name = "time")
-    private Integer time;
+    @Column(name = "secure_id")
+    private String secureId;
+
+    @Column(name = "participate_url")
+    private String participateUrl;
 
     @Builder
-    public ConferenceRoom(String subject, int maxParticipate, int time){
+    public ConferenceRoom(String subject){
         this.subject = subject;
-        this.maxParticipate = maxParticipate;
-        this.time = time;
         this.step = Step.STEP_0;
         this.isEnd = false;
         this.startTime = new Date();
         this.inviteCode = CommonUtils.generateRandomMixStr(6,true);
+        this.secureId = MeetingUrlGenerator.generateMeetingUrl();
+        this.participateUrl = String.format("https://bardisue.store/v1/conferences/%s", this.secureId);
     }
 
     public ConferenceRoom update() {
@@ -85,6 +86,12 @@ public class ConferenceRoom {
 
     public ConferenceRoom updateStep(Step step) {
         this.step = step;
+        return this;
+    }
+
+    public ConferenceRoom updateAi(String AssistantId, String ThreadId) {
+        this.assistantId = AssistantId;
+        this.threadId = ThreadId;
         return this;
     }
 

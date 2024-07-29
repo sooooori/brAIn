@@ -5,6 +5,8 @@ import com.ssafy.brAIn.history.repository.MemberHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class MemberHistoryService {
@@ -13,4 +15,5 @@ public class MemberHistoryService {
     public MemberHistory save(MemberHistory memberHistory) {
         return memberHistoryRepository.save(memberHistory);
     }
+
 }
