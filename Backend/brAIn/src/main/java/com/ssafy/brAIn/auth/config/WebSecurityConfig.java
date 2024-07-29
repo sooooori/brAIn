@@ -69,45 +69,44 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
 //주석
 
-        return httpSecurity
-                .httpBasic(AbstractHttpConfigurer::disable)  // 기본인증 해제
-                .csrf(AbstractHttpConfigurer::disable)       // csrf 해제
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // cors 설정
-                .formLogin(AbstractHttpConfigurer::disable)  // 폼로그인 해제
-                .logout(logout -> logout
-                        .invalidateHttpSession(true)  // 로그아웃 시 세션 무효화
-                )
-                .authorizeHttpRequests(requests -> {
-                    requests.requestMatchers(  // 허용 URL
-                            "/api/v1/members/join",
-                            "/api/v1/members/login",
-                            "/api/v1/members/refresh",
-                            "/oauth/**",
-                            "/**"
-                            ).permitAll();
-                    requests.anyRequest().authenticated(); // 모든 URL 인증 필요
-                })
-                .sessionManagement(  // 세션방식 해제
-                        sessionManagement ->
-                                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                // Oauth 로그인 추가 및 성공핸들러 추가
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler(oAuth2LoginSuccessHandler))
-                // 필터 적용 (유효토큰 확인)
-                .addFilterBefore(jwtFilter, ExceptionTranslationFilter.class)
+//        return httpSecurity
+//                .httpBasic(AbstractHttpConfigurer::disable)  // 기본인증 해제
+//                .csrf(AbstractHttpConfigurer::disable)       // csrf 해제
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // cors 설정
+//                .formLogin(AbstractHttpConfigurer::disable)  // 폼로그인 해제
+//                .logout(logout -> logout
+//                        .invalidateHttpSession(true)  // 로그아웃 시 세션 무효화
+//                )
+//                .authorizeHttpRequests(requests -> {
+//                    requests.requestMatchers(  // 허용 URL
+//                            "/api/v1/members/join",
+//                            "/api/v1/members/login",
+//                            "/api/v1/members/refresh",
+//                            "/oauth/**",
+//                            "/**"
+//                            ).permitAll();
+//                    requests.anyRequest().authenticated(); // 모든 URL 인증 필요
+//                })
+//                .sessionManagement(  // 세션방식 해제
+//                        sessionManagement ->
+//                                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                )
+//                // Oauth 로그인 추가 및 성공핸들러 추가
+//                .oauth2Login(oauth2 -> oauth2
+//                        .successHandler(oAuth2LoginSuccessHandler))
+//                // 필터 적용 (유효토큰 확인)
+//                .addFilterBefore(jwtFilter, ExceptionTranslationFilter.class)
                 .build();
     }
 
     // CORS 설정 빈
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 클라이언트 도메인
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-                .build();
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 클라이언트 도메인
+//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//        configuration.setAllowedHeaders(Arrays.asList("*"));
+//    }
 
     // 인증 관리자 관련 설정
     @Bean
