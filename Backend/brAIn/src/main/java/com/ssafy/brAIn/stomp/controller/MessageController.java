@@ -163,7 +163,12 @@ public class MessageController {
 
     //타이머 시간 추가
     @MessageMapping("timer.modify.{roomId}")
-    public void modifyTimer(@DestinationVariable String roomId, @Payload Long time) {
+    public void modifyTimer(@DestinationVariable String roomId, @Payload Long time, StompHeaderAccessor accessor) {
+        String token=accessor.getFirstNativeHeader("Authorization");
+//        String sender=jwtUtil.getNickname(token);
+        String sender="userA";
+        String curUser=messageService.getCurUser(Integer.parseInt(roomId));
+        if(!sender.equals(curUser))return;
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new Timer(MessageType.PLUS_TIME,time));
     }
 

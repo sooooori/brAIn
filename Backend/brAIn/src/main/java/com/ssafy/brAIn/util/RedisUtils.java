@@ -76,4 +76,8 @@ public class RedisUtils {
         return false;
     }
 
+    public String getData(String key) {
+        return (String) redisTemplate.opsForValue().get(key);
+    }
+
 }

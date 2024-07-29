@@ -186,6 +186,12 @@ public class MessageService {
         redisUtils.updateValue(key,curUser);
     }
 
+    //현재 차례의 유저를 반환한다.
+    public String getCurUser(Integer roomId) {
+        String key=roomId + ":curOrder";
+        return redisUtils.getData(key);
+    }
+
 
 
 
