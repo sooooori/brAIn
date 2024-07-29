@@ -147,7 +147,10 @@ public class MessageController {
     //유저 답변 제출
     @MessageMapping("state.user.submit.{roomId}")
     public void submit(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
-
+        String token=accessor.getFirstNativeHeader("Authorization");
+        //        String nickname=jwtFilter.getNickname(token);
+        String nickname="userA";
+        messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
     }
 
 
