@@ -1,4 +1,4 @@
-package com.ssafy.brAIn.history.member.entity;
+package com.ssafy.brAIn.history.entity;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
