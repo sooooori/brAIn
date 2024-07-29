@@ -30,6 +30,7 @@ public class MessageController {
         //this.jwtUtil = jwtUtil;
     }
 
+
     @MessageMapping("step1.submit.{roomId}")
     public void submitPost(RequestGroupPost groupPost, @DestinationVariable String roomId) {
 
@@ -142,6 +143,17 @@ public class MessageController {
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember));
 
     }
+
+    //유저 답변 제출
+    @MessageMapping("state.user.submit.{roomId}")
+    public void submit(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
+        String token=accessor.getFirstNativeHeader("Authorization");
+        //        String nickname=jwtFilter.getNickname(token);
+        String nickname="userA";
+        messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
+    }
+
+
 
 
 
