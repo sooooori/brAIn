@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.stomp.controller;
 
+import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.stomp.dto.*;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
@@ -22,21 +23,32 @@ public class MessageController {
 
     private final RabbitTemplate rabbitTemplate;
     private final MessageService messageService;
+    private final JwtUtil jwtUtil;
 //    private final JWTUtil jwtUtil;
 
-    public MessageController(RabbitTemplate rabbitTemplate, MessageService messageService) {
+    public MessageController(RabbitTemplate rabbitTemplate, MessageService messageService, JwtUtil jwtUtil) {
         this.rabbitTemplate = rabbitTemplate;
         this.messageService = messageService;
         //this.jwtUtil = jwtUtil;
+        this.jwtUtil = jwtUtil;
     }
 
 
+    //유저 답변 제출완료
     @MessageMapping("step1.submit.{roomId}")
-    public void submitPost(RequestGroupPost groupPost, @DestinationVariable String roomId) {
+    public void submitPost(RequestGroupPost groupPost, @DestinationVariable String roomId,StompHeaderAccessor accessor) {
+
+        String token=accessor.getFirstNativeHeader("Authorization");
+//        String nickname=jwtUtil.getNickname(token);
+        String nickname="userA";
+        messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
+
+        messageService.
 
         ResponseGroupPost responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT,groupPost.getRound(),groupPost.getContent());
-        rabbitTemplate.convertAndSend("amq.topic","room." + roomId, responseGroupPost);
         messageService.sendPost(Integer.parseInt(roomId),groupPost);
+        rabbitTemplate.convertAndSend("amq.topic","room." + roomId, responseGroupPost);
+
 
     }
 
@@ -151,6 +163,7 @@ public class MessageController {
         //        String nickname=jwtFilter.getNickname(token);
         String nickname="userA";
         messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
+        rabbitTemplate
     }
 
 

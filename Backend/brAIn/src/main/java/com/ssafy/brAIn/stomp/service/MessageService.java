@@ -152,7 +152,11 @@ public class MessageService {
         String key=roomId + ":order" ;
         Double curOrder= redisUtils.getScoreFromSortedSet(key,curUser);
 
-        return redisUtils.getUserFromSortedSet(key,(curOrder).longValue());
+        //현재 유저의 순서가 마지막 순서라면 다시 첫 번째 사람을 가져온다.
+        if(curOrder==redisUtils.getSortedSet(key).size()-1){
+            return redisUtils.getUserFromSortedSet(key,0);
+        }
+        return redisUtils.getUserFromSortedSet(key,(curOrder).longValue()+1);
     }
 
     //현재 제출순서가 된 유저를 업데이트한다.
