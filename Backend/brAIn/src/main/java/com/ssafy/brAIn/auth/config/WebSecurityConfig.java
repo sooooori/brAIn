@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
@@ -50,7 +51,7 @@ public class WebSecurityConfig {
     // 특정 HTTP 요청에 대한 웹 기반 보안 구성
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
+//        return http
 //                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
 //                .authorizeHttpRequests(auth -> auth // 인증, 인가 설정
 //                        .anyRequest().permitAll()
@@ -64,38 +65,38 @@ public class WebSecurityConfig {
 //                        .logoutSuccessUrl("/api/v1/members/login")
 //                        .invalidateHttpSession(true)
 //                )
-                .authorizeHttpRequests(auth->auth
-                        .anyRequest().permitAll())
-                .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
+//                .authorizeHttpRequests(auth->auth
+//                        .anyRequest().permitAll())
+//                .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
 //주석
 
-//        return httpSecurity
-//                .httpBasic(AbstractHttpConfigurer::disable)  // 기본인증 해제
-//                .csrf(AbstractHttpConfigurer::disable)       // csrf 해제
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // cors 설정
-//                .formLogin(AbstractHttpConfigurer::disable)  // 폼로그인 해제
-//                .logout(logout -> logout
-//                        .invalidateHttpSession(true)  // 로그아웃 시 세션 무효화
-//                )
-//                .authorizeHttpRequests(requests -> {
-//                    requests.requestMatchers(  // 허용 URL
-//                            "/api/v1/members/join",
-//                            "/api/v1/members/login",
-//                            "/api/v1/members/refresh",
-//                            "/oauth/**",
-//                            "/**"
-//                            ).permitAll();
-//                    requests.anyRequest().authenticated(); // 모든 URL 인증 필요
-//                })
-//                .sessionManagement(  // 세션방식 해제
-//                        sessionManagement ->
-//                                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                )
-//                // Oauth 로그인 추가 및 성공핸들러 추가
-//                .oauth2Login(oauth2 -> oauth2
-//                        .successHandler(oAuth2LoginSuccessHandler))
-//                // 필터 적용 (유효토큰 확인)
-//                .addFilterBefore(jwtFilter, ExceptionTranslationFilter.class)
+        return http
+                .httpBasic(AbstractHttpConfigurer::disable)  // 기본인증 해제
+                .csrf(AbstractHttpConfigurer::disable)       // csrf 해제
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // cors 설정
+                .formLogin(AbstractHttpConfigurer::disable)  // 폼로그인 해제
+                .logout(logout -> logout
+                        .invalidateHttpSession(true)  // 로그아웃 시 세션 무효화
+                )
+                .authorizeHttpRequests(requests -> {
+                    requests.requestMatchers(  // 허용 URL
+                            "/api/v1/members/join",
+                            "/api/v1/members/login",
+                            "/api/v1/members/refresh",
+                            "/oauth/**",
+                            "/**"
+                            ).permitAll();
+                    requests.anyRequest().authenticated(); // 모든 URL 인증 필요
+                })
+                .sessionManagement(  // 세션방식 해제
+                        sessionManagement ->
+                                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                // Oauth 로그인 추가 및 성공핸들러 추가
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(oAuth2LoginSuccessHandler))
+                // 필터 적용 (유효토큰 확인)
+                .addFilterBefore(jwtFilter, ExceptionTranslationFilter.class)
                 .build();
     }
 
@@ -106,6 +107,10 @@ public class WebSecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 클라이언트 도메인
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     // 인증 관리자 관련 설정
@@ -116,4 +121,18 @@ public class WebSecurityConfig {
         authProvider.setPasswordEncoder(bCryptPasswordEncoder);
         return new ProviderManager(authProvider);
     }
+
+    // CORS 설정을 위한 빈 등록
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // 리액트 앱의 주소를 허용
+//        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+//        configuration.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 }
