@@ -4,7 +4,7 @@ import './App.css';
 import NavBar from './components/NavBar';
 import Home from './pages/Home'; // Home page added
 import LoginOption from './pages/LoginOption';
-import OAuthRedirect from './pages/OAuthRedirect'; // OAuth 리다이렉트 핸들러 추가
+import OAuthRedirect from './components/OAuthRedirect'; // OAuth 리다이렉트 핸들러 추가
 
 function App() {
     return (

@@ -11,10 +11,21 @@ const OAuthRedirect= () => {
         if (accessToken) {
             console.log('Access Token:', accessToken);
 
-            const expirationTimeAccess = new Date(new Date().getTime() + 25 * 60 * 1000);
-            const expirationTimeAccessString = expirationTimeAccess.toISOString();
+            // 현재 시간을 한국 시간대로 설정
+            const expirationTimeAccess = new Date(new Date().getTime() + 10 * 60 * 1000); // 10분
+            const expirationTimeAccessKST = new Intl.DateTimeFormat('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false,
+                timeZone: 'Asia/Seoul'
+            }).format(expirationTimeAccess);
+            
             localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('accessTokenExpiration', expirationTimeAccessString);
+            localStorage.setItem('accessTokenExpiration', expirationTimeAccessKST);
 
             window.location.href = 'http://localhost:5173/';
         } else {

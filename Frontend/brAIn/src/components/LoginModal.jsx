@@ -56,11 +56,27 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
             // Access Token 가져오기
             const { accessToken} = response.data;
 
+            // 현재 시간을 한국 시간대로 설정
+            const expirationTimeAccess = new Date(new Date().getTime() + 10 * 60 * 1000); // 10분
+            const expirationTimeAccessKST = new Intl.DateTimeFormat('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false,
+                timeZone: 'Asia/Seoul'
+            }).format(expirationTimeAccess);
+
             // Access Token 유효 기간 설정 (25분)
             // const expirationTimeAccess = new Date(new Date().getTime() + 25 * 60 * 1000);
             // const expirationTimeAccessString = expirationTimeAccess.toISOString();
             localStorage.setItem('accessToken', accessToken);
-            // localStorage.setItem('accessTokenExpiration', expirationTimeAccessString);
+            localStorage.setItem('accessTokenExpiration', expirationTimeAccessKST);
+
+            // 쿠키 확인
+            console.log('Refresh Token:', document.cookie);
 
             // Refresh Token 유효 기간 설정 (35분)
             // const expirationDateRefresh = new Date(new Date().getTime() + 35 * 60 * 1000);
