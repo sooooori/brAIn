@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Integer> {
 
     // 이메일 중복 검사 위한 메서드 추가
-    boolean existsMemberByEmail(String email);
+    boolean existsByEmail(String email);
 
     // 이메일로 사용자 정보 가져오기
     Optional<Member> findByEmail(String email);

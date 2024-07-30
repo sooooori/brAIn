@@ -41,14 +41,6 @@ public class MemberController {
     private final MemberDetailService memberDetailService;
     private final EmailService emailService;
 
-    // 이메일 중복 검사
-    @PostMapping("/checkEmail")
-    public ResponseEntity<?> checkEmail(@RequestBody String email) {
-        memberService.emailCheck(email);
-        return ResponseEntity.ok(Map.of("message", "Email check successfully"));
-    }
-
-
     // 회원가입
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody MemberRequest memberRequest) {
