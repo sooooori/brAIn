@@ -2,9 +2,11 @@ package com.ssafy.brAIn.member.controller;
 
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.exception.BadRequestException;
+import com.ssafy.brAIn.member.dto.EmailRequest;
 import com.ssafy.brAIn.member.dto.MemberRequest;
 import com.ssafy.brAIn.member.dto.MemberResponse;
 import com.ssafy.brAIn.member.entity.Member;
+import com.ssafy.brAIn.member.service.EmailService;
 import com.ssafy.brAIn.member.service.MemberDetailService;
 import com.ssafy.brAIn.member.service.MemberService;
 import io.jsonwebtoken.Claims;
@@ -13,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,9 +25,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/members")
@@ -33,6 +39,7 @@ public class MemberController {
     private final MemberService memberService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberDetailService memberDetailService;
+    private final EmailService emailService;
 
     // 회원가입
     @PostMapping("/join")
@@ -133,5 +140,23 @@ public class MemberController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Member not found");
         }
+    }
+
+    // 이메일 인증번호 생성
+    @PostMapping("/sendAuthNumber")
+    public ResponseEntity<String> getEmailForVerification(@RequestBody EmailRequest request) {
+        String email = request.getEmail();
+        LocalDateTime requestedAt = LocalDateTime.now();
+        emailService.sendEmail(email, requestedAt);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Email Verification Successful");
+    }
+
+
+    // 이메일 인증번호 인증하기
+    @PostMapping("/authNumber")
+    public ResponseEntity<String> verificationByCode(@RequestBody EmailRequest request) {
+        LocalDateTime requestedAt = LocalDateTime.now();
+        emailService.verifyEmail(request.getEmail(), request.getCode(), requestedAt);
+        return ResponseEntity.ok("Email Authentication Completed");
     }
 }

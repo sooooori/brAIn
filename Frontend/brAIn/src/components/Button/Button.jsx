@@ -1,0 +1,42 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
+// Define button styles
+const BUTTON_STYLES = {
+  black: "bg-grayscale-black text-grayscale-white",
+  gray: "bg-grayscale-lightgray text-grayscale-black",
+  red: "bg-alert-100 text-grayscale-white",
+  blue: "bg-boarlog-100 text-grayscale-white"
+};
+
+Object.freeze(BUTTON_STYLES);
+
+// Button component
+const Button = ({ type, onClick, className, children, value, buttonStyle, ariaLabel }) => {
+  return (
+    <button
+      type="button"
+      className={`flex flex-row justify-center items-center gap-1 py-3 rounded-xl semibold-18 hover:opacity-70 duration-500 ${
+        type === "full" ? "w-full" : type === "fit" ? "px-3 w-fit" : type === "grow" ? "flex-grow basis-0" : ""
+      } ${BUTTON_STYLES[buttonStyle]} ${className}`}
+      onClick={onClick}
+      value={value}
+      aria-label={ariaLabel}
+    >
+      {children}
+    </button>
+  );
+};
+
+// Define PropTypes for type checking
+Button.propTypes = {
+  type: PropTypes.oneOf(["full", "fit", "grow"]).isRequired,
+  onClick: PropTypes.func,
+  className: PropTypes.string,
+  children: PropTypes.node.isRequired,
+  value: PropTypes.string,
+  buttonStyle: PropTypes.oneOf(["black", "gray", "red", "blue"]).isRequired,
+  ariaLabel: PropTypes.string
+};
+
+export default Button;

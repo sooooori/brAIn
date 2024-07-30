@@ -62,6 +62,8 @@ public class RedisUtils {
         redisTemplate.opsForValue().set(key, newValue);
     }
 
+<<<<<<< HEAD
+=======
     public void setDataInSet(String key, Object newValue,Long expireTime) {
         redisTemplate.opsForSet().add(key, newValue);
         redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
@@ -83,5 +85,6 @@ public class RedisUtils {
     public void save(String key, String value) {
         redisTemplate.opsForValue().set(key, value);
     }
+>>>>>>> develop
 
 }

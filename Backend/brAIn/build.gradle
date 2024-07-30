@@ -42,6 +42,14 @@ dependencies {
 	
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
+<<<<<<< HEAD
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310' //jackson 직렬화
+
+	//이메일 인증
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+=======
 	//RabbitMQ & Stomp
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	implementation 'org.springframework.boot:spring-boot-starter-reactor-netty'
@@ -51,6 +59,7 @@ dependencies {
 
 	//웹소켓 메시지 종속성
 	implementation 'org.springframework.security:spring-security-messaging'
+>>>>>>> develop
 }
 
 tasks.named('test') {
