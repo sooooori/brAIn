@@ -4,7 +4,9 @@
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-websocket/3.3.2/4e36fcce519717db322e86511ee65edf8a474938/spring-boot-starter-websocket-3.3.2.jar!/" />
     </CLASSES>
-    <JAVADOC />
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-websocket/3.3.2/71ea5fbefbdca1f7428579488288b2ad2ee386ac/spring-boot-starter-websocket-3.3.2-javadoc.jar!/" />
+    </JAVADOC>
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-websocket/3.3.2/808cddc761b8619248c49890c38e0630375e76f5/spring-boot-starter-websocket-3.3.2-sources.jar!/" />
     </SOURCES>

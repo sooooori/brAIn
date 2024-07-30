@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Modal from 'react-modal';
 import { Button, TextField, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from 'axios';
+import axios from '../utils/Axios';
 
 // Custom styles for the modal
 const customStyles = {

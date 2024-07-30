@@ -4,7 +4,9 @@
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-devtools/3.3.2/ff9e444f433eeafd6bc88025909459f835631038/spring-boot-devtools-3.3.2.jar!/" />
     </CLASSES>
-    <JAVADOC />
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-devtools/3.3.2/ef595ae466e7fb059bdab3119466033500b2b756/spring-boot-devtools-3.3.2-javadoc.jar!/" />
+    </JAVADOC>
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-devtools/3.3.2/4e6e5997a05bd30e4661b500dffc1f3282c7309f/spring-boot-devtools-3.3.2-sources.jar!/" />
     </SOURCES>

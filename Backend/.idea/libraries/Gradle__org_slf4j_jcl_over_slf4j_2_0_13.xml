@@ -4,7 +4,9 @@
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.slf4j/jcl-over-slf4j/2.0.13/d062d6e35605aabee0c727a950e29d39ac0a262e/jcl-over-slf4j-2.0.13.jar!/" />
     </CLASSES>
-    <JAVADOC />
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.slf4j/jcl-over-slf4j/2.0.13/7f091498e88d3b0ffc69a7a2d0d91ac479d0b54b/jcl-over-slf4j-2.0.13-javadoc.jar!/" />
+    </JAVADOC>
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.slf4j/jcl-over-slf4j/2.0.13/247a72428efb9df1581a149ff9b4cd622f73d25d/jcl-over-slf4j-2.0.13-sources.jar!/" />
     </SOURCES>
