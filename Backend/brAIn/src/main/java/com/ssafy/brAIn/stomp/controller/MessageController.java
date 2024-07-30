@@ -108,7 +108,7 @@ public class MessageController {
     }
 
     //대기방에서 회의방 시작하기
-    @Secured("ROLE_CHIEF")
+    //@Secured("ROLE_CHIEF")
     @MessageMapping("start.conferences.{roomId}")
     public void startConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
         String token=accessor.getFirstNativeHeader("Authorization");

@@ -84,7 +84,7 @@ public class MessageService {
 
         //DB업데이트
         MemberHistoryId memberHistoryId=new MemberHistoryId(roomId,member.get().getId());
-        MemberHistory memberHistory= memberHistoryRepository.findById(memberHistoryId);
+        MemberHistory memberHistory= memberHistoryRepository.findById(memberHistoryId).get();
         memberHistory.historyStateUpdate(Status.OUT);
 
         //redis에 나간유저를 저장해놓자.
@@ -115,7 +115,7 @@ public class MessageService {
                 .map(Object::toString)
                 .toList();
 
-        List<Integer> order=makeRandomList(users    .size());
+        List<Integer> order=makeRandomList(users.size());
         List<String> nicknames = makeNickname(users.size());
 
         for(int i=0;i<users.size();i++){

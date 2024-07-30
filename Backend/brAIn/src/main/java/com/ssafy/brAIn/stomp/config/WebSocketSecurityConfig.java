@@ -25,7 +25,7 @@ public class WebSocketSecurityConfig  {
                 .simpDestMatchers("/app/start.conferences.*").hasRole("CHIEF")
                 .simpDestMatchers("/app/next.step.*").hasRole("CHIEF")
 
-                .anyMessage().authenticated();
+                .anyMessage().permitAll();
         return messages.build();
     }
 }
