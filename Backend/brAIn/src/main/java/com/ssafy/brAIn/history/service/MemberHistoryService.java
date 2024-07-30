@@ -25,4 +25,9 @@ public class MemberHistoryService {
     public void createRoom(ConferenceRoom conferenceRoom, Member member) {
         memberHistoryRepository.save(MemberHistory.builder().member(member).conferenceRoom(conferenceRoom).id(new MemberHistoryId(member.getId(), conferenceRoom.getId())).role(Role.CHIEF).status(Status.COME).nickName(RandomNicknameGenerator.generateNickname()).orders(0).build());
     };
+
+    @Transactional
+    public void joinRoom(ConferenceRoom conferenceRoom, Member member) {
+        memberHistoryRepository.save(MemberHistory.builder().member(member).conferenceRoom(conferenceRoom).id(new MemberHistoryId(member.getId(), conferenceRoom.getId())).role(Role.MEMBER).status(Status.COME).nickName(RandomNicknameGenerator.generateNickname()).orders(0).build());
+    };
 }

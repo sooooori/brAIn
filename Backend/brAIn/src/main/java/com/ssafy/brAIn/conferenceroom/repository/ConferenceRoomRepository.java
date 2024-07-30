@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface ConferenceRoomRepository extends JpaRepository<ConferenceRoom, Integer> {
     Optional<ConferenceRoom> findByInviteCode(String inviteCode);
+    Optional<ConferenceRoom> findBySecureId(String secureId);
 }

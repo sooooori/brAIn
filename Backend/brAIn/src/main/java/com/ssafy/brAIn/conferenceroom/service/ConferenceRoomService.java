@@ -29,4 +29,8 @@ public class ConferenceRoomService {
     public ConferenceRoom findByInviteCode(String inviteCode) {
        return conferenceRoomRepository.findByInviteCode(inviteCode).orElse(null);
     }
+
+    public ConferenceRoom findBySecureId(String secureId) {
+        return conferenceRoomRepository.findBySecureId(secureId).orElse(null);
+    }
 }

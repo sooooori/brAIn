@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/conferences")
+@RequestMapping("/v1/conferences")
 public class ConferenceRoomController {
 
     private final ConferenceRoomService conferenceRoomService;
@@ -44,9 +44,20 @@ public class ConferenceRoomController {
     }
 
     @GetMapping("/join")
-    public ResponseEntity<?> joinConferenceRoom(@RequestBody ConferenceRoomJoinRequest conferenceRoomJoinRequest) {
+    public ResponseEntity<?> getConferenceRoom(@RequestBody ConferenceRoomJoinRequest conferenceRoomJoinRequest) {
         ConferenceRoom findConference = conferenceRoomService.findByInviteCode(conferenceRoomJoinRequest.getInviteCode());
         ConferenceRoomResponse crr = new ConferenceRoomResponse(findConference);
         return ResponseEntity.status(200).body(crr);
+    }
+
+    @PostMapping("/{url}")
+    public ResponseEntity<?> joinConferenceRoom(@PathVariable String url, @RequestHeader("Authorization") String token) {
+        ConferenceRoom findConference = conferenceRoomService.findBySecureId(url);
+        token = token.split(" ")[1];
+        Claims claims = JwtUtil.extractToken(token);
+        String email = claims.get("email").toString();
+        Member member = memberService.findByEmail(email).orElse(null);
+        memberHistoryService.joinRoom(findConference, member);
+        return ResponseEntity.status(200).body(findConference);
     }
 }
