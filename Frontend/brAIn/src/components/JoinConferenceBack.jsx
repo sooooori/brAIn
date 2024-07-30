@@ -4,7 +4,7 @@ import Button from './Button/Button';
 import { Close as CloseIcon, Search as SearchIcon, MeetingRoom as EnterIcon } from '@mui/icons-material';
 import ConferenceCodeInput from './ConferenceCodeInput';
 import { useNavigate } from 'react-router-dom';
-import axios from '../utils/Axios'; // Ensure axios is installed and imported
+import axios from 'axios'; // Ensure axios is installed and imported
 
 const JoinConferenceBack = ({
   handleJoinConferenceFalse,

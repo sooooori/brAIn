@@ -4,9 +4,7 @@
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-jcl/6.1.11/97b34c6b72c8084759e71cd09a7dad16bfb8f1da/spring-jcl-6.1.11.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-jcl/6.1.11/66b9d867f0e5abfd9b6ae1a204c4c9b054870b20/spring-jcl-6.1.11-javadoc.jar!/" />
-    </JAVADOC>
+    <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-jcl/6.1.11/b4154e1a79654a3c211739da27a9807bac209366/spring-jcl-6.1.11-sources.jar!/" />
     </SOURCES>
