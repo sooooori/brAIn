@@ -7,6 +7,7 @@ import com.ssafy.brAIn.openai.service.OpenAiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.Objects;
@@ -17,10 +18,15 @@ public class ConferenceRoomService {
 
     private final ConferenceRoomRepository conferenceRoomRepository;
 
+    @Transactional
     public ConferenceRoom save(ConferenceRoom conferenceRoom) {
-        Map<String, ?> res = OpenAiService.sendPostRequest(conferenceRoom.getSubject());
+        Map<String, Object> res = OpenAiService.sendPostRequest(conferenceRoom.getSubject());
         System.out.println(res.toString());
         conferenceRoom.updateAi(res.get("assistantId").toString(), res.get("threadId").toString());
         return conferenceRoomRepository.save(conferenceRoom);
+    }
+
+    public ConferenceRoom findByInviteCode(String inviteCode) {
+       return conferenceRoomRepository.findByInviteCode(inviteCode).orElse(null);
     }
 }

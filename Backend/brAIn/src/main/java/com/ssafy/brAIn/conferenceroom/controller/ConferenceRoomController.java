@@ -1,11 +1,19 @@
 package com.ssafy.brAIn.conferenceroom.controller;
 
+import com.ssafy.brAIn.auth.jwt.JwtUtil;
+import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomJoinRequest;
 import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomRequest;
 import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomResponse;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
+import com.ssafy.brAIn.history.entity.MemberHistory;
+import com.ssafy.brAIn.history.service.MemberHistoryService;
+import com.ssafy.brAIn.member.entity.Member;
+import com.ssafy.brAIn.member.service.MemberService;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 public class ConferenceRoomController {
 
     private final ConferenceRoomService conferenceRoomService;
+    private final MemberService memberService;
+    private final MemberHistoryService memberHistoryService;
 
     @GetMapping("/{roomId}")
     public ResponseEntity<?> getConferenceRoom(@PathVariable String roomId) {
@@ -21,10 +31,22 @@ public class ConferenceRoomController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> addConferenceRoom(@RequestBody ConferenceRoomRequest conferenceRoomRequest) {
+    public ResponseEntity<?> addConferenceRoom(@RequestBody ConferenceRoomRequest conferenceRoomRequest, @RequestHeader("Authorization") String token) {
         ConferenceRoom cr = conferenceRoomRequest.toConferenceRoom();
-        conferenceRoomService.save(cr);
+        ConferenceRoom saveCr = conferenceRoomService.save(cr);
+        token = token.split(" ")[1];
+        Claims claims = JwtUtil.extractToken(token);
+        String email = claims.get("email").toString();
+        Member member = memberService.findByEmail(email).orElse(null);
+        memberHistoryService.createRoom(saveCr, member);
         ConferenceRoomResponse crr = new ConferenceRoomResponse(cr);
         return ResponseEntity.status(201).body(crr);
+    }
+
+    @GetMapping("/join")
+    public ResponseEntity<?> joinConferenceRoom(@RequestBody ConferenceRoomJoinRequest conferenceRoomJoinRequest) {
+        ConferenceRoom findConference = conferenceRoomService.findByInviteCode(conferenceRoomJoinRequest.getInviteCode());
+        ConferenceRoomResponse crr = new ConferenceRoomResponse(findConference);
+        return ResponseEntity.status(200).body(crr);
     }
 }
