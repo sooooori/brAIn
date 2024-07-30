@@ -1,10 +1,22 @@
-const MainCard = ({ isButtonClicked, children }) => {
+import React, { useState } from 'react';
+import './MainCard.css';
+
+const MainCard = ({ frontComponent, backComponent }) => {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  const handleFlip = () => {
+    setIsFlipped(!isFlipped);
+  };
+
   return (
-    <div className={`w-11/12 home:w-[25rem] h-[31rem] perspective-1000`}>
-      <div
-        className={`w-full h-full relative transition-all preserve-3d duration-500 ${isButtonClicked && "rotate-180"}`}
-      >
-        {children}
+    <div className="perspective">
+      <div className={`card ${isFlipped ? 'flipped' : ''}`} onClick={handleFlip}>
+        <div className="card-face card-front">
+          {frontComponent}
+        </div>
+        <div className="card-face card-back">
+          {backComponent}
+        </div>
       </div>
     </div>
   );
