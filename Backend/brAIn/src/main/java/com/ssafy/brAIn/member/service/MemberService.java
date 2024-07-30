@@ -3,6 +3,7 @@ package com.ssafy.brAIn.member.service;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.member.dto.MemberRequest;
+import com.ssafy.brAIn.member.dto.PasswordRequest;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
 import jakarta.servlet.http.Cookie;
@@ -68,5 +69,42 @@ public class MemberService {
     // 이메일로 사용자 정보 조회
     public Optional<Member> findByEmail(String email) {
         return memberRepository.findByEmail(email);
+    }
+
+    // 회원 탈퇴
+    public void deleteMember(MemberRequest memberRequest) {
+        Member member = memberRepository.findByEmail(memberRequest.getEmail())
+                .orElseThrow(() -> new BadRequestException("User not found"));
+
+        // 비밀번호 일치 여부 확인
+        if (!bCryptPasswordEncoder.matches(memberRequest.getPassword(), member.getPassword())) {
+            throw new BadRequestException("Wrong password");
+        }
+
+        memberRepository.delete(member);
+    }
+
+    // 회원 정보 수정
+    public void updatePhoto(String email, String photoUrl) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found"));
+        member.updatePhoto(photoUrl);
+        memberRepository.save(member);
+    }
+
+    // 비밀번호 재설정
+    public void resetPassword(PasswordRequest passwordRequest) {
+        Member member = memberRepository.findByEmail(passwordRequest.getEmail())
+                .orElseThrow(() -> new BadRequestException("User not found"));
+
+        // 기존 비밀번호 확인
+        if (!bCryptPasswordEncoder.matches(passwordRequest.getOldPassword(), member.getPassword())) {
+            throw new BadRequestException("Wrong password");
+        }
+
+        // 새로운 비밀번호 암호화 및 저장
+        String encodedPassword = bCryptPasswordEncoder.encode(passwordRequest.getNewPassword());
+        member.resetPassword(encodedPassword);
+        memberRepository.save(member);
     }
 }

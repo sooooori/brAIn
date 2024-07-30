@@ -4,6 +4,7 @@ import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.member.dto.MemberRequest;
 import com.ssafy.brAIn.member.dto.MemberResponse;
+import com.ssafy.brAIn.member.dto.PasswordRequest;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.service.MemberDetailService;
 import com.ssafy.brAIn.member.service.MemberService;
@@ -133,5 +134,26 @@ public class MemberController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Member not found");
         }
+    }
+
+    // 회원 탈퇴
+    @DeleteMapping("/member")
+    public ResponseEntity<?> deleteMember(@RequestBody MemberRequest memberRequest) {
+        memberService.deleteMember(memberRequest);
+        return ResponseEntity.ok(Map.of("message", "Member deleted successfully"));
+    }
+
+    // 회원 프로필 사진 변경
+    @PutMapping("/updatePhoto")
+    public ResponseEntity<?> updatePhoto(@RequestParam String email, @RequestParam String photo) {
+        memberService.updatePhoto(email, photo);
+        return ResponseEntity.ok(Map.of("message", "Profile Image Change Successful"));
+    }
+
+    // 비밀번호 재설정
+    @PutMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordRequest passwordRequest) {
+        memberService.resetPassword(passwordRequest);
+        return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
     }
 }
