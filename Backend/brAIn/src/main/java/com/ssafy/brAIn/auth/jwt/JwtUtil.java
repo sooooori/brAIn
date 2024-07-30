@@ -24,7 +24,7 @@ public class JwtUtil {
     }
 
     // 토큰 만료 시간 설정
-    private static final long accessTokenExpiration = 6000; // 1시간 (1000 = 1초)
+    private static final long accessTokenExpiration = 600000; // 10분 (1000 = 1초)
     private static final long refreshTokenExpiration = 1209600000; // 14일
 
     // ( Authentication auth = 인증된 사용자 정보의 객체를 담고있음)
@@ -105,5 +105,16 @@ public class JwtUtil {
                 .parseSignedClaims(token)
                 .getPayload();
         return claims;
+    }
+
+    // 회의록 관련 메서드
+    public static String getEmail(String token) {
+        Claims claims = extractToken(token);
+        return claims.get("email", String.class);
+    }
+
+    public static String getUserConferences(String token){
+        Claims claims = extractToken(token);
+        return claims.get("userConferences", String.class);
     }
 }
