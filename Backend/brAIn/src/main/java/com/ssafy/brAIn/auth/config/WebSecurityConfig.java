@@ -1,7 +1,7 @@
 package com.ssafy.brAIn.auth.config;
 
 import com.ssafy.brAIn.auth.jwt.JwtFilter;
-import com.ssafy.brAIn.auth.oauth.OAuth2LoginSuccessHandler;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,11 +12,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +27,6 @@ import java.util.Arrays;
 public class WebSecurityConfig {
 
     private final JwtFilter jwtFilter;
-    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     // 패스워드 암호화
     @Bean
@@ -39,18 +41,20 @@ public class WebSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)  // 기본인증 해제
                 .csrf(AbstractHttpConfigurer::disable)       // csrf 해제
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // cors 설정
-//                .cors(AbstractHttpConfigurer::disable)       // cors 해제
                 .formLogin(AbstractHttpConfigurer::disable)  // 폼로그인 해제
                 .logout(logout -> logout
                         .invalidateHttpSession(true)  // 로그아웃 시 세션 무효화
+                        .deleteCookies("refreshToken")
+                        .logoutUrl("/api/v1/members/logout")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        })
                 )
                 .authorizeHttpRequests(requests -> {
                     requests.requestMatchers(  // 허용 URL
                             "/api/v1/members/join",
                             "/api/v1/members/login",
-                            "/api/v1/members/refresh",
-                            "/oauth/**",
-                            "/**"
+                            "/api/v1/members/refresh"
                             ).permitAll();
                     requests.anyRequest().authenticated(); // 모든 URL 인증 필요
                 })
@@ -58,9 +62,6 @@ public class WebSecurityConfig {
                         sessionManagement ->
                                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                // Oauth 로그인 추가 및 성공핸들러 추가
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler(oAuth2LoginSuccessHandler))
                 // 필터 적용 (유효토큰 확인)
                 .addFilterBefore(jwtFilter, ExceptionTranslationFilter.class)
                 .build();
@@ -72,7 +73,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 클라이언트 도메인
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
