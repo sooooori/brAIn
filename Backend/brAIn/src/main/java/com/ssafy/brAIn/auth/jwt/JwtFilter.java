@@ -2,12 +2,12 @@ package com.ssafy.brAIn.auth.jwt;
 
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.entity.Role;
+import com.ssafy.brAIn.member.entity.Social;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -21,9 +21,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
     ) throws ServletException, IOException {
 
         // 요청에서 JWT 토큰 추출
@@ -37,11 +37,13 @@ public class JwtFilter extends OncePerRequestFilter {
                 // 클레임에서 정보 가져옴
                 String email = claims.get("email").toString();
                 String role = claims.get("role").toString();
+                String social = claims.get("social").toString();
 
                 // 정보가지고 멤버 객체 생성
                 Member member = Member.builder()
                         .email(email)
                         .role(Role.valueOf(role))
+                        .social(Social.valueOf(social))
                         .build();
 
                 // 스프링 시큐리티의 UsernamePasswordAuthenticationToken을 생성
@@ -64,7 +66,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     // 헤더에서 토큰 추출
-    private String extractJwtFromRequest(HttpServletRequest request) {
+    public String extractJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         // Authorization 헤더가 "Bearer "로 시작하는지 확인
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {

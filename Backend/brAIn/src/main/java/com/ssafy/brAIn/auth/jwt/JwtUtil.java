@@ -34,25 +34,23 @@ public class JwtUtil {
         String email;
         String role;
         String name;
+        String social;
 
-        // Oauth 로그인 유저인지 확인
-        if (auth.getPrincipal() instanceof DefaultOAuth2User) {
-            DefaultOAuth2User oauth2User = (DefaultOAuth2User) auth.getPrincipal();
-            email = oauth2User.getAttribute("email");
-            name = oauth2User.getAttribute("name");
-            role = oauth2User.getAuthorities().stream()
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Role not found"))
-                    .getAuthority();
         // 일반 로그인 유저인지 확인
-        } else {
+        if (auth.getPrincipal() instanceof Member) {
             Member member = (Member) auth.getPrincipal();
             email = member.getEmail();
             name = member.getName();
-            role = member.getAuthorities().stream()
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Role not found"))
-                    .getAuthority();
+            role = member.getRole().name();
+            social = member.getSocial().name();
+        // 일반 로그인 유저인지 확인
+        } else {
+            // Oauth(구글) 로그인 유저인지 확인
+            DefaultOAuth2User oauth2User = (DefaultOAuth2User) auth.getPrincipal();
+            email = oauth2User.getAttribute("email");
+            name = oauth2User.getAttribute("name");
+            role = "USER"; // 기본값 설정
+            social = "Google";
         }
 
         // access토큰 생성
@@ -60,6 +58,7 @@ public class JwtUtil {
                 .claim("email", email)
                 .claim("name", name)
                 .claim("role", role)
+                .claim("social", social)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
                 .signWith(key)
@@ -71,29 +70,27 @@ public class JwtUtil {
         // 토큰에 포함할 사용자 정보
         String email;
         String role;
+        String social;
 
-        // Oauth 로그인 유저인지 확인
-        if (auth.getPrincipal() instanceof DefaultOAuth2User) {
-            DefaultOAuth2User oauth2User = (DefaultOAuth2User) auth.getPrincipal();
-            email = oauth2User.getAttribute("email");
-            role = oauth2User.getAuthorities().stream()
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Role not found"))
-                    .getAuthority();
         // 일반 로그인 유저인지 확인
-        } else {
+        if (auth.getPrincipal() instanceof Member) {
             Member member = (Member) auth.getPrincipal();
             email = member.getEmail();
-            role = member.getAuthorities().stream()
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Role not found"))
-                    .getAuthority();
+            role = member.getRole().name();
+            social = member.getSocial().name();
+        } else {
+            // Oauth(구글) 로그인 유저인지 확인
+            DefaultOAuth2User oauth2User = (DefaultOAuth2User) auth.getPrincipal();
+            email = oauth2User.getAttribute("email");
+            role = "USER"; // 기본값 설정
+            social = "Google";
         }
 
         // refresh토큰 생성
         return Jwts.builder()
                 .claim("email", email)
                 .claim("role", role)
+                .claim("social", social)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
                 .signWith(key)
