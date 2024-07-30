@@ -71,20 +71,20 @@ public class MessageService {
         redisUtils.setData(key,email,3600L);
     }
 
-    //멤버가 대기방에서 나갔을 때, 레디스에서 삭제
+    //멤버가 대기방에서 나갔을 때, 레디스에서 삭제(테스트 완)
     public void exitWaitingRoom(Integer roomId,String username) {
         String key=roomId + ":" + "email";
         redisUtils.removeDataInList(key,username);
     }
 
-    //멤버가 회의 중 나갔을 때 history 테이블 업데이트
+    //멤버가 회의 중 나갔을 때 history 테이블 업데이트(테스트 완)
     @Transactional
     public void historyUpdate(Integer roomId,String email) {
         Optional<Member> member=memberRepository.findByEmail(email);
         if(member.isEmpty())return;
 
         //DB업데이트
-        MemberHistoryId memberHistoryId=new MemberHistoryId(roomId,member.get().getId());
+        MemberHistoryId memberHistoryId=new MemberHistoryId(member.get().getId(),roomId);
         MemberHistory memberHistory= memberHistoryRepository.findById(memberHistoryId).get();
         memberHistory.historyStateUpdate(Status.OUT);
 
@@ -93,13 +93,13 @@ public class MessageService {
 
     }
 
-    //다음 단계로 이동 시, 회의 룸 업데이트 해야함.
+    //다음 단계로 이동 시, 회의 룸 업데이트 해야함.(테스트 완료)
     @Transactional
     public void updateStep(Integer roomId, Step step) {
         Optional<ConferenceRoom> conferenceRoom=conferenceRoomRepository.findById(roomId);
         if(conferenceRoom.isEmpty())return;
-        conferenceRoom.get().updateStep(step.next());
-        redisUtils.save(roomId+":curStep",step.next().toString());
+        conferenceRoom.get().updateStep(step);
+        redisUtils.save(roomId+":curStep",step.toString());
     }
 
     //유저 상태 레디스에 임시 저장

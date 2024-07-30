@@ -4,8 +4,10 @@ import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.stomp.dto.*;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
+import com.ssafy.brAIn.stomp.request.RequestStep;
 import com.ssafy.brAIn.stomp.response.*;
 import com.ssafy.brAIn.stomp.service.MessageService;
+import com.sun.jdi.request.StepRequest;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -85,7 +87,7 @@ public class MessageController {
 //        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit("enter conferences",nickname));
 //    }
 
-    //대기 방 퇴장
+    //대기 방 퇴장(테스트 완)
     @MessageMapping("exit.waiting.{roomId}")
     public void exitWaitingRoom(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.EXIT_WAITING_ROOM));
@@ -95,20 +97,20 @@ public class MessageController {
         messageService.exitWaitingRoom(Integer.parseInt(roomId),username);
     }
 
-    // 회의 중 퇴장
+    // 회의 중 퇴장(테스트 완)
     @MessageMapping("exit.conferences.{roomId}")
     public void exitConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
 
         String token=accessor.getFirstNativeHeader("Authorization");
 //        String nickname=jwtUtil.getNickname(token);
 //        String email=jwtUtil.getEmail(token);
-        String nickname="user"+(int)(Math.random()*100);
+        String nickname="호랑이6";
         String email="123@naver.com";
         messageService.historyUpdate(Integer.parseInt(roomId),email);
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit(MessageType.EXIT_CONFERENCES,nickname));
     }
 
-    //대기방에서 회의방 시작하기
+    //대기방에서 회의방 시작하기(테스트 완)(아직 secured는 테스트 못함)
     @Secured("ROLE_CHIEF")
     @MessageMapping("start.conferences.{roomId}")
     public void startConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
@@ -129,13 +131,14 @@ public class MessageController {
 
     }
 
-    //회의 다음단계 시작
+    //회의 다음단계 시작(테스트 완)(Secured미완)
     @Secured("ROLE_CHIEF")
     @MessageMapping("next.step.{roomId}")
-    public void nextStep(@Payload Step step, @DestinationVariable String roomId) {
+    public void nextStep(@Payload RequestStep requestStep, @DestinationVariable String roomId) {
 
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseStep(MessageType.NEXT_STEP,step.next()));
-        messageService.updateStep(Integer.parseInt(roomId),step.next());
+        Step nextStep=requestStep.getStep().next();
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseStep(MessageType.NEXT_STEP,nextStep));
+        messageService.updateStep(Integer.parseInt(roomId),nextStep);
     }
 
     //유저 준비 완료
