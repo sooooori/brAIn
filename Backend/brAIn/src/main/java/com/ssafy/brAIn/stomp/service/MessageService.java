@@ -71,7 +71,7 @@ public class MessageService {
         if(member.isEmpty())return;
 
         MemberHistoryId memberHistoryId=new MemberHistoryId(roomId,member.get().getId());
-        MemberHistory memberHistory= memberHistoryRepository.findById(memberHistoryId);
+        MemberHistory memberHistory= memberHistoryRepository.findById(memberHistoryId).get();
         memberHistory.historyStateUpdate(Status.OUT);
     }
 

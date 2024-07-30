@@ -4,7 +4,6 @@ import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.history.model.Role;
 import com.ssafy.brAIn.history.model.Status;
 import com.ssafy.brAIn.member.entity.Member;
-import com.ssafy.brAIn.util.CommonUtils;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -44,13 +43,13 @@ public class MemberHistory {
     private ConferenceRoom conferenceRoom;
 
     @Builder
-    public MemberHistory(MemberHistoryId id, Role role, Status status,String nickName,int orders, Member member, ConferenceRoom conferenceRoom) {
+    public MemberHistory(MemberHistoryId id, Role role, Status status, String nickName, int orders, Member member, ConferenceRoom conferenceRoom) {
         this.id = id;
         this.role = role;
         this.status = status;
 //        this.nickName = CommonUtils.generateRandomKoreanString(); //6글자 랜덤 닉네임
-        this.orders=orders;
-        this.nickName=nickName;
+        this.orders = orders;
+        this.nickName = nickName;
         this.member = member;
         this.conferenceRoom = conferenceRoom;
     }
