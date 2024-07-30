@@ -55,6 +55,8 @@ public class MemberHistory {
         this.conferenceRoom = conferenceRoom;
     }
 
+
+
     //멤버가 회의를 도중에 나가거나 다시 들어왔을 때 history 업데이트
     public void historyStateUpdate(Status status) {
         this.status = status;
