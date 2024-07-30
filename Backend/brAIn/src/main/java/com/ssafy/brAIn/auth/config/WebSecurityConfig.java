@@ -1,7 +1,6 @@
 package com.ssafy.brAIn.auth.config;
 
 import com.ssafy.brAIn.auth.jwt.JwtFilter;
-import com.ssafy.brAIn.auth.oauth.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +23,6 @@ import java.util.Arrays;
 public class WebSecurityConfig {
 
     private final JwtFilter jwtFilter;
-    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     // 패스워드 암호화
     @Bean
@@ -47,10 +45,7 @@ public class WebSecurityConfig {
                     requests.requestMatchers(  // 허용 URL
                             "/api/v1/members/join",
                             "/api/v1/members/login",
-                            "/api/v1/members/refresh",
-                            "/oauth/**",
-                            "/accounts/**",
-                            "/login/**"
+                            "/api/v1/members/refresh"
                             ).permitAll();
                     requests.anyRequest().authenticated(); // 모든 URL 인증 필요
                 })
@@ -58,9 +53,6 @@ public class WebSecurityConfig {
                         sessionManagement ->
                                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                // Oauth 로그인 추가 및 성공핸들러 추가
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler(oAuth2LoginSuccessHandler))
                 // 필터 적용 (유효토큰 확인)
                 .addFilterBefore(jwtFilter, ExceptionTranslationFilter.class)
                 .build();
