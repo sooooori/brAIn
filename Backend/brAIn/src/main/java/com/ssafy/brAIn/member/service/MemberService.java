@@ -23,14 +23,19 @@ public class MemberService {
 
     // 회원가입(유저정보 저장)
     public void join(MemberRequest memberRequest) {
-        // 이메일 중복 검사
-        if (memberRepository.existsByEmail(memberRequest.getEmail())) {
-            throw new BadRequestException("Email is already in use");
-        }
         // 비밀번호 암호화
         String encodedPassword = bCryptPasswordEncoder.encode(memberRequest.getPassword());
         memberRepository.save(memberRequest.toEntity(encodedPassword));
     }
+
+    // 이메일 중복 확인
+    public void emailCheck(String email) {
+        // 이메일 중복 검사
+        if (memberRepository.existsMemberByEmail(email)) {
+            throw new BadRequestException("Email is already in use");
+        }
+    }
+
 
     // 일반 로그인 유저를 위한 토큰 발급 메서드
     public String login(Authentication authentication, HttpServletResponse response) {
