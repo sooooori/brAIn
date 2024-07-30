@@ -1,18 +1,20 @@
+/* Navbar styling */
 .navbar {
     position: fixed; /* Keeps the navbar at the top of the page */
     top: 0;
     left: 0;
     width: 100%; /* Full width */
     background-color: #333; /* Dark background for the navbar */
-    padding: 0.5rem 1rem; /* Adjust padding for a balanced look */
+    padding: 0.5rem 1rem; /* Reduced padding for a smaller navbar */
     color: white;
     display: flex;
     justify-content: space-between; /* Space between logo and links */
     align-items: center; /* Center items vertically */
     z-index: 1000; /* Ensure the navbar stays on top */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Reduced shadow for less depth */
 }
 
+/* Logo styling */
 .navbar-logo {
     display: flex;
     align-items: center; /* Align logo image and text vertically */
@@ -21,49 +23,56 @@
 .navbar-logo a {
     color: white;
     text-decoration: none;
-    font-size: 1.5rem;
+    font-size: 1.5rem; /* Reduced font size for the logo */
     font-weight: bold;
     display: flex;
     align-items: center; /* Center the logo image and text */
 }
 
+/* Adjust logo image size */
+.logo-img {
+    width: 40px; /* Reduced width of the logo image */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 0.5rem; /* Space between the logo image and text */
+}
+
+/* Navbar links styling */
 .navbar-links {
     display: flex;
     align-items: center; /* Center the button vertically */
 }
 
-/* 시작하기 버튼 */
+/* Start button styling */
 .navbar-links .MuiButton-root.primary {
     background-color: #b300ff; 
     color: white;
-    border-radius: 5px; 
-    padding: 0.5rem 1rem; 
+    border-radius: 6px; /* Reduced border-radius */
+    padding: 0.5rem 1rem; /* Reduced padding for a smaller button */
     text-transform: none; 
-    margin-left: 1rem; 
+    margin-left: 0.5rem;
+    margin-right: 1.5rem; /* Adjusted space between buttons to move the button left */
+    font-size: 1rem; /* Reduced font size */
     &:hover {
         background-color: #a300e6;
     }
 }
 
-/* 로그아웃 버튼 */
+/* Logout button styling */
 .navbar-links .MuiButton-root.logout {
     background-color: #ff4d4d; 
     color: white;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
+    border-radius: 6px; /* Reduced border-radius */
+    padding: 0.5rem 1rem; /* Reduced padding for a smaller button */
     text-transform: none;
-    margin-left: 1rem;
+    margin-left: 0.5rem;
+    margin-right: 1.5rem; /* Space between buttons */
+    font-size: 1rem; /* Reduced font size */
     &:hover {
         background-color: #e60000;
     }
 }
 
-.logo-img {
-    width: 40px; /* Adjust the width of the logo image */
-    height: auto; /* Maintain aspect ratio */
-    margin-right: 0.5rem; /* Space between the logo image and text */
-}
-
+/* Confirm alert overlay styling */
 .react-confirm-alert-overlay {
-    background: rgba(0, 0, 0, 0.5); /* 배경 흐림 효과 */
+    background: rgba(0, 0, 0, 0.5); /* Background blur effect */
 }
