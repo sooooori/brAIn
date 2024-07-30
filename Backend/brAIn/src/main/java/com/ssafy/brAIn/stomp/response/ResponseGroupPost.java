@@ -11,12 +11,16 @@ import lombok.Setter;
 public class ResponseGroupPost {
 
     private MessageType type;
-    private int round;
+    private String sender;
+    private int curRound;
+    private int nextRound;
     private String content;
 
-    public ResponseGroupPost(MessageType type, int round, String content) {
+    public ResponseGroupPost(MessageType type, String sender,int curRound, int nextRound, String content) {
         this.type = type;
-        this.round = round;
+        this.sender = sender;
+        this.curRound = curRound;
+        this.nextRound = nextRound;
         this.content = content;
     }
 
