@@ -10,7 +10,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      const { user, accessToken, refreshToken } = action.payload;
+      const { user, accessToken} = action.payload;
 
       // Update state based on available data
       state.user = user || state.user; // if user data is available, use it
@@ -23,9 +23,7 @@ const authSlice = createSlice({
       if (accessToken) {
         localStorage.setItem('accessToken', accessToken);
       }
-      if (refreshToken) {
-        localStorage.setItem('refreshToken', refreshToken);
-      }
+
       localStorage.setItem('isAuthenticated', JSON.stringify(state.isAuthenticated));
     },
     logout: (state) => {
@@ -34,7 +32,7 @@ const authSlice = createSlice({
       localStorage.removeItem('user');
       localStorage.removeItem('isAuthenticated');
       localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+
     },
   },
 });
