@@ -1,104 +1,156 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import axios from "axios";
-import Button from "../components/Button/Button"; // Import custom Button
-import IconButton from '@mui/material/IconButton'; // MUI IconButton import
-import CloseIcon from '@mui/icons-material/Close'; // MUI CloseIcon import
-import SearchIcon from '@mui/icons-material/Search'; // MUI SearchIcon import
-import AddIcon from '@mui/icons-material/Add'; // MUI AddIcon import
-import ConferenceCodeInput from "./ConferenceCodeInput";
-import Snackbar from '@mui/material/Snackbar'; // MUI Snackbar import
-import Alert from '@mui/material/Alert'; // MUI Alert import
-import Box from '@mui/material/Box'; // MUI Box import
-import Typography from '@mui/material/Typography'; // MUI Typography import
+import React from 'react';
+import { Box, Typography, TextField, IconButton, Button as MuiButton } from '@mui/material';
+import Button from './Button/Button'; // Adjust path if necessary
+import CloseIcon from '@mui/icons-material/Close'; // Use MUI's CloseIcon
+import AddIcon from '@mui/icons-material/Add'; // Use MUI's AddIcon
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+// import useAuth from './hooks/useAuth'; // Assuming you have a useAuth hook
 
-const JoinConferenceBack = ({
-  handleJoinConferenceFalse,
-  isConferenceSearchClicked,
-  handleConferenceSearchClickedTrue,
-  codeInputs,
-  setCodeInputs
+const NewConferenceBack = ({ 
+  handleNewConferenceFalse,
+  isNewConferenceClicked,
+  handleNewConferenceClickedTrue,
 }) => {
   const navigate = useNavigate();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [notification, setNotification] = useState({ open: false, message: "", type: "info" });
+  // const { checkAuth } = useAuth();
+  const [title, setTitle] = React.useState('');
+  const [description, setDescription] = React.useState('');
 
-  const handleSearchButtonClicked = () => {
-    if (isConferenceSearchClicked) {
-      navigate(`/participant?roomid=${codeInputs.join("")}`);
+  // Function to handle the creation of a new conference
+  const handleCreateButtonClicked = () => {
+    if (title.trim() && description.trim()) {
+      // checkAuth(); // Check authentication
+      axios
+        .post(
+          `${import.meta.env.VITE_API_SERVER_URL}/conference`,
+          {
+            title,
+            description,
+            email: localStorage.getItem('email'),
+          },
+          {
+            headers: {
+              Authorization: localStorage.getItem('token'),
+            },
+          }
+        )
+        .then((result) => {
+          handleNewConferenceClickedTrue(); // Trigger the flip to show the confirmation
+        })
+        .catch((error) => {
+          if (error.response?.status === 401) {
+            navigate('/userauth');
+          } else {
+            alert('회의 생성에 실패했습니다.');
+          }
+        });
     } else {
-      if (codeInputs.join("").length !== 6) {
-        setNotification({ open: true, message: "회의 코드를 올바르게 입력해주세요.", type: "error" });
-      } else {
-        axios
-          .get(`${import.meta.env.VITE_API_SERVER_URL}/conference?code=${codeInputs.join("")}`)
-          .then((result) => {
-            setTitle(result.data.title);
-            setDescription(result.data.description);
-            handleConferenceSearchClickedTrue();
-          })
-          .catch(() => {
-            setNotification({ open: true, message: "회의 코드가 존재하지 않아요.", type: "error" });
-          });
-      }
+      alert('올바른 회의 정보를 입력해주세요.');
     }
   };
 
-  const handleCloseNotification = () => {
-    setNotification({ open: false, message: "", type: "info" });
+  const handleCloseButtonClicked = () => {
+    // Reset input fields and close the card
+    setTitle('');
+    setDescription('');
+    handleNewConferenceFalse();
   };
 
   return (
-    <Box className="w-full h-full flex flex-col absolute bg-grayscale-white overflow-hidden border-default rounded-xl rotate-180 z-[1] shadow-xl" p={3}>
-      <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4">회의 참여하기</Typography>
-        <IconButton onClick={handleJoinConferenceFalse} className="w-6 h-6">
+    <Box
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      p={3}
+      className="w-full h-full"
+    >
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        width="100%"
+        mb={2}
+      >
+        <Typography variant="h6">새로운 회의 생성하기</Typography>
+        <IconButton onClick={handleCloseButtonClicked} color="inherit">
           <CloseIcon />
         </IconButton>
       </Box>
 
-      {isConferenceSearchClicked ? (
+      {isNewConferenceClicked ? (
         <>
           <Box mb={2}>
-            <Typography variant="h6">회의 코드</Typography>
-            <Typography variant="h5" color="primary">{codeInputs.join("")}</Typography>
-          </Box>
-          <Box mb={2}>
             <Typography variant="h6">회의 제목</Typography>
-            <Typography variant="body1" color="textSecondary">{title}</Typography>
+            <Typography variant="body1">{title}</Typography>
           </Box>
           <Box mb={2}>
             <Typography variant="h6">회의 설명</Typography>
-            <Typography variant="body1" color="textSecondary">{description}</Typography>
+            <Typography variant="body1">{description}</Typography>
           </Box>
+          <MuiButton
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => navigate(`/instructor?roomid=${title}`)} // Adjust as needed
+          >
+            회의 생성하기
+          </MuiButton>
         </>
       ) : (
-        <Box mb={3}>
-          <Typography variant="h6">회의 코드</Typography>
-          <Typography variant="body2" color="textSecondary">
-            회의 진행자에게 전달받은 회의 코드 6자리를 입력해주세요.
-          </Typography>
-          <ConferenceCodeInput inputs={codeInputs} setInputs={setCodeInputs} keyPress={handleSearchButtonClicked} />
-        </Box>
+        <>
+          <Box
+            display="flex"
+            flexDirection="column"
+            gap={2}
+            width="100%"
+            mb={2}
+          >
+            <Typography variant="h6">회의 제목</Typography>
+            <TextField
+              variant="outlined"
+              fullWidth
+              placeholder="회의 제목을 입력해주세요"
+              maxLength={50}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              inputProps={{ maxLength: 50 }}
+            />
+          </Box>
+
+          <Box
+            display="flex"
+            flexDirection="column"
+            gap={2}
+            width="100%"
+            mb={2}
+          >
+            <Typography variant="h6">회의 설명</Typography>
+            <TextField
+              variant="outlined"
+              fullWidth
+              multiline
+              rows={4}
+              placeholder="회의 설명을 입력해주세요"
+              maxLength={200}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              inputProps={{ maxLength: 200 }}
+            />
+          </Box>
+
+          <Button
+            onClick={handleCreateButtonClicked}
+            startIcon={<AddIcon />}
+            buttonStyle="blue"
+          >
+            회의 생성하기
+          </Button>
+        </>
       )}
-
-      <Button
-        type="full" // Adjust as needed
-        buttonStyle={isConferenceSearchClicked ? "blue" : "gray"} // Set the button style conditionally
-        onClick={handleSearchButtonClicked}
-        startIcon={isConferenceSearchClicked ? <AddIcon /> : <SearchIcon />}
-      >
-        {isConferenceSearchClicked ? "회의 참여하기" : "회의 조회하기"}
-      </Button>
-
-      <Snackbar open={notification.open} autoHideDuration={6000} onClose={handleCloseNotification}>
-        <Alert onClose={handleCloseNotification} severity={notification.type} sx={{ width: '100%' }}>
-          {notification.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };
 
-export default JoinConferenceBack;
+export default NewConferenceBack;

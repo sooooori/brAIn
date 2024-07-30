@@ -1,12 +1,122 @@
-.home-container {
-    text-align: center;
-    margin-top: 5rem;
+/* Perspective container to apply 3D effect */
+.perspective {
+    perspective: 1000px; /* 3D depth effect */
 }
 
-button {
-    display: block;
-    margin: 1rem auto;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    cursor: pointer;
+/* Card styling */
+.card {
+    position: relative;
+    width: 300px; /* Width of the cards */
+    height: 400px; /* Height of the cards */
+    transform-style: preserve-3d; /* Enable 3D effects for children */
+    transition: transform 0.6s; /* Smooth transition for flipping */
+    transform-origin: center; /* Center rotation */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Card rotation styles */
+.rotate-left {
+    transform: rotateY(-180deg); /* Rotate card to the left */
+}
+
+.rotate-right {
+    transform: rotateY(180deg); /* Rotate card to the right */
+}
+
+/* Backface visibility styling */
+.backface-hidden {
+    backface-visibility: hidden; /* Hide the back face of the card when flipped */
+}
+
+/* Container to center cards */
+.home-container {
+    display: flex;
+    flex-direction: column; /* Align items vertically */
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 60px); /* Full viewport height minus navbar height */
+    padding: 20px; /* Padding around the container */
+    margin-top: 60px; /* Margin to account for the height of the navbar */
+    margin-bottom: 100px; /* Increase space between title and cards */
+}
+
+/* Container to arrange cards in a row with increased spacing */
+.card-container {
+    display: flex;
+    gap: 150px; /* Increase space between the cards */
+    perspective: 1000px; /* Apply perspective to the container */
+    align-items: center; /* Center cards vertically in the container */
+    justify-content: center; /* Center cards horizontally in the container */
+    width: 100%; /* Ensure the container is full width */
+    margin-bottom: 150px; /* Increase space between cards and sections */
+}
+
+/* Ensures the card divs are properly positioned */
+.card-container > div {
+    position: relative;
+    transform-style: preserve-3d; /* Ensure proper 3D transformation */
+}
+
+/* Button styling */
+.start-button {
+    background-color: #9c27b0; /* Purple background color */
+    color: white; /* White text color */
+    font-size: 1.5rem; /* Adjust font size for better visibility */
+    padding: 20px 40px; /* Adjust padding for better button size */
+    margin-bottom: 100px; /* Increased space between button and sections */
+}
+
+/* Section styling for scroll animations */
+.section {
+    width: 100%;
+    height: 400px; /* Increased height for sections */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Start hidden */
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+    margin-bottom: 150px; /* Increased space between sections */
+    background-color: #f0f0f0; /* Light background color for better contrast */
+    padding: 20px; /* Add padding to sections for better spacing */
+    box-sizing: border-box; /* Include padding in the element's total width and height */
+}
+
+/* Adjust image size if necessary */
+.section img {
+    max-width: 80%; /* Adjusted max-width for better fit */
+    height: auto;
+    max-height: 80%; /* Adjusted max-height for better fit */
+}
+
+/* Animation classes for sections */
+.section.fade-left {
+    opacity: 1;
+    transform: translateX(-50px); /* Reduced distance for animation */
+}
+
+.section.fade-right {
+    opacity: 1;
+    transform: translateX(50px); /* Reduced distance for animation */
+}
+
+.section.fade-center {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Title styling */
+.home-title {
+    font-family: 'Gothic', sans-serif; /* Apply Gothic font */
+    font-size: 3rem; /* Adjust font size as needed */
+    margin-bottom: 60px; /* Increase space between title and cards */
+    text-align: center; /* Center align the title */
+}
+
+.home-subtitle {
+    font-family: 'Gothic', sans-serif; /* Update to your preferred font */
+    font-size: 1.75rem; /* Adjust size as needed */
+    text-align: center;
+    margin-bottom: 60px; /* Space below the subtitle */
 }
