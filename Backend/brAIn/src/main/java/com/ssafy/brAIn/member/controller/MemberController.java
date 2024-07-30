@@ -103,7 +103,7 @@ public class MemberController {
         response.addCookie(cookie);
 
         // 새 accessToken을 응답 본문에 포함하여 발급
-        return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+        return ResponseEntity.ok(Map.of("accessToken", newAccessToken, "refreshToken", newRefreshToken));
     }
 
     // 로그아웃

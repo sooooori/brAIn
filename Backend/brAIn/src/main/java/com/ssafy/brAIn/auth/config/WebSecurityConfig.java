@@ -1,6 +1,7 @@
 package com.ssafy.brAIn.auth.config;
 
 import com.ssafy.brAIn.auth.jwt.JwtFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,6 +41,11 @@ public class WebSecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)  // 폼로그인 해제
                 .logout(logout -> logout
                         .invalidateHttpSession(true)  // 로그아웃 시 세션 무효화
+                        .deleteCookies("refreshToken")
+                        .logoutUrl("/api/v1/members/logout")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        })
                 )
                 .authorizeHttpRequests(requests -> {
                     requests.requestMatchers(  // 허용 URL
@@ -64,7 +70,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 클라이언트 도메인
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
