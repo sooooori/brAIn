@@ -76,6 +76,7 @@ public class WebSecurityConfig {
 //주석
 
 
+
         return http
                 .httpBasic(AbstractHttpConfigurer::disable)  // 기본인증 해제
                 .csrf(AbstractHttpConfigurer::disable)       // csrf 해제
@@ -90,6 +91,7 @@ public class WebSecurityConfig {
                             "/api/v1/members/login",
                             "/api/v1/members/refresh",
                             "/oauth/**",
+                            "/ws/**",
                             "/**"
                             ).permitAll();
                     requests.anyRequest().permitAll(); // 모든 URL 인증 필요
