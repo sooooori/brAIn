@@ -34,14 +34,14 @@ public class MessageController {
     }
 
 
-    //유저 답변 제출완료
+    //유저 답변 제출완료(테스트 완)
     //유저가 답변을 제출하면 자동으로 다음 사람으로 넘어가야 함.
     @MessageMapping("step1.submit.{roomId}")
     public void submitPost(RequestGroupPost groupPost, @DestinationVariable String roomId,StompHeaderAccessor accessor) {
 
         String token=accessor.getFirstNativeHeader("Authorization");
 //        String nickname=jwtUtil.getNickname(token);
-        String nickname="userA";
+        String nickname="호랑이0";
         messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
 
         ResponseGroupPost responseGroupPost=null;
@@ -56,8 +56,8 @@ public class MessageController {
 
 
     }
-
-    //다음 라운드로 이동하라는 메시지
+    //삭제예정
+    //다음 라운드로 이동하라는 메시지(어차피 제출할 때, 다음 라운드까지 제시해줘서 필요없는듯)
     @MessageMapping("next.round.{roomId}")
     public void nextRound(@Payload int curRound, @DestinationVariable String roomId) {
 
@@ -65,14 +65,15 @@ public class MessageController {
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, nextRound);
     }
 
+    //(테스트 완)
     //대기 방 입장했을 때, 렌더링 시 호출하면 될듯(useEffect 내부에서 publish)
     @MessageMapping("enter.waiting.{roomId}")
     public void enterWaitingRoom(@DestinationVariable String roomId, StompHeaderAccessor accessor){
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.ENTER_WAITING_ROOM));
         String authorization = accessor.getFirstNativeHeader("Authorization");
-//        String username=jwtUtil.getUsername(token);
-        String username="user";
-        messageService.enterWaitingRoom(Integer.parseInt(roomId),username);
+//        String email=jwtUtil.getEmail(token);
+        String email="user";
+        messageService.enterWaitingRoom(Integer.parseInt(roomId),email);
     }
 
     //회의 중간에 입장 시,
@@ -108,11 +109,12 @@ public class MessageController {
     }
 
     //대기방에서 회의방 시작하기
-    //@Secured("ROLE_CHIEF")
+    @Secured("ROLE_CHIEF")
     @MessageMapping("start.conferences.{roomId}")
     public void startConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
         String token=accessor.getFirstNativeHeader("Authorization");
 //        String chiefEmail=jwtUtil.getEmail(token);
+
         String chiefEmail="123@naver.com";
         List<String> users=messageService.startConferences(Integer.parseInt(roomId),chiefEmail).stream()
                 .map(Object::toString)
@@ -123,7 +125,7 @@ public class MessageController {
             message.getMessageProperties().setHeader("Authorization", "회의 토큰");
             return message;
         };
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users));
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users),messagePostProcessor);
 
     }
 

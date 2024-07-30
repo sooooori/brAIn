@@ -53,8 +53,9 @@ public class MessageService {
     }
 
     
-    //현재 유저가 마지막 순서인지 확인하는 메서드
+    //현재 유저가 마지막 순서인지 확인하는 메서드(테스트 완)
     public boolean isLastOrder(Integer roomId, String nickname) {
+        System.out.println(nickname);
         Double order=redisUtils.getScoreFromSortedSet(roomId+":order",nickname);
         int lastOrder=redisUtils.getSortedSet(roomId+":order").size()-1;
         if (order == lastOrder) {
@@ -63,7 +64,7 @@ public class MessageService {
         return false;
     }
 
-    //멤버가 대기방 입장 시, 레디스에 저장
+    //멤버가 대기방 입장 시, 레디스에 저장(테스트 완)
     public void enterWaitingRoom(Integer roomId,String email) {
 
         String key=roomId + ":" + "email";
