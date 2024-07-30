@@ -4,7 +4,7 @@ import Button from './Button/Button'; // Adjust path if necessary
 import CloseIcon from '@mui/icons-material/Close'; // Use MUI's CloseIcon
 import AddIcon from '@mui/icons-material/Add'; // Use MUI's AddIcon
 import { useNavigate } from 'react-router-dom';
-import axios from '../utils/Axios';
+import axios from 'axios';
 // import useAuth from './hooks/useAuth'; // Assuming you have a useAuth hook
 
 const NewConferenceBack = ({ 

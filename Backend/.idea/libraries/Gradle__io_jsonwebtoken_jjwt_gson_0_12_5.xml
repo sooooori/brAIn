@@ -4,9 +4,7 @@
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.jsonwebtoken/jjwt-gson/0.12.5/dd5f47015d49bc03cfd260ee659fe8abc6dfd289/jjwt-gson-0.12.5.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.jsonwebtoken/jjwt-gson/0.12.5/c5f88be8343c315bc1ebb7a77dcb320d9dacc0d9/jjwt-gson-0.12.5-javadoc.jar!/" />
-    </JAVADOC>
+    <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.jsonwebtoken/jjwt-gson/0.12.5/b9893156ca57a595a9c9f61e2ae0564a96775e33/jjwt-gson-0.12.5-sources.jar!/" />
     </SOURCES>

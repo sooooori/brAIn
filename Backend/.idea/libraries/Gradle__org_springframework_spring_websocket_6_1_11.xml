@@ -4,9 +4,7 @@
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-websocket/6.1.11/8384070351969296a3a8be90950ef171c92c2a68/spring-websocket-6.1.11.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-websocket/6.1.11/c4f252499ef6d9890e6c6fd7d067b92243d2abe1/spring-websocket-6.1.11-javadoc.jar!/" />
-    </JAVADOC>
+    <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-websocket/6.1.11/380a35aef419e96321e85bda683e99bbebe10414/spring-websocket-6.1.11-sources.jar!/" />
     </SOURCES>

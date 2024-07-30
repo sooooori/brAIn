@@ -2,14 +2,13 @@ import { useState } from 'react';
 import Modal from 'react-modal';
 import { Button, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from '../utils/Axios';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from '../features/auth/authSlice';
 import SendNumberModal from './SendNumberModal';
 import ResetPasswordModal from './ResetPasswordModal';
 import JoinModal from './JoinModal';
-import Cookies from 'js-cookie';
 
 const customStyles = {
     content: {
@@ -55,16 +54,13 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
 
         try {
             const response = await axios.post('http://localhost:8080/api/v1/members/login', { email, password });
-            const { accessToken} = response.data;
+            const { accessToken } = response.data;
 
-            console.log(response.data)
             localStorage.setItem('accessToken', accessToken);
-            // Cookies.set('refreshToken', refreshToken);
 
             // Redux에 로그인 상태 업데이트
             dispatch(login({ email }));
 
-            // 로그인 성공 후 메인 페이지로 이동
             navigate('/');
             onRequestClose();
         } catch (error) {

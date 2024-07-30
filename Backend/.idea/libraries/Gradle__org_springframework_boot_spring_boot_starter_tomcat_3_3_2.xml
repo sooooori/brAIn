@@ -4,9 +4,7 @@
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-tomcat/3.3.2/37ccb53cd5207fffd7a6fc1b591687f8cb1350df/spring-boot-starter-tomcat-3.3.2.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-tomcat/3.3.2/b27dec2cea9915542d113fa0534a7d1f844a1f0b/spring-boot-starter-tomcat-3.3.2-javadoc.jar!/" />
-    </JAVADOC>
+    <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-tomcat/3.3.2/b7ed8c01f39eb7cf24c57c04006ee237e953a1be/spring-boot-starter-tomcat-3.3.2-sources.jar!/" />
     </SOURCES>
