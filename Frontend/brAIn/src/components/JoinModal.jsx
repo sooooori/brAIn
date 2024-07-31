@@ -257,12 +257,14 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
                                         onChange={handleChangeUserInfo}
                                         placeholder="이메일을 입력하세요."
                                         fullWidth
+                                        disabled={isVerificationComplete} // Disable the email input if verification is complete
                                     />
                                     {isEmailChecked ? (
                                         <Button
                                             className="auth-button"
                                             onClick={handleSendVerificationCode}
                                             variant="contained"
+                                            disabled={isVerificationComplete} // Disable the button if verification is complete
                                         >
                                             {isVerificationCodeResent ? '인증번호 재전송' : '인증번호 전송'}
                                         </Button>
@@ -271,6 +273,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
                                             className="check-email-button"
                                             onClick={handleCheckEmailDuplicate}
                                             variant="contained"
+                                            disabled={isVerificationComplete} // Disable the button if verification is complete
                                         >
                                             이메일 중복 확인
                                         </Button>
@@ -293,6 +296,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
                                         onChange={handleChangeUserInfo}
                                         placeholder="인증번호를 입력하세요."
                                         fullWidth
+                                        disabled={isVerificationComplete} // Disable the verification code input if verification is complete
                                     />
                                     <Button
                                         className="verify-button"
