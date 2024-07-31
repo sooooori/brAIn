@@ -41,7 +41,7 @@ public class EmailService {
 
     // 인증코드 검증
     public void verifyEmail(String email, String code, LocalDateTime verifiedAt) {
-        VerificationCode verificationCode = (VerificationCode) redisTemplate.opsForValue().get(email);
+        VerificationCode verificationCode = (VerificationCode) redisTemplate1.opsForValue().get(email);
         if (verificationCode == null) {
             throw new NoSuchElementException("Verification code not found");
         }
@@ -56,7 +56,7 @@ public class EmailService {
             throw new IllegalArgumentException("Invalid verification code");
         }
 
-        redisTemplate.delete(email); // 인증 완료 후 Redis에서 삭제
+        redisTemplate1.delete(email); // 인증 완료 후 Redis에서 삭제
     }
 
     // 6자리 랜덤 인증 숫자
