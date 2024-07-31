@@ -16,6 +16,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Getter
 @Service
@@ -24,7 +25,7 @@ public class S3Service {
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
-    @Value("${cloud.aws.region.static}")
+    @Value("${spring.cloud.aws.region.static}")
     private String region;
     private final S3Presigner s3Presigner;
     private final S3Client s3Client;
@@ -59,15 +60,24 @@ public class S3Service {
             throw new RuntimeException("No images found in the random-profile folder of the S3 bucket.");
         }
 
+        // 파일 이름이 있는 객체만 필터링
+        List<S3Object> filteredObjects = objects.stream()
+                .filter(obj -> obj.key().startsWith("random-profile/") && !obj.key().equals("random-profile/"))
+                .toList();
+
+        if (filteredObjects.isEmpty()) {
+            throw new RuntimeException("No valid images found in the random-profile folder of the S3 bucket.");
+        }
+
         // 랜덤 객체 선택
         Random rand = new Random();
-        S3Object randomObject = objects.get(rand.nextInt(objects.size()));
+        S3Object randomObject = filteredObjects.get(rand.nextInt(filteredObjects.size()));
 
         // 선택된 객체의 URL 생성
         return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, randomObject.key());
     }
 
-    // 업로드 이미지 가져오기
+    // 프로필 이미지 변경
     public void uploadUserImage(String key, byte[] fileData) {
         // 'profile-image' 폴더에 저장
         String userImagePath = "profile-image/" + key;
