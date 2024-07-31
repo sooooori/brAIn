@@ -94,6 +94,10 @@ public class WebSocketEventListener {
                 }
             }
 
+            if(redisUtils.isValueInSet(roomId+":out", jwtUtilForRoom.getNickname(token))){
+                redisUtils.removeValueFromSet(roomId+":out", jwtUtilForRoom.getNickname(token));
+            }
+
 
             //레디스에 sessionId와 함께 닉네임을 저장해서 갑작스러운 종료 때, 닉네임을 얻기 위함.
             String sessionId = accessor.getSessionId();
@@ -120,6 +124,10 @@ public class WebSocketEventListener {
         MemberHistory memberHistory=memberHistoryRepository.findById(memberHistoryId).get();
         memberHistory.historyStateUpdate(Status.OUT);
         memberHistoryRepository.save(memberHistory);
+
+        redisUtils.setDataInSet(roomId+":out",memberHistory.getNickName(),7200L);
+
+
         System.out.println("Session ID: " + sessionId + " disconnected.");
         System.out.println("User nickname: " + memberHistory.getNickName() + " disconnected.");
         // 추가적인 로직 구현

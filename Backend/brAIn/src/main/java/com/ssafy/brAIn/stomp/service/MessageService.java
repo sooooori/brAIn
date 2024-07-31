@@ -53,9 +53,8 @@ public class MessageService {
     
     //현재 유저가 마지막 순서인지 확인하는 메서드(테스트 완)
     public boolean isLastOrder(Integer roomId, String nickname) {
-        System.out.println(nickname);
         Double order=redisUtils.getScoreFromSortedSet(roomId+":order",nickname);
-        int lastOrder=redisUtils.getSortedSet(roomId+":order").size()-1;
+        int lastOrder=redisUtils.getSortedSet(roomId+":order").size()-redisUtils.ge-1;
         if (order == lastOrder) {
             return true;
         }
@@ -92,9 +91,9 @@ public class MessageService {
 
     //멤버가 대기방에서 나갔을 때, 레디스에 저장(테스트 완)
     public void exitWaitingRoom(Integer roomId,String nickname) {
-        String key=roomId + ":" + "email";
-        redisUtils.setDataInSet(roomId+":out",nickname,7200L);
 
+        redisUtils.setDataInSet(roomId+":out",nickname,7200L);
+        //redisUtils.removeValueFromSortedSet(roomId+"order",nickname);
     }
 
     //멤버가 회의 중 나갔을 때 history 테이블 업데이트(테스트 완)
@@ -112,6 +111,10 @@ public class MessageService {
         //redis에 나간유저를 저장해놓자.
         redisUtils.setDataInSet(roomId+":out",memberHistory.getNickName(),7200L);
 
+        //order에서는 삭제
+        //redisUtils.removeValueFromSortedSet(roomId+":order",memberHistory.getNickName());
+
+
     }
 
     //다음 단계로 이동 시, 회의 룸 업데이트 해야함.(테스트 완료)
@@ -120,6 +123,7 @@ public class MessageService {
         Optional<ConferenceRoom> conferenceRoom=conferenceRoomRepository.findById(roomId);
         if(conferenceRoom.isEmpty())return;
         conferenceRoom.get().updateStep(step);
+        conferenceRoomRepository.saveAndFlush(conferenceRoom.get());
         redisUtils.save(roomId+":curStep",step.toString());
     }
 
@@ -130,7 +134,7 @@ public class MessageService {
     }
 
     //방장이 회의 시작 요청을 보내면 현재 멤버들을 닉네임으로 기록한다.(테스트 완료)
-    public List<Object> startConferences(Integer roomId,String chiefEmail) {
+    public List<Object> startConferences(Integer roomId) {
 
         //현재 회의룸에 있는 모든 유저들을 가져온다.
         List<MemberHistory> memberHistories=memberHistoryRepository.findByConferenceRoomId(roomId);
@@ -142,7 +146,7 @@ public class MessageService {
             MemberHistory memberHistory=memberHistories.get(i);
             memberHistory.setOrder(i);
             memberHistoryRepository.save(memberHistory);
-            if(memberHistory.getStatus().equals(Status.OUT))continue;
+            //if(memberHistory.getStatus().equals(Status.OUT))continue;
             redisUtils.setSortedSet(roomId+":"+"order",i,memberHistory.getNickName());
 
         }
@@ -169,6 +173,7 @@ public class MessageService {
     //현재 제출순서가 된 유저를 업데이트한다.
     public void updateCurOrder(Integer roomId,String curUser) {
         String key=roomId+":curOrder";
+        //System.out.println("nextUser"+curUser);
         redisUtils.updateValue(key,curUser);
     }
 
@@ -176,6 +181,18 @@ public class MessageService {
     public String getCurUser(Integer roomId) {
         String key=roomId + ":curOrder";
         return redisUtils.getData(key);
+    }
+
+    //
+    public boolean isPrevUser(Integer roomId,String curUser,String compareUser) {
+        int cur = redisUtils.getScoreFromSortedSet(roomId + ":order", curUser).intValue();
+        int compare = redisUtils.getScoreFromSortedSet(roomId + ":order", compareUser).intValue();
+
+
+        if (compare < cur) {
+            return true;
+        }
+        return false;
     }
 
 

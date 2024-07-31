@@ -124,16 +124,16 @@ public class MessageController {
         String token=accessor.getFirstNativeHeader("Authorization");
         String chiefEmail=jwtUtilForRoom.getUsername(token);
 
-        List<String> users=messageService.startConferences(Integer.parseInt(roomId),chiefEmail).stream()
+        List<String> users=messageService.startConferences(Integer.parseInt(roomId)).stream()
                 .map(Object::toString)
                 .toList();
 
 
-        MessagePostProcessor messagePostProcessor = message -> {
-            message.getMessageProperties().setHeader("Authorization", "회의 토큰");
-            return message;
-        };
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users),messagePostProcessor);
+//        MessagePostProcessor messagePostProcessor = message -> {
+//            message.getMessageProperties().setHeader("Authorization", "회의 토큰");
+//            return message;
+//        };
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users));
 
     }
 
@@ -163,8 +163,17 @@ public class MessageController {
     public void passRound(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
+
         messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.PASS);
         String nextMember=messageService.NextOrder(Integer.parseInt(roomId),nickname);
+
+        //현재 유저가 라운드의 마지막 유저라면
+        if (messageService.isPrevUser(Integer.parseInt(roomId), nickname, nickname)) {
+            if (messageService.isStep1EndCondition(Integer.parseInt(roomId))) {
+                rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.PASS_AND_END,nickname));
+                return;
+            }
+        }
         messageService.updateCurOrder(Integer.parseInt(roomId),nextMember);
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember));
 
