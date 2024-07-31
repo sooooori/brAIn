@@ -111,13 +111,14 @@ public class MessageService {
     //방장이 회의 시작 요청을 보내면 현재 멤버들을 닉네임으로 기록한다.
     public List<Object> startConferences(Integer roomId,String chiefEmail) {
         String key=roomId + ":" + "email";
+
         List<String> users=redisUtils.getListFromKey(key)
                 .stream()
                 .map(Object::toString)
                 .toList();
 
         List<Integer> order=makeRandomList(users.size());
-        List<String> nicknames = makeNickname(users.size());
+        List<String> nicknames = getNicknames(roomId);
 
         for(int i=0;i<users.size();i++){
             String userEmail = users.get(i);
@@ -142,12 +143,11 @@ public class MessageService {
     }
 
 
-    //닉네임 목록을 저장하는 데이터베이스 하나 만들면 좋을듯?(지금은 임시로 내부에서 만듦)
-    private List<String> makeNickname(int size) {
-        List<String> nicknames=new ArrayList<>();
-        for(int i=0;i<size;i++){
-            nicknames.add("호랑이"+i);
-        }
+    //닉네임 목록을 가져옴
+    private List<String> getNicknames(Integer roomId) {
+
+        List<String> nicknames = new ArrayList<>(redisUtils.getListFromKey(roomId + ":nicknames").stream()
+                .map(Object::toString).toList());
 
         //랜덤으로 부여하기 위해 한번 섞어준다.
         Collections.shuffle(nicknames);
