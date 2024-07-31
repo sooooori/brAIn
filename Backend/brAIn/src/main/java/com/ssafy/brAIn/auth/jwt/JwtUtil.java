@@ -110,11 +110,11 @@ public class JwtUtil {
     // 회의록 관련 메서드
     public static String getEmail(String token) {
         Claims claims = extractToken(token);
-        return claims.get("email", String.class);
+        return claims.get("email").toString();
     }
 
     public static String getUserConferences(String token){
         Claims claims = extractToken(token);
-        return claims.get("userConferences", String.class);
+        return claims.get("userConferences").toString();
     }
 }

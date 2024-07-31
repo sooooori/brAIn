@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.member.controller;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.member.dto.EmailRequest;
@@ -13,7 +14,6 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,9 +22,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
+
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -48,6 +52,9 @@ public class MemberController {
         return ResponseEntity.ok(Map.of("message", "Email check successfully"));
     }
 
+
+    // 이미지파일 5MB로 제한
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
     // 회원가입
     @PostMapping("/join")
@@ -138,7 +145,7 @@ public class MemberController {
 
     // 이메일로 사용자 정보 조회
     @GetMapping("/email")
-    public ResponseEntity<?> getEmail(@RequestParam String email) {
+    public ResponseEntity<?> getEmail(@RequestBody String email) {
         // 이메일로 사용자 정보 조회
         Optional<Member> member = memberService.findByEmail(email);
         if (member.isPresent()) {
@@ -150,6 +157,60 @@ public class MemberController {
         }
     }
 
+    // 회원정보 조회
+    @GetMapping("/member")
+    public ResponseEntity<?> getMember(@RequestHeader("Authorization") String token) {
+        // Bearer 접두사 제거
+        String accessToken = token.replace("Bearer ", "");
+        // 조회
+        MemberResponse memberResponse = memberService.getMember(accessToken);
+        return ResponseEntity.ok(Map.of("member", memberResponse));
+    }
+
+    // 회원 탈퇴
+    @DeleteMapping("/member")
+    public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String token, @RequestBody String password) {
+        // Bearer 접두사 제거
+        String accessToken = token.replace("Bearer ", "");
+        // 정보 삭제
+        memberService.deleteMember(accessToken, password);
+        return ResponseEntity.ok(Map.of("message", "Member deleted successfully"));
+    }
+
+    // 회원 프로필 사진 변경
+    @PutMapping("/updatePhoto")
+    public ResponseEntity<?> updatePhoto(@RequestHeader("Authorization") String token,
+                                         @RequestBody ObjectNode requestBody) throws IOException {
+        // Bearer 접두사 제거
+        String accessToken = token.replace("Bearer ", "");
+        // 파일 데이터와 URL을 JSON으로 받음
+        String base64FileData = requestBody.has("fileData") ? requestBody.get("fileData").asText() : null;
+        String imageUrl = requestBody.has("imageUrl") ? requestBody.get("imageUrl").asText() : null;
+        String originalFileName = requestBody.has("fileName") ? requestBody.get("fileName").asText() : null;
+
+        if (base64FileData != null) {
+            byte[] fileData = Base64.getDecoder().decode(base64FileData);
+            if (fileData.length > MAX_FILE_SIZE) {
+                throw new BadRequestException("File size exceeds the maximum allowed size of 5MB");
+            }
+            memberService.uploadUserImage(accessToken, fileData, originalFileName);
+        } else if (imageUrl != null) {
+            memberService.updateUserImageByUrl(accessToken, imageUrl);
+        } else {
+            throw new BadRequestException("No file or imageUrl provided");
+        }
+
+        return ResponseEntity.ok(Map.of("message", "Profile Image Change Successful"));
+    }
+
+    // 비밀번호 재설정
+    @PutMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestHeader("Authorization") String token, @RequestBody String newPassword) {
+        // Barer 접두사 제거
+        String accessToken = token.replace("Bearer ", "");
+        // 비밀번호 재설정
+        memberService.resetPassword(accessToken, newPassword);
+        return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
     // 이메일 인증번호 생성
     @PostMapping("/sendAuthNumber")
     public ResponseEntity<?> getEmailForVerification(@RequestBody EmailRequest request) {
