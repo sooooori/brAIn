@@ -2,6 +2,8 @@ import { useState } from 'react';
 import Modal from 'react-modal';
 import { Button, TextField, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import axios from '../utils/Axios'; // Import axios
+import { useSelector } from 'react-redux';
 
 // Custom styles for the modal
 const customStyles = {
@@ -28,11 +30,12 @@ const customStyles = {
     }
 };
 
-const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
+const ResetPasswordModal = ({ isOpen, onRequestClose, token }) => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const { accessToken } = useSelector((state) => state.auth);
 
     // Reset state when modal is closed
     const handleRequestClose = () => {
@@ -44,21 +47,42 @@ const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
     };
 
     // Handle resetting password
-    const handleResetPassword = () => {
+    const handleResetPassword = async () => {
         if (newPassword !== confirmPassword) {
             setErrorMessage('비밀번호가 일치하지 않습니다.');
             setSuccessMessage('');
-        } else {
-            // Implement the password reset logic here
-            setErrorMessage('');
-            setSuccessMessage('비밀번호가 성공적으로 변경되었습니다.');
+            return;
+        }
+
+        try {
+            const response = await axios.put(
+                'http://localhost:8080/api/v1/members/resetPassword',
+                { password: newPassword }, // Body content
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                }
+            );
+            
+            if (response.status === 200) {
+                setSuccessMessage('비밀번호가 성공적으로 변경되었습니다.');
+                setErrorMessage('');
+                handleRequestClose(); // Optionally close the modal after success
+            } else {
+                setSuccessMessage('');
+                setErrorMessage('비밀번호 변경에 실패하였습니다.');
+            }
+        } catch (error) {
+            setSuccessMessage('');
+            setErrorMessage('서버와의 연결에 문제가 발생하였습니다.');
         }
     };
 
     return (
         <Modal
             isOpen={isOpen}
-            onRequestClose={handleRequestClose} // Use the updated function here
+            onRequestClose={handleRequestClose}
             contentLabel="Reset Password Modal"
             style={customStyles}
         >

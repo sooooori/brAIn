@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   user: JSON.parse(localStorage.getItem('user')) || null,
+  accessToken: localStorage.getItem('accessToken') || null,
   isAuthenticated: JSON.parse(localStorage.getItem('isAuthenticated')) || false,
 };
 
@@ -10,15 +11,15 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      const { user, accessToken} = action.payload;
+      const { user, accessToken } = action.payload;
 
-      // Update state based on available data
-      state.user = user || state.user; // if user data is available, use it
+      state.user = user || state.user;
+      state.accessToken = accessToken || state.accessToken;
       state.isAuthenticated = true;
 
       // Store user and tokens in local storage
       if (user) {
-        localStorage.setItem('user', JSON.stringify(state.user));
+        localStorage.setItem('user', JSON.stringify(user));
       }
       if (accessToken) {
         localStorage.setItem('accessToken', accessToken);
@@ -28,11 +29,11 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       state.user = null;
+      state.accessToken = null;
       state.isAuthenticated = false;
       localStorage.removeItem('user');
-      localStorage.removeItem('isAuthenticated');
       localStorage.removeItem('accessToken');
-
+      localStorage.removeItem('isAuthenticated');
     },
   },
 });

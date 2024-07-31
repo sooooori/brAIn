@@ -1,0 +1,90 @@
+.profile-container {
+    padding: 20px;
+}
+
+.profile-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+/* Title styling */
+.profile-name {
+    font-family: 'Gothic', sans-serif; /* Apply Gothic font */
+    font-size: 2.5rem; /* Adjust font size as needed */
+    margin-bottom: 60px; /* Increase space between title and cards */
+    text-align: center; /* Center align the title */
+}
+
+.profile-info .profile-email {
+    font-family: 'Gothic', sans-serif; /* Update to your preferred font */
+    font-size: 1.5rem; /* Adjust size as needed */
+    text-align: center;
+    margin-bottom: 45px; /* Space below the subtitle */
+}
+
+.profile-image-container {
+    position: relative;
+}
+
+.profile-image {
+    width: 220px; /* Adjust size as needed */
+    height: 220px; /* Adjust size as needed */
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+.profile-image-button {
+    position: absolute;
+    bottom: 1px; 
+    left: 170px; /* Adjust spacing as needed */
+    padding: 0; /* Remove default padding */
+    border: none; /* Remove default border */
+    background-color: transparent; /* Transparent background */
+    cursor: pointer;
+    z-index: 10;
+    display: flex; /* Use flex to center content */
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+}
+
+.profile-image-button img {
+    width: 100%; /* Make the image fill the button */
+    height: 100%; /* Make the image fill the button */
+    object-fit: contain; /* Ensure image fits within button */
+    border-radius: 20%;
+}
+
+.profile-info {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.profile-info h2 {
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.profile-info p {
+    margin: 0;
+    margin-bottom: 20px;
+}
+
+
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-actions button {
+    margin-bottom: 15px;
+}
+
+.profile-actions button:last-child {
+    margin-bottom: 0;
+}
