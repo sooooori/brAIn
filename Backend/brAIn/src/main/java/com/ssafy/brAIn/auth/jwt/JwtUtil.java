@@ -117,4 +117,19 @@ public class JwtUtil {
         Claims claims = extractToken(token);
         return claims.get("userConferences", String.class);
     }
+
+    public static Integer getRoomId(String token){
+        Claims claims = extractToken(token);
+        return claims.get("roomId", Integer.class);
+    }
+
+    public static String getRole(String token){
+        Claims claims = extractToken(token);
+        return claims.get("role", String.class);
+    }
+
+    public static String getNickname(String token){
+        Claims claims = extractToken(token);
+        return claims.get("nickname", String.class);
+    }
 }
