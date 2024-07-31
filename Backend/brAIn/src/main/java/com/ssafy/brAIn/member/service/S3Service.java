@@ -16,6 +16,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Getter
@@ -79,14 +80,11 @@ public class S3Service {
 
     // 프로필 이미지 변경
     public void uploadUserImage(String key, byte[] fileData) {
-        // 'profile-image' 폴더에 저장
-        String userImagePath = "profile-image/" + key;
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
-                .key(userImagePath)
+                .key(key)
                 .build();
 
-        // S3 버킷에 객체 업로드
         s3Client.putObject(putObjectRequest, RequestBody.fromBytes(fileData));
     }
 }

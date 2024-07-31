@@ -42,14 +42,25 @@ public class MemberService {
     }
 
     // 프로필 이미지 변경
-    public void uploadUserImage(String token, byte[] fileData) {
+    public void uploadUserImage(String token, byte[] fileData, String originalFilename) {
         String email = JwtUtil.getEmail(token);
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("Member not found"));
 
-        String key = email + "-profile-image";
+        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String key = "profile-image/" + email + fileExtension;
         s3Service.uploadUserImage(key, fileData);
-        String imageUrl = String.format("https://%s.s3.%s.amazonaws.com/profile-image/%s", s3Service.getBucket(), s3Service.getRegion(), key);
+        String imageUrl = String.format("https://%s.s3.%s.amazonaws.com/%s", s3Service.getBucket(), s3Service.getRegion(), key);
+        member.updatePhoto(imageUrl);
+        memberRepository.save(member);
+    }
+
+    // 프로필 이미지가 S3에 존재할 때 업데이트
+    public void updateUserImageByUrl(String token, String imageUrl) {
+        String email = JwtUtil.getEmail(token);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("Member not found"));
+
         member.updatePhoto(imageUrl);
         memberRepository.save(member);
     }

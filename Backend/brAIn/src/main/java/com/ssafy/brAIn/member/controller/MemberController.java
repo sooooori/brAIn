@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.member.controller;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.member.dto.MemberRequest;
@@ -18,10 +19,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
 
@@ -161,17 +164,26 @@ public class MemberController {
     // 회원 프로필 사진 변경
     @PutMapping("/updatePhoto")
     public ResponseEntity<?> updatePhoto(@RequestHeader("Authorization") String token,
-                                         @RequestBody MultipartFile file) throws IOException {
+                                         @RequestBody ObjectNode requestBody) throws IOException {
         // Bearer 접두사 제거
         String accessToken = token.replace("Bearer ", "");
-        // 파일 크기 검증
-        if (file.getSize() > MAX_FILE_SIZE) {
-            throw new BadRequestException("File size exceeds the maximum allowed size of 5MB");
+        // 파일 데이터와 URL을 JSON으로 받음
+        String base64FileData = requestBody.has("fileData") ? requestBody.get("fileData").asText() : null;
+        String imageUrl = requestBody.has("imageUrl") ? requestBody.get("imageUrl").asText() : null;
+        String originalFileName = requestBody.has("fileName") ? requestBody.get("fileName").asText() : null;
+
+        if (base64FileData != null) {
+            byte[] fileData = Base64.getDecoder().decode(base64FileData);
+            if (fileData.length > MAX_FILE_SIZE) {
+                throw new BadRequestException("File size exceeds the maximum allowed size of 5MB");
+            }
+            memberService.uploadUserImage(accessToken, fileData, originalFileName);
+        } else if (imageUrl != null) {
+            memberService.updateUserImageByUrl(accessToken, imageUrl);
+        } else {
+            throw new BadRequestException("No file or imageUrl provided");
         }
-        // 파일 데이터를 바이트 배열로 변환
-        byte[] fileData = file.getBytes();
-        // 서비스 호출하여 이미지 업로드 및 사용자 정보 업데이트
-        memberService.uploadUserImage(accessToken, fileData);
+
         return ResponseEntity.ok(Map.of("message", "Profile Image Change Successful"));
     }
 
