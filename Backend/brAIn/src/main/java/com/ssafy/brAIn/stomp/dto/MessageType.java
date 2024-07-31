@@ -9,5 +9,6 @@ public enum MessageType {
     SUBMIT_POST_IT,
     NEXT_ROUND,
     START_CONFERENCE,
-    PLUS_TIME;
+    PLUS_TIME,
+    START_VOTE;
 }

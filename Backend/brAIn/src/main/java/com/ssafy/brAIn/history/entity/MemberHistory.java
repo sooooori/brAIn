@@ -67,6 +67,11 @@ public class MemberHistory implements UserDetails {
         this.status = status;
     }
 
+    public MemberHistory setOrder(Integer order) {
+        this.orders = order;
+        return this;
+    }
+
     // 기록 갱신 메서드
     public MemberHistory historyUpdate(){
         return this;

@@ -77,15 +77,28 @@ public class WebSocketEventListener {
                     .conferenceRoom(room.get())
                     .build();
 
+
+
             if (memberHistory != null) {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(memberHistory, null, memberHistory.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
                 System.out.println("User connected: " + memberHistory.getUsername());
+
+                Optional<MemberHistory> optionalMemberHistory = memberHistoryRepository.findById(memberHistoryId);
+                if(optionalMemberHistory.isEmpty() ){
+                    memberHistoryRepository.save(memberHistory);
+                }else{
+                    optionalMemberHistory.get().historyStateUpdate(Status.COME);
+                    memberHistoryRepository.save(optionalMemberHistory.get());
+                }
             }
+
 
             //레디스에 sessionId와 함께 닉네임을 저장해서 갑작스러운 종료 때, 닉네임을 얻기 위함.
             String sessionId = accessor.getSessionId();
-            redisUtils.save(sessionId,jwtUtilForRoom.getNickname(token));
+            redisUtils.save(sessionId,memberId+":"+roomId);
+
         }
     }
 
@@ -99,7 +112,16 @@ public class WebSocketEventListener {
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
+        String[] historyId=redisUtils.getData(sessionId).split(":");
+        Integer memberId=Integer.parseInt(historyId[0]);
+        Integer roomId=Integer.parseInt(historyId[1]);
+
+        MemberHistoryId memberHistoryId=new MemberHistoryId(memberId,roomId);
+        MemberHistory memberHistory=memberHistoryRepository.findById(memberHistoryId).get();
+        memberHistory.historyStateUpdate(Status.OUT);
+        memberHistoryRepository.save(memberHistory);
         System.out.println("Session ID: " + sessionId + " disconnected.");
+        System.out.println("User nickname: " + memberHistory.getNickName() + " disconnected.");
         // 추가적인 로직 구현
     }
 }

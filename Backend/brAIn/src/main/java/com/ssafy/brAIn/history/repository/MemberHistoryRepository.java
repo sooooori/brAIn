@@ -10,5 +10,7 @@ import java.util.List;
 @Repository
 public interface MemberHistoryRepository extends JpaRepository<MemberHistory, MemberHistoryId> {
     List<MemberHistory> findByMemberId(int memberId);
+
+    List<MemberHistory> findByConferenceRoomId(Integer roomId);
 }
 

@@ -12,9 +12,7 @@ import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
 import com.ssafy.brAIn.stomp.dto.UserState;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
-import com.ssafy.brAIn.stomp.response.ResponseGroupPost;
 import com.ssafy.brAIn.util.RedisUtils;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class MessageService {
@@ -64,6 +62,27 @@ public class MessageService {
         return false;
     }
 
+    //유저의 2/3가 패스하면 종료되야 함.
+    public boolean isStep1EndCondition(Integer roomId) {
+        AtomicInteger count= new AtomicInteger();
+
+        List<String> nicknames=redisUtils.getListFromKey(roomId+":nicknames")
+                .stream()
+                .map(Object::toString)
+                .toList();
+
+        int len=nicknames.size();
+
+        nicknames.forEach((nickname)->{
+            if(redisUtils.getData(roomId+":"+nickname).equals("PASS")){
+                count.getAndIncrement();
+            }
+        });
+
+        return count.get() > len * (2.0 / 3.0);
+
+    }
+
     //멤버가 대기방 입장 시, 레디스에 저장(테스트 완)
     public void enterWaitingRoom(Integer roomId,String email) {
 
@@ -71,10 +90,11 @@ public class MessageService {
         redisUtils.setData(key,email,3600L);
     }
 
-    //멤버가 대기방에서 나갔을 때, 레디스에서 삭제(테스트 완)
-    public void exitWaitingRoom(Integer roomId,String username) {
+    //멤버가 대기방에서 나갔을 때, 레디스에 저장(테스트 완)
+    public void exitWaitingRoom(Integer roomId,String nickname) {
         String key=roomId + ":" + "email";
-        redisUtils.removeDataInList(key,username);
+        redisUtils.setDataInSet(roomId+":out",nickname,7200L);
+
     }
 
     //멤버가 회의 중 나갔을 때 history 테이블 업데이트(테스트 완)
@@ -87,6 +107,7 @@ public class MessageService {
         MemberHistoryId memberHistoryId=new MemberHistoryId(member.get().getId(),roomId);
         MemberHistory memberHistory= memberHistoryRepository.findById(memberHistoryId).get();
         memberHistory.historyStateUpdate(Status.OUT);
+        memberHistoryRepository.save(memberHistory);
 
         //redis에 나간유저를 저장해놓자.
         redisUtils.setDataInSet(roomId+":out",memberHistory.getNickName(),7200L);
@@ -108,63 +129,27 @@ public class MessageService {
         redisUtils.save(key,userState.toString());
     }
 
-    //방장이 회의 시작 요청을 보내면 현재 멤버들을 닉네임으로 기록한다.
+    //방장이 회의 시작 요청을 보내면 현재 멤버들을 닉네임으로 기록한다.(테스트 완료)
     public List<Object> startConferences(Integer roomId,String chiefEmail) {
-        String key=roomId + ":" + "email";
-        List<String> users=redisUtils.getListFromKey(key)
-                .stream()
-                .map(Object::toString)
-                .toList();
 
-        List<Integer> order=makeRandomList(users.size());
-        List<String> nicknames = getNicknames(roomId);
+        //현재 회의룸에 있는 모든 유저들을 가져온다.
+        List<MemberHistory> memberHistories=memberHistoryRepository.findByConferenceRoomId(roomId);
 
-        for(int i=0;i<users.size();i++){
-            String userEmail = users.get(i);
-            Role role = userEmail.equals(chiefEmail) ? Role.CHIEF : Role.MEMBER;
+        //한번 섞어준다.
+        Collections.shuffle(memberHistories);
 
-            MemberHistory memberHistory=MemberHistory.builder()
-                    .id(new MemberHistoryId(memberRepository.findByEmail(users.get(i)).get().getId(),roomId))
-                    .role(role)
-                    .status(Status.COME)
-                    .orders(order.get(i))
-                    .nickName(nicknames.get(i))
-                    .member(memberRepository.findByEmail(users.get(i)).get())
-                    .conferenceRoom(conferenceRoomRepository.getReferenceById(roomId))
-                    .build();
-
-            //레디스에 유저들의 순서를 닉네임으로 저장
-            redisUtils.setSortedSet(roomId+":"+"order", order.get(i),nicknames.get(i) );
+        for(int i=0;i<memberHistories.size();i++){
+            MemberHistory memberHistory=memberHistories.get(i);
+            memberHistory.setOrder(i);
             memberHistoryRepository.save(memberHistory);
-        }
+            if(memberHistory.getStatus().equals(Status.OUT))continue;
+            redisUtils.setSortedSet(roomId+":"+"order",i,memberHistory.getNickName());
 
+        }
         return redisUtils.getSortedSet(roomId+":order");
     }
 
 
-    //닉네임 목록을 가져옴
-    private List<String> getNicknames(Integer roomId) {
-
-        List<String> nicknames = new ArrayList<>(redisUtils.getListFromKey(roomId + ":nicknames").stream()
-                .map(Object::toString).toList());
-
-        //랜덤으로 부여하기 위해 한번 섞어준다.
-        Collections.shuffle(nicknames);
-
-        return nicknames;
-    }
-
-    //유저들의 순서를 정하기 위한 함수
-    private List<Integer> makeRandomList(int size) {
-        List<Integer> order=new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            order.add(i);
-        }
-
-        Collections.shuffle(order);
-        return order;
-
-    }
 
     //현재 유저의 다음 순서의 사람을 가져온다.(닉네임)
     public String NextOrder(Integer roomId,String curUser) {
