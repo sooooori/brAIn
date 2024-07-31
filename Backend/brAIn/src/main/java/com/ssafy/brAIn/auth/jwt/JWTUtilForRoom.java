@@ -3,12 +3,14 @@ package com.ssafy.brAIn.auth.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+@Component
 public class JWTUtilForRoom {
 
     private final SecretKey secretKey;
@@ -39,8 +41,8 @@ public class JWTUtilForRoom {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
     }
 
-    public Integer getRoomId(String token){
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("roomId", Integer.class);
+    public String getRoomId(String token){
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("roomId", String.class);
     }
 
 
@@ -50,7 +52,7 @@ public class JWTUtilForRoom {
     }
 
 
-    public String createJwt(String category,String username, String role,String nickname,Integer roomId, Long expiredMs) {
+    public String createJwt(String category,String username, String role,String nickname,String roomId, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("category",category)

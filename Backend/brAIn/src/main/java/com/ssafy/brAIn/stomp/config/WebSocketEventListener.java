@@ -30,25 +30,33 @@ public class WebSocketEventListener {
     private final ConferenceRoomRepository conferenceRoomRepository;
     private final RedisUtils redisUtils;
     private final JWTUtilForRoom jwtUtilForRoom;
-    private MemberHistoryRepository memberHistoryRepository;
-    private MemberRepository memberRepository;
+    private final MemberHistoryRepository memberHistoryRepository;
+    private final MemberRepository memberRepository;
 
-    public WebSocketEventListener(ConferenceRoomRepository conferenceRoomRepository, RedisUtils redisUtils, JWTUtilForRoom jwtUtilForRoom) {
+    public WebSocketEventListener(ConferenceRoomRepository conferenceRoomRepository,
+                                  RedisUtils redisUtils,
+                                  JWTUtilForRoom jwtUtilForRoom,
+                                  MemberRepository memberRepository,
+                                  MemberHistoryRepository memberHistoryRepository) {
         this.conferenceRoomRepository = conferenceRoomRepository;
         this.redisUtils = redisUtils;
         this.jwtUtilForRoom = jwtUtilForRoom;
+        this.memberRepository = memberRepository;
+        this.memberHistoryRepository = memberHistoryRepository;
     }
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectEvent event) {
+        System.out.println("hihi");
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String token = accessor.getFirstNativeHeader("Authorization");
 
+        System.out.println(token);
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
 
             String email=jwtUtilForRoom.getUsername(token);
-            Integer roomId=jwtUtilForRoom.getRoomId(token);
+            Integer roomId=Integer.parseInt(jwtUtilForRoom.getRoomId(token));
             Integer memberId=getMemberId(email);
             Role role=Role.valueOf(jwtUtilForRoom.getRole(token));
             Optional<Member> member = memberRepository.findByEmail(email);
@@ -82,6 +90,7 @@ public class WebSocketEventListener {
     }
 
     private Integer getMemberId(String email) {
+        System.out.println("email:"+email);
         Member member =memberRepository.findByEmail(email).get();
         return member.getId();
     }
