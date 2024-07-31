@@ -74,6 +74,10 @@ const NavBar = () => {
         });
     };
 
+    const handleProfileUpdate = async () => {
+        navigate('/profile')
+    };
+
     return (
         <nav className="navbar">
             <div className="navbar-logo">
@@ -93,14 +97,20 @@ const NavBar = () => {
                         brAIn 시작하기
                     </Button>
                 ) : (
-                    <Button
-                        variant="outlined"
-                        color="secondary"
-                        className="logout" // CSS에서 정의된 클래스
-                        onClick={confirmLogout}
-                    >
-                        로그아웃
-                    </Button>
+                    <>
+                        <Button
+                            onClick={handleProfileUpdate}>
+                            회원정보수정
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            color="secondary"
+                            className="logout" // CSS에서 정의된 클래스
+                            onClick={confirmLogout}
+                        >
+                            로그아웃
+                        </Button>
+                    </>
                 )}
             </div>
         </nav>

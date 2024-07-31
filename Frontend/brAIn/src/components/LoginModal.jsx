@@ -56,10 +56,17 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
             const response = await axios.post('http://localhost:8080/api/v1/members/login', { email, password });
             const { accessToken } = response.data;
 
+            console.log('Login response:', response.data);
+
+            if (!accessToken) {
+                setErrorMessage('로그인 정보가 올바르지 않습니다.');
+                return;
+            }
+
             localStorage.setItem('accessToken', accessToken);
 
             // Redux에 로그인 상태 업데이트
-            dispatch(login({ email }));
+            dispatch(login({ accessToken }));
 
             navigate('/');
             onRequestClose();
