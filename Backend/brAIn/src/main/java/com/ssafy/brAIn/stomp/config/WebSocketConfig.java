@@ -40,13 +40,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("*"); // React 앱의 주소
+                .setAllowedOrigins("*");
 
     }
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new AuthorizationChannelInterceptor(authorizationManager));
+//        registration.interceptors(new AuthorizationChannelInterceptor(authorizationManager));
     }
 
 

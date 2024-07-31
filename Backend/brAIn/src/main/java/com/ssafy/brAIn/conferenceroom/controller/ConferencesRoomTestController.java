@@ -18,7 +18,7 @@ public class ConferencesRoomTestController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createRoom() {
-        String accessToken=jwtUtilForRoom.createJwt("access","123@naver.com","CHIEF","하마","1",1650000000L);
+        String accessToken=jwtUtilForRoom.createJwt("access","h0568@naver.com","CHIEF","하마","1",1650000000L);
         System.out.println();
         return ResponseEntity.ok(Map.of("accessToken", accessToken));
     }

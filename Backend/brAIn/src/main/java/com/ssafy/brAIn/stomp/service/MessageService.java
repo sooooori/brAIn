@@ -111,6 +111,7 @@ public class MessageService {
     //방장이 회의 시작 요청을 보내면 현재 멤버들을 닉네임으로 기록한다.
     public List<Object> startConferences(Integer roomId,String chiefEmail) {
         String key=roomId + ":" + "email";
+
         List<String> users=redisUtils.getListFromKey(key)
                 .stream()
                 .map(Object::toString)

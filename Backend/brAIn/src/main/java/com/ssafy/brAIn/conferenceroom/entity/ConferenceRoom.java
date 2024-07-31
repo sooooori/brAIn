@@ -68,6 +68,9 @@ public class ConferenceRoom {
     @Column(name = "participate_url")
     private String participateUrl;
 
+    @Column(name = "round")
+    private Integer round;
+
     @Builder
     public ConferenceRoom(String subject){
         this.subject = subject;
@@ -77,6 +80,7 @@ public class ConferenceRoom {
         this.inviteCode = CommonUtils.generateRandomMixStr(6,true);
         this.secureId = MeetingUrlGenerator.generateMeetingUrl();
         this.participateUrl = String.format("https://bardisue.store/v1/conferences/%s", this.secureId);
+        this.round = 0;
     }
 
     public ConferenceRoom update() {

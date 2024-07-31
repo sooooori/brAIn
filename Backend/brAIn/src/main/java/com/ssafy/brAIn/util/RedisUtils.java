@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.util;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class RedisUtils {
 
+    @Qualifier("redisTemplate")
     private final RedisTemplate<String, Object> redisTemplate;
 
     public RedisUtils(RedisTemplate<String, Object> redisTemplate) {
