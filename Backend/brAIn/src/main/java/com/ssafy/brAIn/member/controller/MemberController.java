@@ -152,10 +152,11 @@ public class MemberController {
 
     // 이메일 인증번호 생성
     @PostMapping("/sendAuthNumber")
-    public ResponseEntity<String> getEmailForVerification(@RequestBody EmailRequest request) {
+    public ResponseEntity<?> getEmailForVerification(@RequestBody EmailRequest request) {
         String email = request.getEmail();
         LocalDateTime requestedAt = LocalDateTime.now();
         emailService.sendEmail(email, requestedAt);
+        System.out.println("falg");
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Email Verification Successful");
     }
 
