@@ -41,6 +41,14 @@ public class MemberController {
     private final MemberDetailService memberDetailService;
     private final EmailService emailService;
 
+    // 이메일 중복 검사
+    @PostMapping("/checkEmail")
+    public ResponseEntity<?> checkEmail(@RequestBody String email) {
+        memberService.emailCheck(email);
+        return ResponseEntity.ok(Map.of("message", "Email check successfully"));
+    }
+
+
     // 회원가입
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody MemberRequest memberRequest) {
@@ -110,7 +118,7 @@ public class MemberController {
         response.addCookie(cookie);
 
         // 새 accessToken을 응답 본문에 포함하여 발급
-        return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+        return ResponseEntity.ok(Map.of("accessToken", newAccessToken, "refreshToken", newRefreshToken));
     }
 
     // 로그아웃
@@ -144,10 +152,11 @@ public class MemberController {
 
     // 이메일 인증번호 생성
     @PostMapping("/sendAuthNumber")
-    public ResponseEntity<String> getEmailForVerification(@RequestBody EmailRequest request) {
+    public ResponseEntity<?> getEmailForVerification(@RequestBody EmailRequest request) {
         String email = request.getEmail();
         LocalDateTime requestedAt = LocalDateTime.now();
         emailService.sendEmail(email, requestedAt);
+        System.out.println("falg");
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Email Verification Successful");
     }
 

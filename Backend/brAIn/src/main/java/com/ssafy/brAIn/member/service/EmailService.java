@@ -23,6 +23,7 @@ public class EmailService {
     private final Integer EXPIRATION_TIME_IN_MINUTES = 5; //제한시간 5분
     private final JavaMailSender mailSender;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate1;
 
     // 인증 코드 발송
     public void sendEmail(String to, LocalDateTime sendAt) {
@@ -32,8 +33,7 @@ public class EmailService {
         message.setSubject(String.format("Email Verification For %s", to)); //이메일 제목
 
         VerificationCode code = generateVerificationCode(sendAt);
-        redisTemplate.opsForValue().set(to, code, EXPIRATION_TIME_IN_MINUTES, TimeUnit.MINUTES);
-
+        redisTemplate1.opsForValue().set(to, code, EXPIRATION_TIME_IN_MINUTES, TimeUnit.MINUTES);
         String text = code.generateCodeMessage();
         message.setText(text);
         mailSender.send(message);
@@ -41,7 +41,7 @@ public class EmailService {
 
     // 인증코드 검증
     public void verifyEmail(String email, String code, LocalDateTime verifiedAt) {
-        VerificationCode verificationCode = (VerificationCode) redisTemplate.opsForValue().get(email);
+        VerificationCode verificationCode = (VerificationCode) redisTemplate1.opsForValue().get(email);
         if (verificationCode == null) {
             throw new NoSuchElementException("Verification code not found");
         }
@@ -56,7 +56,7 @@ public class EmailService {
             throw new IllegalArgumentException("Invalid verification code");
         }
 
-        redisTemplate.delete(email); // 인증 완료 후 Redis에서 삭제
+        redisTemplate1.delete(email); // 인증 완료 후 Redis에서 삭제
     }
 
     // 6자리 랜덤 인증 숫자

@@ -1,50 +1,42 @@
-// src/utils/axios.js
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
-// 토큰 유효성 검사 함수
-const isTokenExpired = (expirationTime) => {
-    const now = new Date().getTime();
-    return now > expirationTime;
-};
+axios.defaults.withCredentials = true;
 
-// 토큰 갱신 요청 함수
-const refreshAccessToken = async () => {
-    try {
-        const response = await axios.post('http://localhost:8080/api/v1/members/refresh', null, {
-            withCredentials: true // 쿠키를 포함하여 요청
-        });
-        const { accessToken } = response.data;
+// 인터셉터 추가
+axios.interceptors.response.use(
+    response => response,
+    async error => {
+        const originalRequest = error.config;
+        if (error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            try {
+                const response = await axios.post('http://localhost:8080/api/v1/members/refresh', {}, { withCredentials: true });
+                const { accessToken } = response.data;
+                
+                // 새로운 accessToken을 로컬 스토리지에 저장
+                const expirationTimeAccess = new Date(new Date().getTime() + 10 * 60 * 1000); // 10분
+                const expirationTimeAccessKST = new Intl.DateTimeFormat('ko-KR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false,
+                    timeZone: 'Asia/Seoul'
+                }).format(expirationTimeAccess);
 
-        const expirationTimeAccess = new Date(new Date().getTime() + 10 * 60 * 1000); // 10분 유효시간
-        const expirationTimeAccessString = expirationTimeAccess.toISOString();
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('accessTokenExpiration', expirationTimeAccessString);
-
-        return accessToken;
-    } catch (error) {
-        console.error('Failed to refresh access token:', error);
-        return null;
-    }
-};
-
-// Axios 인터셉터 설정
-axios.interceptors.request.use(
-    async (config) => {
-        let accessToken = localStorage.getItem('accessToken');
-        const expirationTimeAccess = new Date(localStorage.getItem('accessTokenExpiration')).getTime();
-
-        if (isTokenExpired(expirationTimeAccess)) {
-            accessToken = await refreshAccessToken();
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('accessTokenExpiration', expirationTimeAccessKST);
+                
+                axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+                originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+                return axios(originalRequest);
+            } catch (err) {
+                console.error('리프레시 토큰을 사용한 액세스 토큰 재발급 실패:', err);
+                // 필요한 경우 로그아웃 처리 등을 수행
+            }
         }
-
-        if (accessToken) {
-            config.headers.Authorization = `Bearer ${accessToken}`;
-        }
-
-        return config;
-    },
-    (error) => {
         return Promise.reject(error);
     }
 );

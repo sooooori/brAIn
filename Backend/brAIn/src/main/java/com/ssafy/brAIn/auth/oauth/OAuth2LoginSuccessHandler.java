@@ -1,6 +1,5 @@
 package com.ssafy.brAIn.auth.oauth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.entity.Role;
@@ -17,7 +16,6 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -25,29 +23,58 @@ import java.util.Map;
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final MemberRepository memberRepository;
-    // JSON 변환을 위한 ObjectMapper
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         // OAuth2User 객체에서 사용자 정보를 가져옴
         DefaultOAuth2User oauth2User = (DefaultOAuth2User) authentication.getPrincipal();
 
-        // 사용자 정보에서 이메일과 이름을 추출
-        String email = oauth2User.getAttribute("email");
-        String name = oauth2User.getAttribute("name");
+        // 제공자별로 사용자 정보를 추출
+        String email = null;
+        String name = null;
+        Social social = null;
+
+        Map<String, Object> attributes = oauth2User.getAttributes();
+
+        if (attributes.containsKey("email")) {
+            // 구글 로그인 처리
+            email = (String) attributes.get("email");
+            name = (String) attributes.get("name");
+            social = Social.Google;
+        } else if (attributes.containsKey("kakao_account")) {
+            // 카카오 로그인 처리
+            Object kakaoAccountObj = attributes.get("kakao_account");
+            if (kakaoAccountObj instanceof Map<?, ?> kakaoAccount) {
+                email = (String) kakaoAccount.get("email");
+
+                Object profileObj = kakaoAccount.get("profile");
+                if (profileObj instanceof Map<?, ?> profile) {
+                    name = (String) profile.get("nickname");
+                }
+            }
+            social = Social.Kakao;
+        }
+
+        if (email == null) {
+            throw new IllegalArgumentException("Email not found from OAuth2 provider");
+        }
+
+        // 람다식에서 사용될 변수를 final로 선언하여 사용
+        final String finalEmail = email;
+        final String finalName = name;
+        final Social finalSocial = social;
 
         // 데이터베이스에서 사용자 정보를 조회하거나 없으면 새로 생성
-        Member member = memberRepository.findByEmail(email).orElseGet(() ->
+        Member member = memberRepository.findByEmail(finalEmail).orElseGet(() ->
                 memberRepository.save(Member.builder()
-                        .email(email)
-                        .name(name)
+                        .email(finalEmail)
+                        .name(finalName)
                         .role(Role.USER)
-                        .social(Social.Google)
+                        .social(finalSocial)
                         .locked(true)
                         .loginFailCount(0)
                         .photo("null")
-                        .password("googleLoginUser")
+                        .password(finalSocial + "LoginUser")
                         .build())
         );
 
