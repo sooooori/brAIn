@@ -4,7 +4,6 @@ import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.member.dto.MemberRequest;
 import com.ssafy.brAIn.member.dto.MemberResponse;
-import com.ssafy.brAIn.member.dto.PasswordRequest;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.service.MemberDetailService;
 import com.ssafy.brAIn.member.service.MemberService;
@@ -12,7 +11,6 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -124,7 +122,7 @@ public class MemberController {
 
     // 이메일로 사용자 정보 조회
     @GetMapping("/email")
-    public ResponseEntity<?> getEmail(@RequestParam String email) {
+    public ResponseEntity<?> getEmail(@RequestBody String email) {
         // 이메일로 사용자 정보 조회
         Optional<Member> member = memberService.findByEmail(email);
         if (member.isPresent()) {
@@ -136,24 +134,43 @@ public class MemberController {
         }
     }
 
+    // 회원정보 조회
+    @GetMapping("/member")
+    public ResponseEntity<?> getMember(@RequestHeader("Authorization") String token) {
+        // Bearer 접두사 제거
+        String accessToken = token.replace("Bearer ", "");
+        // 조회
+        MemberResponse memberResponse = memberService.getMember(accessToken);
+        return ResponseEntity.ok(Map.of("member", memberResponse));
+    }
+
     // 회원 탈퇴
     @DeleteMapping("/member")
-    public ResponseEntity<?> deleteMember(@RequestBody MemberRequest memberRequest) {
-        memberService.deleteMember(memberRequest);
+    public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String token, @RequestBody String password) {
+        // Bearer 접두사 제거
+        String accessToken = token.replace("Bearer ", "");
+        // 정보 삭제
+        memberService.deleteMember(accessToken, password);
         return ResponseEntity.ok(Map.of("message", "Member deleted successfully"));
     }
 
     // 회원 프로필 사진 변경
     @PutMapping("/updatePhoto")
-    public ResponseEntity<?> updatePhoto(@RequestParam String email, @RequestParam String photo) {
-        memberService.updatePhoto(email, photo);
+    public ResponseEntity<?> updatePhoto(@RequestHeader("Authorization") String token, @RequestBody String photo) {
+        // Barer 접두사 제거
+        String accessToken = token.replace("Bearer ", "");
+        // 사진 변경
+        memberService.updatePhoto(accessToken, photo);
         return ResponseEntity.ok(Map.of("message", "Profile Image Change Successful"));
     }
 
     // 비밀번호 재설정
     @PutMapping("/resetPassword")
-    public ResponseEntity<?> resetPassword(@RequestBody PasswordRequest passwordRequest) {
-        memberService.resetPassword(passwordRequest);
+    public ResponseEntity<?> resetPassword(@RequestHeader("Authorization") String token, @RequestBody String newPassword) {
+        // Barer 접두사 제거
+        String accessToken = token.replace("Bearer ", "");
+        // 비밀번호 재설정
+        memberService.resetPassword(accessToken, newPassword);
         return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
     }
 }

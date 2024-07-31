@@ -3,7 +3,7 @@ package com.ssafy.brAIn.member.service;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.member.dto.MemberRequest;
-import com.ssafy.brAIn.member.dto.PasswordRequest;
+import com.ssafy.brAIn.member.dto.MemberResponse;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
 import jakarta.servlet.http.Cookie;
@@ -71,39 +71,44 @@ public class MemberService {
         return memberRepository.findByEmail(email);
     }
 
-    // 회원 탈퇴
-    public void deleteMember(MemberRequest memberRequest) {
-        Member member = memberRepository.findByEmail(memberRequest.getEmail())
+    // 회원정보 조회 (토큰)
+    public MemberResponse getMember(String token) {
+        String email = JwtUtil.getEmail(token);
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
+        return MemberResponse.fromEntity(member);
+    }
 
+    // 회원 탈퇴
+    public void deleteMember(String token, String password) {
+        String email = JwtUtil.getEmail(token);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("User not found"));
         // 비밀번호 일치 여부 확인
-        if (!bCryptPasswordEncoder.matches(memberRequest.getPassword(), member.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(password ,member.getPassword())) {
             throw new BadRequestException("Wrong password");
         }
-
+        // 회원정보 삭제
         memberRepository.delete(member);
     }
 
-    // 회원 정보 수정
-    public void updatePhoto(String email, String photoUrl) {
+    // 회원 정보(프로필 사진) 수정
+    public void updatePhoto(String token, String photo) {
+        String email = JwtUtil.getEmail(token);
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
-        member.updatePhoto(photoUrl);
+        member.updatePhoto(photo);
         memberRepository.save(member);
     }
 
     // 비밀번호 재설정
-    public void resetPassword(PasswordRequest passwordRequest) {
-        Member member = memberRepository.findByEmail(passwordRequest.getEmail())
+    public void resetPassword(String token, String newPassword) {
+        String email = JwtUtil.getEmail(token);
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
 
-        // 기존 비밀번호 확인
-        if (!bCryptPasswordEncoder.matches(passwordRequest.getOldPassword(), member.getPassword())) {
-            throw new BadRequestException("Wrong password");
-        }
-
         // 새로운 비밀번호 암호화 및 저장
-        String encodedPassword = bCryptPasswordEncoder.encode(passwordRequest.getNewPassword());
+        String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
         member.resetPassword(encodedPassword);
         memberRepository.save(member);
     }
