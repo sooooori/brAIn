@@ -104,34 +104,14 @@ const Home = () => {
         </div>
       )}
       <div className={`section ${leftInView ? 'fade-left' : ''}`} ref={leftRef}>
-        <div>
-          <h1>AI와 함께 회의하기</h1>
-          <br />
-          <p>AI와 다양한 의견으로 창의적인 브레인스토밍 진행하기 !</p>
-        </div>
-        <div>
-          <img src="images/google.png" alt="Left" />
-        </div>
+        <img src="images/google.png" alt="Left" />
       </div>
 
       <div className={`section ${rightInView ? 'fade-right' : ''}`} ref={rightRef}>
-        <div>
-          <h1>익명 포스트잇 보드</h1>
-          <br />
-          <p>내 생각을 바로바로 표현 !
-          랜덤 색상 표현으로 익명성 보장 !</p>
-        </div>
-        <div>
-          <img src="images/google.png" alt="Right" />
-        </div>
+        <img src="images/google.png" alt="Right" />
       </div>
 
       <div className={`section ${centerInView ? 'fade-center' : ''}`} ref={centerRef}>
-        <div>
-          <h1>아이디어 화상 토론</h1>
-          <br />
-          <p>최종 아이디어에 대한 자유로운 토론 시간</p>
-        </div>
         <img src="images/google.png" alt="Center" />
       </div>
     </div>

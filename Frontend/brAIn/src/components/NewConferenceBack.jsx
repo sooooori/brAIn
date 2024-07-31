@@ -1,11 +1,9 @@
 import React from 'react';
-import { Box, Typography, TextField, IconButton, Button as MuiButton } from '@mui/material';
-import Button from './Button/Button'; // Adjust path if necessary
-import CloseIcon from '@mui/icons-material/Close'; // Use MUI's CloseIcon
-import AddIcon from '@mui/icons-material/Add'; // Use MUI's AddIcon
+import { Box, Typography, TextField, IconButton, Slider } from '@mui/material';
+import Button from './Button/Button';
+import { Close as CloseIcon, Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import axios from '../utils/Axios';
-// import useAuth from './hooks/useAuth'; // Assuming you have a useAuth hook
+import axios from 'axios';
 
 const NewConferenceBack = ({ 
   handleNewConferenceFalse,
@@ -13,20 +11,17 @@ const NewConferenceBack = ({
   handleNewConferenceClickedTrue,
 }) => {
   const navigate = useNavigate();
-  // const { checkAuth } = useAuth();
   const [title, setTitle] = React.useState('');
-  const [description, setDescription] = React.useState('');
+  const [preparationTime, setPreparationTime] = React.useState(5); // Default to 5 minutes
 
-  // Function to handle the creation of a new conference
   const handleCreateButtonClicked = () => {
-    if (title.trim() && description.trim()) {
-      // checkAuth(); // Check authentication
+    if (title.trim() && preparationTime > 0) {
       axios
         .post(
           `${import.meta.env.VITE_API_SERVER_URL}/conference`,
           {
             title,
-            description,
+            preparationTime,
             email: localStorage.getItem('email'),
           },
           {
@@ -35,8 +30,8 @@ const NewConferenceBack = ({
             },
           }
         )
-        .then((result) => {
-          handleNewConferenceClickedTrue(); // Trigger the flip to show the confirmation
+        .then(() => {
+          handleNewConferenceClickedTrue();
         })
         .catch((error) => {
           if (error.response?.status === 401) {
@@ -51,9 +46,8 @@ const NewConferenceBack = ({
   };
 
   const handleCloseButtonClicked = () => {
-    // Reset input fields and close the card
     setTitle('');
-    setDescription('');
+    setPreparationTime(5); // Reset to default
     handleNewConferenceFalse();
   };
 
@@ -61,10 +55,18 @@ const NewConferenceBack = ({
     <Box
       display="flex"
       flexDirection="column"
-      justifyContent="center"
       alignItems="center"
+      justifyContent="center"
       p={3}
-      className="w-full h-full"
+      sx={{
+        width: '100%',
+        maxWidth: '500px',
+        height: '100%',
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        boxShadow: 3,
+        overflow: 'hidden',
+      }}
     >
       <Box
         display="flex"
@@ -74,29 +76,30 @@ const NewConferenceBack = ({
         mb={2}
       >
         <Typography variant="h6">새로운 회의 생성하기</Typography>
-        <IconButton onClick={handleCloseButtonClicked} color="inherit">
+        <IconButton onClick={handleCloseButtonClicked}>
           <CloseIcon />
         </IconButton>
       </Box>
 
       {isNewConferenceClicked ? (
         <>
-          <Box mb={2}>
+          <Box width="100%" mb={2}>
             <Typography variant="h6">회의 제목</Typography>
             <Typography variant="body1">{title}</Typography>
           </Box>
-          <Box mb={2}>
-            <Typography variant="h6">회의 설명</Typography>
-            <Typography variant="body1">{description}</Typography>
+          <Box width="100%" mb={2}>
+            <Typography variant="h6">아이디어 준비 시간</Typography>
+            <Typography variant="body1">{preparationTime} 분</Typography>
           </Box>
-          <MuiButton
+          <Button
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-            onClick={() => navigate(`/instructor?roomid=${title}`)} // Adjust as needed
+            onClick={() => navigate(`/instructor?roomid=${title}`)}
+            sx={{ width: '100%', mt: 2 }}
           >
             회의 생성하기
-          </MuiButton>
+          </Button>
         </>
       ) : (
         <>
@@ -107,15 +110,22 @@ const NewConferenceBack = ({
             width="100%"
             mb={2}
           >
-            <Typography variant="h6">회의 제목</Typography>
+            <Typography variant="h6">회의 주제</Typography>
             <TextField
               variant="outlined"
               fullWidth
-              placeholder="회의 제목을 입력해주세요"
-              maxLength={50}
+              placeholder="회의 주제를 입력해주세요"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               inputProps={{ maxLength: 50 }}
+              sx={{ 
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '8px',
+                },
+                '& .MuiInputBase-input': {
+                  fontSize: '16px',
+                },
+              }}
             />
           </Box>
 
@@ -126,24 +136,43 @@ const NewConferenceBack = ({
             width="100%"
             mb={2}
           >
-            <Typography variant="h6">회의 설명</Typography>
-            <TextField
-              variant="outlined"
-              fullWidth
-              multiline
-              rows={4}
-              placeholder="회의 설명을 입력해주세요"
-              maxLength={200}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              inputProps={{ maxLength: 200 }}
+            <Typography variant="h6">아이디어 준비 기간</Typography>
+            <Typography variant="body1">
+              브레인스토밍을 위한 아이디어 준비 제한 시간을 설정해주세요.
+            </Typography>
+            <Slider
+              value={preparationTime}
+              onChange={(e, newValue) => setPreparationTime(newValue)}
+              aria-labelledby="preparation-time-slider"
+              valueLabelDisplay="auto"
+              min={1}
+              max={10} // Set maximum to 10 minutes
+              step={1} // Adjust step to 1 minute for fine control
+              sx={{
+                color: '#D1C4E9', // Light purple color for the slider
+                '& .MuiSlider-thumb': {
+                  borderRadius: '50%',
+                  bgcolor: '#D1C4E9', // Light purple color for the thumb
+                },
+                '& .MuiSlider-track': {
+                  borderRadius: '4px',
+                },
+                '& .MuiSlider-rail': {
+                  borderRadius: '4px',
+                },
+              }}
             />
+            <Typography variant="body2" color="textSecondary">
+              선택된 시간: {preparationTime} 분
+            </Typography>
           </Box>
 
           <Button
-            onClick={handleCreateButtonClicked}
+            variant="contained"
+            color="primary"
             startIcon={<AddIcon />}
-            buttonStyle="blue"
+            onClick={handleCreateButtonClicked}
+            sx={{ width: '100%', mt: 2 }}
           >
             회의 생성하기
           </Button>

@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-modal';
-import { Button, TextField, IconButton } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from '../utils/Axios'; // Import axios
-import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom'; // Import useNavigate and useLocation
 
 // Custom styles for the modal
 const customStyles = {
@@ -27,107 +27,114 @@ const customStyles = {
     button: {
         marginTop: '10px',
         marginBottom: '10px',
+    },
+    errorText: {
+        color: '#ff5252',  // Red color for error messages
+        fontSize: '14px',
+        marginTop: '10px',
     }
 };
 
-const ResetPasswordModal = ({ isOpen, onRequestClose, token }) => {
+const ResetPasswordCompletionModal = ({ isOpen, onRequestClose }) => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
-    const { accessToken } = useSelector((state) => state.auth);
 
-    // Reset state when modal is closed
-    const handleRequestClose = () => {
-        setNewPassword('');
-        setConfirmPassword('');
-        setErrorMessage('');
-        setSuccessMessage('');
-        onRequestClose();
-    };
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    // Handle resetting password
-    const handleResetPassword = async () => {
+    const handlePasswordReset = () => {
+        if (!newPassword) {
+            setErrorMessage('새 비밀번호를 입력해주세요.');
+            return;
+        }
         if (newPassword !== confirmPassword) {
             setErrorMessage('비밀번호가 일치하지 않습니다.');
-            setSuccessMessage('');
+            return;
+        }
+        if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(newPassword)) {
+            setErrorMessage('비밀번호는 최소 8자 이상, 문자와 숫자를 포함해야 합니다.');
             return;
         }
 
-        try {
-            const response = await axios.put(
-                'http://localhost:8080/api/v1/members/resetPassword',
-                { password: newPassword }, // Body content
-                {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
+        axios.post('http://localhost:8080/api/v1/members/resetPassword', { newPassword })
+            .then(response => {
+                // Password reset successful, now logout
+                handleLogout();
+            })
+            .catch(error => {
+                console.error('Password reset failed', error);
+                setErrorMessage('비밀번호 재설정 중 오류가 발생했습니다.');
+            });
+    };
+
+    const handleLogout = () => {
+        axios.post('http://localhost:8080/api/v1/members/logout')
+            .then(response => {
+                // Perform different actions based on the current location
+                if (location.pathname === '/mypage') {
+                    navigate('/');
+                } else {
+                    onRequestClose();
                 }
-            );
-            
-            if (response.status === 200) {
-                setSuccessMessage('비밀번호가 성공적으로 변경되었습니다.');
-                setErrorMessage('');
-                handleRequestClose(); // Optionally close the modal after success
-            } else {
-                setSuccessMessage('');
-                setErrorMessage('비밀번호 변경에 실패하였습니다.');
-            }
-        } catch (error) {
-            setSuccessMessage('');
-            setErrorMessage('서버와의 연결에 문제가 발생하였습니다.');
-        }
+            })
+            .catch(error => {
+                console.error('Logout failed', error);
+                // Handle logout error if needed
+                if (location.pathname === '/mypage') {
+                    navigate('/');
+                } else {
+                    onRequestClose();
+                }
+            });
     };
 
     return (
         <Modal
             isOpen={isOpen}
-            onRequestClose={handleRequestClose}
-            contentLabel="Reset Password Modal"
+            onRequestClose={onRequestClose}
+            contentLabel="Reset Password Completion Modal"
             style={customStyles}
         >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1>비밀번호 재설정</h1>
-                <IconButton onClick={handleRequestClose} style={{ color: '#000' }}>
+                <h1>비밀번호 재설정 완료</h1>
+                <Button onClick={onRequestClose} style={{ color: '#000' }}>
                     <CloseIcon />
-                </IconButton>
-            </div>
-            <div style={{ marginBottom: '20px' }}>
-                <TextField
-                    id="newPassword"
-                    label="새 비밀번호"
-                    type="password"
-                    placeholder="새 비밀번호를 입력하세요"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    fullWidth
-                    variant="outlined"
-                    style={{ marginBottom: '10px' }}
-                />
-                <TextField
-                    id="confirmPassword"
-                    label="비밀번호 확인"
-                    type="password"
-                    placeholder="비밀번호를 다시 입력하세요"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    fullWidth
-                    variant="outlined"
-                    style={{ marginBottom: '10px' }}
-                />
-                <Button 
-                    onClick={handleResetPassword} 
-                    variant="contained" 
-                    color="primary"
-                    style={customStyles.button}
-                >
-                    비밀번호 재설정
                 </Button>
             </div>
-            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-            {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+            <TextField
+                id="newPassword"
+                label="새 비밀번호"
+                type="password"
+                placeholder="새 비밀번호를 입력하세요"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                fullWidth
+                variant="outlined"
+                style={{ marginBottom: '10px' }}
+            />
+            <TextField
+                id="confirmPassword"
+                label="비밀번호 확인"
+                type="password"
+                placeholder="비밀번호를 다시 입력하세요"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                fullWidth
+                variant="outlined"
+                style={{ marginBottom: '10px' }}
+            />
+            {errorMessage && <p style={customStyles.errorText}>{errorMessage}</p>}
+            <Button 
+                onClick={handlePasswordReset} 
+                variant="contained" 
+                color="primary"
+                style={customStyles.button}
+            >
+                비밀번호 재설정
+            </Button>
         </Modal>
     );
 };
 
-export default ResetPasswordModal;
+export default ResetPasswordCompletionModal;

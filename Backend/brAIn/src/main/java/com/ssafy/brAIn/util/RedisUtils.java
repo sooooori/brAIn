@@ -62,5 +62,26 @@ public class RedisUtils {
         redisTemplate.opsForValue().set(key, newValue);
     }
 
+    public void setDataInSet(String key, Object newValue,Long expireTime) {
+        redisTemplate.opsForSet().add(key, newValue);
+        redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
+
+    }
+
+    public boolean isValueInSet(String key, String value) {
+        Set<Object> set = redisTemplate.opsForSet().members(key);
+        if(set != null && !set.isEmpty()) {
+            return set.contains(value);
+        }
+        return false;
+    }
+
+    public String getData(String key) {
+        return (String) redisTemplate.opsForValue().get(key);
+    }
+
+    public void save(String key, String value) {
+        redisTemplate.opsForValue().set(key, value);
+    }
 
 }

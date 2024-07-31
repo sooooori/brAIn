@@ -3,7 +3,7 @@ import './NavBar.css'; // CSS 파일을 사용하여 스타일링
 import { Button } from '@mui/material';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import axios from '../utils/Axios';
+import axios from 'axios'; // axios를 import
 import Cookies from 'js-cookie';
 import { useSelector, useDispatch } from 'react-redux'; // useSelector와 useDispatch import
 import { logout, login } from '../features/auth/authSlice';
@@ -34,7 +34,8 @@ const NavBar = () => {
     const handleLogout = async () => {
         try {
             const token = localStorage.getItem('accessToken');
-            await axios.post('http://localhost:8080/api/v1/members/logout',  {
+            const refreshToken = Cookies.get('refreshToken');
+            await axios.post('http://localhost:8080/api/v1/members/logout', { refreshToken: refreshToken }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -46,7 +47,7 @@ const NavBar = () => {
             // 로컬 스토리지와 쿠키에서 인증 정보 삭제
             localStorage.removeItem('accessToken');
             localStorage.removeItem('user');
-
+            Cookies.remove('refreshToken');
             
             // 홈 페이지로 리다이렉트
             navigate('/');
