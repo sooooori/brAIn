@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-modal';
-import { Button } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from 'axios';  // Import axios for making HTTP requests
-import { useNavigate, useLocation } from 'react-router-dom';  // Import useNavigate and useLocation
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../features/auth/authSlice';  // Import logout action
+import axios from 'axios';
 
 // Custom styles for the modal
 const customStyles = {
@@ -31,28 +33,40 @@ const customStyles = {
 };
 
 const ResetPasswordCompletionModal = ({ isOpen, onRequestClose }) => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
 
-    const handleLogout = () => {
-        axios.post('http://localhost:8080/api/v1/members/logout')
-            .then(response => {
-                // Perform different actions based on the current location
-                if (location.pathname === '/mypage') {
-                    navigate('/');
-                } else {
-                    onRequestClose();
-                }
-            })
-            .catch(error => {
-                console.error('Logout failed', error);
-                // Handle logout error if needed
-                if (location.pathname === '/mypage') {
-                    navigate('/');
-                } else {
-                    onRequestClose();
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const { accessToken } = useSelector((state) => state.auth);
+
+    const handlePasswordChange = async () => {
+
+        try {
+            const response = await axios.put('http://localhost:8080/api/v1/members/resetPassword', {newPassword}, { 
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
                 }
             });
+            console.log(response);
+            handleLogout();
+        } catch (error) {
+            console.error('Password change failed', error);
+            setErrorMessage('비밀번호 변경 중 오류가 발생했습니다.');
+        }
+    };
+
+    const handleLogout = async () => {
+        await dispatch(logout());
+        // Perform different actions based on the current location
+        if (location.pathname === '/profile') {
+            navigate('/');
+        } else {
+            onRequestClose();
+        }
     };
 
     return (
@@ -68,9 +82,8 @@ const ResetPasswordCompletionModal = ({ isOpen, onRequestClose }) => {
                     <CloseIcon />
                 </Button>
             </div>
-            <p>비밀번호 수정이 완료되었습니다. 다시 로그인해주세요.</p>
             <Button 
-                onClick={handleLogout} 
+                onClick={handlePasswordChange} 
                 variant="contained" 
                 color="primary"
                 style={customStyles.button}

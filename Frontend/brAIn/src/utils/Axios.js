@@ -25,21 +25,21 @@ axios.interceptors.response.use(
                 const response = await axios.post('http://localhost:8080/api/v1/members/refresh', {}, { withCredentials: true });
                 const { accessToken } = response.data;
                 
-                // 새로운 accessToken을 로컬 스토리지에 저장
-                const expirationTimeAccess = new Date(new Date().getTime() + 10 * 60 * 1000); // 10분
-                const expirationTimeAccessKST = new Intl.DateTimeFormat('ko-KR', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false,
-                    timeZone: 'Asia/Seoul'
-                }).format(expirationTimeAccess);
+                // // 새로운 accessToken을 로컬 스토리지에 저장
+                // const expirationTimeAccess = new Date(new Date().getTime() + 10 * 60 * 1000); // 10분
+                // const expirationTimeAccessKST = new Intl.DateTimeFormat('ko-KR', {
+                //     year: 'numeric',
+                //     month: '2-digit',
+                //     day: '2-digit',
+                //     hour: '2-digit',
+                //     minute: '2-digit',
+                //     second: '2-digit',
+                //     hour12: false,
+                //     timeZone: 'Asia/Seoul'
+                // }).format(expirationTimeAccess);
 
                 localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('accessTokenExpiration', expirationTimeAccessKST);
+                // localStorage.setItem('accessTokenExpiration', expirationTimeAccessKST);
                 
                 axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
                 originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;

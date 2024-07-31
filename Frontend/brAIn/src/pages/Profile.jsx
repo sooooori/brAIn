@@ -29,9 +29,11 @@ const Profile = () => {
                     console.log('User data fetched:', response.data.member);
                 } else {
                     console.log('No access token found.');
+                    
                 }
             } catch (error) {
                 console.error('Failed to fetch user data:', error);
+                console.log(accessToken)
             }
         };
 
@@ -39,31 +41,39 @@ const Profile = () => {
     }, [accessToken]);
 
     const handleEditProfileImage = async (file) => {
-        const formData = new FormData();
-        formData.append('file', file); // 서버에서 예상하는 키와 일치시킵니다.
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = async () => {
+            const base64FileData = reader.result.split(',')[1];
+            const fileName = file.name; // 파일 이름 추출
+            const requestBody = {
+                fileData: base64FileData,
+                fileName: fileName
+            };
 
-        try {
-            const response = await axios.put('http://localhost:8080/api/v1/members/updatePhoto', formData, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            });
+            try {
+                const response = await axios.put('http://localhost:8080/api/v1/members/updatePhoto', requestBody, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
 
-            // 즉시 업데이트된 이미지를 반영
-            const updatedPhotoUrl = URL.createObjectURL(file);
-            setUserData(prevData => ({
-                ...prevData,
-                photo: updatedPhotoUrl
-            }));
+                // 즉시 업데이트된 이미지를 반영
+                const updatedPhotoUrl = URL.createObjectURL(file);
+                setUserData(prevData => ({
+                    ...prevData,
+                    photo: updatedPhotoUrl
+                }));
 
-            console.log('Profile image updated:', response.data);
-            navigate('/profile'); // 이미지 변경 후 /profile로 리디렉션
-            
-        } catch (error) {
-            console.error('Failed to update profile image:', error);
-        } finally {
-            setIsProfileImageModalOpen(false);
-        }
+
+                console.log('Profile image updated:', response.data);
+            } catch (error) {
+                console.error('Failed to update profile image:', error);
+            } finally {
+                setIsProfileImageModalOpen(false);
+            }
+        };
     };
 
     const handleChangePassword = () => {

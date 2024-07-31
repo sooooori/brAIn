@@ -58,15 +58,15 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
 
             console.log('Login response:', response.data);
 
-            if (!accessToken) {
-                setErrorMessage('로그인 정보가 올바르지 않습니다.');
-                return;
-            }
+            // if (!accessToken) {
+            //     setErrorMessage('로그인 정보가 올바르지 않습니다.');
+            //     return;
+            // }
 
             localStorage.setItem('accessToken', accessToken);
 
             // Redux에 로그인 상태 업데이트
-            dispatch(login({ accessToken }));
+            dispatch(login({ email }));
 
             navigate('/');
             onRequestClose();

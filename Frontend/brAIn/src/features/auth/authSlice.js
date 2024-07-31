@@ -24,9 +24,9 @@ const authSlice = createSlice({
       if (accessToken) {
         localStorage.setItem('accessToken', accessToken);
       }
-      if (refreshToken) {
-        localStorage.setItem('refreshToken', refreshToken);
-      }
+      // if (refreshToken) {
+      //   localStorage.setItem('refreshToken', refreshToken);
+      // }
       localStorage.setItem('isAuthenticated', JSON.stringify(state.isAuthenticated));
     },
     logout: (state) => {
