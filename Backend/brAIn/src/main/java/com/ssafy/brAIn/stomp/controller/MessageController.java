@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.stomp.controller;
 
+import com.ssafy.brAIn.auth.jwt.JWTUtilForRoom;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.stomp.dto.*;
@@ -25,14 +26,15 @@ public class MessageController {
 
     private final RabbitTemplate rabbitTemplate;
     private final MessageService messageService;
-    private final JwtUtil jwtUtil;
-//    private final JWTUtil jwtUtil;
 
-    public MessageController(RabbitTemplate rabbitTemplate, MessageService messageService, JwtUtil jwtUtil) {
+    private final JWTUtilForRoom jwtUtilForRoom;
+
+    public MessageController(RabbitTemplate rabbitTemplate,
+                             MessageService messageService,
+                             JWTUtilForRoom jwtUtilForRoom) {
         this.rabbitTemplate = rabbitTemplate;
         this.messageService = messageService;
-        //this.jwtUtil = jwtUtil;
-        this.jwtUtil = jwtUtil;
+        this.jwtUtilForRoom = jwtUtilForRoom;
     }
 
 
@@ -42,8 +44,7 @@ public class MessageController {
     public void submitPost(RequestGroupPost groupPost, @DestinationVariable String roomId,StompHeaderAccessor accessor) {
 
         String token=accessor.getFirstNativeHeader("Authorization");
-//        String nickname=jwtUtil.getNickname(token);
-        String nickname="호랑이0";
+        String nickname=jwtUtilForRoom.getNickname(token);
         messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
 
         ResponseGroupPost responseGroupPost=null;
@@ -72,9 +73,8 @@ public class MessageController {
     @MessageMapping("enter.waiting.{roomId}")
     public void enterWaitingRoom(@DestinationVariable String roomId, StompHeaderAccessor accessor){
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.ENTER_WAITING_ROOM));
-        String authorization = accessor.getFirstNativeHeader("Authorization");
-//        String email=jwtUtil.getEmail(token);
-        String email="user";
+        String token = accessor.getFirstNativeHeader("Authorization");
+        String email=JwtUtil.getEmail(token);
         messageService.enterWaitingRoom(Integer.parseInt(roomId),email);
     }
 
@@ -102,10 +102,8 @@ public class MessageController {
     public void exitConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
 
         String token=accessor.getFirstNativeHeader("Authorization");
-//        String nickname=jwtUtil.getNickname(token);
-//        String email=jwtUtil.getEmail(token);
-        String nickname="호랑이6";
-        String email="123@naver.com";
+        String nickname=jwtUtilForRoom.getNickname(token);
+        String email=jwtUtilForRoom.getUsername(token);
         messageService.historyUpdate(Integer.parseInt(roomId),email);
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit(MessageType.EXIT_CONFERENCES,nickname));
     }
@@ -115,9 +113,8 @@ public class MessageController {
     @MessageMapping("start.conferences.{roomId}")
     public void startConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
         String token=accessor.getFirstNativeHeader("Authorization");
-//        String chiefEmail=jwtUtil.getEmail(token);
+        String chiefEmail=jwtUtilForRoom.getUsername(token);
 
-        String chiefEmail="123@naver.com";
         List<String> users=messageService.startConferences(Integer.parseInt(roomId),chiefEmail).stream()
                 .map(Object::toString)
                 .toList();
@@ -145,8 +142,7 @@ public class MessageController {
     @MessageMapping("state.user.{roomId}")
     public void readyState(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
         String token=accessor.getFirstNativeHeader("Authorization");
-//        String nickname=jwtFilter.getNickname(token);
-        String nickname="userA";
+        String nickname=jwtUtilForRoom.getNickname(token);
 
         messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.READY);
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY,nickname));
@@ -157,8 +153,7 @@ public class MessageController {
     @MessageMapping("state.user.pass.{roomId}")
     public void passRound(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
         String token=accessor.getFirstNativeHeader("Authorization");
-        //        String nickname=jwtFilter.getNickname(token);
-        String nickname="userA";
+        String nickname=jwtUtilForRoom.getNickname(token);
         messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.PASS);
         String nextMember=messageService.NextOrder(Integer.parseInt(roomId),nickname);
         messageService.updateCurOrder(Integer.parseInt(roomId),nextMember);
@@ -170,8 +165,7 @@ public class MessageController {
     @MessageMapping("timer.modify.{roomId}")
     public void modifyTimer(@DestinationVariable String roomId, @Payload Long time, StompHeaderAccessor accessor) {
         String token=accessor.getFirstNativeHeader("Authorization");
-//        String sender=jwtUtil.getNickname(token);
-        String sender="userA";
+        String sender=jwtUtilForRoom.getNickname(token);
         String curUser=messageService.getCurUser(Integer.parseInt(roomId));
         if(!sender.equals(curUser))return;
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new Timer(MessageType.PLUS_TIME,time));
