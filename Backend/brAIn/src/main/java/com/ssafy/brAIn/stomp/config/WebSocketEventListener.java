@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.stomp.config;
 
+import com.ssafy.brAIn.auth.jwt.JWTUtilForRoom;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
@@ -28,13 +29,14 @@ public class WebSocketEventListener {
 
     private final ConferenceRoomRepository conferenceRoomRepository;
     private final RedisUtils redisUtils;
-    private JwtUtil jwtUtil;
+    private final JWTUtilForRoom jwtUtilForRoom;
     private MemberHistoryRepository memberHistoryRepository;
     private MemberRepository memberRepository;
 
-    public WebSocketEventListener(ConferenceRoomRepository conferenceRoomRepository, RedisUtils redisUtils) {
+    public WebSocketEventListener(ConferenceRoomRepository conferenceRoomRepository, RedisUtils redisUtils, JWTUtilForRoom jwtUtilForRoom) {
         this.conferenceRoomRepository = conferenceRoomRepository;
         this.redisUtils = redisUtils;
+        this.jwtUtilForRoom = jwtUtilForRoom;
     }
 
     @EventListener
@@ -45,10 +47,10 @@ public class WebSocketEventListener {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
 
-            String email=JwtUtil.getEmail(token);
-            Integer roomId=JwtUtil.getRoomId(token);
+            String email=jwtUtilForRoom.getUsername(token);
+            Integer roomId=jwtUtilForRoom.getRoomId(token);
             Integer memberId=getMemberId(email);
-            Role role=Role.valueOf(JwtUtil.getRole(token));
+            Role role=Role.valueOf(jwtUtilForRoom.getRole(token));
             Optional<Member> member = memberRepository.findByEmail(email);
             Optional<ConferenceRoom> room=conferenceRoomRepository.findById(roomId);
 
@@ -62,7 +64,7 @@ public class WebSocketEventListener {
             MemberHistory memberHistory=MemberHistory.builder().id(memberHistoryId)
                     .role(role)
                     .status(Status.COME)
-                    .nickName(JwtUtil.getNickname(token))
+                    .nickName(jwtUtilForRoom.getNickname(token))
                     .member(member.get())
                     .conferenceRoom(room.get())
                     .build();
@@ -75,7 +77,7 @@ public class WebSocketEventListener {
 
             //레디스에 sessionId와 함께 닉네임을 저장해서 갑작스러운 종료 때, 닉네임을 얻기 위함.
             String sessionId = accessor.getSessionId();
-            redisUtils.save(sessionId,JwtUtil.getNickname(token));
+            redisUtils.save(sessionId,jwtUtilForRoom.getNickname(token));
         }
     }
 

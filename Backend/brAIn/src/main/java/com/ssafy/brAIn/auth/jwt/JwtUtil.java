@@ -107,6 +107,8 @@ public class JwtUtil {
         return claims;
     }
 
+
+
     // 회의록 관련 메서드
     public static String getEmail(String token) {
         Claims claims = extractToken(token);
@@ -118,18 +120,5 @@ public class JwtUtil {
         return claims.get("userConferences", String.class);
     }
 
-    public static Integer getRoomId(String token){
-        Claims claims = extractToken(token);
-        return claims.get("roomId", Integer.class);
-    }
 
-    public static String getRole(String token){
-        Claims claims = extractToken(token);
-        return claims.get("role", String.class);
-    }
-
-    public static String getNickname(String token){
-        Claims claims = extractToken(token);
-        return claims.get("nickname", String.class);
-    }
 }
