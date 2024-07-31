@@ -54,7 +54,8 @@ public class WebSecurityConfig {
                     requests.requestMatchers(  // 허용 URL
                             "/api/v1/members/join",
                             "/api/v1/members/login",
-                            "/api/v1/members/refresh"
+                            "/api/v1/members/refresh",
+                            "/**"
                             ).permitAll();
                     requests.anyRequest().authenticated(); // 모든 URL 인증 필요
                 })
