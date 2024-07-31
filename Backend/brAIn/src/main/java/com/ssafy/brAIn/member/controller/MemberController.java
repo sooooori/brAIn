@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Map;
@@ -32,6 +33,9 @@ public class MemberController {
     private final MemberService memberService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberDetailService memberDetailService;
+
+    // 이미지파일 5MB로 제한
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
     // 회원가입
     @PostMapping("/join")
@@ -156,11 +160,18 @@ public class MemberController {
 
     // 회원 프로필 사진 변경
     @PutMapping("/updatePhoto")
-    public ResponseEntity<?> updatePhoto(@RequestHeader("Authorization") String token, @RequestBody String photo) {
-        // Barer 접두사 제거
+    public ResponseEntity<?> updatePhoto(@RequestHeader("Authorization") String token,
+                                         @RequestBody MultipartFile file) throws IOException {
+        // Bearer 접두사 제거
         String accessToken = token.replace("Bearer ", "");
-        // 사진 변경
-        memberService.updatePhoto(accessToken, photo);
+        // 파일 크기 검증
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new BadRequestException("File size exceeds the maximum allowed size of 5MB");
+        }
+        // 파일 데이터를 바이트 배열로 변환
+        byte[] fileData = file.getBytes();
+        // 서비스 호출하여 이미지 업로드 및 사용자 정보 업데이트
+        memberService.uploadUserImage(accessToken, fileData);
         return ResponseEntity.ok(Map.of("message", "Profile Image Change Successful"));
     }
 

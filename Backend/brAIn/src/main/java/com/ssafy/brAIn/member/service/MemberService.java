@@ -21,8 +21,9 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final S3Service s3Service;
 
-    // 회원가입(유저정보 저장)
+    // 회원가입
     public void join(MemberRequest memberRequest) {
         // 이메일 중복 검사
         if (memberRepository.existsByEmail(memberRequest.getEmail())) {
@@ -30,7 +31,27 @@ public class MemberService {
         }
         // 비밀번호 암호화
         String encodedPassword = bCryptPasswordEncoder.encode(memberRequest.getPassword());
-        memberRepository.save(memberRequest.toEntity(encodedPassword));
+
+        // 랜덤 이미지 URL 가져오기
+        String profileImageUrl = s3Service.getRandomImageUrl();
+
+        // 회원정보 저장
+        Member member = memberRequest.toEntity(encodedPassword);
+        member.updatePhoto(profileImageUrl);
+        memberRepository.save(member);
+    }
+
+    // 프로필 이미지 변경
+    public void uploadUserImage(String token, byte[] fileData) {
+        String email = JwtUtil.getEmail(token);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("Member not found"));
+
+        String key = email + "-profile-image";
+        s3Service.uploadUserImage(key, fileData);
+        String imageUrl = String.format("https://%s.s3.%s.amazonaws.com/profile-image/%s", s3Service.getBucket(), s3Service.getRegion(), key);
+        member.updatePhoto(imageUrl);
+        memberRepository.save(member);
     }
 
     // 일반 로그인 유저를 위한 토큰 발급 메서드
@@ -71,7 +92,7 @@ public class MemberService {
         return memberRepository.findByEmail(email);
     }
 
-    // 회원정보 조회 (토큰)
+    // 회원정보 조회
     public MemberResponse getMember(String token) {
         String email = JwtUtil.getEmail(token);
         Member member = memberRepository.findByEmail(email)
