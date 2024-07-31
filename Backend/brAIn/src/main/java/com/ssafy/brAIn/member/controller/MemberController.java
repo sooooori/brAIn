@@ -30,7 +30,6 @@ import java.util.Base64;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RestController
@@ -42,14 +41,6 @@ public class MemberController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberDetailService memberDetailService;
     private final EmailService emailService;
-
-    // 이메일 중복 검사
-    @PostMapping("/checkEmail")
-    public ResponseEntity<?> checkEmail(@RequestBody String email) {
-        memberService.emailCheck(email);
-        return ResponseEntity.ok(Map.of("message", "Email check successfully"));
-    }
-
 
     // 이미지파일 5MB로 제한
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -99,9 +90,9 @@ public class MemberController {
             throw new BadRequestException("Refresh token is missing");
         }
 
+        // Refresh Token 검증 및 클레임 추출
         Claims claims;
         try {
-            // Refresh Token 검증 및 클레임 추출
             claims = JwtUtil.extractToken(refreshToken);
         } catch (Exception e) {
             throw new BadRequestException("Invalid refresh token");
@@ -129,6 +120,7 @@ public class MemberController {
     // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+
         // Refresh Token 쿠키 제거
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setMaxAge(0); // 쿠키 제거
@@ -155,6 +147,13 @@ public class MemberController {
         }
     }
 
+    // 이메일 중복 검사
+    @PostMapping("/checkEmail")
+    public ResponseEntity<?> checkEmail(@RequestBody String email) {
+        memberService.emailCheck(email);
+        return ResponseEntity.ok(Map.of("message", "Email check successfully"));
+    }
+
     // 회원정보 조회
     @GetMapping("/member")
     public ResponseEntity<?> getMember(@RequestHeader("Authorization") String token) {
@@ -170,7 +169,7 @@ public class MemberController {
     public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String token, @RequestBody String password) {
         // Bearer 접두사 제거
         String accessToken = token.replace("Bearer ", "");
-        // 정보 삭제
+        // 탈퇴
         memberService.deleteMember(accessToken, password);
         return ResponseEntity.ok(Map.of("message", "Member deleted successfully"));
     }
@@ -186,7 +185,11 @@ public class MemberController {
         String imageUrl = requestBody.has("imageUrl") ? requestBody.get("imageUrl").asText() : null;
         String originalFileName = requestBody.has("fileName") ? requestBody.get("fileName").asText() : null;
 
+        // 업로드 파일 체크 (파일 유무, 용량, URL)
         if (base64FileData != null) {
+            if (originalFileName == null) {
+                throw new BadRequestException("File name is missing");
+            }
             byte[] fileData = Base64.getDecoder().decode(base64FileData);
             if (fileData.length > MAX_FILE_SIZE) {
                 throw new BadRequestException("File size exceeds the maximum allowed size of 5MB");
@@ -217,12 +220,10 @@ public class MemberController {
         String email = request.getEmail();
         LocalDateTime requestedAt = LocalDateTime.now();
         emailService.sendEmail(email, requestedAt);
-        System.out.println("falg");
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Email Verification Successful");
     }
 
-
-    // 이메일 인증번호 인증하기
+    // 이메일 인증번호 인증
     @PostMapping("/authNumber")
     public ResponseEntity<String> verificationByCode(@RequestBody EmailRequest request) {
         LocalDateTime requestedAt = LocalDateTime.now();
