@@ -42,8 +42,8 @@ public class MemberController {
     private final MemberDetailService memberDetailService;
     private final EmailService emailService;
 
-    // 이미지파일 5MB로 제한
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
+    // 이미지파일 2MB로 제한
+    private static final long MAX_FILE_SIZE = 2 * 1024 * 1024;
 
     // 회원가입
     @PostMapping("/join")

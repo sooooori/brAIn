@@ -10,10 +10,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -27,24 +24,10 @@ public class S3Service {
     private String bucket;
     @Value("${spring.cloud.aws.region.static}")
     private String region;
-    private final S3Presigner s3Presigner;
     private final S3Client s3Client;
 
     // 허용된 파일 확장자 목록
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of("png", "jpg", "jpeg", "gif");
-
-    // 프리사인 된 URL 생성
-    public String createPresignedUrl(String path) {
-        var putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucket)
-                .key(path)
-                .build();
-        var preSignRequest = PutObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofMinutes(3))
-                .putObjectRequest(putObjectRequest)
-                .build();
-        return s3Presigner.presignPutObject(preSignRequest).url().toString();
-    }
 
     // 랜덤 프로필 이미지 가져오기
     public String getRandomImageUrl() {
