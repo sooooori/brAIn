@@ -3,9 +3,11 @@ package com.ssafy.brAIn.member.controller;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.exception.BadRequestException;
+import com.ssafy.brAIn.member.dto.EmailRequest;
 import com.ssafy.brAIn.member.dto.MemberRequest;
 import com.ssafy.brAIn.member.dto.MemberResponse;
 import com.ssafy.brAIn.member.entity.Member;
+import com.ssafy.brAIn.member.service.EmailService;
 import com.ssafy.brAIn.member.service.MemberDetailService;
 import com.ssafy.brAIn.member.service.MemberService;
 import io.jsonwebtoken.Claims;
@@ -13,6 +15,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,9 +28,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Base64;
+
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/members")
@@ -36,6 +43,15 @@ public class MemberController {
     private final MemberService memberService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberDetailService memberDetailService;
+    private final EmailService emailService;
+
+    // 이메일 중복 검사
+    @PostMapping("/checkEmail")
+    public ResponseEntity<?> checkEmail(@RequestBody String email) {
+        memberService.emailCheck(email);
+        return ResponseEntity.ok(Map.of("message", "Email check successfully"));
+    }
+
 
     // 이미지파일 5MB로 제한
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -195,5 +211,22 @@ public class MemberController {
         // 비밀번호 재설정
         memberService.resetPassword(accessToken, newPassword);
         return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
+    // 이메일 인증번호 생성
+    @PostMapping("/sendAuthNumber")
+    public ResponseEntity<?> getEmailForVerification(@RequestBody EmailRequest request) {
+        String email = request.getEmail();
+        LocalDateTime requestedAt = LocalDateTime.now();
+        emailService.sendEmail(email, requestedAt);
+        System.out.println("falg");
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Email Verification Successful");
+    }
+
+
+    // 이메일 인증번호 인증하기
+    @PostMapping("/authNumber")
+    public ResponseEntity<String> verificationByCode(@RequestBody EmailRequest request) {
+        LocalDateTime requestedAt = LocalDateTime.now();
+        emailService.verifyEmail(request.getEmail(), request.getCode(), requestedAt);
+        return ResponseEntity.ok("Email Authentication Completed");
     }
 }
