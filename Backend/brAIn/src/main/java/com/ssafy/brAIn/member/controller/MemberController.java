@@ -22,9 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -211,6 +209,8 @@ public class MemberController {
         // 비밀번호 재설정
         memberService.resetPassword(accessToken, newPassword);
         return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
+    }
+
     // 이메일 인증번호 생성
     @PostMapping("/sendAuthNumber")
     public ResponseEntity<?> getEmailForVerification(@RequestBody EmailRequest request) {
