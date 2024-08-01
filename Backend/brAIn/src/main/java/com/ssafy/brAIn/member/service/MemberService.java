@@ -138,8 +138,7 @@ public class MemberService {
     }
 
     // 비밀번호 재설정
-    public void resetPassword(String token, String newPassword) {
-        String email = JwtUtil.getEmail(token);
+    public void resetPassword(String email, String newPassword) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
 
