@@ -97,4 +97,8 @@ public class RedisUtils {
         return redisTemplate.opsForSet().members(key);
     }
 
+    public boolean isKeyExists(String key) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+    }
+
 }

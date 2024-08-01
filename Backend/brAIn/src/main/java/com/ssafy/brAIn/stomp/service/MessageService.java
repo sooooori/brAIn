@@ -53,8 +53,8 @@ public class MessageService {
     
     //현재 유저가 마지막 순서인지 확인하는 메서드(테스트 완)
     public boolean isLastOrder(Integer roomId, String nickname) {
-        Double order=redisUtils.getScoreFromSortedSet(roomId+":order",nickname);
-        int lastOrder=redisUtils.getSortedSet(roomId+":order").size()-redisUtils.ge-1;
+        Double order=redisUtils.getScoreFromSortedSet(roomId+":order:cur",nickname);
+        int lastOrder=redisUtils.getSortedSet(roomId+":order:cur").size()-1;
         if (order == lastOrder) {
             return true;
         }
@@ -65,7 +65,7 @@ public class MessageService {
     public boolean isStep1EndCondition(Integer roomId) {
         AtomicInteger count= new AtomicInteger();
 
-        List<String> nicknames=redisUtils.getListFromKey(roomId+":nicknames")
+        List<String> nicknames=redisUtils.getSortedSet(roomId+":order:cur")
                 .stream()
                 .map(Object::toString)
                 .toList();
@@ -82,6 +82,7 @@ public class MessageService {
 
     }
 
+    //삭제예정
     //멤버가 대기방 입장 시, 레디스에 저장(테스트 완)
     public void enterWaitingRoom(Integer roomId,String email) {
 
@@ -146,12 +147,17 @@ public class MessageService {
             MemberHistory memberHistory=memberHistories.get(i);
             memberHistory.setOrder(i);
             memberHistoryRepository.save(memberHistory);
-            //if(memberHistory.getStatus().equals(Status.OUT))continue;
+
             redisUtils.setSortedSet(roomId+":"+"order",i,memberHistory.getNickName());
+            if(memberHistory.getStatus().equals(Status.OUT))continue;
+            redisUtils.setSortedSet(roomId+":"+"order:cur",i,memberHistory.getNickName());
+
+
 
         }
         return redisUtils.getSortedSet(roomId+":order");
     }
+
 
 
 
@@ -196,7 +202,14 @@ public class MessageService {
     }
 
 
+    public void initUserState(Integer roomId) {
+        String key=roomId + ":order";
+        redisUtils.getSortedSet(key)
+//                .filter((user)->redisUtils.isKeyExists(roomId+":"+user))
+                .forEach((user)->redisUtils.save(roomId+":"+user,UserState.NONE.toString()));
 
-
+        String FirstUser = redisUtils.getUserFromSortedSet(roomId + ":order:cur", 0);
+        redisUtils.save(roomId+":curOrder",FirstUser);
+    }
 
 }
