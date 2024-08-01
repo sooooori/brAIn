@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
-import { Button } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -33,47 +33,40 @@ const customStyles = {
     }
 };
 
-const ResetPasswordCompletionModal = ({ isOpen, onRequestClose, newPassword, email }) => {
+const ResetPasswordCompletionModal = ({ isOpen, onRequestClose}) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const location = useLocation();  // Hook to get the current location
 
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const { accessToken } = useSelector((state) => state.auth);
 
-    const updatePassword = newPassword;
-    const useremail = email;
-
-    const isProfilePage = location.pathname === '/profile';
 
     const handlePasswordChange = async () => {
-        try {
-            let response;
-            if (isProfilePage) {
-                response = await axios.put('http://localhost:8080/api/v1/members/updatePassword', 
-                    { newPassword: updatePassword },  // Wrap newPassword in an object
-                    {  
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`,  // Pass the access token in the Authorization header
-                            'Content-Type': 'application/json'  // Ensure correct content type
-                        }
-                    }
-                );
-            } else {
-                response = await axios.put('http://localhost:8080/api/v1/members/resetPassword', 
-                    
-                    { email: useremail, newPassword: updatePassword },  // Wrap email and newPassword in an object
-                );
-                console.log('completionModal: ', useremail)
-            }
+        if (newPassword !== confirmPassword) {
+            setErrorMessage('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+            return;
+        }
 
-            if (response && response.status === 200) {
-                dispatch(logout());
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('user');
-                Cookies.remove('refreshToken');
-                navigate('/');
-            }
+        try {
+            
+            const response = await axios.put('http://localhost:8080/api/v1/members/updatePassword', 
+                { newPassword },  // Wrap newPassword in an object
+                {  
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,  // Pass the access token in the Authorization header
+                        'Content-Type': 'application/json'  // Ensure correct content type
+                    }
+                }
+            );
+    
+            dispatch(logout());
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            Cookies.remove('refreshToken');
+            navigate('/');
+            
         } catch (error) {
             console.error('Password change failed', error);
             setErrorMessage('비밀번호 변경 중 오류가 발생했습니다.');
@@ -88,18 +81,40 @@ const ResetPasswordCompletionModal = ({ isOpen, onRequestClose, newPassword, ema
             style={customStyles}
         >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1>비밀번호 재설정 완료</h1>
+                <h1>비밀번호 재설정</h1>
                 <Button onClick={onRequestClose} style={{ color: '#000' }}>
                     <CloseIcon />
                 </Button>
             </div>
-            <Button 
-                onClick={handlePasswordChange} 
-                variant="contained" 
+            <TextField
+                id="newPassword"
+                label="새 비밀번호"
+                type="password"
+                placeholder="새 비밀번호를 입력하세요"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                fullWidth
+                variant="outlined"
+                style={{ marginBottom: '10px' }}
+            />
+            <TextField
+                id="confirmPassword"
+                label="비밀번호 확인"
+                type="password"
+                placeholder="비밀번호를 다시 입력하세요"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                fullWidth
+                variant="outlined"
+                style={{ marginBottom: '10px' }}
+            />
+            <Button
+                onClick={handlePasswordChange}
+                variant="contained"
                 color="primary"
                 style={customStyles.button}
             >
-                확인
+                비밀번호 재설정
             </Button>
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
         </Modal>
