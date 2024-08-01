@@ -6,6 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -36,6 +37,66 @@ public class AIService {
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("postIt", content);
         requestBody.put("threadId", threadId);
+
+        return webClient
+                .post()
+                .uri(url)
+                .bodyValue(requestBody)
+                .retrieve().bodyToMono(String.class)
+                .block();
+    }
+
+    public String makePostIt(String threadId, String assistantId) {
+        String url="/postIt/make";
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("assistantId", assistantId);
+        requestBody.put("threadId", threadId);
+
+        return webClient
+                .post()
+                .uri(url)
+                .bodyValue(requestBody)
+                .retrieve().bodyToMono(String.class)
+                .block();
+    }
+
+    public String makeSummary(String threadId, String assistantId) {
+        String url="/summary/make";
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("assistantId", assistantId);
+        requestBody.put("threadId", threadId);
+
+        return webClient
+                .post()
+                .uri(url)
+                .bodyValue(requestBody)
+                .retrieve().bodyToMono(String.class)
+                .block();
+    }
+
+
+    public String personaMake(String idea, String threadId, String assistantId) {
+        String url="/persona/make";
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("idea", idea);
+        requestBody.put("assistantId", assistantId);
+        requestBody.put("threadId", threadId);
+
+        return webClient
+                .post()
+                .uri(url)
+                .bodyValue(requestBody)
+                .retrieve().bodyToMono(String.class)
+                .block();
+    }
+
+    public String swotMake(String idea, List<String> details, String threadId, String assistantId) {
+        String url="/persona/make";
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("idea", idea);
+        requestBody.put("assistantId", assistantId);
+        requestBody.put("threadId", threadId);
+        requestBody.put("details", details.toString());
 
         return webClient
                 .post()
