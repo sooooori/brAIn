@@ -52,4 +52,21 @@ public class CommentController {
         commentService.deleteComment(accessToken, roundPostItId, commentId);
         return ResponseEntity.ok(Map.of("message", "Comment deleted successfully"));
     }
+
+    // Ready 상태 설정
+    @PutMapping("/{roundPostItId}/ready")
+    public ResponseEntity<?> changeReady(@RequestHeader("Authorization") String token,
+                                         @PathVariable Integer roundPostItId) {
+        String accessToken = token.replace("Bearer ", "");
+
+        Map<String, Object> result = commentService.changeReady(accessToken, roundPostItId);
+        String message = result.get("message").toString();
+
+        if (result.containsKey("nextRoundPostItId")) {
+            Integer nextRoundPostItId = (Integer) result.get("nextRoundPostItId");
+            return ResponseEntity.ok(Map.of("nextRoundPostItId", nextRoundPostItId, "message", message));
+        } else {
+            return ResponseEntity.ok(Map.of("message", message));
+        }
+    }
 }

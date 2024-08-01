@@ -23,17 +23,25 @@ public class Comment {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "roundpostit_id", referencedColumnName = "id")
+    @JoinColumn(name = "postit_id", referencedColumnName = "id")
     private RoundPostIt roundPostIt;
 
     @Column(name = "content")
     private String content;
+
+    @Column(name = "ready")
+    private boolean ready;
 
     @Builder
     public Comment(Member member, RoundPostIt roundPostIt, String content) {
         this.member = member;
         this.roundPostIt = roundPostIt;
         this.content = content;
+        this.ready = false;
+    }
+
+    public void changeReady(boolean ready) {
+        this.ready = ready;
     }
 
     public void updateContent(String content) {

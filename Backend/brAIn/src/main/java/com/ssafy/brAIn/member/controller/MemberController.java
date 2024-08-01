@@ -221,6 +221,7 @@ public class MemberController {
     public ResponseEntity<?> resetPassword(@RequestBody PasswordRequest passwordRequest) {
         String email = passwordRequest.getEmail();
         String newPassword = passwordRequest.getNewPassword();
+
         memberService.resetPassword(email, newPassword);
         return ResponseEntity.ok(Map.of("message", "Password update successfully"));
     }
