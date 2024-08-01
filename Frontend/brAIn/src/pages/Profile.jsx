@@ -4,15 +4,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import Modal from 'react-modal';
 import Button from '../components/Button/Button';
 import axios from '../utils/Axios';
-import ResetPasswordModal from '../components/ResetPasswordModal';
+import ResetPasswordCompletionModal from '../components/ResetPasswordCompletionModal';
 import ProfileImageModal from '../components/ProfileImageModal';
 import './Profile.css';
 import { logout, updateUser } from '../features/auth/authSlice';
 
 const Profile = () => {
-    const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
     const [isProfileImageModalOpen, setIsProfileImageModalOpen] = useState(false);
     const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
+    const [isResetPasswordCompletionModalOpen, setIsResetPasswordCompletionModalOpen] = useState(false);
     const [deletePassword, setDeletePassword] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
@@ -81,7 +81,8 @@ const Profile = () => {
     };
 
     const handleChangePassword = () => {
-        setIsResetPasswordModalOpen(true);
+        // Open the Reset Password Completion Modal
+        setIsResetPasswordCompletionModalOpen(true);
     };
 
     const handleDeleteAccount = async () => {
@@ -107,7 +108,7 @@ const Profile = () => {
         navigate('/');
     };
 
-    const isAnyModalOpen = isProfileImageModalOpen || isResetPasswordModalOpen || isDeleteAccountModalOpen;
+    const isAnyModalOpen = isProfileImageModalOpen || isDeleteAccountModalOpen || isResetPasswordCompletionModalOpen;
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -156,9 +157,9 @@ const Profile = () => {
                 currentPhoto={user?.photo}  // Pass current photo URL
             />
 
-            <ResetPasswordModal
-                isOpen={isResetPasswordModalOpen}
-                onRequestClose={() => setIsResetPasswordModalOpen(false)}
+            <ResetPasswordCompletionModal
+                isOpen={isResetPasswordCompletionModalOpen}
+                onRequestClose={() => setIsResetPasswordCompletionModalOpen(false)}
             />
 
             <Modal

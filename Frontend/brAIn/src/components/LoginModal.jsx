@@ -6,7 +6,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from '../features/auth/authSlice';
-import SendNumberModal from './SendNumberModal';
 import ResetPasswordModal from './ResetPasswordModal';
 import JoinModal from './JoinModal';
 
@@ -37,7 +36,6 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
     const [password, setPassword] = useState('');
     const [loginAttempts, setLoginAttempts] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
-    const [isSendNumberModalOpen, setIsSendNumberModalOpen] = useState(false);
     const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
     const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
 
@@ -101,16 +99,11 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
     };
 
     const handlePasswordFind = () => {
-        setIsSendNumberModalOpen(true);
+        setIsResetPasswordModalOpen(true);
     };
 
     const handleSignup = () => {
         setIsJoinModalOpen(true);
-    };
-
-    const handleVerificationSuccess = () => {
-        setIsSendNumberModalOpen(false);
-        setIsResetPasswordModalOpen(true);
     };
 
     const handleRequestClose = () => {
@@ -118,7 +111,6 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
         setPassword('');
         setLoginAttempts(0);
         setErrorMessage('');
-        setIsSendNumberModalOpen(false);
         setIsResetPasswordModalOpen(false);
         setIsJoinModalOpen(false);
         onRequestClose();
@@ -170,15 +162,10 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
                 </div>
             </Modal>
 
-            <SendNumberModal
-                isOpen={isSendNumberModalOpen}
-                onRequestClose={() => setIsSendNumberModalOpen(false)}
-                onVerificationSuccess={handleVerificationSuccess}
-            />
-
             <ResetPasswordModal
                 isOpen={isResetPasswordModalOpen}
                 onRequestClose={() => setIsResetPasswordModalOpen(false)}
+                email={email} // Email 전달
             />
 
             <JoinModal

@@ -38,7 +38,7 @@ const JoinConferenceFront = ({ handleJoinConferenceTrue }) => {
         }}
       >
         <img
-          src="images/JoinConference.png"
+          src="images/joinConference.png"
           alt="Join Conference"
           style={{
             width: '100%',
