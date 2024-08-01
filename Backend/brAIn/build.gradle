@@ -57,6 +57,9 @@ dependencies {
 
 	//웹소켓 메시지 종속성
 	implementation 'org.springframework.security:spring-security-messaging'
+
+	//Webclient
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {
