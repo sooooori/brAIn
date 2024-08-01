@@ -3,6 +3,7 @@ package com.ssafy.brAIn.postit.controller;
 import com.ssafy.brAIn.auth.jwt.JWTUtilForRoom;
 import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomRequest;
 import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomResponse;
+import com.ssafy.brAIn.postit.entity.PostItKey;
 import com.ssafy.brAIn.postit.service.PostItService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +26,31 @@ public class PostItController {
     }
 
     @PostMapping
-    public ResponseEntity<?> postIt(@RequestBody Map<String,String> content,  StompHeaderAccessor accessor) {
-        String roomToken=accessor.getFirstNativeHeader("Authorization");
-        String contentText = content.get("content");
-        if(postItService.postItMake(roomToken, contentText)){
+    public ResponseEntity<?> postIt(@RequestBody Map<String,String> content, @RequestHeader("Authorization") String token) {
+        String contentText = content.get("context");
+        System.out.println(contentText);
+        System.out.println(token);
+        if(postItService.postItMake(token, contentText)){
+            return ResponseEntity.status(201).body("오케이");
+        }
+        else{
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> postIt(@RequestBody PostItKey postIt, @RequestHeader("Authorization") String token) {
+        if(postItService.deletePostIt(token, postIt)){
+            return ResponseEntity.status(201).body("오케이");
+        }
+        else{
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @PutMapping()
+    public ResponseEntity<?> updatePostIt(@RequestBody PostItKey postItKey, @RequestHeader("Authorization") String token) {
+        if(postItService.updatePostIt(token, postItKey)){
             return ResponseEntity.status(201).body("오케이");
         }
         else{
