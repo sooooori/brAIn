@@ -1,3 +1,15 @@
+/* Background image for the entire page */
+body {
+    margin: 0;
+    font-family: 'Gothic', sans-serif;
+    /* background: url('images/back-tmp.png') no-repeat center center fixed; */
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 /* Perspective container to apply 3D effect */
 .perspective {
     perspective: 1000px; /* 3D depth effect */
@@ -14,6 +26,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
 }
 
 /* Card rotation styles */
@@ -38,7 +51,7 @@
     align-items: center;
     min-height: calc(100vh - 60px); /* Full viewport height minus navbar height */
     padding: 20px; /* Padding around the container */
-    margin-top: 60px; /* Margin to account for the height of the navbar */
+    margin-top: 30px; /* Margin to account for the height of the navbar */
     margin-bottom: 100px; /* Increase space between title and cards */
 }
 
@@ -59,27 +72,32 @@
     transform-style: preserve-3d; /* Ensure proper 3D transformation */
 }
 
-/* Button styling */
-.start-button {
-    background-color: #9c27b0; /* Purple background color */
-    color: white; /* White text color */
-    font-size: 1.5rem; /* Adjust font size for better visibility */
-    padding: 20px 40px; /* Adjust padding for better button size */
-    margin-bottom: 100px; /* Increased space between button and sections */
+/* Intro image styling */
+.intro-container {
+    margin-top : 80px;
+    width: 90%; /* Full width of the container */
+    display: flex;
+    justify-content: flex-start; /* Align image to the left */
+    margin-bottom: 50px; /* Space between button and section images */
+}
+
+.intro-container img {
+    max-width: 100%; /* Ensure image fits within container */
+    height: auto; /* Maintain aspect ratio */
 }
 
 /* Section styling for scroll animations */
 .section {
-    width: 100%;
+    width: 100%; /* Full width */
     height: 400px; /* Increased height for sections */
     display: flex;
     justify-content: center;
     align-items: center;
     opacity: 0; /* Start hidden */
     transition: opacity 1s ease-in-out, transform 1s ease-in-out;
-    margin-bottom: 150px; /* Increased space between sections */
-    background-color: #f0f0f0; /* Light background color for better contrast */
-    padding: 20px; /* Add padding to sections for better spacing */
+    margin-bottom: 30px;
+    background-color: #ffffff; /* Light background color for better contrast */
+    padding: 10px; /* Add padding to sections for better spacing */
     box-sizing: border-box; /* Include padding in the element's total width and height */
 }
 
@@ -92,6 +110,7 @@
 
 /* Animation classes for sections */
 .section.fade-left {
+    
     opacity: 1;
     transform: translateX(-50px); /* Reduced distance for animation */
 }
@@ -112,11 +131,43 @@
     font-size: 3rem; /* Adjust font size as needed */
     margin-bottom: 60px; /* Increase space between title and cards */
     text-align: center; /* Center align the title */
+    color: #333; /* Darker text color */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
 }
 
 .home-subtitle {
     font-family: 'Gothic', sans-serif; /* Update to your preferred font */
     font-size: 1.75rem; /* Adjust size as needed */
     text-align: center;
-    margin-bottom: 60px; /* Space below the subtitle */
+    margin-bottom: 60px; /* Space between subtitle and cards */
+    color: #555; /* Slightly darker subtitle color */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
 }
+
+/* Intro section styling */
+.home-intro {
+    text-align: center;
+    color: #333;
+    padding: 20px; /* Add padding to intro section */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-radius: 10px; /* Rounded corners */
+    background-color: rgba(255, 255, 255, 0.8); /* White background with slight transparency */
+}
+
+/* Button styling */
+.button-primary {
+    background-color: rgb(0, 0, 0); /* Use orange as primary color */
+    font-size: 1.25rem; /* Adjust button font size */
+    padding: 10px 20px; /* Adjust padding for better spacing */
+    margin-top: 30px; /* Increase space above button */
+    cursor: pointer;
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners for the button */
+    color: white; /* Button text color */
+    transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+.button-primary:hover {
+    background-color: darkorange; /* Darker orange on hover */
+}
+
