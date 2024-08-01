@@ -141,8 +141,6 @@ public class MessageService {
         //현재 회의룸에 있는 모든 유저들을 가져온다.
         List<MemberHistory> memberHistories=memberHistoryService.getHistoryByRoomId(roomId);
 
-        //인공지능의 history도 가져온다.
-
         //한번 섞어준다.
         Collections.shuffle(memberHistories);
 
@@ -155,13 +153,11 @@ public class MessageService {
             if(memberHistory.getStatus().equals(Status.OUT))continue;
             redisUtils.setSortedSet(roomId+":"+"order:cur",i,memberHistory.getNickName());
 
+
+
         }
         return redisUtils.getSortedSet(roomId+":order");
     }
-
-//    public MemberHistory makeAiHistory(Integer roomId) {
-//        redisUtils.getData()
-//    }
 
 
 
