@@ -1,38 +1,95 @@
 package com.ssafy.brAIn.history.service;
 
+import com.ssafy.brAIn.conferenceroom.dto.ConferenceMemberRequest;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
+import com.ssafy.brAIn.exception.BadRequestException;
+import com.ssafy.brAIn.history.dto.ConferenceToMemberResponse;
 import com.ssafy.brAIn.history.entity.MemberHistory;
 import com.ssafy.brAIn.history.entity.MemberHistoryId;
 import com.ssafy.brAIn.history.model.Role;
 import com.ssafy.brAIn.history.model.Status;
 import com.ssafy.brAIn.history.repository.MemberHistoryRepository;
 import com.ssafy.brAIn.member.entity.Member;
+import com.ssafy.brAIn.member.repository.MemberRepository;
 import com.ssafy.brAIn.util.RandomNicknameGenerator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class MemberHistoryService {
+
     private final MemberHistoryRepository memberHistoryRepository;
+    private final MemberRepository memberRepository;
 
-    // 사용자 ID에 해당하는 모든 회의 조회
-    public List<MemberHistory> getAllHistories(int memberId) {
-        return memberHistoryRepository.findByMemberId(memberId);
+
+    // 회원이 참여한 모든 회의 기록 보여주기 -> 사용자 이미지 파싱
+    public List<ConferenceMemberRequest> getAllHistories(String email) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        if (optionalMember.isEmpty()) {
+            throw new BadRequestException("Member not found");
+        }
+        Member member = optionalMember.get();
+        List<MemberHistory> memberHistories = memberHistoryRepository.findByMemberId(member.getId());
+
+        return memberHistories.stream()
+                .map(memberHistory -> {
+                    ConferenceRoom conferenceRoom = memberHistory.getConferenceRoom();
+                    List<ConferenceToMemberResponse> memberResponses = conferenceRoom.getMemberHistories().stream()
+                            .map(history -> new ConferenceToMemberResponse(history.getMember().getId(), history.getMember().getRole(), history.getMember().getName()))
+                            .collect(Collectors.toList());
+
+                    return new ConferenceMemberRequest(
+                            conferenceRoom.getId(),
+                            conferenceRoom.getSubject(),
+                            conferenceRoom.getConclusion(),
+                            getTimeDifference(conferenceRoom.getStartTime(), conferenceRoom.getEndTime()),
+                            memberResponses
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
-    // 사용자 ID에 해당하는 개별 회의 열람
-    public Optional<MemberHistory> getHistoryDetails(MemberHistoryId memberHistoryId) {
-        return memberHistoryRepository.findById(memberHistoryId);
+    //회의 번호 별 회원이 참여한 회의 기록 보여주기
+    public ConferenceMemberRequest getHistoryDetails(String email, int conferenceId) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+        if (optionalMember.isEmpty()) {
+            throw new BadRequestException("Member not found");
+        }
+
+        Member member = optionalMember.get();
+        Optional<MemberHistory> historyOptional = memberHistoryRepository.findByMemberIdAndConferenceRoomId(member.getId(), conferenceId);
+        if (historyOptional.isEmpty()) {
+            throw new BadRequestException("Member history not found");
+        }
+
+        MemberHistory memberHistory = historyOptional.get();
+        ConferenceRoom conferenceRoom = memberHistory.getConferenceRoom();
+        List<ConferenceToMemberResponse> memberResponses = conferenceRoom.getMemberHistories().stream()
+                .map(history -> new ConferenceToMemberResponse(history.getMember().getId(), history.getMember().getRole(), history.getMember().getName()))
+                .collect(Collectors.toList());
+
+        return new ConferenceMemberRequest(
+                conferenceRoom.getId(),
+                conferenceRoom.getSubject(),
+                conferenceRoom.getConclusion(),
+                getTimeDifference(conferenceRoom.getStartTime(), conferenceRoom.getEndTime()),
+                memberResponses
+        );
     }
 
-    // 회의 기록
-    public MemberHistory saveHistory(MemberHistory memberHistory) {
-        return memberHistoryRepository.save(memberHistory);
+    // 시간 차이 계산 메서드
+    private Date getTimeDifference(Date startTime, Date endTime) {
+        long differenceInMillis = endTime.getTime() - startTime.getTime();
+        return new Date(differenceInMillis);
     }
 
     @Transactional
