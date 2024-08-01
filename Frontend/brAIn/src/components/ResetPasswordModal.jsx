@@ -29,36 +29,33 @@ const customStyles = {
     }
 };
 
-const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
+const ResetPasswordModal = ({ isOpen, onRequestClose, email }) => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
     const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false);
+
+    const passwordModalEmail = email;
+    console.log('passwordModal:', passwordModalEmail)
 
     const handleRequestClose = () => {
         setNewPassword('');
         setConfirmPassword('');
         setErrorMessage('');
-        setSuccessMessage('');
         onRequestClose();
     };
 
     const handleResetPassword = () => {
         if (newPassword !== confirmPassword) {
             setErrorMessage('비밀번호가 일치하지 않습니다.');
-            setSuccessMessage('');
         } else {
-            // Implement the password reset logic here
-            setErrorMessage('');
-            setSuccessMessage('비밀번호가 성공적으로 변경되었습니다.');
-
-            // Open completion modal
-            setIsCompletionModalOpen(true);
-
-            // Close the ResetPasswordModal
-            handleRequestClose();
+            setIsCompletionModalOpen(true); // Open completion modal
         }
+    };
+
+    const handleCompletionModalClose = () => {
+        setIsCompletionModalOpen(false);
+        handleRequestClose(); // Close the ResetPasswordModal after completion
     };
 
     return (
@@ -108,13 +105,14 @@ const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
                     </Button>
                 </div>
                 {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-                {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
             </Modal>
 
             {/* CompletionModal */}
             <ResetPasswordCompletionModal
                 isOpen={isCompletionModalOpen}
-                onRequestClose={() => setIsCompletionModalOpen(false)}
+                onRequestClose={handleCompletionModalClose}
+                newPassword={newPassword}  // Pass newPassword to CompletionModal
+                email={passwordModalEmail}  // Pass email to CompletionModal
             />
         </>
     );

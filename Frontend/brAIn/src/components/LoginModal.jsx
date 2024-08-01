@@ -54,19 +54,37 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
 
         try {
             const response = await axios.post('http://localhost:8080/api/v1/members/login', { email, password });
-            const { accessToken } = response.data;
+            const { accessToken} = response.data;
 
             console.log('Login response:', response.data);
 
-            // if (!accessToken) {
-            //     setErrorMessage('로그인 정보가 올바르지 않습니다.');
-            //     return;
-            // }
+            if (!accessToken) {
+                setErrorMessage('로그인 정보가 올바르지 않습니다.');
+                return;
+            }
 
             localStorage.setItem('accessToken', accessToken);
+            if (accessToken) {
+                const response = await axios.get('http://localhost:8080/api/v1/members/member', {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
+                const userData = response.data;
 
-            // Redux에 로그인 상태 업데이트
-            dispatch(login({ email }));
+                const userEmail = userData.member.email;
+                const userName = userData.member.name;
+                const userPhoto = userData.member.photo;
+
+                dispatch(login({
+                    user: {
+                        email: userEmail,
+                        name: userName,
+                        photo: userPhoto
+                    },
+                    accessToken: accessToken
+                }));
+            }
 
             navigate('/');
             onRequestClose();

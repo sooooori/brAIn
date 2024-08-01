@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal'; // react-modal 패키지를 사용합니다.
 import Button from '../components/Button/Button';
 import './ProfileImageModal.css';
 
 const ProfileImageModal = ({ isOpen, onRequestClose, onSave, currentPhoto }) => {
     const [selectedFile, setSelectedFile] = useState(null);
+    const [preview, setPreview] = useState(currentPhoto);
+
+    useEffect(() => {
+        if (selectedFile) {
+            const objectUrl = URL.createObjectURL(selectedFile);
+            setPreview(objectUrl);
+
+            // Clean up memory when component unmounts
+            return () => URL.revokeObjectURL(objectUrl);
+        } else {
+            setPreview(currentPhoto);
+        }
+    }, [selectedFile, currentPhoto]);
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -29,9 +42,9 @@ const ProfileImageModal = ({ isOpen, onRequestClose, onSave, currentPhoto }) => 
             overlayClassName="profile-image-modal-overlay"
         >
             <h2>프로필 재설정</h2>
-            {currentPhoto && (
+            {preview && (
                 <img
-                    src={currentPhoto}
+                    src={preview}
                     alt="Current Profile"
                     className="current-profile-image"
                 />

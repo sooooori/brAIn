@@ -236,6 +236,7 @@ const SendNumberModal = ({ isOpen, onRequestClose }) => {
             <ResetPasswordModal
                 isOpen={isResetPasswordModalOpen}
                 onRequestClose={() => setIsResetPasswordModalOpen(false)}
+                email={email}  // Pass email to ResetPasswordModal
             />
         </>
     );
