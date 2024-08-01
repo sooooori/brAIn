@@ -1,16 +1,9 @@
 package com.ssafy.brAIn.conferenceroom.entity;
 
+import com.ssafy.brAIn.history.entity.MemberHistory;
 import com.ssafy.brAIn.util.CommonUtils;
 import com.ssafy.brAIn.util.MeetingUrlGenerator;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity // 엔티티로 지정
 @Getter
@@ -68,6 +62,11 @@ public class ConferenceRoom {
     @Column(name = "participate_url")
     private String participateUrl;
 
+
+    // 히스토리와 양방향 관계 설정
+    @OneToMany(mappedBy = "conferenceRoom", fetch = FetchType.LAZY)
+    private List<MemberHistory> memberHistories;
+
     @Builder
     public ConferenceRoom(String subject){
         this.subject = subject;
@@ -95,6 +94,12 @@ public class ConferenceRoom {
         return this;
     }
 
+
+    //회의 정보 업데이트 -> 회의록의 내용과 종료 시간
+    public void updateConferenceDetails(String conclusion, Date endTime) {
+        this.conclusion = conclusion;
+        this.endTime = endTime;
+    }
 }
 
 // 빌더 패턴을 사용하면 객체를 유연하고 직관적으로 생성할 수 있음, 어느 필드에 어떤 값이 들어가는지 명시적으로 파악할 수 있음.
