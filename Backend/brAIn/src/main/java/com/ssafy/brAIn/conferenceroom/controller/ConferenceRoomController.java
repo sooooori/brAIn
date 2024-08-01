@@ -4,16 +4,15 @@ import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomJoinRequest;
 import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomRequest;
 import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomResponse;
+import com.ssafy.brAIn.conferenceroom.dto.ConferenceMemberRequest;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
-import com.ssafy.brAIn.history.entity.MemberHistory;
 import com.ssafy.brAIn.history.service.MemberHistoryService;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.service.MemberService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -59,5 +58,19 @@ public class ConferenceRoomController {
         Member member = memberService.findByEmail(email).orElse(null);
         memberHistoryService.joinRoom(findConference, member);
         return ResponseEntity.status(200).body(findConference);
+    }
+
+
+    // 새로운 회의 기록 생성 and 중간 회의록
+    @PostMapping("/save")
+    public ResponseEntity<?> createHistory(@RequestBody ConferenceMemberRequest conferenceSaveRequest) {
+        try {
+            ConferenceMemberRequest saveRequestDTO = conferenceRoomService.saveConferenceHistory(conferenceSaveRequest);
+            return ResponseEntity.ok(saveRequestDTO);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body("Conference Room not found");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An error occurred while saving conference history");
+        }
     }
 }
