@@ -31,6 +31,10 @@ public class MemberHistoryService {
     private final MemberRepository memberRepository;
 
 
+    public List<MemberHistory> getHistoryByRoomId(int roomId) {
+        return memberHistoryRepository.findByConferenceRoomId(roomId);
+    }
+
     // 회원이 참여한 모든 회의 기록 보여주기 -> 사용자 이미지 파싱
     public List<ConferenceMemberRequest> getAllHistories(String email) {
         Optional<Member> optionalMember = memberRepository.findByEmail(email);

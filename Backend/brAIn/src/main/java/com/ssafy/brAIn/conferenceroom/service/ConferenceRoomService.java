@@ -2,6 +2,7 @@ package com.ssafy.brAIn.conferenceroom.service;
 
 import com.ssafy.brAIn.ai.response.AIAssistant;
 import com.ssafy.brAIn.ai.service.AIService;
+import com.ssafy.brAIn.conferenceroom.dto.ConferenceMemberRequest;
 import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomRequest;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
@@ -11,6 +12,7 @@ import com.ssafy.brAIn.history.entity.MemberHistory;
 import com.ssafy.brAIn.history.repository.MemberHistoryRepository;
 import com.ssafy.brAIn.openai.service.OpenAiService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

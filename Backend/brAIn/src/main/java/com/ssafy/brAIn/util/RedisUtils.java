@@ -115,6 +115,7 @@ public class RedisUtils {
 
     public boolean isKeyExists(String key) {
         return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+    }
 
     public Set<Object> getSetFromKey(String key) {
         return redisTemplate.opsForSet().members(key);

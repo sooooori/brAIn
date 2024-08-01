@@ -8,6 +8,7 @@ import com.ssafy.brAIn.history.entity.MemberHistoryId;
 import com.ssafy.brAIn.history.model.Role;
 import com.ssafy.brAIn.history.model.Status;
 import com.ssafy.brAIn.history.repository.MemberHistoryRepository;
+import com.ssafy.brAIn.history.service.MemberHistoryService;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
 import com.ssafy.brAIn.stomp.dto.UserState;
@@ -16,10 +17,7 @@ import com.ssafy.brAIn.util.RedisUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -29,17 +27,20 @@ public class MessageService {
 
 
     private final MemberHistoryRepository memberHistoryRepository;
+    private final MemberHistoryService memberHistoryService;
     private final MemberRepository memberRepository;
     private final ConferenceRoomRepository conferenceRoomRepository;
 
     public MessageService(RedisUtils redisUtils,
                           MemberRepository memberRepository,
                           MemberHistoryRepository memberHistoryRepository,
-                          ConferenceRoomRepository conferenceRoomRepository) {
+                          ConferenceRoomRepository conferenceRoomRepository,
+                          MemberHistoryService memberHistoryService) {
         this.redisUtils = redisUtils;
         this.memberHistoryRepository = memberHistoryRepository;
         this.memberRepository = memberRepository;
         this.conferenceRoomRepository=conferenceRoomRepository;
+        this.memberHistoryService = memberHistoryService;
     }
 
     public void sendPost(Integer roomId, RequestGroupPost groupPost) {
@@ -138,7 +139,7 @@ public class MessageService {
     public List<Object> startConferences(Integer roomId) {
 
         //현재 회의룸에 있는 모든 유저들을 가져온다.
-        List<MemberHistory> memberHistories=memberHistoryRepository.findByConferenceRoomId(roomId);
+        List<MemberHistory> memberHistories=memberHistoryService.getHistoryByRoomId(roomId);
 
         //한번 섞어준다.
         Collections.shuffle(memberHistories);
