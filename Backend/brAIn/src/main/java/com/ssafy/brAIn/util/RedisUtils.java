@@ -99,6 +99,23 @@ public class RedisUtils {
         redisTemplate.opsForValue().set(key, value);
     }
 
+
+    //sortedSet에서 특정 value삭제
+    public void removeValueFromSortedSet(String key, String value) {
+        redisTemplate.opsForZSet().remove(key, value);
+    }
+
+    public void removeValueFromSet(String key, Object value) {
+        redisTemplate.opsForSet().remove(key, value);
+    }
+
+    public Set<Object> getSetMembers(String key) {
+        return redisTemplate.opsForSet().members(key);
+    }
+
+    public boolean isKeyExists(String key) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+
     public Set<Object> getSetFromKey(String key) {
         return redisTemplate.opsForSet().members(key);
     }

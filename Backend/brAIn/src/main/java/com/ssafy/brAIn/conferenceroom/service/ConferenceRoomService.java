@@ -1,6 +1,8 @@
 package com.ssafy.brAIn.conferenceroom.service;
 
-import com.ssafy.brAIn.conferenceroom.dto.ConferenceMemberRequest;
+import com.ssafy.brAIn.ai.response.AIAssistant;
+import com.ssafy.brAIn.ai.service.AIService;
+import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomRequest;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
@@ -23,11 +25,17 @@ public class ConferenceRoomService {
 
     private final ConferenceRoomRepository conferenceRoomRepository;
 
+    @Autowired
+    private AIService aiService;
+
     @Transactional
     public ConferenceRoom save(ConferenceRoom conferenceRoom) {
-        Map<String, Object> res = OpenAiService.sendPostRequest(conferenceRoom.getSubject());
-        System.out.println(res.toString());
-        conferenceRoom.updateAi(res.get("assistantId").toString(), res.get("threadId").toString());
+        //Map<String, Object> res = OpenAiService.sendPostRequest(conferenceRoom.getSubject());
+        AIAssistant assistant= aiService.makeAIAssistant(conferenceRoom.getSubject());
+        System.out.println(assistant.getAssistantId());
+        System.out.println(assistant.getThreadId());
+        //System.out.println(res.toString());
+        //conferenceRoom.updateAi(res.get("assistantId").toString(), res.get("threadId").toString());
         return conferenceRoomRepository.save(conferenceRoom);
     }
 

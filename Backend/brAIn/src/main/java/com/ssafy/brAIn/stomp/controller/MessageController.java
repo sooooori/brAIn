@@ -48,15 +48,24 @@ public class MessageController {
         messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
 
         ResponseGroupPost responseGroupPost=null;
-
+//        boolean isStep1End=false;
         if (messageService.isLastOrder(Integer.parseInt(roomId), nickname)) {
-            responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,groupPost.getRound(), groupPost.getRound()+1, groupPost.getContent());
+            if (messageService.isStep1EndCondition(Integer.parseInt(roomId))) {
+//                isStep1End=true;
+                responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT_AND_END,nickname,groupPost.getRound(), groupPost.getRound(), groupPost.getContent());
+            }else{
+                responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,groupPost.getRound(), groupPost.getRound()+1, groupPost.getContent());
+
+            }
+            messageService.initUserState(Integer.parseInt(roomId));
         }else{
             responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,groupPost.getRound(), groupPost.getRound(), groupPost.getContent());
         }
         messageService.sendPost(Integer.parseInt(roomId),groupPost);
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, responseGroupPost);
-
+//        if(isStep1End){
+//            rabbitTemplate.convertAndSend("amq.topic","room." + roomId, new VoteNotification(MessageType.START_VOTE));
+//        }
 
     }
     //삭제예정
@@ -72,10 +81,11 @@ public class MessageController {
     //대기 방 입장했을 때, 렌더링 시 호출하면 될듯(useEffect 내부에서 publish)
     @MessageMapping("enter.waiting.{roomId}")
     public void enterWaitingRoom(@DestinationVariable String roomId, StompHeaderAccessor accessor){
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.ENTER_WAITING_ROOM));
         String token = accessor.getFirstNativeHeader("Authorization");
         String email=JwtUtil.getEmail(token);
-        messageService.enterWaitingRoom(Integer.parseInt(roomId),email);
+        //messageService.enterWaitingRoom(Integer.parseInt(roomId),email);
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.ENTER_WAITING_ROOM));
+
     }
 
     //회의 중간에 입장 시,
@@ -90,11 +100,13 @@ public class MessageController {
     //대기 방 퇴장(테스트 완)
     @MessageMapping("exit.waiting.{roomId}")
     public void exitWaitingRoom(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.EXIT_WAITING_ROOM));
         String token=accessor.getFirstNativeHeader("Authorization");
-//        String username=jwtUtil.getUsername(token);
-        String username="user";
-        messageService.exitWaitingRoom(Integer.parseInt(roomId),username);
+        String email=jwtUtilForRoom.getUsername(token);
+        //messageService.exitWaitingRoom(Integer.parseInt(roomId),nickname);
+        messageService.historyUpdate(Integer.parseInt(roomId),email);
+
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.EXIT_WAITING_ROOM));
+
     }
 
     // 회의 중 퇴장(테스트 완)
@@ -113,18 +125,20 @@ public class MessageController {
     @MessageMapping("start.conferences.{roomId}")
     public void startConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
         String token=accessor.getFirstNativeHeader("Authorization");
-        String chiefEmail=jwtUtilForRoom.getUsername(token);
 
-        List<String> users=messageService.startConferences(Integer.parseInt(roomId),chiefEmail).stream()
+        List<String> users=messageService.startConferences(Integer.parseInt(roomId)).stream()
                 .map(Object::toString)
                 .toList();
 
+        //초기화
+        messageService.initUserState(Integer.parseInt(roomId));
 
-        MessagePostProcessor messagePostProcessor = message -> {
-            message.getMessageProperties().setHeader("Authorization", "회의 토큰");
-            return message;
-        };
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users),messagePostProcessor);
+
+//        MessagePostProcessor messagePostProcessor = message -> {
+//            message.getMessageProperties().setHeader("Authorization", "회의 토큰");
+//            return message;
+//        };
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users));
 
     }
 
@@ -149,13 +163,23 @@ public class MessageController {
 
     }
 
-    //유저 답변 패스
+    //유저 답변 패스(테스트 완)
     @MessageMapping("state.user.pass.{roomId}")
     public void passRound(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
+
         messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.PASS);
         String nextMember=messageService.NextOrder(Integer.parseInt(roomId),nickname);
+
+        //현재 유저가 라운드의 마지막 유저라면
+        if (messageService.isPrevUser(Integer.parseInt(roomId), nickname, nextMember)) {
+            if (messageService.isStep1EndCondition(Integer.parseInt(roomId))) {
+                rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.PASS_AND_END,nickname));
+                return;
+            }
+            messageService.initUserState(Integer.parseInt(roomId));
+        }
         messageService.updateCurOrder(Integer.parseInt(roomId),nextMember);
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember));
 
