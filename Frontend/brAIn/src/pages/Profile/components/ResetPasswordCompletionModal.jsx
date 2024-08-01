@@ -4,7 +4,7 @@ import { Button, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../features/auth/authSlice';  // Import logout action
+import { logout } from '../../../features/auth/authSlice';  // Import logout action
 import axios from 'axios';
 import Cookies from 'js-cookie';
 

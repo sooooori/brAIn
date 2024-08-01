@@ -1,7 +1,7 @@
 // src/components/JoinConferenceFront.jsx
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import Button from './Button/Button'; // Adjust path if necessary
+import Button from '../../../components/Button/Button'; // Adjust path if necessary
 import { MeetingRoom as EnterIcon } from '@mui/icons-material';
 
 const JoinConferenceFront = ({ handleJoinConferenceTrue }) => {

@@ -1,7 +1,7 @@
 // src/components/NewConferenceFront.jsx
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import Button from './Button/Button'; // Adjust path if necessary
+import Button from '../../../components/Button/Button'; // Adjust path if necessary
 import AddIcon from '@mui/icons-material/Add';
 
 const NewConferenceFront = ({ handleNewConferenceTrue }) => {

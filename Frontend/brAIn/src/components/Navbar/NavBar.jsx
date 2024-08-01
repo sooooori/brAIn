@@ -1,13 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
 import './NavBar.css'; // CSS 파일을 사용하여 스타일링
 import { Avatar, Popover, Box } from '@mui/material';
-import Button from './Button/Button';
+import Button from '../Button/Button';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import axios from 'axios'; // axios를 import
 import Cookies from 'js-cookie';
 import { useSelector, useDispatch } from 'react-redux'; // useSelector와 useDispatch import
-import { logout } from '../features/auth/authSlice';
+import { logout } from '../../features/auth/authSlice';
 import { useState } from 'react';
 
 const NavBar = () => {

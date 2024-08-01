@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal'; // react-modal 패키지를 사용합니다.
-import Button from '../components/Button/Button';
+import Button from '../../../components/Button/Button';
 import './ProfileImageModal.css';
 
 const ProfileImageModal = ({ isOpen, onRequestClose, onSave, currentPhoto }) => {

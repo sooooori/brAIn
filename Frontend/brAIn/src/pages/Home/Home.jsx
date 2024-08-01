@@ -1,14 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import NewMainCard from '../components/NewMainCard';
-import JoinConferenceFront from '../components/JoinConferenceFront';
-import JoinConferenceBack from '../components/JoinConferenceBack';
-import NewConferenceFront from '../components/NewConferenceFront';
-import NewConferenceBack from '../components/NewConferenceBack';
-import JoinMainCard from '../components/JoinMainCard';
+import NewMainCard from './components/NewMainCard';
+import JoinConferenceFront from './components/JoinConferenceFront';
+import JoinConferenceBack from './components/JoinConferenceBack';
+import NewConferenceFront from './components/NewConferenceFront';
+import NewConferenceBack from './components/NewConferenceBack';
+import JoinMainCard from './components/JoinMainCard';
 import { useInView } from 'react-intersection-observer';
 import './Home.css';
-import Button from '../components/Button/Button';
+import Button from '../../components/Button/Button';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {

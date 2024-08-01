@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { login } from '../features/auth/authSlice';
+import { login } from '../../../features/auth/authSlice';
 import ResetPasswordModal from './ResetPasswordModal';
 import JoinModal from './JoinModal';
 

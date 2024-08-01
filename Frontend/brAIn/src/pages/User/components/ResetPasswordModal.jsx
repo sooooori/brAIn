@@ -77,10 +77,11 @@ const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
         }
 
         // Check if the email exists in the database
-        axios.post('http://localhost:8080/api/v1/members/checkEmail', { email })
+        axios.post('http://localhost:8080/api/v1/members/checkEmail', { email : email })
             .then(response => {
-                if (response.data.message === 'Email check successfully') {
+                if (response.data.message !== 'Email check successfully') {
                     // If email exists, send the verification code
+    
                     return axios.post('http://localhost:8080/api/v1/members/sendAuthNumber', { email });
                 } else {
                     setErrorMessage('가입된 회원이 아닙니다.');

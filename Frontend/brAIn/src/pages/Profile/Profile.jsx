@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Modal from 'react-modal';
-import Button from '../components/Button/Button';
-import axios from '../utils/Axios';
-import ResetPasswordCompletionModal from '../components/ResetPasswordCompletionModal';
-import ProfileImageModal from '../components/ProfileImageModal';
+import Button from '../../components/Button/Button'
+import axios from '../../utils/Axios';
+import ResetPasswordCompletionModal from './components/ResetPasswordCompletionModal';
+import ProfileImageModal from './components/ProfileImageModal';
 import './Profile.css';
-import { logout, updateUser } from '../features/auth/authSlice';
+import { logout, updateUser } from '../../features/auth/authSlice';
 
 const Profile = () => {
     const [isProfileImageModalOpen, setIsProfileImageModalOpen] = useState(false);

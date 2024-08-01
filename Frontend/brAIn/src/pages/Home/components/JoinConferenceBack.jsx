@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
-import Button from './Button/Button';
+import Button from '../../../components/Button/Button';
 import { Close as CloseIcon, Search as SearchIcon, MeetingRoom as EnterIcon } from '@mui/icons-material';
 import ConferenceCodeInput from './ConferenceCodeInput';
 import { useNavigate } from 'react-router-dom';

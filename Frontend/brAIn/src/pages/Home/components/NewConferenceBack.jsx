@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, TextField, IconButton, Slider } from '@mui/material';
-import Button from './Button/Button';
+import Button from '../../../components/Button/Button';
 import { Close as CloseIcon, Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';

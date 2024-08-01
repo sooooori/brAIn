@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import LoginModal from '../components/LoginModal';
-import JoinModal from '../components/JoinModal';
+import LoginModal from './components/LoginModal';
+import JoinModal from './components/JoinModal';
 
 const LoginOption = () => {
 
