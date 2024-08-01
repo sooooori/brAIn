@@ -68,6 +68,16 @@ public class Member implements UserDetails {
         this.refreshToken = refreshToken;
     }
 
+    // 비밀번호 재설정
+    public void resetPassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    // 프로필 사진 변경
+    public void updatePhoto(String photo) {
+        this.photo = photo;
+    }
+
     // refreshTOken 업데이트
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;

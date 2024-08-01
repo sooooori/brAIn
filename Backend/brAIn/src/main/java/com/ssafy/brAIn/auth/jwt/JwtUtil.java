@@ -107,14 +107,17 @@ public class JwtUtil {
         return claims;
     }
 
-    // 회의록 관련 메서드
+    // Token에서 이메일 추출
     public static String getEmail(String token) {
         Claims claims = extractToken(token);
-        return claims.get("email", String.class);
+        return claims.get("email").toString();
     }
 
+    // Token에서 회의룸 추출
     public static String getUserConferences(String token){
         Claims claims = extractToken(token);
-        return claims.get("userConferences", String.class);
+        return claims.get("userConferences").toString();
     }
+
+
 }

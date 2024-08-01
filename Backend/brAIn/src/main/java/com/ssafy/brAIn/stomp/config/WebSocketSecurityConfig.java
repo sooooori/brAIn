@@ -21,7 +21,7 @@ public class WebSocketSecurityConfig  {
 
     @Bean
     AuthorizationManager<Message<?>> authorizationManager(MessageMatcherDelegatingAuthorizationManager.Builder messages) {
-        messages.simpDestPathMatcher(new AntPathMatcher())
+        messages
                 .simpDestMatchers("/app/start.conferences.*").hasRole("CHIEF")
                 .simpDestMatchers("/app/next.step.*").hasRole("CHIEF")
 

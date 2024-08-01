@@ -66,6 +66,9 @@ public class ConferenceRoom {
     // 히스토리와 양방향 관계 설정
     @OneToMany(mappedBy = "conferenceRoom", fetch = FetchType.LAZY)
     private List<MemberHistory> memberHistories;
+    
+    @Column(name = "round")
+    private Integer round;
 
     @Builder
     public ConferenceRoom(String subject){
@@ -76,6 +79,7 @@ public class ConferenceRoom {
         this.inviteCode = CommonUtils.generateRandomMixStr(6,true);
         this.secureId = MeetingUrlGenerator.generateMeetingUrl();
         this.participateUrl = String.format("https://bardisue.store/v1/conferences/%s", this.secureId);
+        this.round = 0;
     }
 
     public ConferenceRoom update() {

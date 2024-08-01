@@ -77,6 +77,15 @@ public class WebSecurityConfig {
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
         configuration.setAllowCredentials(true);
 
+//        configuration.addAllowedOrigin("*");
+//        configuration.setAllowCredentials(false);
+
+        // WebSocket을 위한 추가 설정
+        configuration.addAllowedHeader("Sec-WebSocket-Extensions");
+        configuration.addAllowedHeader("Sec-WebSocket-Key");
+        configuration.addAllowedHeader("Sec-WebSocket-Version");
+        configuration.addAllowedHeader("Sec-WebSocket-Protocol");
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
