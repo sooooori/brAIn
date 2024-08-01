@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
-import { Button, TextField } from '@mui/material';
+import { Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../features/auth/authSlice';  // Import logout action
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 // Custom styles for the modal
 const customStyles = {
@@ -32,40 +33,32 @@ const customStyles = {
     }
 };
 
-const ResetPasswordCompletionModal = ({ isOpen, onRequestClose }) => {
+const ResetPasswordCompletionModal = ({ isOpen, onRequestClose, newPassword, email }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const location = useLocation();
 
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-
     const { accessToken } = useSelector((state) => state.auth);
-
+    console.log(email)
     const handlePasswordChange = async () => {
-
         try {
-            const response = await axios.put('http://localhost:8080/api/v1/members/resetPassword', {newPassword}, { 
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
+            await axios.put('http://localhost:8080/api/v1/members/resetPassword', 
+                 newPassword ,  // Wrap newPassword in an object
+                {  
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,  // Pass the access token in the Authorization header
+                        'Content-Type': 'application/json'  // Ensure correct content type
+                    }
                 }
-            });
-            console.log(response);
-            handleLogout();
+            );
+            dispatch(logout());
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            Cookies.remove('refreshToken');
+            navigate('/');
         } catch (error) {
             console.error('Password change failed', error);
             setErrorMessage('비밀번호 변경 중 오류가 발생했습니다.');
-        }
-    };
-
-    const handleLogout = async () => {
-        await dispatch(logout());
-        // Perform different actions based on the current location
-        if (location.pathname === '/profile') {
-            navigate('/');
-        } else {
-            onRequestClose();
         }
     };
 
@@ -90,6 +83,7 @@ const ResetPasswordCompletionModal = ({ isOpen, onRequestClose }) => {
             >
                 확인
             </Button>
+            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
         </Modal>
     );
 };

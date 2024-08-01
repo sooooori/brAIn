@@ -1,31 +1,32 @@
 import { Link, useNavigate } from 'react-router-dom';
 import './NavBar.css'; // CSS 파일을 사용하여 스타일링
-import { Button } from '@mui/material';
+import { Button, Avatar, Popover, Box } from '@mui/material';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import axios from 'axios'; // axios를 import
 import Cookies from 'js-cookie';
 import { useSelector, useDispatch } from 'react-redux'; // useSelector와 useDispatch import
-import { logout, login } from '../features/auth/authSlice';
-import { useEffect } from 'react';
+import { logout } from '../features/auth/authSlice';
+import { useState } from 'react';
 
 const NavBar = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    // Redux store에서 로그인 상태를 가져옵니다.
+    // Popover 상태와 핸들러
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const id = open ? 'profile-popover' : undefined;
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    // Redux store에서 로그인 상태와 사용자 정보를 가져옵니다.
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const user = useSelector((state) => state.auth.user);
-
-    // Load the authentication state from localStorage and update Redux store
-    useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        const accessToken = localStorage.getItem('accessToken');
-        
-        if (storedUser && accessToken) {
-            dispatch(login(storedUser));
-        }
-    }, [dispatch]);
 
     const handleStartClick = () => {
         navigate('/loginoption');
@@ -53,11 +54,11 @@ const NavBar = () => {
             navigate('/');
         } catch (error) {
             console.error('로그아웃 실패:', error);
-            // 로그아웃 실패 시 사용자에게 피드백을 줄 수 있습니다.
         }
     };
 
     const confirmLogout = () => {
+        handleClose()
         confirmAlert({
             title: '로그아웃 확인',
             message: '정말 로그아웃 하시겠습니까?',
@@ -75,7 +76,8 @@ const NavBar = () => {
     };
 
     const handleProfileUpdate = async () => {
-        navigate('/profile')
+        navigate('/profile');
+        handleClose();
     };
 
     return (
@@ -97,20 +99,42 @@ const NavBar = () => {
                         brAIn 시작하기
                     </Button>
                 ) : (
-                    <>
-                        <Button
-                            onClick={handleProfileUpdate}>
-                            회원정보수정
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            color="secondary"
-                            className="logout" // CSS에서 정의된 클래스
-                            onClick={confirmLogout}
+                    <div className='profile-container'>
+                        <Avatar
+                            src={user?.photo || ""}
+                            alt="Profile"
+                            onClick={handleClick}
+                            className="profile-avatar" // Apply the profile-avatar class
+                        />
+                        <Popover
+                            id={id}
+                            open={open}
+                            anchorEl={anchorEl}
+                            onClose={handleClose}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'center',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'center',
+                            }}
                         >
-                            로그아웃
-                        </Button>
-                    </>
+                            <Box className="modal-content">
+                                <div className="profile-info">
+                                    <Avatar src={user?.photo || ""} alt="Profile" className="profile-img-large" />
+                                    <p>{user?.name}</p>
+                                    <p>{user?.email}</p>
+                                </div>
+                                <Button onClick={handleProfileUpdate} variant="outlined" color="primary" style={{ marginBottom: '0.5rem' }}>
+                                    회원정보수정
+                                </Button>
+                                <Button onClick={confirmLogout} variant="contained" color="secondary">
+                                    로그아웃
+                                </Button>
+                            </Box>
+                        </Popover>
+                    </div>
                 )}
             </div>
         </nav>
