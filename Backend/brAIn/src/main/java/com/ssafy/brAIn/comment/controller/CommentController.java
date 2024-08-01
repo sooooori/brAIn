@@ -7,7 +7,6 @@ import com.ssafy.brAIn.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.Map;
 
@@ -30,6 +29,18 @@ public class CommentController {
         return ResponseEntity.ok(Map.of("Comment", comment, "message", "Comment created successfully"));
     }
 
+    // 코멘트 수정
+    @PutMapping("/update")
+    public ResponseEntity<?> updateComment(@RequestHeader("Authorization") String token,
+                                           @RequestBody CommentCreateRequest commentCreateRequest) {
+        String accessToken = token.replace("Bearer ", "");
+        Integer roundPostItId = commentCreateRequest.getRoundPostItId();
+        String updateContent = commentCreateRequest.getContent();
+
+        Comment comment = commentService.updateComment(accessToken, roundPostItId, updateContent);
+        return ResponseEntity.ok(Map.of("UpdatedComment", comment, "message", "Comment created successfully"));
+    }
+
     // 코멘트 삭제
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteComment(@RequestHeader("Authorization") String token,
@@ -41,8 +52,4 @@ public class CommentController {
         commentService.deleteComment(accessToken, roundPostItId, commentId);
         return ResponseEntity.ok(Map.of("message", "Comment deleted successfully"));
     }
-
-
-
-
 }

@@ -55,6 +55,7 @@ public class WebSecurityConfig {
                             "v1/members/join",
                             "v1/members/login",
                             "v1/members/refresh",
+                            "v1/members/resetPassword",
                             "/**"
                             ).permitAll();
                     requests.anyRequest().authenticated(); // 모든 URL 인증 필요

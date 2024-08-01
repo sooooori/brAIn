@@ -35,4 +35,8 @@ public class Comment {
         this.roundPostIt = roundPostIt;
         this.content = content;
     }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }

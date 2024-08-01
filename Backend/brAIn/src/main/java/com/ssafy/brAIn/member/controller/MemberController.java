@@ -205,11 +205,13 @@ public class MemberController {
 
     // 비밀번호 재설정(마이페이지에서 비밀번호 변경)
     @PutMapping("/updatePassword")
-    public ResponseEntity<?> updatePassword(@RequestHeader("Authorization") String token, @RequestBody String newPassword) {
+    public ResponseEntity<?> updatePassword(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> request) {
         // Barer 접두사 제거
         String accessToken = token.replace("Bearer ", "");
         // 비밀번호 재설정
         String email = JwtUtil.getEmail(accessToken);
+        String newPassword = request.get("newPassword");
+
         memberService.resetPassword(email, newPassword);
         return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
     }
