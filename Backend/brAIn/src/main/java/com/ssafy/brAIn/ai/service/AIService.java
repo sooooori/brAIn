@@ -29,6 +29,19 @@ public class AIService {
                 .bodyValue(requestBody)
                 .retrieve().bodyToMono(AIAssistant.class)
                 .block();
+    }
 
+    public String addPostIt(String content, String threadId) {
+        String url="/postIt/add";
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("postIt", content);
+        requestBody.put("threadId", threadId);
+
+        return webClient
+                .post()
+                .uri(url)
+                .bodyValue(requestBody)
+                .retrieve().bodyToMono(String.class)
+                .block();
     }
 }
