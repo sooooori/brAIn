@@ -57,8 +57,7 @@ const Home = () => {
     <div className="home-container">
       {isAuthenticated ? (
         <>
-          <h1 className="home-title">brAIn</h1>
-          <h2 className="home-subtitle">AI와 함께하는 브레인스토밍</h2>
+          <h1 className="home-title">시작하기</h1>
           <div className="card-container">
             <div className={`card ${isNewConferenceClicked ? 'rotate-left' : ''}`}>
               <NewMainCard
@@ -90,30 +89,37 @@ const Home = () => {
         </>
       ) : (
         <div>
-          <h1 className="home-title">About brAIn</h1>
+          <h1 className="home-title">About BrAIn</h1>
           <h2 className="home-subtitle">
-            AI와 함께 생각하고, 표현하고 한 눈에 아이디어를 볼 수 있는 비주얼 워크스페이스
+            AI와 함께하는 신개념 브레인스토밍 플랫폼 <br /> 
           </h2>
           <Button
-            variant="contained"
-            className="start-button"
+            type="fit"
+            buttonStyle="orange"
+            className="button-primary"
             onClick={handleStartClick}
+            ariaLabel="Start BrAIn"
           >
-            brAIn 시작하기
+            BrAIn 시작하기
           </Button>
+          
+          <div className="intro-container">
+            <img src="images/main_image_intro.png" alt="Intro" />
+          </div>
+          <div className={`section ${leftInView ? 'fade-left' : ''}`} ref={leftRef}>
+            <img src="images/main_image_1.png" alt="Left" />
+          </div>
+
+          <div className={`section ${rightInView ? 'fade-right' : ''}`} ref={rightRef}>
+            <img src="images/main_image_2.png" alt="Right" />
+          </div>
+
+          <div className={`section ${centerInView ? 'fade-center' : ''}`} ref={centerRef}>
+            <img src="images/main_image_3.png" alt="Center" />
+          </div>
         </div>
       )}
-      <div className={`section ${leftInView ? 'fade-left' : ''}`} ref={leftRef}>
-        <img src="images/google.png" alt="Left" />
-      </div>
-
-      <div className={`section ${rightInView ? 'fade-right' : ''}`} ref={rightRef}>
-        <img src="images/google.png" alt="Right" />
-      </div>
-
-      <div className={`section ${centerInView ? 'fade-center' : ''}`} ref={centerRef}>
-        <img src="images/google.png" alt="Center" />
-      </div>
+      
     </div>
   );
 };
