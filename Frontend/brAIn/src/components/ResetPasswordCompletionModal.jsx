@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../features/auth/authSlice';  // Import logout action
 import axios from 'axios';
@@ -36,26 +36,44 @@ const customStyles = {
 const ResetPasswordCompletionModal = ({ isOpen, onRequestClose, newPassword, email }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();  // Hook to get the current location
 
     const [errorMessage, setErrorMessage] = useState('');
     const { accessToken } = useSelector((state) => state.auth);
-    console.log(email)
+
+    const updatePassword = newPassword;
+    const useremail = email;
+
+    const isProfilePage = location.pathname === '/profile';
+
     const handlePasswordChange = async () => {
         try {
-            await axios.put('http://localhost:8080/api/v1/members/resetPassword', 
-                 newPassword ,  // Wrap newPassword in an object
-                {  
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,  // Pass the access token in the Authorization header
-                        'Content-Type': 'application/json'  // Ensure correct content type
+            let response;
+            if (isProfilePage) {
+                response = await axios.put('http://localhost:8080/api/v1/members/updatePassword', 
+                    { newPassword: updatePassword },  // Wrap newPassword in an object
+                    {  
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,  // Pass the access token in the Authorization header
+                            'Content-Type': 'application/json'  // Ensure correct content type
+                        }
                     }
-                }
-            );
-            dispatch(logout());
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('user');
-            Cookies.remove('refreshToken');
-            navigate('/');
+                );
+            } else {
+                response = await axios.put('http://localhost:8080/api/v1/members/resetPassword', 
+                    
+                    { email: useremail, newPassword: updatePassword },  // Wrap email and newPassword in an object
+                );
+                console.log('completionModal: ', useremail)
+            }
+
+            if (response && response.status === 200) {
+                dispatch(logout());
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('user');
+                Cookies.remove('refreshToken');
+                navigate('/');
+            }
         } catch (error) {
             console.error('Password change failed', error);
             setErrorMessage('비밀번호 변경 중 오류가 발생했습니다.');

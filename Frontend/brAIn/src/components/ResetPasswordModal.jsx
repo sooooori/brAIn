@@ -35,7 +35,8 @@ const ResetPasswordModal = ({ isOpen, onRequestClose, email }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false);
 
-    console.log(email)
+    const passwordModalEmail = email;
+    console.log('passwordModal:', passwordModalEmail)
 
     const handleRequestClose = () => {
         setNewPassword('');
@@ -111,6 +112,7 @@ const ResetPasswordModal = ({ isOpen, onRequestClose, email }) => {
                 isOpen={isCompletionModalOpen}
                 onRequestClose={handleCompletionModalClose}
                 newPassword={newPassword}  // Pass newPassword to CompletionModal
+                email={passwordModalEmail}  // Pass email to CompletionModal
             />
         </>
     );
