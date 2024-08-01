@@ -30,9 +30,11 @@ public class ConferenceRoomResponse {
 //    private List<HistoryToMemberResponse> children;
     private String inviteCode;
     private String participateUrl;
+    private String jwtForRoom;
 
-    public ConferenceRoomResponse(ConferenceRoom conferenceRoom) {
+    public ConferenceRoomResponse(ConferenceRoom conferenceRoom, String jwtForRoom) {
         this.inviteCode = conferenceRoom.getInviteCode();
         this.participateUrl = conferenceRoom.getParticipateUrl();
+        this.jwtForRoom = jwtForRoom;
     }
 }

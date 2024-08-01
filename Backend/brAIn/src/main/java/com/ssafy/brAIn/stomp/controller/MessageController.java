@@ -1,8 +1,11 @@
 package com.ssafy.brAIn.stomp.controller;
 
+import com.ssafy.brAIn.ai.service.AIService;
 import com.ssafy.brAIn.auth.jwt.JWTUtilForRoom;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
+import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
+import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.stomp.dto.*;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
 import com.ssafy.brAIn.stomp.request.RequestStep;
@@ -28,13 +31,18 @@ public class MessageController {
     private final MessageService messageService;
 
     private final JWTUtilForRoom jwtUtilForRoom;
+    private final AIService aiService;
+    private final ConferenceRoomService conferenceRoomService;
 
     public MessageController(RabbitTemplate rabbitTemplate,
                              MessageService messageService,
-                             JWTUtilForRoom jwtUtilForRoom) {
+                             JWTUtilForRoom jwtUtilForRoom,
+                             AIService aiService, ConferenceRoomService conferenceRoomService) {
         this.rabbitTemplate = rabbitTemplate;
         this.messageService = messageService;
         this.jwtUtilForRoom = jwtUtilForRoom;
+        this.aiService = aiService;
+        this.conferenceRoomService = conferenceRoomService;
     }
 
 
@@ -46,6 +54,8 @@ public class MessageController {
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
         messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
+        ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId);
+        aiService.addPostIt(groupPost.getContent(), cr.getThreadId());
 
         ResponseGroupPost responseGroupPost=null;
 //        boolean isStep1End=false;
@@ -112,7 +122,6 @@ public class MessageController {
     // 회의 중 퇴장(테스트 완)
     @MessageMapping("exit.conferences.{roomId}")
     public void exitConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
-
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
         String email=jwtUtilForRoom.getUsername(token);
