@@ -45,7 +45,7 @@ public class MemberService {
 
         String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
         String key = "profile-image/" + email + fileExtension;
-        s3Service.uploadUserImage(key, fileData);
+        s3Service.uploadUserImage(key, fileData, originalFilename);
         String imageUrl = String.format("https://%s.s3.%s.amazonaws.com/%s", s3Service.getBucket(), s3Service.getRegion(), key);
         member.updatePhoto(imageUrl);
         memberRepository.save(member);
@@ -68,7 +68,6 @@ public class MemberService {
             throw new BadRequestException("Email is already in use");
         }
     }
-
 
     // 일반 로그인 유저를 위한 토큰 발급 메서드
     public String login(Authentication authentication, HttpServletResponse response) {
