@@ -35,10 +35,10 @@ public class ConferenceRoomController {
         ConferenceRoom cr = conferenceRoomRequest.toConferenceRoom();
         ConferenceRoom saveCr = conferenceRoomService.save(cr);
         token = token.split(" ")[1];
-        Claims claims = JwtUtil.extractToken(token);
-        String email = claims.get("email").toString();
-        Member member = memberService.findByEmail(email).orElse(null);
-        memberHistoryService.createRoom(saveCr, member);
+        //Claims claims = JwtUtil.extractToken(token);
+        //String email = claims.get("email").toString();
+        //Member member = memberService.findByEmail(email).orElse(null);
+        //memberHistoryService.createRoom(saveCr, member);
         ConferenceRoomResponse crr = new ConferenceRoomResponse(cr);
         return ResponseEntity.status(201).body(crr);
     }
