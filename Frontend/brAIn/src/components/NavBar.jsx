@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import './NavBar.css'; // CSS 파일을 사용하여 스타일링
-import { Button, Avatar, Popover, Box } from '@mui/material';
+import { Avatar, Popover, Box } from '@mui/material';
+import Button from './Button/Button';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import axios from 'axios'; // axios를 import
@@ -58,7 +59,7 @@ const NavBar = () => {
     };
 
     const confirmLogout = () => {
-        handleClose()
+        handleClose();
         confirmAlert({
             title: '로그아웃 확인',
             message: '정말 로그아웃 하시겠습니까?',
@@ -85,18 +86,19 @@ const NavBar = () => {
             <div className="navbar-logo">
                 <Link to="/">
                     <img className="logo-img" src="images/brAIn_2.png" alt="brAIn" />
-                    brAIn
+                    BrAIn
                 </Link>
             </div>
             <div className="navbar-links">
                 {!isAuthenticated ? (
                     <Button
-                        variant="contained"
-                        color="primary"
-                        className="primary" // CSS에서 정의된 클래스
+                        type="fit"
+                        buttonStyle="orange"
+                        className="button-primary"
                         onClick={handleStartClick}
+                        ariaLabel="Start BrAIn"
                     >
-                        brAIn 시작하기
+                        BrAIn 시작하기
                     </Button>
                 ) : (
                     <div className='profile-container'>
@@ -126,10 +128,22 @@ const NavBar = () => {
                                     <p>{user?.name}</p>
                                     <p>{user?.email}</p>
                                 </div>
-                                <Button onClick={handleProfileUpdate} variant="outlined" color="primary" style={{ marginBottom: '0.5rem' }}>
+                                <Button
+                                    type="fit"
+                                    buttonStyle="green"
+                                    onClick={handleProfileUpdate}
+                                    className="button-profile-update"
+                                    ariaLabel="Update Profile"
+                                >
                                     회원정보수정
                                 </Button>
-                                <Button onClick={confirmLogout} variant="contained" color="secondary">
+                                <Button
+                                    type="fit"
+                                    buttonStyle="red"
+                                    onClick={confirmLogout}
+                                    className="button-logout"
+                                    ariaLabel="Logout"
+                                >
                                     로그아웃
                                 </Button>
                             </Box>

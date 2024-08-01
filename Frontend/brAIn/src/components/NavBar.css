@@ -12,7 +12,6 @@
     align-items: center;
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* Ensure the navbar height is consistent */
     height: 4rem;
 }
 
@@ -33,7 +32,7 @@
 
 /* Adjust logo image size */
 .logo-img {
-    width: 40px;
+    width: 80px;
     height: auto;
     margin-right: 0.5rem;
 }
@@ -42,38 +41,50 @@
 .navbar-links {
     display: flex;
     align-items: center;
+    margin-left: auto; /* Right align the buttons */
 }
 
-/* Start button styling */
-.navbar-links .MuiButton-root.primary {
-    background-color: #b300ff;
+/* Button styling */
+.navbar-links .button-primary {
+    background-color: #ff9800; /* Use orange as primary color */
     color: white;
     border-radius: 6px;
     padding: 0.5rem 1rem;
     text-transform: none;
     margin-left: 0.5rem;
-    margin-right: 1.5rem;
     font-size: 1rem;
 }
 
-.navbar-links .MuiButton-root.primary:hover {
-    background-color: #a300e6;
+.navbar-links .button-primary:hover {
+    background-color: #fb8c00;
 }
 
-/* Logout button styling */
-.navbar-links .MuiButton-root.logout {
-    background-color: #ff4d4d;
+.navbar-links .button-logout {
+    background-color: #f44336; /* Use red as logout color */
     color: white;
     border-radius: 6px;
     padding: 0.5rem 1rem;
     text-transform: none;
     margin-left: 0.5rem;
-    margin-right: 1.5rem;
     font-size: 1rem;
 }
 
-.navbar-links .MuiButton-root.logout:hover {
-    background-color: #e60000;
+.navbar-links .button-logout:hover {
+    background-color: #d32f2f;
+}
+
+.navbar-links .button-profile-update {
+    background-color: #4caf50; /* Use green as profile update color */
+    color: white;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    text-transform: none;
+    margin-left: 0.5rem;
+    font-size: 1rem;
+}
+
+.navbar-links .button-profile-update:hover {
+    background-color: #388e3c;
 }
 
 /* Profile image styling */
@@ -95,9 +106,9 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     padding: 1rem;
     width: 200px;
-    position: absolute; /* Ensure it does not affect navbar height */
+    position: absolute;
     z-index: 1001;
-    transform: translateY(10px); /* Optional: Adds a slight offset */
+    transform: translateY(10px);
 }
 
 /* Profile info styling */
