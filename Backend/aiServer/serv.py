@@ -98,7 +98,7 @@ def make_thread():
     }
     return jsonify(response)
 
-@app.route('/postIt/add', methods=['GET'])
+@app.route('/postIt/add', methods=['POST'])
 def add_postit():
     params = request.get_json()
     post_it = params['postIt']
@@ -112,7 +112,7 @@ def add_postit():
     return convert_json(message)
 
 
-@app.route('/postIt/make', methods=['GET'])
+@app.route('/postIt/make', methods=['POST'])
 def round_robin_make_idea():
     params = request.get_json()
     thread_id = params['threadId']
@@ -139,7 +139,7 @@ def round_robin_make_idea():
     
     return event_handler.get_generated_text()
 
-@app.route('/summary/make', methods=['GET'])
+@app.route('/summary/make', methods=['POST'])
 def summary_ideas():
     params = request.get_json()
     thread_id = params['threadId']
@@ -163,7 +163,7 @@ def summary_ideas():
         stream.until_done()
     return event_handler.get_generated_text()
 
-@app.route('/persona/make', methods=['GET'])
+@app.route('/persona/make', methods=['POST'])
 def persona_make():
     params = request.get_json()
     thread_id = params['threadId']
@@ -194,7 +194,7 @@ def persona_make():
     return event_handler.get_generated_text()
 
 
-@app.route('/swot/make', methods=['GET'])
+@app.route('/swot/make', methods=['POST'])
 def swot_make():
     params = request.get_json()
     thread_id = params['threadId']
