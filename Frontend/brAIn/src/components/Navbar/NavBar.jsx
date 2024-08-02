@@ -1,4 +1,7 @@
+// src/components/Navbar/NavBar.jsx
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import useScrollDirection from '../../hooks/useScrollDirection';
 import './NavBar.css'; // CSS 파일을 사용하여 스타일링
 import { Avatar, Popover, Box } from '@mui/material';
 import Button from '../Button/Button';
@@ -13,6 +16,7 @@ import { useState } from 'react';
 const NavBar = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const scrollingUp = useScrollDirection(); // Hook to detect scroll direction
 
     // Popover 상태와 핸들러
     const [anchorEl, setAnchorEl] = useState(null);
@@ -82,7 +86,7 @@ const NavBar = () => {
     };
 
     return (
-        <nav className="navbar">
+        <nav className={`navbar ${scrollingUp ? 'navbar-show' : 'navbar-hide'}`}>
             <div className="navbar-logo">
                 <Link to="/">
                     <img className="logo-img" src="images/brAIn_2.png" alt="brAIn" />

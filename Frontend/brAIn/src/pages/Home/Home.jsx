@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import NewMainCard from './components/NewMainCard';
 import JoinConferenceFront from './components/JoinConferenceFront';
@@ -13,9 +13,12 @@ import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const [isConferenceSearchClicked, setIsConferenceSearchClicked] = React.useState(false);
-  const [isNewConferenceClicked, setIsNewConferenceClicked] = React.useState(false);
-  const [codeInputs, setCodeInputs] = React.useState(Array(6).fill(''));
+  const [isConferenceSearchClicked, setIsConferenceSearchClicked] = useState(false);
+  const [isNewConferenceClicked, setIsNewConferenceClicked] = useState(false);
+  const [codeInputs, setCodeInputs] = useState(Array(6).fill(''));
+  const [leftVisible, setLeftVisible] = useState(true);
+  const [rightVisible, setRightVisible] = useState(true);
+  const [centerVisible, setCenterVisible] = useState(true);
   const navigate = useNavigate();
 
   const handleConferenceSearchClickedTrue = () => {
@@ -39,23 +42,50 @@ const Home = () => {
   };
 
   const { ref: leftRef, inView: leftInView } = useInView({
-    triggerOnce: true,
-    threshold: 0.5,
+    threshold: 0.7,
   });
 
   const { ref: rightRef, inView: rightInView } = useInView({
-    triggerOnce: true,
     threshold: 0.5,
   });
 
   const { ref: centerRef, inView: centerInView } = useInView({
-    triggerOnce: true,
     threshold: 0.5,
   });
 
+  useEffect(() => {
+    if (leftInView) {
+      setLeftVisible(true);
+      const timer = setTimeout(() => setLeftVisible(false), 3000); // 3 seconds
+      return () => clearTimeout(timer);
+    } else {
+      setLeftVisible(false);
+    }
+  }, [leftInView]);
+
+  useEffect(() => {
+    if (rightInView) {
+      setRightVisible(true);
+      const timer = setTimeout(() => setRightVisible(false), 3000); // 3 seconds
+      return () => clearTimeout(timer);
+    } else {
+      setRightVisible(false);
+    }
+  }, [rightInView]);
+
+  useEffect(() => {
+    if (centerInView) {
+      setCenterVisible(true);
+      const timer = setTimeout(() => setCenterVisible(false), 3000); // 3 seconds
+      return () => clearTimeout(timer);
+    } else {
+      setCenterVisible(false);
+    }
+  }, [centerInView]);
+
   return (
     <div className="home-container">
-      {isAuthenticated ? (
+      {!isAuthenticated ? (
         <>
           <h1 className="home-title">시작하기</h1>
           <div className="card-container">
@@ -106,20 +136,19 @@ const Home = () => {
           <div className="intro-container">
             <img src="images/main_image_intro.png" alt="Intro" />
           </div>
-          <div className={`section ${leftInView ? 'fade-left' : ''}`} ref={leftRef}>
+          <div className={`section ${leftInView && leftVisible ? 'fade-left' : 'fade-out'}`} ref={leftRef}>
             <img src="images/main_image_1.png" alt="Left" />
           </div>
 
-          <div className={`section ${rightInView ? 'fade-right' : ''}`} ref={rightRef}>
+          <div className={`section ${rightInView && rightVisible ? 'fade-right' : 'fade-out'}`} ref={rightRef}>
             <img src="images/main_image_2.png" alt="Right" />
           </div>
 
-          <div className={`section ${centerInView ? 'fade-center' : ''}`} ref={centerRef}>
+          <div className={`section ${centerInView && centerVisible ? 'fade-center' : 'fade-out'}`} ref={centerRef}>
             <img src="images/main_image_3.png" alt="Center" />
           </div>
         </div>
       )}
-      
     </div>
   );
 };

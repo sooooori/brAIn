@@ -4,6 +4,7 @@ import Button from '../../../components/Button/Button';
 import { Close as CloseIcon, Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './NewConferenceBack.css'; // 스타일을 정의한 CSS 파일을 임포트
 
 const NewConferenceBack = ({ 
   handleNewConferenceFalse,
@@ -52,29 +53,8 @@ const NewConferenceBack = ({
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      p={3}
-      sx={{
-        width: '100%',
-        maxWidth: '500px',
-        height: '100%',
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        boxShadow: 3,
-        overflow: 'hidden',
-      }}
-    >
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        width="100%"
-        mb={2}
-      >
+    <Box className="container-box">
+      <Box className="header-section">
         <Typography variant="h6">새로운 회의 생성하기</Typography>
         <IconButton onClick={handleCloseButtonClicked}>
           <CloseIcon />
@@ -83,11 +63,11 @@ const NewConferenceBack = ({
 
       {isNewConferenceClicked ? (
         <>
-          <Box width="100%" mb={2}>
+          <Box width="100%" className="typography-margin-bottom">
             <Typography variant="h6">회의 제목</Typography>
             <Typography variant="body1">{title}</Typography>
           </Box>
-          <Box width="100%" mb={2}>
+          <Box width="100%" className="typography-margin-bottom">
             <Typography variant="h6">아이디어 준비 시간</Typography>
             <Typography variant="body1">{preparationTime} 분</Typography>
           </Box>
@@ -96,7 +76,7 @@ const NewConferenceBack = ({
             color="primary"
             startIcon={<AddIcon />}
             onClick={() => navigate(`/instructor?roomid=${title}`)}
-            sx={{ width: '100%', mt: 2 }}
+            className="button-full-width"
           >
             회의 생성하기
           </Button>
@@ -108,7 +88,7 @@ const NewConferenceBack = ({
             flexDirection="column"
             gap={2}
             width="100%"
-            mb={2}
+            className="typography-margin-bottom"
           >
             <Typography variant="h6">회의 주제</Typography>
             <TextField
@@ -118,13 +98,9 @@ const NewConferenceBack = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               inputProps={{ maxLength: 50 }}
-              sx={{ 
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '8px',
-                },
-                '& .MuiInputBase-input': {
-                  fontSize: '16px',
-                },
+              classes={{
+                root: 'textfield-input-root',
+                input: 'textfield-input',
               }}
             />
           </Box>
@@ -134,11 +110,11 @@ const NewConferenceBack = ({
             flexDirection="column"
             gap={2}
             width="100%"
-            mb={2}
+            className="typography-margin-bottom"
           >
             <Typography variant="h6">아이디어 준비 기간</Typography>
             <Typography variant="body1">
-              브레인스토밍을 위한 아이디어 준비 제한 시간을 설정해주세요.
+              브레인스토밍을 위한 아이디어 준비 <br/>제한 시간을 설정해주세요.
             </Typography>
             <Slider
               value={preparationTime}
@@ -148,18 +124,11 @@ const NewConferenceBack = ({
               min={1}
               max={10} // Set maximum to 10 minutes
               step={1} // Adjust step to 1 minute for fine control
-              sx={{
-                color: '#D1C4E9', // Light purple color for the slider
-                '& .MuiSlider-thumb': {
-                  borderRadius: '50%',
-                  bgcolor: '#D1C4E9', // Light purple color for the thumb
-                },
-                '& .MuiSlider-track': {
-                  borderRadius: '4px',
-                },
-                '& .MuiSlider-rail': {
-                  borderRadius: '4px',
-                },
+              classes={{
+                root: 'slider-root',
+                thumb: 'slider-thumb',
+                track: 'slider-track',
+                rail: 'slider-rail',
               }}
             />
             <Typography variant="body2" color="textSecondary">
@@ -172,7 +141,7 @@ const NewConferenceBack = ({
             color="primary"
             startIcon={<AddIcon />}
             onClick={handleCreateButtonClicked}
-            sx={{ width: '100%', mt: 2 }}
+            className="button-full-width"
           >
             회의 생성하기
           </Button>
