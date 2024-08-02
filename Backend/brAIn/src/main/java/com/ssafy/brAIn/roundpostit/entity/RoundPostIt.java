@@ -1,5 +1,7 @@
 package com.ssafy.brAIn.roundpostit.entity;
 
+import com.ssafy.brAIn.comment.entity.Comment;
+import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.roundboard.entity.RoundBoard;
 import jakarta.persistence.*;
@@ -7,6 +9,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -18,8 +23,8 @@ public class RoundPostIt {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "round_board_id", referencedColumnName = "id")
-    private RoundBoard roundBoard;
+    @JoinColumn(name = "room_id", referencedColumnName = "id")
+    private ConferenceRoom conferenceRoom;
 
     @ManyToOne
     @JoinColumn(name = "member_id", referencedColumnName = "id")
@@ -28,6 +33,10 @@ public class RoundPostIt {
     @Column(name = "content")
     private String content;
 
+    // 댓글 리스트
+    @OneToMany(mappedBy = "roundPostIt", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Comment> comments;
+
     private boolean last9;
 
     private boolean last3;
@@ -35,21 +44,21 @@ public class RoundPostIt {
     private boolean isAI;
 
     @Builder
-    public RoundPostIt(RoundBoard roundBoard, Member member, String content) {
-        this.roundBoard = roundBoard;
+    public RoundPostIt(ConferenceRoom conferenceRoom, Member member, String content) {
+        this.conferenceRoom = conferenceRoom;
         this.member = member;
         this.content = content;
     }
 
     @Builder
-    public RoundPostIt(RoundBoard roundBoard,String content) {
-        this.roundBoard = roundBoard;
+    public RoundPostIt(ConferenceRoom conferenceRoom,String content) {
+        this.conferenceRoom = conferenceRoom;
         this.content = content;
     }
 
     @Builder
-    public RoundPostIt(RoundBoard roundBoard, boolean isAI, String content) {
-        this.roundBoard = roundBoard;
+    public RoundPostIt(ConferenceRoom conferenceRoom, boolean isAI, String content) {
+        this.conferenceRoom = conferenceRoom;
         this.isAI = isAI;
         this.content = content;
     }
@@ -61,5 +70,4 @@ public class RoundPostIt {
     public void selectedThree() {
         last3 = true;
     }
-
 }
