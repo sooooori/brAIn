@@ -146,20 +146,25 @@ body {
 }
 
 .button-primary {
-    background-color: rgb(0, 0, 0);
-    font-size: 1.25rem;
-    padding: 10px 20px;
-    margin-top: 30px;
+    background-color: rgb(0, 0, 0); /* Black background color */
+    width: 300px;
+    font-size: 0.875rem; /* Adjust font size if necessary */
+    padding: 4px 8px; /* Further reduce padding to make the button smaller */
+    margin-top: 15px; /* Adjust margin for appropriate spacing */
     cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    transition: background-color 0.3s;
+    border: none; /* Remove default border */
+    border-radius: 4px; /* Rounded corners for a softer look */
+    color: white; /* Button text color */
+    display: inline-block; /* Ensure button size fits its content */
+    text-align: center; /* Center text within the button */
+    line-height: 1.5; /* Adjust line height if necessary */
+    transition: background-color 0.3s; /* Smooth background color transition */
 }
 
 .button-primary:hover {
-    background-color: darkorange;
+    background-color: darkorange; /* Darker orange on hover */
 }
+
 
 /* Intro section styling */
 .home-intro {
