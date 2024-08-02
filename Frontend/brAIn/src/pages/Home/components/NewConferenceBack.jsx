@@ -14,16 +14,16 @@ const NewConferenceBack = ({
   const navigate = useNavigate();
   const [title, setTitle] = React.useState('');
   const [preparationTime, setPreparationTime] = React.useState(5); // Default to 5 minutes
+  const [roomUrl, setRoomUrl] = React.useState('');
 
   const handleCreateButtonClicked = () => {
     if (title.trim() && preparationTime > 0) {
       axios
         .post(
-          `${import.meta.env.VITE_API_SERVER_URL}/conference`,
+          `http://localhost/api/v1/conferences`,
           {
-            title,
-            preparationTime,
-            email: localStorage.getItem('email'),
+            subject : title,
+            time : preparationTime,
           },
           {
             headers: {
@@ -31,7 +31,8 @@ const NewConferenceBack = ({
             },
           }
         )
-        .then(() => {
+        .then((result) => {
+          setRoomUrl(result.data.secureId);
           handleNewConferenceClickedTrue();
         })
         .catch((error) => {
@@ -56,9 +57,9 @@ const NewConferenceBack = ({
     <Box className="container-box">
       <Box className="header-section">
         <Typography variant="h6">새로운 회의 생성하기</Typography>
-        <IconButton onClick={handleCloseButtonClicked}>
+        {/* <IconButton onClick={handleCloseButtonClicked}>
           <CloseIcon />
-        </IconButton>
+        </IconButton> */}
       </Box>
 
       {isNewConferenceClicked ? (
@@ -75,7 +76,7 @@ const NewConferenceBack = ({
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-            onClick={() => navigate(`/instructor?roomid=${title}`)}
+            onClick={() => navigate(`/conferences/${roomUrl}`)}
             className="button-full-width"
           >
             회의 생성하기

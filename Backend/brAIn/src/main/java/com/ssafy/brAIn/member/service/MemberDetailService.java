@@ -1,6 +1,5 @@
 package com.ssafy.brAIn.member.service;
 
-import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

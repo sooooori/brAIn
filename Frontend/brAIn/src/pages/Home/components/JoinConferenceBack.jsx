@@ -16,16 +16,20 @@ const JoinConferenceBack = ({
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [conferenceFetched, setConferenceFetched] = React.useState(false);
+  const [roomUrl, setRoomUrl] = React.useState('');
 
   const handleSearchButtonClicked = () => {
     if (codeInputs.join('').length !== 6) {
       alert('회의 코드를 올바르게 입력해주세요.');
     } else {
       axios
-        .get(`${import.meta.env.VITE_API_SERVER_URL}/conference?code=${codeInputs.join('')}`)
+        .post(`http://localhost/api/v1/conferences/join`,{
+          inviteCode:codeInputs.join('')
+        })
         .then((result) => {
-          setTitle(result.data.title);
-          setDescription(result.data.description);
+          setTitle(result.data.subject);
+          setDescription(result.data.subject);
+          setRoomUrl(result.data.secureId);
           setConferenceFetched(true);
         })
         .catch(() => {
@@ -36,7 +40,7 @@ const JoinConferenceBack = ({
 
   const handleJoinButtonClicked = () => {
     if (conferenceFetched) {
-      navigate(`/participant?roomid=${codeInputs.join('')}`);
+      navigate(`/conferences/${roomUrl}`);
     }
   };
 

@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.member.entity;
 
+import com.ssafy.brAIn.history.entity.MemberHistory;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -51,6 +52,9 @@ public class Member implements UserDetails {
     @Column(name = "refresh_token")
     private String refreshToken;
 
+    @OneToMany(mappedBy = "member")
+    private List<MemberHistory> memberHistories;
+
     @Builder
     public Member(String email, String password, Role role, Social social, String name, String photo, Boolean locked, Integer loginFailCount, String refreshToken) {
         this.email = email;
@@ -62,6 +66,16 @@ public class Member implements UserDetails {
         this.locked = locked;
         this.loginFailCount = loginFailCount;
         this.refreshToken = refreshToken;
+    }
+
+    // 비밀번호 재설정
+    public void resetPassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    // 프로필 사진 변경
+    public void updatePhoto(String photo) {
+        this.photo = photo;
     }
 
     // refreshTOken 업데이트
