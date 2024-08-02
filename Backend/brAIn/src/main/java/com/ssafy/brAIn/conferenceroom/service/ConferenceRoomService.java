@@ -37,7 +37,7 @@ public class ConferenceRoomService {
         System.out.println(assistant.getAssistantId());
         System.out.println(assistant.getThreadId());
         //System.out.println(res.toString());
-        //conferenceRoom.updateAi(res.get("assistantId").toString(), res.get("threadId").toString());
+        conferenceRoom.updateAi(assistant.getAssistantId(), assistant.getThreadId());
         return conferenceRoomRepository.save(conferenceRoom);
     }
 
@@ -48,6 +48,11 @@ public class ConferenceRoomService {
     public ConferenceRoom findBySecureId(String secureId) {
         return conferenceRoomRepository.findBySecureId(secureId).orElse(null);
     }
+
+    public ConferenceRoom findByRoomId(String roomId) {
+        return conferenceRoomRepository.findById(Integer.parseInt(roomId)).orElse(null);
+    }
+
 
     @Transactional
     public ConferenceMemberRequest saveConferenceHistory(ConferenceMemberRequest conferenceSaveRequest) {

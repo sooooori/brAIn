@@ -16,6 +16,7 @@ public class RedisUtils {
 
     @Qualifier("redisTemplate")
     private final RedisTemplate<String, Object> redisTemplate;
+
     @Qualifier("redisTemplate1")
     private final RedisTemplate<String, Object> redisTemplate1;
 

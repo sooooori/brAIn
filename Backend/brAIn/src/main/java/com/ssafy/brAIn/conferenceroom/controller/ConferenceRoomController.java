@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.conferenceroom.controller;
 
+import com.ssafy.brAIn.auth.jwt.JWTUtilForRoom;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomJoinRequest;
 import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomRequest;
@@ -7,11 +8,14 @@ import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomResponse;
 import com.ssafy.brAIn.conferenceroom.dto.ConferenceMemberRequest;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
+import com.ssafy.brAIn.history.model.Role;
 import com.ssafy.brAIn.history.service.MemberHistoryService;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.service.MemberService;
+import com.ssafy.brAIn.util.RandomNicknameGenerator;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +28,9 @@ public class ConferenceRoomController {
     private final MemberService memberService;
     private final MemberHistoryService memberHistoryService;
 
+    @Autowired
+    private JWTUtilForRoom jwtUtilForRoom;
+
     @GetMapping("/{roomId}")
     public ResponseEntity<?> getConferenceRoom(@PathVariable String roomId) {
         return ResponseEntity.status(200).body(roomId);
@@ -34,18 +41,21 @@ public class ConferenceRoomController {
         ConferenceRoom cr = conferenceRoomRequest.toConferenceRoom();
         ConferenceRoom saveCr = conferenceRoomService.save(cr);
         token = token.split(" ")[1];
-        //Claims claims = JwtUtil.extractToken(token);
-        //String email = claims.get("email").toString();
-        //Member member = memberService.findByEmail(email).orElse(null);
-        //memberHistoryService.createRoom(saveCr, member);
-        ConferenceRoomResponse crr = new ConferenceRoomResponse(cr);
+        Claims claims = JwtUtil.extractToken(token);
+        String email = claims.get("email").toString();
+
+        String jwtTokenForRoom = jwtUtilForRoom.createJwt("access", email, "CHIEF", RandomNicknameGenerator.generateNickname(), saveCr.getId()+"", 100000000L);
+//        Member member = memberService.findByEmail(email).orElse(null);
+//        memberHistoryService.createRoom(saveCr, member);
+        ConferenceRoomResponse crr = new ConferenceRoomResponse(cr, jwtTokenForRoom);
         return ResponseEntity.status(201).body(crr);
     }
 
     @PostMapping("/join")
     public ResponseEntity<?> getConferenceRoom(@RequestBody ConferenceRoomJoinRequest conferenceRoomJoinRequest) {
         ConferenceRoom findConference = conferenceRoomService.findByInviteCode(conferenceRoomJoinRequest.getInviteCode());
-        ConferenceRoomResponse crr = new ConferenceRoomResponse(findConference);
+
+        ConferenceRoomResponse crr = new ConferenceRoomResponse(findConference, "");
         return ResponseEntity.status(200).body(crr);
     }
 
@@ -55,9 +65,11 @@ public class ConferenceRoomController {
         token = token.split(" ")[1];
         Claims claims = JwtUtil.extractToken(token);
         String email = claims.get("email").toString();
-        Member member = memberService.findByEmail(email).orElse(null);
-        memberHistoryService.joinRoom(findConference, member);
-        return ResponseEntity.status(200).body(findConference);
+
+        String jwtTokenForRoom = jwtUtilForRoom.createJwt("access", email, "MEMBER", RandomNicknameGenerator.generateNickname(), findConference.getId()+"", 100000000L);
+
+        ConferenceRoomResponse crr = new ConferenceRoomResponse(findConference, jwtTokenForRoom);
+        return ResponseEntity.status(200).body(crr);
     }
 
 

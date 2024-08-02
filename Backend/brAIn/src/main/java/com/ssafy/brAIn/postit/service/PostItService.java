@@ -22,7 +22,10 @@ public class PostItService {
 
     public boolean postItMake(String token, String content){
         String roomId = jwtUtilForRoom.getRoomId(token);
+        System.out.println(roomId);
         String nickname = jwtUtilForRoom.getNickname(token);
+
+        System.out.println(nickname);
 
         String key = String.format("%s:postIt:%s",roomId,nickname);
         PostItKey postItKey = new PostItKey(content,nickname);
