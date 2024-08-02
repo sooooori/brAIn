@@ -82,7 +82,7 @@ const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
         }
 
         // Check if the email exists in the database
-        axios.post('http://localhost/api/v1/members/checkEmail', { email: email })
+        axios.post('http://localhost/api/v1/members/resetEmail', { email: email })
             .then(response => {
                 if (response.data.message === 'Email check successfully') {
                     // If email exists, send the verification code

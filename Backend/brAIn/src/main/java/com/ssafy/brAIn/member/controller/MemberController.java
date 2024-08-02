@@ -148,8 +148,16 @@ public class MemberController {
 
     // 이메일 중복 검사
     @PostMapping("/checkEmail")
-    public ResponseEntity<?> checkEmail(@RequestBody String email) {
-        memberService.emailCheck(email);
+    public ResponseEntity<?> checkEmail(@RequestBody EmailRequest email) {
+
+        memberService.emailCheck(email.getEmail());
+        return ResponseEntity.ok(Map.of("message", "Email check successfully"));
+    }
+
+    @PostMapping("/resetEmail")
+    public ResponseEntity<?> resetEmail(@RequestBody EmailRequest email) {
+
+        memberService.resetEmail(email.getEmail());
         return ResponseEntity.ok(Map.of("message", "Email check successfully"));
     }
 
