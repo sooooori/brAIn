@@ -49,22 +49,23 @@ public class MessageService {
         this.conferenceRoomService = conferenceRoomService;
     }
 
-    public void sendPost(Integer roomId, RequestGroupPost groupPost) {
+    public void sendPost(Integer roomId, RequestGroupPost groupPost,String nickname) {
 
         int round= groupPost.getRound();
         String content=groupPost.getContent();
         String key = roomId + ":" + round;
         redisUtils.setData(key,content,3600L);
 
-        //ai 에게 전송
-        sendPostToAI(roomId,groupPost);
-    }
-
-    private void sendPostToAI(Integer roomId, RequestGroupPost groupPost) {
-        String threadId=conferenceRoomService.findByRoomId(roomId+"").getThreadId();
-        aiService.addPostIt(groupPost.getContent(),threadId);
+        //유저의 상태 submit로 업데이트
+        updateUserState(roomId,nickname,UserState.SUBMIT);
 
     }
+
+//    private void sendPostToAI(Integer roomId, RequestGroupPost groupPost) {
+//        String threadId=conferenceRoomService.findByRoomId(roomId+"").getThreadId();
+//        aiService.addPostIt(groupPost.getContent(),threadId);
+//
+//    }
 
 
     //현재 유저가 마지막 순서인지 확인하는 메서드(테스트 완)
@@ -248,6 +249,11 @@ public class MessageService {
         String assistantId=conferenceRoom.getAssistantId();
         return aiService.makePostIt(threadId,assistantId);
 
+    }
+
+    public boolean isAi(Integer roomId,String user) {
+        String ai = redisUtils.getData(roomId + ":ai:nickname");
+        return ai.equals(user);
     }
 
 }
