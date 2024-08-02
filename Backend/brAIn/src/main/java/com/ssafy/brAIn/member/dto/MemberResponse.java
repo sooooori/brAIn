@@ -16,13 +16,15 @@ public class MemberResponse {
     private String name;
     private Role role;
     private Social social;
+    private String photo;
 
     public static MemberResponse fromEntity(Member member) {
         return new MemberResponse(
                 member.getEmail(),
                 member.getName(),
                 member.getRole(),
-                member.getSocial()
+                member.getSocial(),
+                member.getPhoto()
         );
     }
 }

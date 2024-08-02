@@ -1,5 +1,7 @@
 package com.ssafy.brAIn.util;
 
+import com.ssafy.brAIn.postit.entity.PostItKey;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -12,10 +14,15 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class RedisUtils {
 
+    @Qualifier("redisTemplate")
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public RedisUtils(RedisTemplate<String, Object> redisTemplate) {
+    @Qualifier("redisTemplate1")
+    private final RedisTemplate<String, Object> redisTemplate1;
+
+    public RedisUtils(RedisTemplate<String, Object> redisTemplate, RedisTemplate<String, Object> redisTemplate1) {
         this.redisTemplate = redisTemplate;
+        this.redisTemplate1 = redisTemplate1;
     }
 
     public void setData(String key,String content,Long expireTime) {
@@ -68,6 +75,15 @@ public class RedisUtils {
 
     }
 
+    public void setDataInSetSerialize(String key, Object newValue,Long expireTime) {
+        redisTemplate1.opsForSet().add(key, newValue);
+        redisTemplate1.expire(key, expireTime, TimeUnit.SECONDS);
+    }
+
+    public void removeDataInListSerialize(String key,Object content) {
+        redisTemplate1.opsForSet().remove(key, 1, content);
+    }
+
     public boolean isValueInSet(String key, String value) {
         Set<Object> set = redisTemplate.opsForSet().members(key);
         if(set != null && !set.isEmpty()) {
@@ -82,6 +98,46 @@ public class RedisUtils {
 
     public void save(String key, String value) {
         redisTemplate.opsForValue().set(key, value);
+    }
+
+
+    //sortedSet에서 특정 value삭제
+    public void removeValueFromSortedSet(String key, String value) {
+        redisTemplate.opsForZSet().remove(key, value);
+    }
+
+    public void removeValueFromSet(String key, Object value) {
+        redisTemplate.opsForSet().remove(key, value);
+    }
+
+    public Set<Object> getSetMembers(String key) {
+        return redisTemplate.opsForSet().members(key);
+    }
+
+    public boolean isKeyExists(String key) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+    }
+
+    public Set<Object> getSetFromKey(String key) {
+        return redisTemplate.opsForSet().members(key);
+    }
+
+    public void updateSetFromKeySerialize(String key, Object newValue) {
+        Set<Object> objects = redisTemplate1.opsForSet().members(key);
+        if (objects != null) {
+            // 2. 객체 수정
+            for (Object obj : objects) {
+                if (obj instanceof PostItKey) { // 객체 타입 확인
+                    PostItKey myObject = (PostItKey) obj;
+                    if (((PostItKey)newValue).getKey().equals(myObject.getKey())) { // 식별자로 확인
+                        redisTemplate1.opsForSet().remove(key,1, obj);
+                        redisTemplate1.opsForSet().add(key, newValue, TimeUnit.SECONDS);
+                        break;
+                    }
+                }
+            }
+        }
+
     }
 
 }

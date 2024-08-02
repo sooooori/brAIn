@@ -9,11 +9,17 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberHistory {
+public class MemberHistory implements UserDetails {
 
     @EmbeddedId
     private MemberHistoryId id;
@@ -61,8 +67,28 @@ public class MemberHistory {
         this.status = status;
     }
 
+    public MemberHistory setOrder(Integer order) {
+        this.orders = order;
+        return this;
+    }
+
     // 기록 갱신 메서드
     public MemberHistory historyUpdate(){
         return this;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return "";
+    }
+
+    @Override
+    public String getUsername() {
+        return nickName;
     }
 }

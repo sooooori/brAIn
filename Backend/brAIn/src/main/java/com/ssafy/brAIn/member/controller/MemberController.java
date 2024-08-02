@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.member.controller;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.member.dto.EmailRequest;
@@ -13,7 +14,6 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,15 +25,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Base64;
+
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/members")
+@RequestMapping("/v1/members")
 public class MemberController {
 
     private final MemberService memberService;
@@ -49,6 +50,8 @@ public class MemberController {
         return ResponseEntity.ok(Map.of("message", "Email check successfully"));
     }
 
+    // 이미지파일 2MB로 제한
+    private static final long MAX_FILE_SIZE = 2 * 1024 * 1024;
 
     // 회원가입
     @PostMapping("/join")
@@ -95,9 +98,9 @@ public class MemberController {
             throw new BadRequestException("Refresh token is missing");
         }
 
+        // Refresh Token 검증 및 클레임 추출
         Claims claims;
         try {
-            // Refresh Token 검증 및 클레임 추출
             claims = JwtUtil.extractToken(refreshToken);
         } catch (Exception e) {
             throw new BadRequestException("Invalid refresh token");
@@ -125,6 +128,7 @@ public class MemberController {
     // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+
         // Refresh Token 쿠키 제거
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setMaxAge(0); // 쿠키 제거
@@ -139,7 +143,7 @@ public class MemberController {
 
     // 이메일로 사용자 정보 조회
     @GetMapping("/email")
-    public ResponseEntity<?> getEmail(@RequestParam String email) {
+    public ResponseEntity<?> getEmail(@RequestBody String email) {
         // 이메일로 사용자 정보 조회
         Optional<Member> member = memberService.findByEmail(email);
         if (member.isPresent()) {
@@ -151,6 +155,73 @@ public class MemberController {
         }
     }
 
+    // 이메일 중복 검사
+    @PostMapping("/checkEmail")
+    public ResponseEntity<?> checkEmail(@RequestBody String email) {
+        memberService.emailCheck(email);
+        return ResponseEntity.ok(Map.of("message", "Email check successfully"));
+    }
+
+    // 회원정보 조회
+    @GetMapping("/member")
+    public ResponseEntity<?> getMember(@RequestHeader("Authorization") String token) {
+        // Bearer 접두사 제거
+        String accessToken = token.replace("Bearer ", "");
+        // 조회
+        MemberResponse memberResponse = memberService.getMember(accessToken);
+        return ResponseEntity.ok(Map.of("member", memberResponse));
+    }
+
+    // 회원 탈퇴
+    @DeleteMapping("/member")
+    public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String token, @RequestBody String password) {
+        // Bearer 접두사 제거
+        String accessToken = token.replace("Bearer ", "");
+        // 탈퇴
+        memberService.deleteMember(accessToken, password);
+        return ResponseEntity.ok(Map.of("message", "Member deleted successfully"));
+    }
+
+    // 회원 프로필 사진 변경
+    @PutMapping("/updatePhoto")
+    public ResponseEntity<?> updatePhoto(@RequestHeader("Authorization") String token,
+                                         @RequestBody ObjectNode requestBody) throws IOException {
+        // Bearer 접두사 제거
+        String accessToken = token.replace("Bearer ", "");
+        // 파일 데이터와 URL을 JSON으로 받음
+        String base64FileData = requestBody.has("fileData") ? requestBody.get("fileData").asText() : null;
+        String imageUrl = requestBody.has("imageUrl") ? requestBody.get("imageUrl").asText() : null;
+        String originalFileName = requestBody.has("fileName") ? requestBody.get("fileName").asText() : null;
+
+        // 업로드 파일 체크 (파일 유무, 용량, URL)
+        if (base64FileData != null) {
+            if (originalFileName == null) {
+                throw new BadRequestException("File name is missing");
+            }
+            byte[] fileData = Base64.getDecoder().decode(base64FileData);
+            if (fileData.length > MAX_FILE_SIZE) {
+                throw new BadRequestException("File size exceeds the maximum allowed size of 5MB");
+            }
+            memberService.uploadUserImage(accessToken, fileData, originalFileName);
+        } else if (imageUrl != null) {
+            memberService.updateUserImageByUrl(accessToken, imageUrl);
+        } else {
+            throw new BadRequestException("No file or imageUrl provided");
+        }
+
+        return ResponseEntity.ok(Map.of("message", "Profile Image Change Successful"));
+    }
+
+    // 비밀번호 재설정
+    @PutMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestHeader("Authorization") String token, @RequestBody String newPassword) {
+        // Barer 접두사 제거
+        String accessToken = token.replace("Bearer ", "");
+        // 비밀번호 재설정
+        memberService.resetPassword(accessToken, newPassword);
+        return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
+    }
+
     // 이메일 인증번호 생성
     @PostMapping("/sendAuthNumber")
     public ResponseEntity<?> getEmailForVerification(@RequestBody EmailRequest request) {
@@ -160,8 +231,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Email Verification Successful");
     }
 
-
-    // 이메일 인증번호 인증하기
+    // 이메일 인증번호 인증
     @PostMapping("/authNumber")
     public ResponseEntity<String> verificationByCode(@RequestBody EmailRequest request) {
         LocalDateTime requestedAt = LocalDateTime.now();
