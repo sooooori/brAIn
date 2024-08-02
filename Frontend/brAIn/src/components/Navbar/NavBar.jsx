@@ -97,7 +97,7 @@ const NavBar = () => {
                 {!isAuthenticated ? (
                     <Button
                         type="fit"
-                        buttonStyle="orange"
+                        buttonStyle="black"
                         className="button-primary"
                         onClick={handleStartClick}
                         ariaLabel="Start BrAIn"

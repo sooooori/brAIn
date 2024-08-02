@@ -7,6 +7,7 @@ import LoginOption from './pages/User/LoginOption';
 // import OAuthRedirect from './pages/OAuthRedirect'; // OAuth 리다이렉트 핸들러 추가
 import Profile from './pages/Profile/Profile';
 import NavBar from './components/Navbar/NavBar'
+import Conference from './pages/Conference/Conference'
 function App() {
     return (
         <div className="App">
@@ -18,6 +19,7 @@ function App() {
                     {/* <Route path="/oauth/redirect" element={<OAuthRedirect />} /> */}
                     <Route path="/profile" element={<Profile />} />
                     {/*<Route path="/participant/:secureId" element={<Participant />} />*/}
+                    <Route path="/conferences/:secureId" elememt = {<Conference />} />
                 </Routes>
             </div>
         </div>
