@@ -1,25 +1,39 @@
-// WaitingModal.jsx
+// components/WaitingModal.js
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import axios for making HTTP requests
-import './WaitingModal.css'; // Import your CSS for styling
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { setRole, clearRole } from '../../../features/conference/conferenceSlice'; // Adjust the path as needed
+import Button from '../../../components/Button/Button';
+import axios from 'axios';
+import './WaitingModal.css';
 
-const WaitingModal = ({ isVisible, participantCount, secureId }) => {
+const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartMeeting }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [conferenceCode, setConferenceCode] = useState(null); // State for storing the fetched data
+  const [conferenceCode, setConferenceCode] = useState(null);
+  const [conferenceSubject, setConferenceSubject] = useState(null);
+  const [isSharing, setIsSharing] = useState(false);
+
+  const navigate = useNavigate();
+  const role = useSelector((state) => state.conference.role); // Get role from Redux
+  
 
   useEffect(() => {
     const fetchData = async () => {
       if (isVisible) {
         setLoading(true);
-        setError(null); // Reset error state
+        setError(null);
 
         try {
-          // Construct the URL with the secureId
-          const response = await axios.get(`http://localhost/api/v1/conferences`, {
-            params: { secureId }
+          const token = localStorage.getItem('authToken');
+          const response = await axios.get('http://localhost/api/v1/conferences', {
+            params: { secureId },
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
           });
-          setConferenceCode(response.data.inviteCode); // Update state with the fetched data
+          setConferenceCode(response.data.inviteCode);
+          setConferenceSubject(response.data.subject || 'No subject available');
         } catch (error) {
           console.error('Error fetching data:', error);
           setError('Failed to load data');
@@ -30,22 +44,69 @@ const WaitingModal = ({ isVisible, participantCount, secureId }) => {
     };
 
     fetchData();
-  }, [isVisible, secureId]); // Re-run the effect if isVisible or secureId changes
+  }, [isVisible, secureId]);
 
-  if (!isVisible) return null; // Don't render the modal if it's not visible
+  const handleShareCode = () => {
+    navigator.clipboard.writeText(conferenceCode);
+    setIsSharing(true);
+    setTimeout(() => setIsSharing(false), 2000); // Reset share status after 2 seconds
+  };
+
+  const handleClose = () => {
+    navigate('/'); // Redirect to Home page
+  };
+
+  if (!isVisible) return null;
 
   return (
     <div className="waiting-modal">
       <div className="waiting-modal-content">
-        <h2>Waiting Room</h2>
-        <p>Current Participants: {participantCount}</p>
-        {loading && <p>Loading data...</p>}
-        {error && <p className="error">{error}</p>}
-        {conferenceCode && (
-          <div>
-            {/* Render your data here */}
-            <pre>{JSON.stringify(conferenceCode, null, 2)}</pre>
+        {loading ? (
+          <div className="loading-overlay">
+            <p>Loading...</p>
           </div>
+        ) : (
+          <>
+            <h2>회의 주제: {conferenceSubject}</h2>
+            <p>현재 참여 인원: {participantCount}</p>
+            {error && <p className="error">{error}</p>}
+            {conferenceCode && (
+              <div className="waiting-modal-code">
+                <pre>{conferenceCode}</pre>
+                <Button
+                  type="fit"
+                  onClick={handleShareCode}
+                  buttonStyle="blue"
+                  ariaLabel="Share conference code"
+                  className="waiting-modal-code-button"
+                >
+                  {isSharing ? 'Copied!' : 'Share Code'}
+                </Button>
+              </div>
+            )}
+            <div className="waiting-modal-footer">
+              <Button
+                type="fit"
+                onClick={handleClose}
+                buttonStyle="red"
+                ariaLabel="Cancel"
+                className="waiting-modal-button waiting-modal-button-cancel"
+              >
+                Cancel
+              </Button>
+              {role === 'host' && ( // Conditionally render button based on role
+                <Button
+                  type="fit"
+                  onClick={onStartMeeting}
+                  buttonStyle="green"
+                  ariaLabel="Start Meeting"
+                  className="waiting-modal-button waiting-modal-button-start"
+                >
+                  Start Meeting
+                </Button>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>

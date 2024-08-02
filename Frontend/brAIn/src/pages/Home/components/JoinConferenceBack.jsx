@@ -5,6 +5,8 @@ import { Close as CloseIcon, Search as SearchIcon, MeetingRoom as EnterIcon } fr
 import ConferenceCodeInput from './ConferenceCodeInput';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setRole } from '../../../features/conference/conferenceSlice'; // Adjust the path as needed
 import './JoinConferenceBack.css';
 
 const JoinConferenceBack = ({
@@ -13,6 +15,7 @@ const JoinConferenceBack = ({
   setCodeInputs
 }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch(); // Initialize useDispatch
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [conferenceFetched, setConferenceFetched] = React.useState(false);
@@ -23,8 +26,8 @@ const JoinConferenceBack = ({
       alert('회의 코드를 올바르게 입력해주세요.');
     } else {
       axios
-        .post(`http://localhost/api/v1/conferences/join`,{
-          inviteCode:codeInputs.join('')
+        .post(`http://localhost/api/v1/conferences/join`, {
+          inviteCode: codeInputs.join('')
         })
         .then((result) => {
           setTitle(result.data.subject);
@@ -40,6 +43,7 @@ const JoinConferenceBack = ({
 
   const handleJoinButtonClicked = () => {
     if (conferenceFetched) {
+      dispatch(setRole('participant')); // Set the role to participant
       navigate(`/conferences/${roomUrl}`);
     }
   };

@@ -1,37 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
-import { v4 as uuidv4 } from 'uuid';
 import WaitingModal from './components/WaitingModal';
-
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const Conference = () => {
   const [client, setClient] = useState(null);
   const [connected, setConnected] = useState(false);
-  const [participantCount, setParticipantCount] = useState(0); // Participant count
-  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
+  const [participantCount, setParticipantCount] = useState(1);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [roomId, setRoomId] = useState(null);
   const { secureId } = useParams();
+
+  // Fetch roomId when secureId changes
   useEffect(() => {
+    const fetchRoomId = async () => {
+      try {
+        const response = await axios.get('http://localhost/api/v1/conferences', {
+          params: { secureId },
+        });
+        console.log('Fetched roomId:', response.data.roomId);
+        setRoomId(response.data.roomId);
+      } catch (error) {
+        console.error('Failed to fetch roomId:', error);
+      }
+    };
+
+    fetchRoomId();
+  }, [secureId]);
+
+  // Set up WebSocket connection when roomId changes
+  useEffect(() => {
+    if (roomId === null) return;
+
     const newClient = new Client({
-      brokerURL: 'ws://localhost/ws', // WebSocket URL
+      brokerURL: 'ws://localhost:8080/ws',
       connectHeaders: {
         login: 'user',
         passcode: 'password',
       },
       debug: (str) => {
-        console.log(str);
+        console.log('WebSocket Debug:', str);
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
     });
 
-    // Set up WebSocket connection
     newClient.onConnect = (frame) => {
       setConnected(true);
       console.log('Connected: ' + frame);
-      newClient.subscribe(`/topic/room.*`, (message) => {
+      newClient.subscribe(`/topic/room.${roomId}`, (message) => {
         const receivedMessage = JSON.parse(message.body);
+        console.log('Received message:', receivedMessage);
 
         if (receivedMessage.type === 'ENTER_WAITING_ROOM') {
           countUpMember();
@@ -39,7 +60,6 @@ const Conference = () => {
       });
     };
 
-    // Handle WebSocket connection errors
     newClient.onStompError = (frame) => {
       console.error('STOMP error:', frame);
     };
@@ -48,28 +68,34 @@ const Conference = () => {
     newClient.activate();
 
     return () => {
-      if (client) {
-        client.deactivate();
+      if (newClient) {
+        newClient.deactivate();
       }
     };
-  }, [client]);
+  }, [roomId]);
 
-  // Function to update participant count and show modal
+  // Show modal when roomId is fetched and WebSocket is connected
+  useEffect(() => {
+    if (roomId && connected) {
+      setIsModalVisible(true);
+    }
+  }, [roomId, connected]);
+
   const countUpMember = () => {
     setParticipantCount((prevCount) => prevCount + 1);
     setIsModalVisible(true);
-    setTimeout(() => setIsModalVisible(false), 3000); // Hide modal after 3 seconds
+    setTimeout(() => setIsModalVisible(false), 3000);
   };
 
   return (
-    <div>
-        <p>Secure ID: {secureId}</p>
+    <div className="waiting-room">
+      <WaitingModal
+        isVisible={isModalVisible}
+        participantCount={participantCount}
+        secureId={secureId}
+      />
     </div>
-    // <div className="waiting-room">
-    //   <WaitingModal isVisible={isModalVisible} participantCount={participantCount} />
-    // </div>
   );
-
 };
 
 export default Conference;
