@@ -31,7 +31,7 @@ public class MemberService {
     // 이메일 중복 확인
     public void emailCheck(String email) {
         // 이메일 중복 검사
-        System.out.println(email);
+//        System.out.println(email);
         if (memberRepository.existsMemberByEmail(email)) {
             throw new BadRequestException("Email is already in use");
         }

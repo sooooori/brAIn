@@ -1,104 +1,110 @@
-/* Perspective container to apply 3D effect */
-.perspective {
-    perspective: 1000px; /* 3D depth effect */
+body {
+    margin: 0;
+    font-family: 'Gothic', sans-serif;
+    /* background: url('images/back-tmp.png') no-repeat center center fixed; */
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Card styling */
+.perspective {
+    perspective: 1000px; 
+}
+
 .card {
     position: relative;
-    width: 300px; /* Width of the cards */
-    height: 400px; /* Height of the cards */
-    transform-style: preserve-3d; /* Enable 3D effects for children */
-    transition: transform 0.6s; /* Smooth transition for flipping */
-    transform-origin: center; /* Center rotation */
+    width: 300px;
+    height: 400px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    transform-origin: center;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Card rotation styles */
 .rotate-left {
-    transform: rotateY(-180deg); /* Rotate card to the left */
+    transform: rotateY(-180deg);
 }
 
 .rotate-right {
-    transform: rotateY(180deg); /* Rotate card to the right */
+    transform: rotateY(180deg);
 }
 
-/* Backface visibility styling */
 .backface-hidden {
-    backface-visibility: hidden; /* Hide the back face of the card when flipped */
+    backface-visibility: hidden;
 }
 
-/* Container to center cards */
 .home-container {
     display: flex;
-    flex-direction: column; /* Align items vertically */
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 60px); /* Full viewport height minus navbar height */
-    padding: 20px; /* Padding around the container */
-    margin-top: 60px; /* Margin to account for the height of the navbar */
-    margin-bottom: 100px; /* Increase space between title and cards */
+    min-height: calc(100vh - 60px);
+    padding: 20px;
+    margin-top: 30px;
+    margin-bottom: 100px;
 }
 
-/* Container to arrange cards in a row with increased spacing */
 .card-container {
     display: flex;
-    gap: 150px; /* Increase space between the cards */
-    perspective: 1000px; /* Apply perspective to the container */
-    align-items: center; /* Center cards vertically in the container */
-    justify-content: center; /* Center cards horizontally in the container */
-    width: 100%; /* Ensure the container is full width */
-    margin-bottom: 150px; /* Increase space between cards and sections */
+    gap: 150px;
+    perspective: 1000px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 150px;
 }
 
-/* Ensures the card divs are properly positioned */
 .card-container > div {
     position: relative;
-    transform-style: preserve-3d; /* Ensure proper 3D transformation */
+    transform-style: preserve-3d;
 }
 
-/* Button styling */
-.start-button {
-    background-color: #9c27b0; /* Purple background color */
-    color: white; /* White text color */
-    font-size: 1.5rem; /* Adjust font size for better visibility */
-    padding: 20px 40px; /* Adjust padding for better button size */
-    margin-bottom: 100px; /* Increased space between button and sections */
+.intro-container {
+    margin-top : 80px;
+    width: 90%;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 50px;
 }
 
-/* Section styling for scroll animations */
+.intro-container img {
+    max-width: 100%;
+    height: auto;
+}
+
 .section {
     width: 100%;
-    height: 400px; /* Increased height for sections */
+    height: 400px;
     display: flex;
     justify-content: center;
     align-items: center;
-    opacity: 0; /* Start hidden */
+    opacity: 0;
     transition: opacity 1s ease-in-out, transform 1s ease-in-out;
-    margin-bottom: 150px; /* Increased space between sections */
-    background-color: #f0f0f0; /* Light background color for better contrast */
-    padding: 20px; /* Add padding to sections for better spacing */
-    box-sizing: border-box; /* Include padding in the element's total width and height */
+    margin-bottom: 30px;
+    background-color: #ffffff;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
-/* Adjust image size if necessary */
 .section img {
-    max-width: 80%; /* Adjusted max-width for better fit */
+    max-width: 80%;
     height: auto;
-    max-height: 80%; /* Adjusted max-height for better fit */
+    max-height: 80%;
 }
 
-/* Animation classes for sections */
 .section.fade-left {
     opacity: 1;
-    transform: translateX(-50px); /* Reduced distance for animation */
+    transform: translateX(-50px);
 }
 
 .section.fade-right {
     opacity: 1;
-    transform: translateX(50px); /* Reduced distance for animation */
+    transform: translateX(50px);
 }
 
 .section.fade-center {
@@ -106,17 +112,50 @@
     transform: translateY(0);
 }
 
-/* Title styling */
+.section.fade-out {
+    opacity: 0;
+    transition: opacity 1s ease-out;
+}
+
 .home-title {
-    font-family: 'Gothic', sans-serif; /* Apply Gothic font */
-    font-size: 3rem; /* Adjust font size as needed */
-    margin-bottom: 60px; /* Increase space between title and cards */
-    text-align: center; /* Center align the title */
+    font-family: 'Gothic', sans-serif;
+    font-size: 3rem;
+    margin-bottom: 60px;
+    text-align: center;
+    color: #333;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .home-subtitle {
-    font-family: 'Gothic', sans-serif; /* Update to your preferred font */
-    font-size: 1.75rem; /* Adjust size as needed */
+    font-family: 'Gothic', sans-serif;
+    font-size: 1.75rem;
     text-align: center;
-    margin-bottom: 60px; /* Space below the subtitle */
+    margin-bottom: 60px;
+    color: #555;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.home-intro {
+    text-align: center;
+    color: #333;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.button-primary {
+    background-color: rgb(0, 0, 0);
+    font-size: 1.25rem;
+    padding: 10px 20px;
+    margin-top: 30px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.button-primary:hover {
+    background-color: darkorange;
 }

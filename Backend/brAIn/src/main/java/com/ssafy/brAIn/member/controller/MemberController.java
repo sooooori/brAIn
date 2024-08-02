@@ -45,6 +45,7 @@ public class MemberController {
     @PostMapping("/checkEmail")
     public ResponseEntity<?> checkEmail(@RequestBody String email) {
         memberService.emailCheck(email);
+
         return ResponseEntity.ok(Map.of("message", "Email check successfully"));
     }
 
@@ -156,7 +157,6 @@ public class MemberController {
         String email = request.getEmail();
         LocalDateTime requestedAt = LocalDateTime.now();
         emailService.sendEmail(email, requestedAt);
-        System.out.println("falg");
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Email Verification Successful");
     }
 

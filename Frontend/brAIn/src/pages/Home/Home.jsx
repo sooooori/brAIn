@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import NewMainCard from './components/NewMainCard';
 import JoinConferenceFront from './components/JoinConferenceFront';
@@ -13,9 +13,12 @@ import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const [isConferenceSearchClicked, setIsConferenceSearchClicked] = React.useState(false);
-  const [isNewConferenceClicked, setIsNewConferenceClicked] = React.useState(false);
-  const [codeInputs, setCodeInputs] = React.useState(Array(6).fill(''));
+  const [isConferenceSearchClicked, setIsConferenceSearchClicked] = useState(false);
+  const [isNewConferenceClicked, setIsNewConferenceClicked] = useState(false);
+  const [codeInputs, setCodeInputs] = useState(Array(6).fill(''));
+  const [leftVisible, setLeftVisible] = useState(true);
+  const [rightVisible, setRightVisible] = useState(true);
+  const [centerVisible, setCenterVisible] = useState(true);
   const navigate = useNavigate();
 
   const handleConferenceSearchClickedTrue = () => {
@@ -39,26 +42,52 @@ const Home = () => {
   };
 
   const { ref: leftRef, inView: leftInView } = useInView({
-    triggerOnce: true,
-    threshold: 0.5,
+    threshold: 0.7,
   });
 
   const { ref: rightRef, inView: rightInView } = useInView({
-    triggerOnce: true,
     threshold: 0.5,
   });
 
   const { ref: centerRef, inView: centerInView } = useInView({
-    triggerOnce: true,
     threshold: 0.5,
   });
 
+  useEffect(() => {
+    if (leftInView) {
+      setLeftVisible(true);
+      const timer = setTimeout(() => setLeftVisible(false), 3000); // 3 seconds
+      return () => clearTimeout(timer);
+    } else {
+      setLeftVisible(false);
+    }
+  }, [leftInView]);
+
+  useEffect(() => {
+    if (rightInView) {
+      setRightVisible(true);
+      const timer = setTimeout(() => setRightVisible(false), 3000); // 3 seconds
+      return () => clearTimeout(timer);
+    } else {
+      setRightVisible(false);
+    }
+  }, [rightInView]);
+
+  useEffect(() => {
+    if (centerInView) {
+      setCenterVisible(true);
+      const timer = setTimeout(() => setCenterVisible(false), 3000); // 3 seconds
+      return () => clearTimeout(timer);
+    } else {
+      setCenterVisible(false);
+    }
+  }, [centerInView]);
+
   return (
     <div className="home-container">
-      {isAuthenticated ? (
+      {!isAuthenticated ? (
         <>
-          <h1 className="home-title">brAIn</h1>
-          <h2 className="home-subtitle">AI와 함께하는 브레인스토밍</h2>
+          <h1 className="home-title">시작하기</h1>
           <div className="card-container">
             <div className={`card ${isNewConferenceClicked ? 'rotate-left' : ''}`}>
               <NewMainCard
@@ -90,30 +119,36 @@ const Home = () => {
         </>
       ) : (
         <div>
-          <h1 className="home-title">About brAIn</h1>
+          <h1 className="home-title">About BrAIn</h1>
           <h2 className="home-subtitle">
-            AI와 함께 생각하고, 표현하고 한 눈에 아이디어를 볼 수 있는 비주얼 워크스페이스
+            AI와 함께하는 신개념 브레인스토밍 플랫폼 <br /> 
           </h2>
           <Button
-            variant="contained"
-            className="start-button"
+            type="fit"
+            buttonStyle="orange"
+            className="button-primary"
             onClick={handleStartClick}
+            ariaLabel="Start BrAIn"
           >
-            brAIn 시작하기
+            BrAIn 시작하기
           </Button>
+          
+          <div className="intro-container">
+            <img src="images/main_image_intro.png" alt="Intro" />
+          </div>
+          <div className={`section ${leftInView && leftVisible ? 'fade-left' : 'fade-out'}`} ref={leftRef}>
+            <img src="images/main_image_1.png" alt="Left" />
+          </div>
+
+          <div className={`section ${rightInView && rightVisible ? 'fade-right' : 'fade-out'}`} ref={rightRef}>
+            <img src="images/main_image_2.png" alt="Right" />
+          </div>
+
+          <div className={`section ${centerInView && centerVisible ? 'fade-center' : 'fade-out'}`} ref={centerRef}>
+            <img src="images/main_image_3.png" alt="Center" />
+          </div>
         </div>
       )}
-      <div className={`section ${leftInView ? 'fade-left' : ''}`} ref={leftRef}>
-        <img src="images/google.png" alt="Left" />
-      </div>
-
-      <div className={`section ${rightInView ? 'fade-right' : ''}`} ref={rightRef}>
-        <img src="images/google.png" alt="Right" />
-      </div>
-
-      <div className={`section ${centerInView ? 'fade-center' : ''}`} ref={centerRef}>
-        <img src="images/google.png" alt="Center" />
-      </div>
     </div>
   );
 };
