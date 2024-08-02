@@ -42,7 +42,7 @@ public class ConferenceRoomController {
         return ResponseEntity.status(201).body(crr);
     }
 
-    @GetMapping("/join")
+    @PostMapping("/join")
     public ResponseEntity<?> getConferenceRoom(@RequestBody ConferenceRoomJoinRequest conferenceRoomJoinRequest) {
         ConferenceRoom findConference = conferenceRoomService.findByInviteCode(conferenceRoomJoinRequest.getInviteCode());
         ConferenceRoomResponse crr = new ConferenceRoomResponse(findConference);

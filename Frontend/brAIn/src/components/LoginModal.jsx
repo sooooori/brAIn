@@ -53,7 +53,7 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
         }
 
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/members/login', { email, password });
+            const response = await axios.post('http://localhost/api/v1/members/login', { email, password });
             const { accessToken } = response.data;
 
             localStorage.setItem('accessToken', accessToken);

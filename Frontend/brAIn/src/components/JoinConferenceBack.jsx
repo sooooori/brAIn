@@ -22,12 +22,20 @@ const JoinConferenceBack = ({
     if (codeInputs.join('').length !== 6) {
       alert('회의 코드를 올바르게 입력해주세요.');
     } else {
+      alert(codeInputs.join(''))
       axios
-        .get(`${import.meta.env.VITE_API_SERVER_URL}/conference?code=${codeInputs.join('')}`)
-        .then((result) => {
+        .post(`http://localhost/api/v1/conferences/join`,
+          {
+
+              inviteCode:codeInputs.join('')
+            
+        }).//then(alert(codeInputs.join(''))).
+        then((result) => {
+          alert(result.data)
           setTitle(result.data.title);
           setDescription(result.data.description);
           setConferenceFetched(true); // Mark conference details as fetched
+          navigate(`/room/${result.data.secureId}`);
         })
         .catch(() => {
           alert('회의 코드가 존재하지 않아요.');
@@ -35,11 +43,11 @@ const JoinConferenceBack = ({
     }
   };
 
-  const handleJoinButtonClicked = () => {
-    if (conferenceFetched) {
-      navigate(`/participant?roomid=${codeInputs.join('')}`);
-    }
-  };
+  // const handleJoinButtonClicked = () => {
+  //   if (conferenceFetched) {
+  //     navigate(`/participant?roomid=${codeInputs.join('')}`);
+  //   }
+  // };
 
   return (
     <Box 
