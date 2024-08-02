@@ -40,7 +40,7 @@ const JoinConferenceBack = ({
 
   const handleJoinButtonClicked = () => {
     if (conferenceFetched) {
-      navigate(`/participant/${roomUrl}`);
+      navigate(`/conferences/${roomUrl}`);
     }
   };
 
