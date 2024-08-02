@@ -1,0 +1,175 @@
+/* Navbar styling */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0); /* Fallback color for transparency */
+
+    background-size: cover; /* Cover the entire navbar */
+    background-position: center; /* Center the background image */
+    padding: 0.5rem 1rem;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 5px 5px rgba(255, 255, 255, 0.1);
+    height: 4rem;
+    transition: transform 0.3s ease-in-out; /* Smooth transition for hide/show */
+}
+
+.navbar-show {
+    transform: translateY(0); /* Show the navbar */
+}
+
+.navbar-hide {
+    transform: translateY(-100%); /* Hide the navbar by moving it out of view */
+}
+
+
+/* Logo styling */
+.navbar-logo {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-logo a {
+    color: black;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+/* Adjust logo image size */
+.logo-img {
+    width: 80px;
+    height: auto;
+    margin-right: 0.5rem;
+}
+
+/* Navbar links styling */
+.navbar-links {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Right align the buttons */
+}
+
+/* Button styling */
+.navbar-links .button-primary {
+    
+    color: white;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    text-transform: none;
+    margin-left: 0.5rem;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    margin-right: 2rem;
+}
+
+.navbar-links .button-logout {
+    background-color: #f44336; /* Use red as logout color */
+    color: white;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    text-transform: none;
+    margin-left: 0.5rem;
+    font-size: 1rem;
+}
+
+.navbar-links .button-logout:hover {
+    background-color: #d32f2f;
+}
+
+.navbar-links .button-profile-update {
+    background-color: #4caf50; /* Use green as profile update color */
+    color: white;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    text-transform: none;
+    margin-left: 0.5rem;
+    font-size: 1rem;
+}
+
+.navbar-links .button-profile-update:hover {
+    background-color: #388e3c;
+}
+
+.modal-content {
+    width: 250px; /* Increase the width of the modal */
+}
+
+/* Profile image styling */
+.user-container {
+    position: relative;
+}
+
+/* Profile avatar styling */
+.user-avatar {
+    cursor: pointer;
+    margin-right: 3rem;
+}
+
+/* Profile popup styling */
+.user-popup {
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    width: 250px; /* Increase the width of the popup */
+    position: absolute;
+    z-index: 1001;
+    transform: translateY(10px);
+}
+
+/* Profile info styling */
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.user-img-large {
+    width: 120px; /* Increase the width of the profile image */
+    height: 120px; /* Increase the height of the profile image */
+    border-radius: 50%;
+    margin: 0 1rem;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 120px; /* Match the height of the profile image */
+    justify-content: center; /* Center the text vertically */
+}
+
+.user-name {
+    font-size: 1.2rem; /* Increase font size of name */
+    font-weight: bold;
+    margin-bottom: 0.5px; /* Reduce margin between name and email */
+}
+
+.user-email {
+    margin-top: 0.5px;
+    font-size: 1rem; /* Increase font size of email */
+}
+
+.user-buttons {
+    margin-top: 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.user-buttons .button-profile-update, 
+.user-buttons .button-logout {
+    flex: 1;
+    margin: 0 8px 10px;
+    padding: 0.5rem; /* Adjust padding for buttons */
+    font-size: 0.8rem;
+}

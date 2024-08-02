@@ -1,0 +1,87 @@
+.login-container {
+    position: relative;
+    text-align: center;
+    margin-top: 70px;
+}
+
+.logo-image {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    width: 400px;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+.content-box {
+    display: inline-block;
+    height: 330px;
+    width: 550px;
+    padding: 40px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 150px; /* Adjust to make room for the logo */
+    z-index: 0;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+h3 {
+    margin-bottom: 20px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #000000;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #3495fd;
+}
+
+.login-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.half-width-button {
+    width: 48%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; 
+}
+
+.button-icon {
+    width: 24px; 
+    height: 24px;
+}
+
+.google-button {
+    background-color: white;
+    color: black;
+    border: 2px solid black; 
+}
+
+.kakao-button {
+    background-color: #FEE500;
+    color: black;
+    border: 2px solid black;
+}
+
+.hide-logo .logo-image {
+    display: none; 
+}
