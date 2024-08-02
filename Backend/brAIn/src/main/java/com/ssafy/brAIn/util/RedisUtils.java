@@ -1,5 +1,7 @@
 package com.ssafy.brAIn.util;
 
+import com.ssafy.brAIn.vote.dto.VoteResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -8,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class RedisUtils {
 
@@ -84,4 +88,24 @@ public class RedisUtils {
         redisTemplate.opsForValue().set(key, value);
     }
 
+    // 포스트잇 투표 점수 증가
+    public void incrementSortedSetScore(String key, double score, String value) {
+        ZSetOperations<String, Object> zSetOperations = redisTemplate.opsForZSet();
+        zSetOperations.incrementScore(key, value, score);
+    }
+
+    public Set<String> keys(String pattern) {
+        return redisTemplate.keys(pattern);
+    }
+
+    // 포스트잇 점수 계산
+    public List<VoteResponse> getSortedSetWithScores(String key) {
+        ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
+        Set<ZSetOperations.TypedTuple<Object>> sortedSet = zSetOps.rangeWithScores(key, 0, -1);
+        List<VoteResponse> response = sortedSet.stream()
+                .map(tuple -> new VoteResponse(tuple.getValue().toString(), tuple.getScore().intValue()))
+                .collect(Collectors.toList());
+        log.info("key{}: {}", key, response);
+        return response;
+    }
 }

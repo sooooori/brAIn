@@ -1,0 +1,52 @@
+package com.ssafy.brAIn.vote.controller;
+
+import com.ssafy.brAIn.vote.dto.VoteRequest;
+import com.ssafy.brAIn.vote.dto.VoteResponse;
+import com.ssafy.brAIn.vote.service.VoteService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/v1/conferences/vote")
+public class VoteController {
+
+    private final VoteService voteService;
+
+    // 투표 종료 -> 타이머 종료
+//    @PostMapping("/endByTimer")
+//    public ResponseEntity<?> endVoteByTimer(@RequestParam Integer conferenceRoomId) {
+//        voteService.endVoteByTimer(conferenceRoomId);
+//        return ResponseEntity.ok().build();
+//    }
+//
+//
+//    // 투표 종료 -> 사용자 전원이 투표하면 자동 종료
+//    @GetMapping("/endByUsers")
+//    public ResponseEntity<?> endVoteByUsers(@RequestParam Integer conferenceRoomId) {
+//        voteService.endVoteByUsers(conferenceRoomId);
+//        return ResponseEntity.ok().build();
+//    }
+
+
+    // 투표 결정(진행)
+    @PostMapping
+    public ResponseEntity<String> vote(@RequestBody VoteRequest voteRequest) {
+        voteService.vote(voteRequest.getRoomId(), voteRequest.getRound(), voteRequest.getVotes());
+        return new ResponseEntity<>("Vote successful", HttpStatus.OK);
+    }
+
+    // 투표 결과 집계
+    @GetMapping("/results")
+    public ResponseEntity<List<VoteResponse>> voteResults(@RequestParam Integer conferenceRoomId) {
+        List<VoteResponse> results = voteService.getVoteResults(conferenceRoomId);
+        return ResponseEntity.ok().body(results);
+    }
+}
