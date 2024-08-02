@@ -8,6 +8,7 @@ import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.stomp.dto.*;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
+import com.ssafy.brAIn.stomp.request.RequestPass;
 import com.ssafy.brAIn.stomp.request.RequestStep;
 import com.ssafy.brAIn.stomp.response.*;
 import com.ssafy.brAIn.stomp.service.MessageService;
@@ -208,7 +209,7 @@ public class MessageController {
 
     //유저 답변 패스(테스트 완)
     @MessageMapping("state.user.pass.{roomId}")
-    public void passRound(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
+    public void passRound(@DestinationVariable String roomId, StompHeaderAccessor accessor, RequestPass pass) {
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
 
@@ -216,15 +217,36 @@ public class MessageController {
         String nextMember=messageService.NextOrder(Integer.parseInt(roomId),nickname);
 
         //현재 유저가 라운드의 마지막 유저라면
-        if (messageService.isPrevUser(Integer.parseInt(roomId), nickname, nextMember)) {
+        if (messageService.isLastOrder(Integer.parseInt(roomId),nickname)) {
+            //종료 조건이라면
             if (messageService.isStep1EndCondition(Integer.parseInt(roomId))) {
                 rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.PASS_AND_END,nickname));
+                messageService.initUserState(Integer.parseInt(roomId));
                 return;
             }
             messageService.initUserState(Integer.parseInt(roomId));
         }
         messageService.updateCurOrder(Integer.parseInt(roomId),nextMember);
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember));
+
+        //다음 사람이 ai가 아니라면 종료
+        if(!messageService.isAi(Integer.parseInt(roomId),nextMember))return;
+        String aiPostIt=messageService.receiveAImessage(Integer.parseInt(roomId));
+        //System.out.println("aiPostIt:"+aiPostIt);
+
+
+        boolean curUserIsLast=messageService.isLastOrder(Integer.parseInt(roomId),nickname);
+
+        RequestGroupPost aiGroupPost=null;
+        if (curUserIsLast) {
+            aiGroupPost=new RequestGroupPost(pass.getCurRound()+1,aiPostIt);
+        }else{
+            aiGroupPost=new RequestGroupPost(pass.getCurRound(),aiPostIt);
+        }
+
+        messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,nickname);
+        ResponseGroupPost aiResponseGroupPost=makeResponseGroupPost(aiGroupPost,Integer.parseInt(roomId),nextMember);
+        rabbitTemplate.convertAndSend("amq.topic","room." + roomId, aiResponseGroupPost);
 
     }
 
