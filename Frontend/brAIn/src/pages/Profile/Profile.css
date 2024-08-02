@@ -1,5 +1,11 @@
 .profile-container {
-    padding: 20px;
+    position: relative;
+    text-align: center;
+    margin-top: 6rem;
+    border: 2px solid black;
+    border-radius: 8%;
+    width: 500px;
+    height: 580px;
 }
 
 .profile-details {
@@ -9,28 +15,14 @@
     position: relative;
 }
 
-/* Title styling */
-.profile-name {
-    font-family: 'Gothic', sans-serif; /* Apply Gothic font */
-    font-size: 2.5rem; /* Adjust font size as needed */
-    margin-bottom: 60px; /* Increase space between title and cards */
-    text-align: center; /* Center align the title */
-}
-
-.profile-info .profile-email {
-    font-family: 'Gothic', sans-serif; /* Update to your preferred font */
-    font-size: 1.5rem; /* Adjust size as needed */
-    text-align: center;
-    margin-bottom: 45px; /* Space below the subtitle */
-}
-
 .profile-image-container {
     position: relative;
+    margin : 10px;
 }
 
 .profile-image {
-    width: 220px; /* Adjust size as needed */
-    height: 220px; /* Adjust size as needed */
+    width: 220px;
+    height: 220px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #ddd;
@@ -38,14 +30,14 @@
 
 .profile-image-button {
     position: absolute;
-    bottom: 1px; 
-    left: 170px; /* Adjust spacing as needed */
-    padding: 0; /* Remove default padding */
-    border: none; /* Remove default border */
-    background-color: transparent; /* Transparent background */
+    bottom: 1px;
+    left: 170px;
+    padding: 0;
+    border: none;
+    background-color: transparent;
     cursor: pointer;
     z-index: 10;
-    display: flex; /* Use flex to center content */
+    display: flex;
     justify-content: center;
     align-items: center;
     width: 60px;
@@ -53,38 +45,94 @@
 }
 
 .profile-image-button img {
-    width: 100%; /* Make the image fill the button */
-    height: 100%; /* Make the image fill the button */
-    object-fit: contain; /* Ensure image fits within button */
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     border-radius: 20%;
 }
 
 .profile-info {
-    margin-top: 20px;
     text-align: center;
-}
-
-.profile-info h2 {
-    margin: 0;
-    margin-bottom: 10px;
-}
-
-.profile-info p {
-    margin: 0;
     margin-bottom: 20px;
 }
 
+.profile-name {
+    font-family: 'Gothic', sans-serif;
+    font-size: 2.5rem;
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.profile-email {
+    font-family: 'Gothic', sans-serif;
+    font-size: 1.5rem;
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
 
 .profile-actions {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 80%;
 }
 
 .profile-actions button {
-    margin-bottom: 15px;
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #000000;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.profile-actions .profile-exit{
+    background-color: rgb(172, 43, 43);
+}
+
+.profile-actions button:hover {
+    background-color: #3495fd;
 }
 
 .profile-actions button:last-child {
     margin-bottom: 0;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.half-width-button {
+    width: 48%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.button-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.google-button {
+    background-color: white;
+    color: black;
+    border: 2px solid black;
+}
+
+.kakao-button {
+    background-color: #FEE500;
+    color: black;
+    border: 2px solid black;
+}
+
+.hide-logo .logo-image {
+    display: none;
 }

@@ -178,7 +178,7 @@ const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
             style={customStyles}
         >
             <div>
-                <h1>{isVerificationCodeSent && !isVerificationComplete ? '인증 코드 확인' : '비밀번호 재설정'}</h1>
+                <h2>{isVerificationCodeSent && !isVerificationComplete ? '인증 코드 확인' : '비밀번호 재설정'}</h2>
                 <div className="modal-header">
                     <IconButton onClick={handleRequestClose}>
                         <CloseIcon />
