@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import PropTypes from 'prop-types'; // Optional: to validate props
+import './ConferenceCodeInput.css'; // Import the CSS file
 
 const ConferenceCodeInput = ({ inputs = [], setInputs, keyPress }) => {
   const inputRefs = useRef([]);
@@ -28,8 +29,8 @@ const ConferenceCodeInput = ({ inputs = [], setInputs, keyPress }) => {
   };
 
   return (
-    <div className="flex justify-center mt-4">
-      <div className="flex gap-2"> {/* Adjusted gap for better spacing */}
+    <div className="code-input-container">
+      <div className="code-inputs">
         {inputs.map((value, index) => (
           <input
             key={index}
@@ -40,8 +41,7 @@ const ConferenceCodeInput = ({ inputs = [], setInputs, keyPress }) => {
             onChange={handleChange(index)}
             onKeyDown={handleKeyDown(index)}
             ref={(element) => (inputRefs.current[index] = element)}
-            className="w-12 h-12 border-2 border-gray-300 rounded-md text-center text-4xl font-bold focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-transform transform duration-300 ease-in-out hover:border-blue-600"
-            style={{ width: '3rem', height: '3rem', lineHeight: '3rem' }} // Adjusted size and lineHeight for vertical centering
+            className="code-input"
           />
         ))}
       </div>

@@ -1,0 +1,68 @@
+/* Container box styling */
+.container-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+  }
+  
+  /* Header section styling */
+  .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  
+  /* Typography styling */
+  .typography-margin-bottom {
+    margin-bottom: 16px;
+  }
+  
+  /* TextField styling */
+  .textfield-root {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  
+  .textfield-input-root {
+    border-radius: 8px;
+  }
+  
+  .textfield-input {
+    font-size: 16px;
+  }
+  
+  /* Slider styling */
+  .slider-root {
+    color: #D1C4E9; /* Light purple color for the slider */
+  }
+  
+  .slider-thumb {
+    border-radius: 50%;
+    background-color: #D1C4E9; /* Light purple color for the thumb */
+  }
+  
+  .slider-track {
+    border-radius: 4px;
+  }
+  
+  .slider-rail {
+    border-radius: 4px;
+  }
+  
+  /* Button styling */
+  .button-full-width {
+    width: 100%;
+    margin-top: 16px;
+  }
+  

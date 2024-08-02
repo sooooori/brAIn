@@ -5,6 +5,7 @@ import { Close as CloseIcon, Search as SearchIcon, MeetingRoom as EnterIcon } fr
 import ConferenceCodeInput from './ConferenceCodeInput';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './JoinConferenceBack.css';
 
 const JoinConferenceBack = ({
   handleJoinConferenceFalse,
@@ -40,67 +41,33 @@ const JoinConferenceBack = ({
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center" // Center vertically
-      p={3}
-      sx={{
-        position: 'relative',
-        overflow: 'hidden',
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        boxShadow: 3,
-        height: '100%',
-        width: '100%',
-        maxWidth: '500px', // Ensure it doesn't stretch too wide
-        margin: '0 auto', // Center the box horizontally
-      }}
-    >
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        width="100%"
-      >
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          width="100%"
-          mb={3} // Increased margin-bottom for more space below header
-        >
+    <Box className="join-conference-back">
+      <Box className="join-conference-content">
+        <Box className="join-conference-header">
           <Typography variant="h6">회의 참여하기</Typography>
           <IconButton
             onClick={() => {
-              handleJoinConferenceFalse(); 
-              setCodeInputs(Array(6).fill('')); // Reset code inputs
-              setConferenceFetched(false); // Reset fetched state
+              handleJoinConferenceFalse();
+              setCodeInputs(Array(6).fill(''));
+              setConferenceFetched(false);
             }}
-            sx={{ minWidth: '40px' }}
+            className="close-button"
           >
             <CloseIcon />
           </IconButton>
         </Box>
 
         {conferenceFetched ? (
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="stretch"
-            width="100%"
-            mb={3} // Increased margin-bottom between sections
-          >
-            <Box mb={2} width="100%">
+          <Box className="conference-details">
+            <Box className="conference-detail-item">
               <Typography variant="h6">회의 코드</Typography>
               <Typography variant="body1">{codeInputs.join('')}</Typography>
             </Box>
-            <Box mb={2} width="100%">
+            <Box className="conference-detail-item">
               <Typography variant="h6">회의 제목</Typography>
               <Typography variant="body1">{title}</Typography>
             </Box>
-            <Box mb={2} width="100%">
+            <Box className="conference-detail-item">
               <Typography variant="h6">회의 설명</Typography>
               <Typography variant="body1">{description}</Typography>
             </Box>
@@ -109,26 +76,14 @@ const JoinConferenceBack = ({
               color="primary"
               onClick={handleJoinButtonClicked}
               startIcon={<EnterIcon />}
-              sx={{ width: '100%' }}
+              className="full-width-button"
             >
               회의 참여하기
             </Button>
           </Box>
         ) : (
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            width="100%"
-          >
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              textAlign="center"
-              width="100%"
-              mb={3} // Increased margin-bottom for spacing above the input and button
-            >
+          <Box className="conference-input-section">
+            <Box className="conference-code-input">
               <Typography variant="h6">회의 코드</Typography>
               <Typography variant="body2" mb={1}>
                 전달받은 회의 코드 6자리를 입력해주세요.
@@ -140,7 +95,7 @@ const JoinConferenceBack = ({
               color="primary"
               onClick={handleSearchButtonClicked}
               startIcon={<SearchIcon />}
-              sx={{ width: '100%' }}
+              className="full-width-button"
             >
               회의 조회하기
             </Button>
