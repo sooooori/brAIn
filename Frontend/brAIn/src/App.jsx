@@ -1,5 +1,5 @@
 // src/App.jsx
-import { Routes, Route } from 'react-router-dom';
+import { Router, Route, Routes} from 'react-router-dom';
 import './App.css';
 
 import Home from './pages/Home/Home'; // Home 페이지 추가
@@ -7,6 +7,8 @@ import LoginOption from './pages/User/LoginOption';
 // import OAuthRedirect from './pages/OAuthRedirect'; // OAuth 리다이렉트 핸들러 추가
 import Profile from './pages/Profile/Profile';
 import NavBar from './components/Navbar/NavBar'
+import Conference from './pages/Conference/Conference'
+
 function App() {
     return (
         <div className="App">
@@ -15,9 +17,8 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/loginoption" element={<LoginOption />} />
-                    {/* <Route path="/oauth/redirect" element={<OAuthRedirect />} /> */}
                     <Route path="/profile" element={<Profile />} />
-                    {/*<Route path="/conferences/:roomUrl" element={<Conferences />} />*/}
+                    <Route path="/conferences" element={<Conference />} />
                 </Routes>
             </div>
         </div>
