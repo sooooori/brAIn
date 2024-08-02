@@ -56,6 +56,7 @@ public class MessageController {
 
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
+        System.out.println(nickname);
         ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId);
         aiService.addPostIt(groupPost.getContent(), cr.getThreadId());
 
@@ -77,7 +78,7 @@ public class MessageController {
         //다음 사람이 ai가 아니라면 종료
         if(!messageService.isAi(Integer.parseInt(roomId),nextUser))return;
         String aiPostIt=messageService.receiveAImessage(Integer.parseInt(roomId));
-
+        System.out.println("aiPostIt:"+aiPostIt);
 
         RequestGroupPost aiGroupPost=null;
         if (curUserIsLast) {
@@ -87,7 +88,7 @@ public class MessageController {
         }
 
         messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,nickname);
-        ResponseGroupPost aiResponseGroupPost=makeResponseGroupPost(groupPost,Integer.parseInt(roomId),nextUser);
+        ResponseGroupPost aiResponseGroupPost=makeResponseGroupPost(aiGroupPost,Integer.parseInt(roomId),nextUser);
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, aiResponseGroupPost);
 
     }
@@ -98,7 +99,7 @@ public class MessageController {
         if (messageService.isLastOrder(roomId, nickname)) {
             messageService.initUserState(roomId);
             if (messageService.isStep1EndCondition(roomId)) {
-                return new ResponseGroupPost(MessageType.SUBMIT_POST_IT_AND_END,nickname,null,groupPost.getRound(), groupPost.getRound(), groupPost.getContent());
+                return new ResponseGroupPost(MessageType.SUBMIT_POST_IT_AND_END,nickname,null,groupPost.getRound(), groupPost.getRound()+1, groupPost.getContent());
             }
                 return new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,nextUser,groupPost.getRound(), groupPost.getRound()+1, groupPost.getContent());
         }
@@ -183,10 +184,10 @@ public class MessageController {
     @MessageMapping("next.step.{roomId}")
     public void nextStep(@Payload RequestStep requestStep, @DestinationVariable String roomId) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            throw new AuthenticationCredentialsNotFoundException("Authentication object is not found in the SecurityContext");
-        }
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication == null) {
+//            throw new AuthenticationCredentialsNotFoundException("Authentication object is not found in the SecurityContext");
+//        }
         Step nextStep=requestStep.getStep().next();
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseStep(MessageType.NEXT_STEP,nextStep));
         messageService.updateStep(Integer.parseInt(roomId),nextStep);

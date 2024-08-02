@@ -70,7 +70,7 @@ public class MessageService {
 
     //현재 유저가 마지막 순서인지 확인하는 메서드(테스트 완)
     public boolean isLastOrder(Integer roomId, String nickname) {
-        Double order=redisUtils.getScoreFromSortedSet(roomId+":order:cur",nickname);
+        int order=redisUtils.getScoreFromSortedSet(roomId+":order:cur",nickname).intValue();
         int lastOrder=redisUtils.getSortedSet(roomId+":order:cur").size()-1;
         if (order == lastOrder) {
             return true;
@@ -162,6 +162,7 @@ public class MessageService {
 
         int aiOrder=makeRandom(memberHistories.size()+1);
 
+        int cnt=0;
         for(int i=0;i<memberHistories.size()+1;i++){
 
             //ai 순서 지정
@@ -169,9 +170,11 @@ public class MessageService {
                 String aiNickname = redisUtils.getData(roomId + ":ai:nickname");
                 redisUtils.setSortedSet(roomId+":order",i,aiNickname);
                 redisUtils.setSortedSet(roomId+":"+"order:cur",i,aiNickname);
+                cnt=1;
+                continue;
             }
 
-            MemberHistory memberHistory=memberHistories.get(i);
+            MemberHistory memberHistory=memberHistories.get(i-cnt);
             memberHistory.setOrder(i);
             memberHistoryRepository.save(memberHistory);
 

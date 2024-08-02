@@ -22,7 +22,7 @@ public class ConferencesRoomTestController {
     public ResponseEntity<?> createRoom(@RequestBody Test test) {
         System.out.println(test.getRoomId());
         String accessToken=jwtUtilForRoom.createJwt(test.getCategory(), test.getUsername(), test.getRole(),
-                test.getNickname(),test.getRoomId(), 100000000L);
+                test.getNickname(),test.getRoomId(), 100000000000L);
 
         return ResponseEntity.ok(Map.of("accessToken", accessToken));
     }

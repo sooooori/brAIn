@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 public class ResponseUserState {
 
     private UserState type;
-    private String nickname;
+    private String curUser;
 
-    public ResponseUserState(UserState type, String nickname) {
+    public ResponseUserState(UserState type, String curUser) {
         this.type = type;
-        this.nickname = nickname;
+        this.curUser = curUser;
     }
 }

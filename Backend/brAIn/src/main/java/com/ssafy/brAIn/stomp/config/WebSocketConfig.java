@@ -60,14 +60,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("*")
-                .addInterceptors(httpSessionHandshakeInterceptor);
+                .setAllowedOrigins("*");
+//                .addInterceptors(httpSessionHandshakeInterceptor);
 
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new AuthorizationChannelInterceptor(authorizationManager));
-    }
+//    @Override
+//    public void configureClientInboundChannel(ChannelRegistration registration) {
+//        registration.interceptors(new AuthorizationChannelInterceptor(authorizationManager));
+//    }
 
 }
