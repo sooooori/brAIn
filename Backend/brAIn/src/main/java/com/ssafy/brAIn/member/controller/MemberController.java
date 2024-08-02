@@ -42,14 +42,6 @@ public class MemberController {
     private final MemberDetailService memberDetailService;
     private final EmailService emailService;
 
-    // 이메일 중복 검사
-    @PostMapping("/checkEmail")
-    public ResponseEntity<?> checkEmail(@RequestBody String email) {
-        memberService.emailCheck(email);
-
-        return ResponseEntity.ok(Map.of("message", "Email check successfully"));
-    }
-
     // 이미지파일 2MB로 제한
     private static final long MAX_FILE_SIZE = 2 * 1024 * 1024;
 

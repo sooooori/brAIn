@@ -5,9 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="46c15ecd-3885-42ed-9a92-5c2da2186c36" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/config/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/config/WebSecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/controller/ConferenceRoomController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/controller/ConferenceRoomController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/member/controller/MemberController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/member/controller/MemberController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/member/service/MemberService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/member/service/MemberService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/JoinConferenceBack.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/JoinConferenceBack.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/LoginModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/LoginModal.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,12 +54,29 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Gradle.Build brAIn.executor": "Run",
     "Gradle.brAIn [:BrAInApplication.main()].executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "front",
-    "kotlin-language-version-configured": "true"
+    "Spring Boot.BrAInApplication.executor": "Run",
+    "git-widget-placeholder": "feature/roomJoin",
+    "kotlin-language-version-configured": "true",
+    "node.js.selected.package.tslint": "(autodetect)"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="BrAInApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="brAIn.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.ssafy.brAIn.BrAInApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">

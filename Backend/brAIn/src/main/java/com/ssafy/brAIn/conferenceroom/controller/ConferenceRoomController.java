@@ -51,11 +51,19 @@ public class ConferenceRoomController {
         return ResponseEntity.status(201).body(crr);
     }
 
-    @GetMapping("/join")
-    public ResponseEntity<?> getConferenceRoom(@RequestBody ConferenceRoomJoinRequest conferenceRoomJoinRequest,  @RequestHeader("Authorization") String token) {
+    @PostMapping("/join")
+    public ResponseEntity<?> getConferenceRoom(@RequestBody ConferenceRoomJoinRequest conferenceRoomJoinRequest) {
         ConferenceRoom findConference = conferenceRoomService.findByInviteCode(conferenceRoomJoinRequest.getInviteCode());
 
         ConferenceRoomResponse crr = new ConferenceRoomResponse(findConference, "");
+        return ResponseEntity.status(200).body(crr);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getConferenceRoomsInfo(@RequestParam("secureId") String secureId) {
+        ConferenceRoom conferenceRoom = conferenceRoomService.findBySecureId(secureId);
+
+        ConferenceRoomResponse crr = new ConferenceRoomResponse(conferenceRoom, "");
         return ResponseEntity.status(200).body(crr);
     }
 

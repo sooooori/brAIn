@@ -31,10 +31,12 @@ public class ConferenceRoomResponse {
     private String inviteCode;
     private String participateUrl;
     private String jwtForRoom;
+    private String secureId;
 
     public ConferenceRoomResponse(ConferenceRoom conferenceRoom, String jwtForRoom) {
         this.inviteCode = conferenceRoom.getInviteCode();
         this.participateUrl = conferenceRoom.getParticipateUrl();
+        this.secureId = conferenceRoom.getSecureId();
         this.jwtForRoom = jwtForRoom;
     }
 }
