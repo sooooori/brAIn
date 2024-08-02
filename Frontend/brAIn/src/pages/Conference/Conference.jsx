@@ -7,9 +7,9 @@ import axios from 'axios';
 const Conference = () => {
   const [client, setClient] = useState(null);
   const [connected, setConnected] = useState(false);
-  const [participantCount, setParticipantCount] = useState(0); // Participant count
+  const [participantCount, setParticipantCount] = useState(1); // Participant count
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
-  const [roomId, setRoomId] = useState('');
+  const [roomId, setRoomId] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const { secureId } = useParams();
 
