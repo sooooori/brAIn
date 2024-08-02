@@ -45,8 +45,8 @@ const UpdatePasswordModal = ({ isOpen, onRequestClose }) => {
         }
 
         try {
-            await axios.put('http://localhost:8080/api/v1/members/updatePassword', 
-                { newPassword },
+            await axios.put('http://localhost/api/v1/members/updatePassword', 
+                {newPassword : newPassword },
                 {  
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
