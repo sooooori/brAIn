@@ -85,7 +85,7 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {!isAuthenticated ? (
+      {isAuthenticated ? (
         <>
           <h1 className="home-title">시작하기</h1>
           <div className="card-container">
