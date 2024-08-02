@@ -59,6 +59,14 @@ public class ConferenceRoomController {
         return ResponseEntity.status(200).body(crr);
     }
 
+    @GetMapping
+    public ResponseEntity<?> getConferenceRoomsInfo(@RequestParam("secureId") String secureId) {
+        ConferenceRoom conferenceRoom = conferenceRoomService.findBySecureId(secureId);
+
+        ConferenceRoomResponse crr = new ConferenceRoomResponse(conferenceRoom, "");
+        return ResponseEntity.status(200).body(crr);
+    }
+
     @PostMapping("/{url}")
     public ResponseEntity<?> joinConferenceRoom(@PathVariable String url, @RequestHeader("Authorization") String token) {
         ConferenceRoom findConference = conferenceRoomService.findBySecureId(url);

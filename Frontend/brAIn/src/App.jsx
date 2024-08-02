@@ -17,6 +17,7 @@ function App() {
                     <Route path="/loginoption" element={<LoginOption />} />
                     {/* <Route path="/oauth/redirect" element={<OAuthRedirect />} /> */}
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/participant/:secureId" element={<Participant />} />
                 </Routes>
             </div>
         </div>

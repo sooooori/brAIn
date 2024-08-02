@@ -64,7 +64,7 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
 
             localStorage.setItem('accessToken', accessToken);
             if (accessToken) {
-                const response = await axios.get('http://localhost:8080/api/v1/members/member', {
+                const response = await axios.get('http://localhost/api/v1/members/member', {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
