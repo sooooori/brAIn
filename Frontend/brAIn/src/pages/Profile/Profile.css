@@ -4,7 +4,7 @@
     margin-top: 6rem;
     border: 2px solid black;
     border-radius: 8%;
-    width: 500px;
+    width: 550px;
     height: 580px;
 }
 
@@ -17,7 +17,7 @@
 
 .profile-image-container {
     position: relative;
-    margin : 10px;
+    margin-top : 15px;
 }
 
 .profile-image {
@@ -40,8 +40,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 60px;
-    height: 60px;
+    width: 45px;
+    height: 45px;
 }
 
 .profile-image-button img {
@@ -96,7 +96,7 @@
 }
 
 .profile-actions button:hover {
-    background-color: #3495fd;
+    background-color: darkorange;
 }
 
 .profile-actions button:last-child {
@@ -135,4 +135,26 @@
 
 .hide-logo .logo-image {
     display: none;
+}
+
+
+/* Profile.css */
+
+.modal-input {
+    width: 94%;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.modal-button {
+    display: inline-block;
+    margin: 5px;
+}
+
+.modal-error-text {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
 }

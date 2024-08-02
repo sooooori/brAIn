@@ -45,8 +45,8 @@ const customStyles = {
     },
     resetPasswordHorizontal: {
         display: 'flex',
-        flexDirection: 'row',
-        gap: '20px',
+        flexDirection: 'column',
+        gap: '10px',
     }
 };
 
@@ -82,11 +82,11 @@ const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
         }
 
         // Check if the email exists in the database
-        axios.post('http://localhost:8080/api/v1/members/checkEmail', { email : email })
+        axios.post('http://localhost:8080/api/v1/members/checkEmail', { email: email })
             .then(response => {
-                if (response.data.message !== 'Email check successfully') {
+                if (response.data.message === 'Email check successfully') {
                     // If email exists, send the verification code
-    
+
                     return axios.post('http://localhost:8080/api/v1/members/sendAuthNumber', { email });
                 } else {
                     setErrorMessage('가입된 회원이 아닙니다.');
@@ -235,32 +235,28 @@ const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
                     </>
                 ) : (
                     <div style={customStyles.resetPasswordHorizontal}>
-                        <div style={{ flex: 1 }}>
-                            <TextField
-                                id="newPassword"
-                                label="새 비밀번호"
-                                type="password"
-                                placeholder="새 비밀번호를 입력하세요"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                fullWidth
-                                variant="outlined"
-                                style={{ marginBottom: '10px' }}
-                            />
-                        </div>
-                        <div style={{ flex: 1 }}>
-                            <TextField
-                                id="confirmPassword"
-                                label="비밀번호 확인"
-                                type="password"
-                                placeholder="비밀번호를 다시 입력하세요"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                fullWidth
-                                variant="outlined"
-                                style={{ marginBottom: '10px' }}
-                            />
-                        </div>
+                        <TextField
+                            id="newPassword"
+                            label="새 비밀번호"
+                            type="password"
+                            placeholder="새 비밀번호를 입력하세요"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            fullWidth
+                            variant="outlined"
+                            style={{ marginBottom: '10px' }}
+                        />
+                        <TextField
+                            id="confirmPassword"
+                            label="비밀번호 확인"
+                            type="password"
+                            placeholder="비밀번호를 다시 입력하세요"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            fullWidth
+                            variant="outlined"
+                            style={{ marginBottom: '10px' }}
+                        />
                         <Button
                             onClick={handleResetPassword}
                             variant="contained"
