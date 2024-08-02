@@ -224,7 +224,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
                 <div className="signup-wrapper">
                     <div className="signup-box">
                         <div className="header">
-                            <img className="logo-img" src="images/brAIn_1.png" alt="brAIn" />
+                            <img className="logo-img-join" src="images/brAIn_1.png" alt="brAIn" />
                             <div className="header-text">
                                 <h1>brAIn</h1>
                                 <p>AI와 함께하는 브레인스토밍</p>
@@ -240,7 +240,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
                                     variant="outlined"
                                     value={userInfo.name}
                                     onChange={handleChangeUserInfo}
-                                    placeholder="이름을 입력하세요."
+                                    placeholder="이름을 입력해주세요."
                                     fullWidth
                                 />
                             </div>
@@ -255,7 +255,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
                                         variant="outlined"
                                         value={userInfo.email}
                                         onChange={handleChangeUserInfo}
-                                        placeholder="이메일을 입력하세요."
+                                        placeholder="이메일을 입력해주세요."
                                         fullWidth
                                         disabled={isVerificationComplete} // Disable the email input if verification is complete
                                     />
@@ -275,7 +275,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
                                             variant="contained"
                                             disabled={isVerificationComplete} // Disable the button if verification is complete
                                         >
-                                            이메일 중복 확인
+                                            중복 확인
                                         </Button>
                                     )}
                                 </div>
@@ -294,7 +294,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
                                         variant="outlined"
                                         value={userInfo.emailVerificationCode}
                                         onChange={handleChangeUserInfo}
-                                        placeholder="인증번호를 입력하세요."
+                                        placeholder="인증번호를 입력해주세요."
                                         fullWidth
                                         disabled={isVerificationComplete} // Disable the verification code input if verification is complete
                                     />
@@ -304,7 +304,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
                                         variant="contained"
                                         disabled={!isVerificationCodeSent || isVerificationComplete}
                                     >
-                                        {isVerificationComplete ? '인증 완료' : '인증하기'}
+                                        {isVerificationComplete ? '인증 완료' : '인증 하기'}
                                     </Button>
                                 </div>
                                 <div className={`status-message ${verificationErrMsg ? 'invalid' : ''}`}>
@@ -326,7 +326,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
                                     variant="outlined"
                                     value={userInfo.password}
                                     onChange={handleChangeUserInfo}
-                                    placeholder="비밀번호를 입력하세요."
+                                    placeholder="비밀번호를 입력해주세요."
                                     fullWidth
                                 />
                                 <div className={`status-message ${passwordErrMsg ? 'invalid' : ''}`}>
@@ -343,7 +343,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
                                     variant="outlined"
                                     value={userInfo.passwordCheck}
                                     onChange={handleChangeUserInfo}
-                                    placeholder="비밀번호를 다시 입력하세요."
+                                    placeholder="비밀번호를 다시 입력해주세요."
                                     fullWidth
                                 />
                                 <div className={`status-message ${passwordCheckErrMsg ? 'invalid' : ''}`}>

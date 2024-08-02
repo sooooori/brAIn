@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { login } from '../../../features/auth/authSlice';
 import ResetPasswordModal from './ResetPasswordModal';
 import JoinModal from './JoinModal';
+import './LoginModal.css';
 
 const customStyles = {
     content: {
@@ -52,7 +53,7 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
 
         try {
             const response = await axios.post('http://localhost:8080/api/v1/members/login', { email, password });
-            const { accessToken} = response.data;
+            const { accessToken } = response.data;
 
             console.log('Login response:', response.data);
 
@@ -129,36 +130,38 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
                         <CloseIcon />
                     </IconButton>
                 </div>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="login-form">
                     <h2>로그인</h2>
-                    <div>
-                        <label>이메일</label>
-                        <br />
+                    <div className="form-group">
+                        <label htmlFor="email">이메일</label>
                         <input
+                            id="email"
                             type="email"
-                            placeholder="이메일을 입력해주세요"
+                            placeholder="이메일을 입력해주세요."
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                     </div>
-                    <div>
-                        <label>비밀번호</label>
-                        <br />
+                    <div className="form-group">
+                        <label htmlFor="password">비밀번호</label>
                         <input
+                            id="password"
                             type="password"
-                            placeholder="비밀번호를 입력해주세요"
+                            placeholder="비밀번호를 입력해주세요."
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
-                        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+                        {errorMessage && <p className="error-message">{errorMessage}</p>}
                     </div>
-                    <Button type="submit" variant="contained">시작하기</Button>
+                    <div className="modal-footer">
+                        <Button type="submit" variant="contained" className="start-button">시작하기</Button>
+                    </div>
                 </form>
-                <div>
-                    <Button onClick={handlePasswordFind}>비밀번호 찾기</Button>
-                    <Button onClick={handleSignup}>회원가입</Button>
+                <div className="modal-footer">
+                    <Button onClick={handlePasswordFind} className="black-button">비밀번호 찾기</Button>
+                    <Button onClick={handleSignup} className="black-button">회원가입</Button>
                 </div>
             </Modal>
 

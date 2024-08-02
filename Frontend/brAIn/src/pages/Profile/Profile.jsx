@@ -116,7 +116,6 @@ const Profile = () => {
 
     return (
         <div className="profile-container">
-            <h1>프로필 재설정</h1>
             <div className="profile-details">
                 <div className="profile-image-container">
                     <img
@@ -140,8 +139,7 @@ const Profile = () => {
                 <div className="profile-actions">
                     <Button onClick={handleChangePassword}>비밀번호 변경</Button>
                     <Button 
-                        variant="outlined"
-                        color="secondary"
+                        className={"profile-exit"}
                         onClick={() => setIsDeleteAccountModalOpen(true)}
                     >
                         회원 탈퇴

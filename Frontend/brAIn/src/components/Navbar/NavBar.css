@@ -98,41 +98,78 @@
     background-color: #388e3c;
 }
 
+.modal-content {
+    width: 250px; /* Increase the width of the modal */
+}
+
 /* Profile image styling */
-.profile-container {
+.user-container {
     position: relative;
 }
 
 /* Profile avatar styling */
-.profile-avatar {
+.user-avatar {
     cursor: pointer;
+    margin-right: 3rem;
 }
 
 /* Profile popup styling */
-.profile-popup {
+.user-popup {
     background-color: white;
     color: black;
     border: 1px solid #ccc;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     padding: 1rem;
-    width: 200px;
+    width: 250px; /* Increase the width of the popup */
     position: absolute;
     z-index: 1001;
     transform: translateY(10px);
 }
 
 /* Profile info styling */
-.profile-info {
+.user-info {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
 }
 
-.profile-img-large {
-    width: 80px;
-    height: 80px;
+.user-img-large {
+    width: 120px; /* Increase the width of the profile image */
+    height: 120px; /* Increase the height of the profile image */
     border-radius: 50%;
-    margin-bottom: 0.5rem;
+    margin: 0 1rem;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 120px; /* Match the height of the profile image */
+    justify-content: center; /* Center the text vertically */
+}
+
+.user-name {
+    font-size: 1.2rem; /* Increase font size of name */
+    font-weight: bold;
+    margin-bottom: 0.5px; /* Reduce margin between name and email */
+}
+
+.user-email {
+    margin-top: 0.5px;
+    font-size: 1rem; /* Increase font size of email */
+}
+
+.user-buttons {
+    margin-top: 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.user-buttons .button-profile-update, 
+.user-buttons .button-logout {
+    flex: 1;
+    margin: 0 8px 10px;
+    padding: 0.5rem; /* Adjust padding for buttons */
+    font-size: 0.8rem;
 }

@@ -15,7 +15,7 @@ const customStyles = {
         marginRight: '-50%',
         transform: 'translate(-50%, -50%)',
         width: '80%',
-        maxWidth: '500px',
+        maxWidth: '500px', // Adjusted width for modal
         padding: '20px',
         borderRadius: '8px',
         boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
@@ -42,6 +42,11 @@ const customStyles = {
         color: '#ff5252',  // Red color for requirement messages
         fontSize: '12px',
         marginTop: '5px',
+    },
+    resetPasswordHorizontal: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '20px',
     }
 };
 
@@ -172,13 +177,15 @@ const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
             contentLabel="Reset Password Modal"
             style={customStyles}
         >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1>{isVerificationCodeSent && !isVerificationComplete ? '인증 코드 확인' : '비밀번호 재설정'}</h1>
-                <IconButton onClick={handleRequestClose} style={{ color: '#000' }}>
-                    <CloseIcon />
-                </IconButton>
+            <div>
+                <h2>{isVerificationCodeSent && !isVerificationComplete ? '인증 코드 확인' : '비밀번호 재설정'}</h2>
+                <div className="modal-header">
+                    <IconButton onClick={handleRequestClose}>
+                        <CloseIcon />
+                    </IconButton>
+                </div>
             </div>
-            <div style={{ marginBottom: '20px' }}>
+            <div>
                 {!isVerificationCodeSent ? (
                     <>
                         <TextField
@@ -227,29 +234,33 @@ const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
                         </div>
                     </>
                 ) : (
-                    <>
-                        <TextField
-                            id="newPassword"
-                            label="새 비밀번호"
-                            type="password"
-                            placeholder="새 비밀번호를 입력하세요"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            style={{ marginBottom: '10px' }}
-                        />
-                        <TextField
-                            id="confirmPassword"
-                            label="비밀번호 확인"
-                            type="password"
-                            placeholder="비밀번호를 다시 입력하세요"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            style={{ marginBottom: '10px' }}
-                        />
+                    <div style={customStyles.resetPasswordHorizontal}>
+                        <div style={{ flex: 1 }}>
+                            <TextField
+                                id="newPassword"
+                                label="새 비밀번호"
+                                type="password"
+                                placeholder="새 비밀번호를 입력하세요"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                style={{ marginBottom: '10px' }}
+                            />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <TextField
+                                id="confirmPassword"
+                                label="비밀번호 확인"
+                                type="password"
+                                placeholder="비밀번호를 다시 입력하세요"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                style={{ marginBottom: '10px' }}
+                            />
+                        </div>
                         <Button
                             onClick={handleResetPassword}
                             variant="contained"
@@ -258,7 +269,7 @@ const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
                         >
                             비밀번호 재설정
                         </Button>
-                    </>
+                    </div>
                 )}
             </div>
             {errorMessage && <p style={customStyles.errorText}>{errorMessage}</p>}

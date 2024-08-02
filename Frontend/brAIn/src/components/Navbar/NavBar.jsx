@@ -105,12 +105,12 @@ const NavBar = () => {
                         BrAIn 시작하기
                     </Button>
                 ) : (
-                    <div className='profile-container'>
+                    <div className='user-container'>
                         <Avatar
                             src={user?.photo || ""}
                             alt="Profile"
                             onClick={handleClick}
-                            className="profile-avatar" // Apply the profile-avatar class
+                            className="user-avatar" // Apply the user-avatar class
                         />
                         <Popover
                             id={id}
@@ -127,29 +127,33 @@ const NavBar = () => {
                             }}
                         >
                             <Box className="modal-content">
-                                <div className="profile-info">
-                                    <Avatar src={user?.photo || ""} alt="Profile" className="profile-img-large" />
-                                    <p>{user?.name}</p>
-                                    <p>{user?.email}</p>
+                                <div className="user-info">
+                                    <Avatar src={user?.photo || ""} alt="Profile" className="user-img-large" />
+                                    <div className="user-details">
+                                        <p className="user-name">{user?.name}</p>
+                                        <p className="user-email">{user?.email}</p>
+                                    </div>
                                 </div>
-                                <Button
-                                    type="fit"
-                                    buttonStyle="green"
-                                    onClick={handleProfileUpdate}
-                                    className="button-profile-update"
-                                    ariaLabel="Update Profile"
-                                >
-                                    회원정보수정
-                                </Button>
-                                <Button
-                                    type="fit"
-                                    buttonStyle="red"
-                                    onClick={confirmLogout}
-                                    className="button-logout"
-                                    ariaLabel="Logout"
-                                >
-                                    로그아웃
-                                </Button>
+                                <div className="user-buttons">
+                                    <Button
+                                        type="fit"
+                                        buttonStyle="green"
+                                        onClick={handleProfileUpdate}
+                                        className="button-profile-update"
+                                        ariaLabel="Update Profile"
+                                    >
+                                        마이페이지
+                                    </Button>
+                                    <Button
+                                        type="fit"
+                                        buttonStyle="red"
+                                        onClick={confirmLogout}
+                                        className="button-logout"
+                                        ariaLabel="Logout"
+                                    >
+                                        로그아웃
+                                    </Button>
+                                </div>
                             </Box>
                         </Popover>
                     </div>
