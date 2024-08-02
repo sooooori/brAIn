@@ -10,10 +10,10 @@ const Conference = () => {
   const [connected, setConnected] = useState(false);
   const [participantCount, setParticipantCount] = useState(0); // Participant count
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
-
+  const { secureId } = useParams();
   useEffect(() => {
     const newClient = new Client({
-      brokerURL: 'ws://localhost:8080/ws', // WebSocket URL
+      brokerURL: 'ws://localhost/ws', // WebSocket URL
       connectHeaders: {
         login: 'user',
         passcode: 'password',
@@ -63,7 +63,7 @@ const Conference = () => {
 
   return (
     <div>
-        222222222222222222
+        <p>Secure ID: {secureId}</p>
     </div>
     // <div className="waiting-room">
     //   <WaitingModal isVisible={isModalVisible} participantCount={participantCount} />
