@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { Button, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../../../features/auth/authSlice';  // Import logout action
+import { logout } from '../../../features/auth/authSlice';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import './UpdatePasswordModal.css';
 
-// Custom styles for the modal
 const customStyles = {
     content: {
         top: '50%',
@@ -27,13 +27,9 @@ const customStyles = {
     overlay: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
-    button: {
-        marginTop: '10px',
-        marginBottom: '10px',
-    }
 };
 
-const ResetPasswordCompletionModal = ({ isOpen, onRequestClose}) => {
+const UpdatePasswordModal = ({ isOpen, onRequestClose }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -42,7 +38,6 @@ const ResetPasswordCompletionModal = ({ isOpen, onRequestClose}) => {
     const [errorMessage, setErrorMessage] = useState('');
     const { accessToken } = useSelector((state) => state.auth);
 
-
     const handlePasswordChange = async () => {
         if (newPassword !== confirmPassword) {
             setErrorMessage('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
@@ -50,13 +45,12 @@ const ResetPasswordCompletionModal = ({ isOpen, onRequestClose}) => {
         }
 
         try {
-            
-            const response = await axios.put('http://localhost:8080/api/v1/members/updatePassword', 
-                { newPassword },  // Wrap newPassword in an object
+            await axios.put('http://localhost/api/v1/members/updatePassword', 
+                {newPassword : newPassword },
                 {  
                     headers: {
-                        Authorization: `Bearer ${accessToken}`,  // Pass the access token in the Authorization header
-                        'Content-Type': 'application/json'  // Ensure correct content type
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
                     }
                 }
             );
@@ -73,19 +67,27 @@ const ResetPasswordCompletionModal = ({ isOpen, onRequestClose}) => {
         }
     };
 
+    const handleClose = () => {
+        // Clear the state when modal is closed
+        setNewPassword('');
+        setConfirmPassword('');
+        setErrorMessage('');
+        onRequestClose();
+    };
+
     return (
         <Modal
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
+            onRequestClose={handleClose}
             contentLabel="Reset Password Completion Modal"
             style={customStyles}
         >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1>비밀번호 재설정</h1>
-                <Button onClick={onRequestClose} style={{ color: '#000' }}>
+            <div className="modal-header">
+                <Button onClick={handleClose} style={{ color: '#000' }}>
                     <CloseIcon />
                 </Button>
             </div>
+            <h1 className="h1">비밀번호 재설정</h1>
             <TextField
                 id="newPassword"
                 label="새 비밀번호"
@@ -95,7 +97,7 @@ const ResetPasswordCompletionModal = ({ isOpen, onRequestClose}) => {
                 onChange={(e) => setNewPassword(e.target.value)}
                 fullWidth
                 variant="outlined"
-                style={{ marginBottom: '10px' }}
+                style={{ marginBottom: '15px' }}
             />
             <TextField
                 id="confirmPassword"
@@ -106,19 +108,20 @@ const ResetPasswordCompletionModal = ({ isOpen, onRequestClose}) => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 fullWidth
                 variant="outlined"
-                style={{ marginBottom: '10px' }}
+                style={{ marginBottom: '15px' }}
             />
             <Button
                 onClick={handlePasswordChange}
                 variant="contained"
                 color="primary"
+                className="modal-button"
                 style={customStyles.button}
             >
                 비밀번호 재설정
             </Button>
-            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+            {errorMessage && <p className="error-text">{errorMessage}</p>}
         </Modal>
     );
 };
 
-export default ResetPasswordCompletionModal;
+export default UpdatePasswordModal;

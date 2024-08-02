@@ -71,7 +71,7 @@
     margin-right: 2rem;
 }
 
-.navbar-links .button-logout {
+.user-buttons .button-logout {
     background-color: #f44336; /* Use red as logout color */
     color: white;
     border-radius: 6px;
@@ -81,12 +81,12 @@
     font-size: 1rem;
 }
 
-.navbar-links .button-logout:hover {
+.user-buttons .button-logout:hover {
     background-color: #d32f2f;
 }
 
-.navbar-links .button-profile-update {
-    background-color: #4caf50; /* Use green as profile update color */
+.user-buttons .button-profile-update {
+    background-color: #000000; /* Use green as profile update color */
     color: white;
     border-radius: 6px;
     padding: 0.5rem 1rem;
@@ -95,8 +95,8 @@
     font-size: 1rem;
 }
 
-.navbar-links .button-profile-update:hover {
-    background-color: #388e3c;
+.user-buttons .button-profile-update:hover {
+    background-color: darkorange;
 }
 
 .modal-content {

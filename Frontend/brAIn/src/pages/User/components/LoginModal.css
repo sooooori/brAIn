@@ -85,7 +85,7 @@
 }
 
 .modal-footer .black-button:hover {
-    background-color: #383838;
+    background-color: darkorange;
 }
 
 @media (max-width: 500px) {

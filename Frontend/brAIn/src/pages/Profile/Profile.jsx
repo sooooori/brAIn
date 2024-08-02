@@ -2,17 +2,38 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Modal from 'react-modal';
-import Button from '../../components/Button/Button'
+import Button from '../../components/Button/Button';
 import axios from '../../utils/Axios';
-import ResetPasswordCompletionModal from './components/ResetPasswordCompletionModal';
+import UpdatePasswordModal from './components/UpdatePasswordModal';
 import ProfileImageModal from './components/ProfileImageModal';
 import './Profile.css';
 import { logout, updateUser } from '../../features/auth/authSlice';
+import Cookies from 'js-cookie';
+
+const customModalStyles = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        width: '80%',
+        maxWidth: '500px',
+        padding: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+        overflowY: 'auto',
+    },
+    overlay: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+};
 
 const Profile = () => {
     const [isProfileImageModalOpen, setIsProfileImageModalOpen] = useState(false);
     const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
-    const [isResetPasswordCompletionModalOpen, setIsResetPasswordCompletionModalOpen] = useState(false);
+    const [isUpdatePasswordModalOpen, setIsUpdatePasswordModalOpen] = useState(false);
     const [deletePassword, setDeletePassword] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
@@ -82,7 +103,7 @@ const Profile = () => {
 
     const handleChangePassword = () => {
         // Open the Reset Password Completion Modal
-        setIsResetPasswordCompletionModalOpen(true);
+        setIsUpdatePasswordModalOpen(true);
     };
 
     const handleDeleteAccount = async () => {
@@ -98,6 +119,7 @@ const Profile = () => {
             console.log('Account deleted successfully:', response.data);
     
             dispatch(logout());
+            Cookies.remove('refreshToken');
             navigate('/');
         } catch (error) {
             console.error('Failed to delete account:', error);
@@ -108,7 +130,7 @@ const Profile = () => {
         navigate('/');
     };
 
-    const isAnyModalOpen = isProfileImageModalOpen || isDeleteAccountModalOpen || isResetPasswordCompletionModalOpen;
+    const isAnyModalOpen = isProfileImageModalOpen || isDeleteAccountModalOpen || isUpdatePasswordModalOpen;
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -128,7 +150,7 @@ const Profile = () => {
                             onClick={() => setIsProfileImageModalOpen(true)} 
                             className="profile-image-button"
                         >
-                            <img src="images/edit.jfif" alt="edit" />
+                            <img src="images/edit.jpg" alt="edit" />
                         </button>
                     )}
                 </div>
@@ -137,14 +159,14 @@ const Profile = () => {
                     <h3 className="profile-email">Email: {user?.email}</h3>
                 </div>
                 <div className="profile-actions">
-                    <Button onClick={handleChangePassword}>비밀번호 변경</Button>
+                    <Button onClick={handleChangePassword}>비밀번호 수정하기</Button>
                     <Button 
                         className={"profile-exit"}
                         onClick={() => setIsDeleteAccountModalOpen(true)}
                     >
                         회원 탈퇴
                     </Button>
-                    <Button onClick={handleGoHome}>홈으로 돌아가기</Button>
+                    <Button onClick={handleGoHome}>홈 화면으로 돌아가기</Button>
                 </div>
             </div>
 
@@ -155,15 +177,16 @@ const Profile = () => {
                 currentPhoto={user?.photo}  // Pass current photo URL
             />
 
-            <ResetPasswordCompletionModal
-                isOpen={isResetPasswordCompletionModalOpen}
-                onRequestClose={() => setIsResetPasswordCompletionModalOpen(false)}
+            <UpdatePasswordModal
+                isOpen={isUpdatePasswordModalOpen}
+                onRequestClose={() => setIsUpdatePasswordModalOpen(false)}
             />
 
             <Modal
                 isOpen={isDeleteAccountModalOpen}
                 onRequestClose={() => setIsDeleteAccountModalOpen(false)}
                 contentLabel="Delete Account Modal"
+                style={customModalStyles}  // Apply custom styles here
             >
                 <h2>정말 탈퇴하시겠습니까?</h2>
                 <input
@@ -172,10 +195,11 @@ const Profile = () => {
                     value={deletePassword}
                     onChange={(e) => setDeletePassword(e.target.value)}
                     required
+                    className="modal-input"
                 />
                 <div className="modal-actions">
-                    <Button onClick={handleDeleteAccount}>탈퇴</Button>
-                    <Button onClick={() => setIsDeleteAccountModalOpen(false)}>취소</Button>
+                    <Button className="modal-button" onClick={handleDeleteAccount}>탈퇴</Button> 
+                    <Button className="modal-button" onClick={() => setIsDeleteAccountModalOpen(false)}>취소</Button>
                 </div>
             </Modal>
         </div>

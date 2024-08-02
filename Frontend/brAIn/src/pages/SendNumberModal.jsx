@@ -73,12 +73,12 @@ const SendNumberModal = ({ isOpen, onRequestClose }) => {
         }
 
         // Check if the email exists in the database
-        axios.post('http://localhost:8080/api/v1/members/checkEmail', { email : email })
+        axios.post('http://localhost/api/v1/members/checkEmail', { email : email })
             .then(response => {
                 console.log(response)
                 if (response.data.message === 'Email check successfully') {
                     // If email exists, send the verification code
-                    return axios.post('http://localhost:8080/api/v1/members/sendAuthNumber', { email : email });
+                    return axios.post('http://localhost/api/v1/members/sendAuthNumber', { email : email });
                 } else {
                     // Email does not exist
                     setErrorMessage('가입된 회원이 아닙니다.');
@@ -112,7 +112,7 @@ const SendNumberModal = ({ isOpen, onRequestClose }) => {
             return;
         }
 
-        axios.post('http://localhost:8080/api/v1/members/authNumber', {
+        axios.post('http://localhost/api/v1/members/authNumber', {
             email,
             code: verificationCode,
         })
