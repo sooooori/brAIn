@@ -19,7 +19,7 @@ const NewConferenceBack = ({
     if (title.trim() && preparationTime > 0) {
       axios
         .post(
-          `${import.meta.env.VITE_API_SERVER_URL}/conference`,
+          `${import.meta.env.VITE_API_SERVER_URL}/conferences`,
           {
             title,
             preparationTime,

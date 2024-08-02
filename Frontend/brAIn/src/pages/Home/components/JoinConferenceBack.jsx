@@ -23,12 +23,12 @@ const JoinConferenceBack = ({
       alert('회의 코드를 올바르게 입력해주세요.');
     } else {
       axios
-        .post(`http://localhost/api/v1/conference`,{
+        .post(`http://localhost/api/v1/conferences/join`,{
           inviteCode:codeInputs.join('')
         })
         .then((result) => {
-          setTitle(result.data.title);
-          setDescription(result.data.description);
+          setTitle(result.data.subject);
+          setDescription(result.data.subject);
           setRoomUrl(result.data.secureId);
           setConferenceFetched(true);
         })
