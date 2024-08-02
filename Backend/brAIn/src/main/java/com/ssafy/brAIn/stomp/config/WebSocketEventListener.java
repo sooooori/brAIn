@@ -22,12 +22,13 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.Optional;
 
-@Configuration
+@Component
 public class WebSocketEventListener {
 
 
@@ -56,7 +57,6 @@ public class WebSocketEventListener {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String token = accessor.getFirstNativeHeader("Authorization");
 
-        System.out.println(token);
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
 
@@ -68,13 +68,13 @@ public class WebSocketEventListener {
             Optional<ConferenceRoom> room = conferenceRoomRepository.findById(roomId);
 
             if (member.isEmpty() || room.isEmpty()) {
-                //오류
-                return;
+                return; // 로그를 추가하여 문제가 무엇인지 확인할 수도 있습니다.
             }
+
             MemberHistoryId memberHistoryId = new MemberHistoryId(memberId, roomId);
 
-
-            MemberHistory memberHistory = MemberHistory.builder().id(memberHistoryId)
+            MemberHistory memberHistory = MemberHistory.builder()
+                    .id(memberHistoryId)
                     .role(role)
                     .status(Status.COME)
                     .nickName(jwtUtilForRoom.getNickname(token))
@@ -82,64 +82,49 @@ public class WebSocketEventListener {
                     .conferenceRoom(room.get())
                     .build();
 
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    memberHistory, null, memberHistory.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            Optional<MemberHistory> optionalMemberHistory = null;
-            if (memberHistory != null) {
-                Authentication authentication = new UsernamePasswordAuthenticationToken(memberHistory, null, memberHistory.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                System.out.println("User connected: " + memberHistory.getUsername());
-
-                optionalMemberHistory = memberHistoryRepository.findById(memberHistoryId);
-                if (optionalMemberHistory.isEmpty()) {
-                    memberHistoryRepository.save(memberHistory);
-                } else {
-                    optionalMemberHistory.get().historyStateUpdate(Status.COME);
-                    memberHistoryRepository.save(optionalMemberHistory.get());
-                    redisUtils.setSortedSet(roomId + ":order:cur", optionalMemberHistory.get().getOrders(),optionalMemberHistory.get().getNickName());
-
-                }
+            Optional<MemberHistory> optionalMemberHistory = memberHistoryRepository.findById(memberHistoryId);
+            if (optionalMemberHistory.isEmpty()) {
+                memberHistoryRepository.save(memberHistory);
+            } else {
+                MemberHistory existingHistory = optionalMemberHistory.get();
+                existingHistory.historyStateUpdate(Status.COME);
+                memberHistoryRepository.save(existingHistory);
+                redisUtils.setSortedSet(roomId + ":order:cur", existingHistory.getOrders(), existingHistory.getNickName());
             }
 
             if (redisUtils.isValueInSet(roomId + ":out", jwtUtilForRoom.getNickname(token))) {
                 redisUtils.removeValueFromSet(roomId + ":out", jwtUtilForRoom.getNickname(token));
             }
 
-
-            //레디스에 sessionId와 함께 닉네임을 저장해서 갑작스러운 종료 때, 닉네임을 얻기 위함.
             String sessionId = accessor.getSessionId();
             redisUtils.save(sessionId, memberId + ":" + roomId);
-
         }
-    }
-
-    private Integer getMemberId(String email) {
-        System.out.println("email:"+email);
-        Member member =memberRepository.findByEmail(email).get();
-        return member.getId();
     }
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
-        String[] historyId=redisUtils.getData(sessionId).split(":");
-        Integer memberId=Integer.parseInt(historyId[0]);
-        Integer roomId=Integer.parseInt(historyId[1]);
+        String[] historyId = redisUtils.getData(sessionId).split(":");
+        Integer memberId = Integer.parseInt(historyId[0]);
+        Integer roomId = Integer.parseInt(historyId[1]);
 
-        MemberHistoryId memberHistoryId=new MemberHistoryId(memberId,roomId);
-        MemberHistory memberHistory=memberHistoryRepository.findById(memberHistoryId).get();
+        MemberHistoryId memberHistoryId = new MemberHistoryId(memberId, roomId);
+        MemberHistory memberHistory = memberHistoryRepository.findById(memberHistoryId).get();
         memberHistory.historyStateUpdate(Status.OUT);
         memberHistoryRepository.save(memberHistory);
 
-        redisUtils.setDataInSet(roomId+":out",memberHistory.getNickName(),7200L);
-        redisUtils.removeValueFromSortedSet(roomId+":order:cur",memberHistory.getNickName());
+        redisUtils.setDataInSet(roomId + ":out", memberHistory.getNickName(), 7200L);
+        redisUtils.removeValueFromSortedSet(roomId + ":order:cur", memberHistory.getNickName());
 
-        System.out.println("Session ID: " + sessionId + " disconnected.");
-        System.out.println("User nickname: " + memberHistory.getNickName() + " disconnected.");
-        // 추가적인 로직 구현
+        rabbitTemplate.convertAndSend("amq.topic", "roomId." + roomId, new ConferencesEnterExit(MessageType.EXIT, memberHistory.getNickName()));
+    }
 
-        //유저 퇴장시 안내메시지
-        rabbitTemplate.convertAndSend("amq.topic","roomId."+roomId,new ConferencesEnterExit(MessageType.EXIT,memberHistory.getNickName()));
+    private Integer getMemberId(String email) {
+        return memberRepository.findByEmail(email).get().getId();
     }
 }

@@ -19,6 +19,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -156,6 +159,10 @@ public class MessageController {
     @MessageMapping("next.step.{roomId}")
     public void nextStep(@Payload RequestStep requestStep, @DestinationVariable String roomId) {
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            throw new AuthenticationCredentialsNotFoundException("Authentication object is not found in the SecurityContext");
+        }
         Step nextStep=requestStep.getStep().next();
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseStep(MessageType.NEXT_STEP,nextStep));
         messageService.updateStep(Integer.parseInt(roomId),nextStep);
@@ -166,6 +173,8 @@ public class MessageController {
     public void readyState(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
+
+
 
         messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.READY);
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY,nickname));
