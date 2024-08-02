@@ -130,7 +130,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
         .then(response => {
             console.log(response);
             if (response.status === 200) { // 이메일 중복 없음
-                setEmailErrMsg('중복되지 않은 이메일입니다.');
+                setEmailErrMsg('중복되지 않은 이메일입니다.' + userInfo.email);
                 setIsEmailChecked(true); // 이메일이 체크됨
             }
         })
