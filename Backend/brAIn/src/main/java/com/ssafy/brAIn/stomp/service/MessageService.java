@@ -144,7 +144,17 @@ public class MessageService {
         //한번 섞어준다.
         Collections.shuffle(memberHistories);
 
-        for(int i=0;i<memberHistories.size();i++){
+        int aiOrder=makeRandom(memberHistories.size()+1);
+
+        for(int i=0;i<memberHistories.size()+1;i++){
+
+            //ai 순서 지정
+            if (i == aiOrder) {
+                String aiNickname = redisUtils.getData(roomId + ":ai:nickname");
+                redisUtils.setSortedSet(roomId+":order",i,aiNickname);
+                redisUtils.setSortedSet(roomId+":"+"order:cur",i,aiNickname);
+            }
+
             MemberHistory memberHistory=memberHistories.get(i);
             memberHistory.setOrder(i);
             memberHistoryRepository.save(memberHistory);
@@ -157,6 +167,10 @@ public class MessageService {
 
         }
         return redisUtils.getSortedSet(roomId+":order");
+    }
+
+    private int makeRandom(int size) {
+        return (int)(Math.random()*size);
     }
 
 
