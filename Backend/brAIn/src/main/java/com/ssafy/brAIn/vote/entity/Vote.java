@@ -29,15 +29,15 @@ public class Vote {
     @JoinColumn(name = "postit_id", referencedColumnName = "id")
     private RoundPostIt roundPostIt;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id", referencedColumnName = "id")
-    private Member member;
+//    @ManyToOne
+//    @JoinColumn(name = "member_id", referencedColumnName = "id")
+//    private Member member;
 
     @Column(name = "score")
     private int score;
 
-    @Enumerated(value = EnumType.STRING)
     @Column(name = "vote_type")
+    @Enumerated(value = EnumType.STRING)
     private VoteType voteType;
 
     @Builder
@@ -47,7 +47,7 @@ public class Vote {
 
         this.conferenceRoom = conferenceRoom;
         this.roundPostIt = roundPostIt;
-        this.member = member;
+//        this.member = member;
     }
 
 }

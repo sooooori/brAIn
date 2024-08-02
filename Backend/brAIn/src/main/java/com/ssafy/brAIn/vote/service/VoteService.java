@@ -1,19 +1,29 @@
 package com.ssafy.brAIn.vote.service;
 
+import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
-import com.ssafy.brAIn.history.repository.MemberHistoryRepository;
+import com.ssafy.brAIn.exception.BadRequestException;
+import com.ssafy.brAIn.exception.GlobalExceptionHandler;
+import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
+import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
 import com.ssafy.brAIn.roundpostit.repository.RoundPostItRepository;
 import com.ssafy.brAIn.util.RedisUtils;
 import com.ssafy.brAIn.vote.dto.VoteResponse;
+import com.ssafy.brAIn.vote.dto.VoteResultRequest;
+import com.ssafy.brAIn.vote.entity.Vote;
+import com.ssafy.brAIn.vote.entity.VoteType;
 import com.ssafy.brAIn.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ServerErrorException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,9 +33,7 @@ import java.util.stream.Collectors;
 public class VoteService {
     private final VoteRepository voteRepository;
     private final RoundPostItRepository roundPostItRepository;
-    private final MemberRepository memberRepository;
     private final ConferenceRoomRepository conferenceRoomRepository;
-    private final MemberHistoryRepository memberHistoryRepository;
 
     private final RedisUtils redisUtils;
 
@@ -50,21 +58,57 @@ public class VoteService {
             }
         }
     }
-    // 전체 결과를 보여줌 (상위 9개)
-    @Transactional
-    public List<VoteResponse> getVoteResults(int conferenceRoomId) {
-        String voteKeyPattern = conferenceRoomId + ":votes:*";
-        Set<String> keys = redisUtils.keys(voteKeyPattern);
-        log.info("key: {}", keys);
 
-        List<VoteResponse> result = keys.stream()
-                .flatMap(key -> redisUtils.getSortedSetWithScores(key).stream())
-                .sorted((v1, v2) -> Integer.compare(v2.getScore(), v1.getScore()))
+    // 전체 결과를 보여줌 (상위 9개)
+    @Transactional(readOnly = true)
+    public List<VoteResponse> getVoteResults(VoteResultRequest voteResultRequest) {
+        String key = voteResultRequest.getConferenceId() + ":votes:" + voteResultRequest.getRound();
+
+        return redisUtils.getSortedSetWithScores(key)
+                .stream()
+                .map(tuple -> new VoteResponse(tuple.getPostIt(), tuple.getScore()))
+                .sorted((v1,v2)->Integer.compare(v2.getScore(),v1.getScore()))
                 .limit(9)
                 .collect(Collectors.toList());
+    }
 
-        log.info("result: {}", result);
-        return result;
+    // 투표 결과를 DB에 저장
+    @Transactional
+    public void saveTop9RoundResults(List<VoteResponse> votes, VoteResultRequest voteResultRequest) throws ServerErrorException {
+        ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(voteResultRequest.getConferenceId())
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 회의실 ID"));
+
+        for (VoteResponse voteResponse : votes) {
+            RoundPostIt roundPostIt = roundPostItRepository.findByContentAndConferenceRoom_Id(voteResponse.getPostIt(), voteResultRequest.getConferenceId())
+                    .orElseGet(() -> {
+                        log.info("Creating new RoundPostIt for content: {}", voteResponse.getPostIt());
+                        return roundPostItRepository.save(
+                                RoundPostIt.builder()
+                                        .content(voteResponse.getPostIt())
+                                        .conferenceRoom(conferenceRoom)
+                                        .build()
+                        );
+                    });
+
+            roundPostIt.selectedNine();
+            roundPostItRepository.save(roundPostIt);
+
+            Optional<Vote> existingVote = voteRepository.findByRoundPostItAndConferenceRoom(roundPostIt, conferenceRoom);
+
+            // 이미 있는 투표 기록이면 반영하지 않음
+            if (existingVote.isEmpty()) {
+                Vote vote = Vote.builder()
+                        .score(voteResponse.getScore())
+                        .voteType(VoteType.MIDDLE)
+                        .conferenceRoom(conferenceRoom)
+                        .roundPostIt(roundPostIt)
+                        .build();
+                voteRepository.save(vote);
+            }
+            else{
+                throw new BadRequestException("중복된 투표입니다.");
+            }
+        }
     }
 
 
@@ -95,43 +139,5 @@ public class VoteService {
 //            conferenceRoomRepository.save(room);
 //            saveVoteResults(conferenceRoomId);
 //        }
-//    }
-
-    // 투표 결과를 DB에 저장
-//    @Transactional
-//    public void saveVoteResults(Integer conferenceRoomId) {
-//        List<VoteResponse> results = getVoteResults(conferenceRoomId);
-//
-//        results.forEach(result -> {
-//            RoundPostItRedis postItRedis = roundPostItRedisRepository.findById(String.valueOf(result.getPostItId()))
-//                    .orElseThrow(() -> new IllegalArgumentException("Invalid post-it ID: " + result.getPostItId()));
-//
-//            MemberHistory memberHistory = memberHistoryRepository.findByMemberIdAndConferenceRoomId(postItRedis.getConferenceId(), conferenceRoomId)
-//                    .orElseThrow(() -> new IllegalArgumentException("Invalid member history for room ID: " + conferenceRoomId + " and member ID: " + postItRedis.getConferenceId()));
-//
-//            Member member = memberHistory.getMember();
-//
-//            RoundPostIt roundPostIt = RoundPostIt.builder()
-//                    .member(member)
-//                    .content(postItRedis.getMessage())
-//                    .conferenceRoom(conferenceRoomRepository.findById(postItRedis.getConferenceId())
-//                            .orElseThrow(() -> new IllegalArgumentException("Invalid conference room ID: " + postItRedis.getConferenceId())))
-//                    .build();
-//
-//            roundPostIt.selectedNine();
-//            roundPostItRepository.save(roundPostIt);
-//
-//            // 각 포스트잇에 대한 결과 저장
-//            Vote vote = Vote.builder()
-//                    .conferenceRoom(conferenceRoomRepository.findById(postItRedis.getConferenceId())
-//                            .orElseThrow(() -> new IllegalArgumentException("Invalid conference room ID: " + postItRedis.getConferenceId())))
-//                    .roundPostIt(roundPostIt)
-//                    .member(member)
-//                    .score(result.getTotalScore())
-//                    .voteType(VoteType.FINAL)
-//                    .build();
-//
-//            voteRepository.save(vote);
-//        });
 //    }
 }

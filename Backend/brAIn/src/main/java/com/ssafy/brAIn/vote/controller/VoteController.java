@@ -2,6 +2,7 @@ package com.ssafy.brAIn.vote.controller;
 
 import com.ssafy.brAIn.vote.dto.VoteRequest;
 import com.ssafy.brAIn.vote.dto.VoteResponse;
+import com.ssafy.brAIn.vote.dto.VoteResultRequest;
 import com.ssafy.brAIn.vote.service.VoteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -45,8 +45,18 @@ public class VoteController {
 
     // 투표 결과 집계
     @GetMapping("/results")
-    public ResponseEntity<List<VoteResponse>> voteResults(@RequestParam Integer conferenceRoomId) {
-        List<VoteResponse> results = voteService.getVoteResults(conferenceRoomId);
+    public ResponseEntity<List<VoteResponse>> voteResults(@RequestBody VoteResultRequest voteResultRequest) {
+        List<VoteResponse> results = voteService.getVoteResults(voteResultRequest);
         return ResponseEntity.ok().body(results);
     }
+
+    // 투표 결과 db 저장
+    @PostMapping("/saveResults")
+    public ResponseEntity<String> saveVoteResults(@RequestBody VoteResultRequest voteResultRequest) {
+        List<VoteResponse> results = voteService.getVoteResults(voteResultRequest);
+        voteService.saveTop9RoundResults(results, voteResultRequest);
+        return new ResponseEntity<>("Vote results saved successfully", HttpStatus.OK);
+    }
+
+    // 투표 결과를을 담은 리스트를 소켓에 담아 메시지 보내기(예정)
 }

@@ -1,12 +1,14 @@
 package com.ssafy.brAIn.roundpostit.entity;
 
-import com.ssafy.brAIn.member.entity.Member;
-import com.ssafy.brAIn.roundboard.entity.RoundBoard;
+import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
+import com.ssafy.brAIn.vote.entity.Vote;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,12 +20,8 @@ public class RoundPostIt {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "round_board_id", referencedColumnName = "id")
-    private RoundBoard roundBoard;
-
-    @ManyToOne
-    @JoinColumn(name = "member_id", referencedColumnName = "id")
-    private Member member;
+    @JoinColumn(name = "room_id", referencedColumnName = "id")
+    private ConferenceRoom conferenceRoom;
 
     @Column(name = "content")
     private String content;
@@ -34,22 +32,22 @@ public class RoundPostIt {
 
     private boolean isAI;
 
+    @OneToMany(mappedBy = "roundPostIt", cascade = CascadeType.ALL)
+    private List<Vote> votes;
+
     @Builder
-    public RoundPostIt(RoundBoard roundBoard, Member member, String content) {
-        this.roundBoard = roundBoard;
-        this.member = member;
+    public RoundPostIt(String content, ConferenceRoom conferenceRoom) {
+        this.content = content;
+        this.conferenceRoom = conferenceRoom;
+    }
+
+    @Builder
+    public RoundPostIt(String content) {
         this.content = content;
     }
 
     @Builder
-    public RoundPostIt(RoundBoard roundBoard,String content) {
-        this.roundBoard = roundBoard;
-        this.content = content;
-    }
-
-    @Builder
-    public RoundPostIt(RoundBoard roundBoard, boolean isAI, String content) {
-        this.roundBoard = roundBoard;
+    public RoundPostIt(boolean isAI, String content) {
         this.isAI = isAI;
         this.content = content;
     }
