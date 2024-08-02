@@ -5,14 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="46c15ecd-3885-42ed-9a92-5c2da2186c36" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/config/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/config/WebSecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/controller/ConferenceRoomController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/controller/ConferenceRoomController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/member/controller/MemberController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/member/controller/MemberController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/JoinConferenceBack.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/JoinConferenceBack.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/LoginModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/LoginModal.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/components/Navbar/NavBar.css" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/components/Navbar/NavBar.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/Home.css" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/Home.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/MainCard.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewMainCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewMainCard.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +59,7 @@
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.BrAInApplication.executor": "Run",
-    "git-widget-placeholder": "feature/roomJoin",
+    "git-widget-placeholder": "feature/waiting__room",
     "kotlin-language-version-configured": "true",
     "node.js.selected.package.tslint": "(autodetect)"
   }
