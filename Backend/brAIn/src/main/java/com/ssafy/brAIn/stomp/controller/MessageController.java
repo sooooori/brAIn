@@ -61,24 +61,24 @@ public class MessageController {
         aiService.addPostIt(groupPost.getContent(), cr.getThreadId());
 
         ResponseGroupPost responseGroupPost=null;
+
+        String nextUser=messageService.NextOrder(Integer.parseInt(roomId),nickname);
 //        boolean isStep1End=false;
         if (messageService.isLastOrder(Integer.parseInt(roomId), nickname)) {
             if (messageService.isStep1EndCondition(Integer.parseInt(roomId))) {
 //                isStep1End=true;
-                responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT_AND_END,nickname,groupPost.getRound(), groupPost.getRound(), groupPost.getContent());
+                responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT_AND_END,nickname,null,groupPost.getRound(), groupPost.getRound(), groupPost.getContent());
             }else{
-                responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,groupPost.getRound(), groupPost.getRound()+1, groupPost.getContent());
+                responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,nextUser,groupPost.getRound(), groupPost.getRound()+1, groupPost.getContent());
 
             }
             messageService.initUserState(Integer.parseInt(roomId));
         }else{
-            responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,groupPost.getRound(), groupPost.getRound(), groupPost.getContent());
+            responseGroupPost = new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,nextUser,groupPost.getRound(), groupPost.getRound(), groupPost.getContent());
         }
         messageService.sendPost(Integer.parseInt(roomId),groupPost);
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, responseGroupPost);
-//        if(isStep1End){
-//            rabbitTemplate.convertAndSend("amq.topic","room." + roomId, new VoteNotification(MessageType.START_VOTE));
-//        }
+
 
     }
     //삭제예정

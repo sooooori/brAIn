@@ -1,8 +1,10 @@
 package com.ssafy.brAIn.stomp.service;
 
+import com.ssafy.brAIn.ai.service.AIService;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
+import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.history.entity.MemberHistory;
 import com.ssafy.brAIn.history.entity.MemberHistoryId;
 import com.ssafy.brAIn.history.model.Role;
@@ -30,17 +32,21 @@ public class MessageService {
     private final MemberHistoryService memberHistoryService;
     private final MemberRepository memberRepository;
     private final ConferenceRoomRepository conferenceRoomRepository;
+    private final AIService aiService;
+    private final ConferenceRoomService conferenceRoomService;
 
     public MessageService(RedisUtils redisUtils,
                           MemberRepository memberRepository,
                           MemberHistoryRepository memberHistoryRepository,
                           ConferenceRoomRepository conferenceRoomRepository,
-                          MemberHistoryService memberHistoryService) {
+                          MemberHistoryService memberHistoryService, AIService aiService, ConferenceRoomService conferenceRoomService) {
         this.redisUtils = redisUtils;
         this.memberHistoryRepository = memberHistoryRepository;
         this.memberRepository = memberRepository;
         this.conferenceRoomRepository=conferenceRoomRepository;
         this.memberHistoryService = memberHistoryService;
+        this.aiService = aiService;
+        this.conferenceRoomService = conferenceRoomService;
     }
 
     public void sendPost(Integer roomId, RequestGroupPost groupPost) {
@@ -49,9 +55,18 @@ public class MessageService {
         String content=groupPost.getContent();
         String key = roomId + ":" + round;
         redisUtils.setData(key,content,3600L);
+
+        //ai 에게 전송
+        sendPostToAI(roomId,groupPost);
     }
 
-    
+    private void sendPostToAI(Integer roomId, RequestGroupPost groupPost) {
+        String threadId=conferenceRoomService.findByRoomId(roomId+"").getThreadId();
+        aiService.addPostIt(groupPost.getContent(),threadId);
+
+    }
+
+
     //현재 유저가 마지막 순서인지 확인하는 메서드(테스트 완)
     public boolean isLastOrder(Integer roomId, String nickname) {
         Double order=redisUtils.getScoreFromSortedSet(roomId+":order:cur",nickname);
@@ -225,6 +240,14 @@ public class MessageService {
 
         String FirstUser = redisUtils.getUserFromSortedSet(roomId + ":order:cur", 0);
         redisUtils.save(roomId+":curOrder",FirstUser);
+    }
+
+    public String receiveAImessage(Integer roomId) {
+        ConferenceRoom conferenceRoom=conferenceRoomRepository.findById(roomId).get();
+        String threadId = conferenceRoom.getThreadId();
+        String assistantId=conferenceRoom.getAssistantId();
+        return aiService.makePostIt(threadId,assistantId);
+
     }
 
 }
