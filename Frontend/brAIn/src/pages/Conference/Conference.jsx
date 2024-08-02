@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
-import { v4 as uuidv4 } from 'uuid';
 import WaitingModal from './components/WaitingModal';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const Conference = () => {
@@ -13,6 +12,8 @@ const Conference = () => {
   const [roomId, setRoomId] = useState('');
   const [isConnecting, setIsConnecting] = useState(false);
   const { secureId } = useParams();
+
+  // Fetch roomId when secureId changes
   useEffect(() => {
     let isMounted = true;
     let currentClient = null;
@@ -93,22 +94,21 @@ const Conference = () => {
     };
   }, [secureId, connected]);
 
-  // Function to update participant count and show modal
   const countUpMember = () => {
     setParticipantCount((prevCount) => prevCount + 1);
     setIsModalVisible(true);
-    setTimeout(() => setIsModalVisible(false), 3000); // Hide modal after 3 seconds
+    setTimeout(() => setIsModalVisible(false), 3000);
   };
 
   return (
-    <div>
-      <p>Secure ID: {secureId}</p>
+    <div className="waiting-room">
+      <WaitingModal
+        isVisible={isModalVisible}
+        participantCount={participantCount}
+        secureId={secureId}
+      />
     </div>
-    // <div className="waiting-room">
-    //   <WaitingModal isVisible={isModalVisible} participantCount={participantCount} />
-    // </div>
   );
-
 };
 
 export default Conference;

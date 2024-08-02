@@ -1,9 +1,11 @@
 import React from 'react';
-import { Box, Typography, TextField, IconButton, Slider } from '@mui/material';
+import { Box, Typography, TextField, Slider } from '@mui/material';
 import Button from '../../../components/Button/Button';
-import { Close as CloseIcon, Add as AddIcon } from '@mui/icons-material';
+import { Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setRole } from '../../../features/conference/conferenceSlice'; // Adjust the path as needed
 import './NewConferenceBack.css'; // 스타일을 정의한 CSS 파일을 임포트
 
 const NewConferenceBack = ({ 
@@ -12,6 +14,7 @@ const NewConferenceBack = ({
   handleNewConferenceClickedTrue,
 }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch(); // Initialize useDispatch
   const [title, setTitle] = React.useState('');
   const [preparationTime, setPreparationTime] = React.useState(5); // Default to 5 minutes
   const [roomUrl, setRoomUrl] = React.useState('');
@@ -22,8 +25,8 @@ const NewConferenceBack = ({
         .post(
           `http://localhost/api/v1/conferences`,
           {
-            subject : title,
-            time : preparationTime,
+            subject: title,
+            time: preparationTime,
           },
           {
             headers: {
@@ -33,6 +36,7 @@ const NewConferenceBack = ({
         )
         .then((result) => {
           setRoomUrl(result.data.secureId);
+          dispatch(setRole('host')); // Set the role to host
           handleNewConferenceClickedTrue();
         })
         .catch((error) => {
