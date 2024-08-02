@@ -16,13 +16,6 @@ public class MemberRequest {
     private String password;
     private String name;
 
-
-    // 회원탈퇴 생성자
-    public MemberRequest(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
-
     // 회원가입 생성자
     public Member toEntity(String encodedPassword) {
         return Member.builder()

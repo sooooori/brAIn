@@ -6,6 +6,7 @@ import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.member.dto.EmailRequest;
 import com.ssafy.brAIn.member.dto.MemberRequest;
 import com.ssafy.brAIn.member.dto.MemberResponse;
+import com.ssafy.brAIn.member.dto.PasswordRequest;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.service.EmailService;
 import com.ssafy.brAIn.member.service.MemberDetailService;
@@ -15,7 +16,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,7 +31,6 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/members")
@@ -166,11 +165,20 @@ public class MemberController {
 
     // 회원 탈퇴
     @DeleteMapping("/member")
-    public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String token, @RequestBody String password) {
+    public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String token,
+                                          @RequestBody String password,
+                                          HttpServletResponse response) {
         // Bearer 접두사 제거
         String accessToken = token.replace("Bearer ", "");
         // 탈퇴
         memberService.deleteMember(accessToken, password);
+        // Refresh Token 쿠키 제거
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setMaxAge(0); // 쿠키 제거
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
         return ResponseEntity.ok(Map.of("message", "Member deleted successfully"));
     }
 
@@ -204,14 +212,27 @@ public class MemberController {
         return ResponseEntity.ok(Map.of("message", "Profile Image Change Successful"));
     }
 
-    // 비밀번호 재설정
-    @PutMapping("/resetPassword")
-    public ResponseEntity<?> resetPassword(@RequestHeader("Authorization") String token, @RequestBody String newPassword) {
+    // 비밀번호 재설정(마이페이지에서 비밀번호 변경)
+    @PutMapping("/updatePassword")
+    public ResponseEntity<?> updatePassword(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> request) {
         // Barer 접두사 제거
         String accessToken = token.replace("Bearer ", "");
         // 비밀번호 재설정
-        memberService.resetPassword(accessToken, newPassword);
+        String email = JwtUtil.getEmail(accessToken);
+        String newPassword = request.get("newPassword");
+
+        memberService.resetPassword(email, newPassword);
         return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
+    }
+
+    // 비밀번호 찾기(로그인 안한 상태에서 비밀번호 변경)
+    @PutMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordRequest passwordRequest) {
+        String email = passwordRequest.getEmail();
+        String newPassword = passwordRequest.getNewPassword();
+
+        memberService.resetPassword(email, newPassword);
+        return ResponseEntity.ok(Map.of("message", "Password update successfully"));
     }
 
     // 이메일 인증번호 생성

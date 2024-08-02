@@ -15,7 +15,7 @@ public class PostIt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     private String content;
 
