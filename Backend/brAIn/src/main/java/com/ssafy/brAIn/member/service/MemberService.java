@@ -124,6 +124,7 @@ public class MemberService {
         if (!bCryptPasswordEncoder.matches(password ,member.getPassword())) {
             throw new BadRequestException("Wrong password");
         }
+
         // 회원정보 삭제
         memberRepository.delete(member);
     }

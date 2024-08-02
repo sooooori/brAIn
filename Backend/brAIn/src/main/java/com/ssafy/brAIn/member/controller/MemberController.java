@@ -165,11 +165,20 @@ public class MemberController {
 
     // 회원 탈퇴
     @DeleteMapping("/member")
-    public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String token, @RequestBody String password) {
+    public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String token,
+                                          @RequestBody String password,
+                                          HttpServletResponse response) {
         // Bearer 접두사 제거
         String accessToken = token.replace("Bearer ", "");
         // 탈퇴
         memberService.deleteMember(accessToken, password);
+        // Refresh Token 쿠키 제거
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setMaxAge(0); // 쿠키 제거
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
         return ResponseEntity.ok(Map.of("message", "Member deleted successfully"));
     }
 
