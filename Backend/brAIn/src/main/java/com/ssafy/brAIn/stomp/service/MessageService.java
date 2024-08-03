@@ -10,10 +10,13 @@ import com.ssafy.brAIn.history.model.Status;
 import com.ssafy.brAIn.history.repository.MemberHistoryRepository;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
+import com.ssafy.brAIn.stomp.dto.MessageType;
 import com.ssafy.brAIn.stomp.dto.UserState;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
 import com.ssafy.brAIn.stomp.response.ResponseGroupPost;
+import com.ssafy.brAIn.stomp.response.ResponseMiddleVote;
 import com.ssafy.brAIn.util.RedisUtils;
+import com.ssafy.brAIn.vote.entity.Vote;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -195,7 +198,24 @@ public class MessageService {
     }
 
 
+    //현재 중간 투표 결과 (상위 9개)를 반환한다.
+    public ResponseMiddleVote getMiddleVote(Integer roomId, Integer round) {
+        String key = roomId + ":votes:" + round;
+        List<Vote> votes = redisUtils.getListFromKey(key)
+                .stream()
+                .map(obj -> (Vote) obj)
+                .toList();
+        return new ResponseMiddleVote(MessageType.FINISH_MIDDLE_VOTE, votes);
+    }
 
 
-
+    //현재 최종 투표 결과 (상위 3개)를 반환한다.
+    public ResponseMiddleVote getFinalVote(Integer roomId, Integer round) {
+        String key = roomId + ":finalVotes:" + round;
+        List<Vote> votes = redisUtils.getListFromKey(key)
+                .stream()
+                .map(obj -> (Vote) obj)
+                .toList();
+        return new ResponseMiddleVote(MessageType.FINISH_FINAL_VOTE, votes);
+    }
 }
