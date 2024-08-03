@@ -46,6 +46,29 @@ public class VoteService {
         // key for storing votes
         String voteKey = roomId + ":votes:" + round;
 
+        // 1점, 3점 ,5점 부여
+        int score1Point = 0;
+        int score3Point = 0;
+        int score5Point = 0;
+        for (Map.Entry<String, Integer> vote : votes.entrySet()) {
+            Integer score = vote.getValue();
+            if (score == 1) {
+                score1Point++;
+            } else if (score == 3) {
+                score3Point++;
+            } else if (score == 5) {
+                score5Point++;
+            } else {
+                throw new IllegalArgumentException("Invalid score value: " + score);
+            }
+        }
+
+        // 한번만 선택되어야 함
+        if (score1Point > 1 || score3Point > 1 || score5Point > 1) {
+            throw new IllegalArgumentException("Each score (1, 3, 5) can only be used once.");
+        }
+
+
         // Apply votes to scores, but only for existing post-its
         for (Map.Entry<String, Integer> vote : votes.entrySet()) {
             String postIt = vote.getKey();
