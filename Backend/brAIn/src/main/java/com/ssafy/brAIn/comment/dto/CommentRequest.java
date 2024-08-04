@@ -4,13 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor // 기본 생성자 추가
+@AllArgsConstructor // 모든 필드 값을 파라미터로 받는 생성자 추가
 @Getter
 public class CommentRequest {
 
-    private Integer memberId;
+    private Integer roundPostItId;
     private Integer commentId;
-    private String comment;
 
 }

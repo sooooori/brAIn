@@ -24,7 +24,7 @@ public class JwtUtil {
     }
 
     // 토큰 만료 시간 설정
-    private static final long accessTokenExpiration = 600000000; // 10분 (1000 = 1초)
+    private static final long accessTokenExpiration = 1209600000; // 10분 (1000 = 1초)
     private static final long refreshTokenExpiration = 1209600000; // 14일
 
     // ( Authentication auth = 인증된 사용자 정보의 객체를 담고있음)

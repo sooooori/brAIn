@@ -63,16 +63,17 @@ public class CommonUtils {
      * @return 랜덤한 숫자 + 문자 조합의 문자열
      */
     public static String generateRandomMixStr(int length, boolean isUpperCase) {
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-        SecureRandom random = new SecureRandom();
+        // 숫자 문자열 정의
+        String numbers = "0123456789";
+        SecureRandom secureRandom = new SecureRandom();
         StringBuilder sb = new StringBuilder(length);
 
+        // 랜덤 숫자를 선택하여 문자열 생성
         for (int i = 0; i < length; i++) {
-            int index = random.nextInt(characters.length());
-            sb.append(characters.charAt(index));
+            sb.append(numbers.charAt(secureRandom.nextInt(numbers.length())));
         }
-        return isUpperCase ? sb.toString() : sb.toString().toLowerCase();
+
+        return sb.toString();
     }
 
 
