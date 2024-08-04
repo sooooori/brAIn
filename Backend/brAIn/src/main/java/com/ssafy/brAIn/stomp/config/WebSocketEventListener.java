@@ -57,6 +57,7 @@ public class WebSocketEventListener {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String token = accessor.getFirstNativeHeader("Authorization");
 
+        System.out.println("최초연결 시:"+token);
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
 
@@ -68,13 +69,13 @@ public class WebSocketEventListener {
             Optional<ConferenceRoom> room = conferenceRoomRepository.findById(roomId);
 
             if (member.isEmpty() || room.isEmpty()) {
-                return; // 로그를 추가하여 문제가 무엇인지 확인할 수도 있습니다.
+                //오류
+                return;
             }
-
             MemberHistoryId memberHistoryId = new MemberHistoryId(memberId, roomId);
 
-            MemberHistory memberHistory = MemberHistory.builder()
-                    .id(memberHistoryId)
+
+            MemberHistory memberHistory = MemberHistory.builder().id(memberHistoryId)
                     .role(role)
                     .status(Status.COME)
                     .nickName(jwtUtilForRoom.getNickname(token))
@@ -82,27 +83,34 @@ public class WebSocketEventListener {
                     .conferenceRoom(room.get())
                     .build();
 
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    memberHistory, null, memberHistory.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            Optional<MemberHistory> optionalMemberHistory = memberHistoryRepository.findById(memberHistoryId);
-            if (optionalMemberHistory.isEmpty()) {
-                memberHistoryRepository.save(memberHistory);
-            } else {
-                MemberHistory existingHistory = optionalMemberHistory.get();
-                existingHistory.historyStateUpdate(Status.COME);
-                memberHistoryRepository.save(existingHistory);
-                redisUtils.setSortedSet(roomId + ":order:cur", existingHistory.getOrders(), existingHistory.getNickName());
+            Optional<MemberHistory> optionalMemberHistory = null;
+            if (memberHistory != null) {
+
+                System.out.println("User connected: " + memberHistory.getUsername());
+
+                optionalMemberHistory = memberHistoryRepository.findById(memberHistoryId);
+                if (optionalMemberHistory.isEmpty()) {
+                    memberHistoryRepository.save(memberHistory);
+                } else {
+                    optionalMemberHistory.get().historyStateUpdate(Status.COME);
+                    memberHistoryRepository.save(optionalMemberHistory.get());
+                    redisUtils.setSortedSet(roomId + ":order:cur", optionalMemberHistory.get().getOrders(),optionalMemberHistory.get().getNickName());
+
+                }
             }
 
             if (redisUtils.isValueInSet(roomId + ":out", jwtUtilForRoom.getNickname(token))) {
                 redisUtils.removeValueFromSet(roomId + ":out", jwtUtilForRoom.getNickname(token));
             }
 
+
+            //레디스에 sessionId와 함께 닉네임을 저장해서 갑작스러운 종료 때, 닉네임을 얻기 위함.
             String sessionId = accessor.getSessionId();
             redisUtils.save(sessionId, memberId + ":" + roomId);
+
         }
+
     }
 
     @EventListener

@@ -20,7 +20,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -159,10 +161,14 @@ public class MessageController {
     }
 
     //대기방에서 회의방 시작하기(테스트 완)(아직 secured는 테스트 못함)
-    @Secured("ROLE_CHIEF")
+
     @MessageMapping("start.conferences.{roomId}")
     public void startConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
-        String token=accessor.getFirstNativeHeader("Authorization");
+        String authorization = accessor.getFirstNativeHeader("Authorization");
+        String role=jwtUtilForRoom.getRole(authorization);
+        if (!role.equals("CHIEF")) {
+            throw new AuthenticationCredentialsNotFoundException("권한이 없음");
+        }
 
         List<String> users=messageService.startConferences(Integer.parseInt(roomId)).stream()
                 .map(Object::toString)
@@ -181,14 +187,21 @@ public class MessageController {
     }
 
     //회의 다음단계 시작(테스트 완)(Secured미완)
-    @Secured("ROLE_CHIEF")
-    @MessageMapping("next.step.{roomId}")
-    public void nextStep(@Payload RequestStep requestStep, @DestinationVariable String roomId) {
 
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication == null) {
-//            throw new AuthenticationCredentialsNotFoundException("Authentication object is not found in the SecurityContext");
-//        }
+    @MessageMapping("next.step.{roomId}")
+    //@PreAuthorize("hasAuthority('ROLE_CHIEF')")
+    public void nextStep(@Payload RequestStep requestStep, @DestinationVariable String roomId,StompHeaderAccessor accessor) {
+
+        String authorization = accessor.getFirstNativeHeader("Authorization");
+        String role=jwtUtilForRoom.getRole(authorization);
+        if (!role.equals("CHIEF")) {
+            throw new AuthenticationCredentialsNotFoundException("권한이 없음");
+        }
+
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("MessageController Authentication: \n\n\n\n\n" + (authentication != null ? authentication.getAuthorities() : "No Authentication"));
+
         Step nextStep=requestStep.getStep().next();
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseStep(MessageType.NEXT_STEP,nextStep));
         messageService.updateStep(Integer.parseInt(roomId),nextStep);
