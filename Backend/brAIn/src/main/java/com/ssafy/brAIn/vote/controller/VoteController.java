@@ -20,43 +20,34 @@ public class VoteController {
 
     private final VoteService voteService;
 
-    // 투표 종료 -> 타이머 종료
-//    @PostMapping("/endByTimer")
-//    public ResponseEntity<?> endVoteByTimer(@RequestParam Integer conferenceRoomId) {
-//        voteService.endVoteByTimer(conferenceRoomId);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//
-//    // 투표 종료 -> 사용자 전원이 투표하면 자동 종료
-//    @GetMapping("/endByUsers")
-//    public ResponseEntity<?> endVoteByUsers(@RequestParam Integer conferenceRoomId) {
-//        voteService.endVoteByUsers(conferenceRoomId);
-//        return ResponseEntity.ok().build();
-//    }
-
-
     // 투표 결정(진행)
     @PostMapping
     public ResponseEntity<String> vote(@RequestBody VoteRequest voteRequest) {
-        voteService.vote(voteRequest.getRoomId(), voteRequest.getRound(), voteRequest.getVotes());
+        voteService.vote(voteRequest.getRoomId(), voteRequest.getRound(), voteRequest.getMemberId(), voteRequest.getVotes());
         return new ResponseEntity<>("Vote successful", HttpStatus.OK);
+    }
+
+    // 타이머에 의해 투표 종료
+    @PostMapping("/endByTimer")
+    public ResponseEntity<?> endVoteByTimer(@RequestBody VoteResultRequest voteResultRequest) {
+        voteService.endVoteByTimer(voteResultRequest);
+        return new ResponseEntity<>("Vote Finished", HttpStatus.OK);
     }
 
     // 투표 결과 집계
     @GetMapping("/results")
-    public ResponseEntity<List<VoteResponse>> voteResults(@RequestBody VoteResultRequest voteResultRequest) {
-        List<VoteResponse> results = voteService.getVoteResults(voteResultRequest);
+    public ResponseEntity<List<VoteResponse>> voteResults(@RequestParam Integer roomId, @RequestParam Integer round) {
+        List<VoteResponse> results = voteService.getVoteResults(roomId, round);
         return ResponseEntity.ok().body(results);
     }
 
     // 투표 결과 db 저장
     @PostMapping("/saveResults")
     public ResponseEntity<String> saveVoteResults(@RequestBody VoteResultRequest voteResultRequest) {
-        List<VoteResponse> results = voteService.getVoteResults(voteResultRequest);
+        List<VoteResponse> results = voteService.getVoteResults(voteResultRequest.getConferenceId(), voteResultRequest.getRound());
         voteService.saveTop9RoundResults(results, voteResultRequest);
         return new ResponseEntity<>("Vote results saved successfully", HttpStatus.OK);
     }
 
-    // 투표 결과를을 담은 리스트를 소켓에 담아 메시지 보내기(예정)
+    // 투표 결과를을 담은 리스트를 소켓에 담아 메시지 보내기(예정) -> Message Controller
 }

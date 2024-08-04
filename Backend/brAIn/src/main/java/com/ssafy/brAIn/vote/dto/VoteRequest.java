@@ -13,5 +13,6 @@ public class VoteRequest {
 
     private int roomId;
     private int round;
+    private int memberId;
     private Map<String,Integer> votes;
 }

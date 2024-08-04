@@ -3,9 +3,6 @@ package com.ssafy.brAIn.vote.service;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
 import com.ssafy.brAIn.exception.BadRequestException;
-import com.ssafy.brAIn.exception.GlobalExceptionHandler;
-import com.ssafy.brAIn.member.entity.Member;
-import com.ssafy.brAIn.member.repository.MemberRepository;
 import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
 import com.ssafy.brAIn.roundpostit.repository.RoundPostItRepository;
 import com.ssafy.brAIn.util.RedisUtils;
@@ -16,7 +13,6 @@ import com.ssafy.brAIn.vote.entity.VoteType;
 import com.ssafy.brAIn.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ServerErrorException;
@@ -37,14 +33,10 @@ public class VoteService {
 
     private final RedisUtils redisUtils;
 
-    // 투표 진행
+    // 투표 진행 - 임시 저장
     @Transactional
-    public void vote(Integer roomId, Integer round, Map<String, Integer> votes) {
-        String key = roomId + ":" + round;
-        List<Object> postIts = redisUtils.getListFromKey(key);
-
-        // key for storing votes
-        String voteKey = roomId + ":votes:" + round;
+    public void vote(Integer roomId, Integer round, Integer memberId, Map<String, Integer> votes) {
+        String tempVoteKey = roomId + ":tempVotes:" + round + ":" + memberId;
 
         // 1점, 3점 ,5점 부여
         int score1Point = 0;
@@ -69,28 +61,53 @@ public class VoteService {
         }
 
 
-        // Apply votes to scores, but only for existing post-its
+        // 기존 투표 기록 삭제
+        List<Object> existingVotes = redisUtils.getSortedSet(tempVoteKey);
+        for (Object postIt : existingVotes) {
+            redisUtils.removeDataFromSortedSet(tempVoteKey, postIt.toString());
+        }
+
+        // 투표 갱신
         for (Map.Entry<String, Integer> vote : votes.entrySet()) {
             String postIt = vote.getKey();
-            Integer score = vote.getValue();
-
-            if (postIts.contains(postIt)) {
-                redisUtils.incrementSortedSetScore(voteKey, score, postIt);
-            } else {
-                System.out.println("Post-it not found: " + postIt);
-            }
+            Integer newScore = vote.getValue();
+            redisUtils.setSortedSet(tempVoteKey, newScore, postIt);
         }
     }
 
+    // 타이머에 의해 투표 종료
+    @Transactional
+    public void endVoteByTimer(VoteResultRequest voteResultRequest) {
+        String tempVotePattern = voteResultRequest.getConferenceId() + ":tempVotes:" + voteResultRequest.getRound() + ":*";
+        String voteKey = voteResultRequest.getConferenceId() + ":votes:" + voteResultRequest.getRound();
+
+        Set<String> tempVoteKeys = redisUtils.keys(tempVotePattern);
+
+        // 모든 사용자별 임시 데이터를 실제 키로 이동
+        for (String tempVoteKey : tempVoteKeys) {
+            List<VoteResponse> tempResults = redisUtils.getSortedSetWithScores(tempVoteKey);
+            for (VoteResponse result : tempResults) {
+                redisUtils.incrementSortedSetScore(voteKey, result.getScore(), result.getPostIt());
+            }
+
+            // 임시 데이터 삭제
+            redisUtils.deleteKey(tempVoteKey);
+        }
+
+        log.info("Vote Finished");
+    }
+
+
     // 전체 결과를 보여줌 (상위 9개)
     @Transactional(readOnly = true)
-    public List<VoteResponse> getVoteResults(VoteResultRequest voteResultRequest) {
-        String key = voteResultRequest.getConferenceId() + ":votes:" + voteResultRequest.getRound();
+    public List<VoteResponse> getVoteResults(Integer conferenceId, Integer round) {
+
+        String key = conferenceId + ":votes:" + round;
 
         return redisUtils.getSortedSetWithScores(key)
                 .stream()
                 .map(tuple -> new VoteResponse(tuple.getPostIt(), tuple.getScore()))
-                .sorted((v1,v2)->Integer.compare(v2.getScore(),v1.getScore()))
+                .sorted((v1, v2) -> Integer.compare(v2.getScore(), v1.getScore()))
                 .limit(9)
                 .collect(Collectors.toList());
     }
@@ -127,40 +144,9 @@ public class VoteService {
                         .roundPostIt(roundPostIt)
                         .build();
                 voteRepository.save(vote);
-            }
-            else{
+            } else {
                 throw new BadRequestException("중복된 투표입니다.");
             }
         }
     }
-
-
-//    // 타이머에 의한 투표 종료
-//    @Transactional
-//    public void endVoteByTimer(Integer conferenceRoomId) {
-//        ConferenceRoom room = conferenceRoomRepository.findById(conferenceRoomId)
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid conferenceRoom ID"));
-//
-//        if (room.isTimerExpired()) {
-//            room.updateStep(Step.STEP_3);
-//            conferenceRoomRepository.save(room);
-//            saveVoteResults(conferenceRoomId);
-//        }
-//    }
-//
-//    // 모든 참가자들이 투표를 완료함
-//    @Transactional
-//    public void endVoteByUsers(Integer conferenceRoomId) {
-//        ConferenceRoom room = conferenceRoomRepository.findById(conferenceRoomId)
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid conferenceRoom ID"));
-//
-//        int totalMembers = memberHistoryRepository.countByConferenceRoomId(conferenceRoomId);
-//        int totalVotes = voteRepository.countByConferenceRoomId(conferenceRoomId);
-//
-//        if (totalMembers * 3 == totalVotes) {
-//            room.updateStep(Step.STEP_3);
-//            conferenceRoomRepository.save(room);
-//            saveVoteResults(conferenceRoomId);
-//        }
-//    }
 }

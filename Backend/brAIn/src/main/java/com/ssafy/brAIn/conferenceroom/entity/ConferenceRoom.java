@@ -95,6 +95,18 @@ public class ConferenceRoom {
         return this;
     }
 
+    // 타이머 설정
+    public void setTimer(int minutes) {
+        long timerInMillis = minutes * 60 * 1000;
+        this.timer = new Date(System.currentTimeMillis() + timerInMillis);
+    }
+
+
+    // 타이머 종료 확인
+    public boolean isTimerExpired() {
+        return timer != null && new Date().after(timer);
+    }
+
 }
 
 // 빌더 패턴을 사용하면 객체를 유연하고 직관적으로 생성할 수 있음, 어느 필드에 어떤 값이 들어가는지 명시적으로 파악할 수 있음.

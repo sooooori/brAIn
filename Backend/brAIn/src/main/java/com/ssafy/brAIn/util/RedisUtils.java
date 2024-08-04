@@ -108,4 +108,15 @@ public class RedisUtils {
         log.info("key{}: {}", key, response);
         return response;
     }
+
+    // 임시 키 삭제
+    public void deleteKey(String key) {
+        redisTemplate.delete(key);
+    }
+
+    // 점수 삭제
+    public void removeDataFromSortedSet(String key, String value) {
+        ZSetOperations<String, Object> zSetOperations = redisTemplate.opsForZSet();
+        zSetOperations.remove(key, value);
+    }
 }
