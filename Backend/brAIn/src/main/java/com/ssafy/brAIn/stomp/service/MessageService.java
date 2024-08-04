@@ -128,6 +128,8 @@ public class MessageService {
 
         //redis에 나간유저를 저장해놓자.
         redisUtils.setDataInSet(roomId+":out",memberHistory.getNickName(),7200L);
+        redisUtils.removeValueFromSortedSet(roomId + ":order:cur", memberHistory.getNickName());
+
 
         //order에서는 삭제
         //redisUtils.removeValueFromSortedSet(roomId+":order",memberHistory.getNickName());

@@ -148,4 +148,8 @@ public class MemberService {
         member.resetPassword(encodedPassword);
         memberRepository.save(member);
     }
+
+    public Optional<Member> findById(Integer memberId) {
+        return memberRepository.findById(memberId);
+    }
 }

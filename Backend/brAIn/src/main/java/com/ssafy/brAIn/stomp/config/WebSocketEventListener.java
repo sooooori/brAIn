@@ -3,7 +3,9 @@ package com.ssafy.brAIn.stomp.config;
 import com.ssafy.brAIn.auth.jwt.JWTUtilForRoom;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
+import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
+import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.history.entity.MemberHistory;
 import com.ssafy.brAIn.history.entity.MemberHistoryId;
 import com.ssafy.brAIn.history.model.Role;
@@ -11,8 +13,11 @@ import com.ssafy.brAIn.history.model.Status;
 import com.ssafy.brAIn.history.repository.MemberHistoryRepository;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
+import com.ssafy.brAIn.member.service.MemberService;
 import com.ssafy.brAIn.stomp.dto.MessageType;
+import com.ssafy.brAIn.stomp.dto.WaitingRoomEnterExit;
 import com.ssafy.brAIn.stomp.response.ConferencesEnterExit;
+import com.ssafy.brAIn.stomp.service.MessageService;
 import com.ssafy.brAIn.util.RedisUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,18 +43,24 @@ public class WebSocketEventListener {
     private final MemberHistoryRepository memberHistoryRepository;
     private final MemberRepository memberRepository;
     private final RabbitTemplate rabbitTemplate;
+    private final MessageService messageService;
+    private final MemberService memberService;
+    private final ConferenceRoomService conferenceRoomService;
 
     public WebSocketEventListener(ConferenceRoomRepository conferenceRoomRepository,
                                   RedisUtils redisUtils,
                                   JWTUtilForRoom jwtUtilForRoom,
                                   MemberRepository memberRepository,
-                                  MemberHistoryRepository memberHistoryRepository, @Qualifier("rabbitTemplate") RabbitTemplate rabbitTemplate) {
+                                  MemberHistoryRepository memberHistoryRepository, @Qualifier("rabbitTemplate") RabbitTemplate rabbitTemplate, MessageService messageService, MemberService memberService, ConferenceRoomService conferenceRoomService) {
         this.conferenceRoomRepository = conferenceRoomRepository;
         this.redisUtils = redisUtils;
         this.jwtUtilForRoom = jwtUtilForRoom;
         this.memberRepository = memberRepository;
         this.memberHistoryRepository = memberHistoryRepository;
         this.rabbitTemplate = rabbitTemplate;
+        this.messageService = messageService;
+        this.memberService = memberService;
+        this.conferenceRoomService = conferenceRoomService;
     }
 
     @EventListener
@@ -93,11 +104,17 @@ public class WebSocketEventListener {
                 //최초 입장시
                 if (optionalMemberHistory.isEmpty()) {
                     memberHistoryRepository.save(memberHistory);
+                    rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.ENTER_WAITING_ROOM));
                 } else {    //중간 입장 시,
                     optionalMemberHistory.get().historyStateUpdate(Status.COME);
                     memberHistoryRepository.save(optionalMemberHistory.get());
                     redisUtils.setSortedSet(roomId + ":order:cur", optionalMemberHistory.get().getOrders(),optionalMemberHistory.get().getNickName());
-                    rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit(MessageType.ENTER_CONFERENCES, jwtUtilForRoom.getNickname(token)));
+
+                    if (room.get().getStep().equals(Step.WAIT)) {
+                        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.ENTER_WAITING_ROOM));
+                    }else{
+                        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit(MessageType.ENTER_CONFERENCES, jwtUtilForRoom.getNickname(token)));
+                    }
                 }
             }
 
@@ -117,22 +134,33 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-        System.out.println("나가자!1\n\n\n\n\n\n\n");
+
         String sessionId = accessor.getSessionId();
         String[] historyId = redisUtils.getData(sessionId).split(":");
         Integer memberId = Integer.parseInt(historyId[0]);
         Integer roomId = Integer.parseInt(historyId[1]);
+        Optional<Member> member=memberService.findById(memberId);
 
-        MemberHistoryId memberHistoryId = new MemberHistoryId(memberId, roomId);
-        MemberHistory memberHistory = memberHistoryRepository.findById(memberHistoryId).get();
-        memberHistory.historyStateUpdate(Status.OUT);
-        memberHistoryRepository.save(memberHistory);
+        String email=member.get().getEmail();
+        messageService.historyUpdate(roomId,email);
 
-        redisUtils.setDataInSet(roomId + ":out", memberHistory.getNickName(), 7200L);
-        redisUtils.removeValueFromSortedSet(roomId + ":order:cur", memberHistory.getNickName());
+        ConferenceRoom conferenceRoom=conferenceRoomService.findByRoomId(roomId+"");
 
-        rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, new ConferencesEnterExit(MessageType.EXIT, memberHistory.getNickName()));
+        String exitUserNickname=getNickName(memberId,roomId);
 
+        //유저가 대기방에 있을 때,
+        if (conferenceRoom.getStep().equals(Step.WAIT)) {
+            rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.EXIT_WAITING_ROOM));
+        }else{
+            rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, new ConferencesEnterExit(MessageType.EXIT_CONFERENCES, exitUserNickname));
+        }
+
+    }
+
+    private String getNickName(Integer memberId,Integer roomId) {
+        MemberHistoryId memberHistoryId=new MemberHistoryId(memberId,roomId);
+        MemberHistory memberHistory= memberHistoryRepository.findById(memberHistoryId).get();
+        return memberHistory.getNickName();
     }
 
     private Integer getMemberId(String email) {

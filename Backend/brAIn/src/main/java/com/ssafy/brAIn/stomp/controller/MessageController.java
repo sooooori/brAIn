@@ -109,25 +109,25 @@ public class MessageController {
         return new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,nextUser,groupPost.getRound(), groupPost.getRound(), groupPost.getContent());
     }
 
-    //삭제예정
-    //다음 라운드로 이동하라는 메시지(어차피 제출할 때, 다음 라운드까지 제시해줘서 필요없는듯)
-    @MessageMapping("next.round.{roomId}")
-    public void nextRound(@Payload int curRound, @DestinationVariable String roomId) {
-
-        Round nextRound=new Round(MessageType.NEXT_ROUND,curRound+1);
-        rabbitTemplate.convertAndSend("amq.topic","room." + roomId, nextRound);
-    }
+//    //삭제예정
+//    //다음 라운드로 이동하라는 메시지(어차피 제출할 때, 다음 라운드까지 제시해줘서 필요없는듯)
+//    @MessageMapping("next.round.{roomId}")
+//    public void nextRound(@Payload int curRound, @DestinationVariable String roomId) {
+//
+//        Round nextRound=new Round(MessageType.NEXT_ROUND,curRound+1);
+//        rabbitTemplate.convertAndSend("amq.topic","room." + roomId, nextRound);
+//    }
 
     //(테스트 완)
-    //대기 방 입장했을 때, 렌더링 시 호출하면 될듯(useEffect 내부에서 publish)
-    @MessageMapping("enter.waiting.{roomId}")
-    public void enterWaitingRoom(@DestinationVariable String roomId, StompHeaderAccessor accessor){
-        String token = accessor.getFirstNativeHeader("Authorization");
-        String email=JwtUtil.getEmail(token);
-        //messageService.enterWaitingRoom(Integer.parseInt(roomId),email);
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.ENTER_WAITING_ROOM));
-
-    }
+//    //대기 방 입장했을 때, 렌더링 시 호출하면 될듯(useEffect 내부에서 publish)
+//    @MessageMapping("enter.waiting.{roomId}")
+//    public void enterWaitingRoom(@DestinationVariable String roomId, StompHeaderAccessor accessor){
+//        String token = accessor.getFirstNativeHeader("Authorization");
+//        String email=JwtUtil.getEmail(token);
+//        //messageService.enterWaitingRoom(Integer.parseInt(roomId),email);
+//        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.ENTER_WAITING_ROOM));
+//
+//    }
 
     //회의 중간에 입장 시,
 //    @MessageMapping("enter.conferences.{roomId}")
@@ -138,27 +138,27 @@ public class MessageController {
 //        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit("enter conferences",nickname));
 //    }
 
-    //대기 방 퇴장(테스트 완)
-    @MessageMapping("exit.waiting.{roomId}")
-    public void exitWaitingRoom(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
-        String token=accessor.getFirstNativeHeader("Authorization");
-        String email=jwtUtilForRoom.getUsername(token);
-        //messageService.exitWaitingRoom(Integer.parseInt(roomId),nickname);
-        messageService.historyUpdate(Integer.parseInt(roomId),email);
+//    //대기 방 퇴장(테스트 완)
+//    @MessageMapping("exit.waiting.{roomId}")
+//    public void exitWaitingRoom(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
+//        String token=accessor.getFirstNativeHeader("Authorization");
+//        String email=jwtUtilForRoom.getUsername(token);
+//        //messageService.exitWaitingRoom(Integer.parseInt(roomId),nickname);
+//        messageService.historyUpdate(Integer.parseInt(roomId),email);
+//
+//        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.EXIT_WAITING_ROOM));
+//
+//    }
 
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.EXIT_WAITING_ROOM));
-
-    }
-
-    // 회의 중 퇴장(테스트 완)
-    @MessageMapping("exit.conferences.{roomId}")
-    public void exitConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
-        String token=accessor.getFirstNativeHeader("Authorization");
-        String nickname=jwtUtilForRoom.getNickname(token);
-        String email=jwtUtilForRoom.getUsername(token);
-        messageService.historyUpdate(Integer.parseInt(roomId),email);
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit(MessageType.EXIT_CONFERENCES,nickname));
-    }
+//    // 회의 중 퇴장(테스트 완)
+//    @MessageMapping("exit.conferences.{roomId}")
+//    public void exitConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
+//        String token=accessor.getFirstNativeHeader("Authorization");
+//        String nickname=jwtUtilForRoom.getNickname(token);
+//        String email=jwtUtilForRoom.getUsername(token);
+//        messageService.historyUpdate(Integer.parseInt(roomId),email);
+//        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit(MessageType.EXIT_CONFERENCES,nickname));
+//    }
 
     //대기방에서 회의방 시작하기(테스트 완)(아직 secured는 테스트 못함)
 
