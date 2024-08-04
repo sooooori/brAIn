@@ -157,6 +157,7 @@ public class MessageService {
         //현재 회의룸에 있는 모든 유저들을 가져온다.
         List<MemberHistory> memberHistories=memberHistoryService.getHistoryByRoomId(roomId);
 
+
         //한번 섞어준다.
         Collections.shuffle(memberHistories);
 

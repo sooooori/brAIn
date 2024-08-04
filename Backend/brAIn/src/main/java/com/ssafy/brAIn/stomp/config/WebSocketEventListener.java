@@ -90,13 +90,14 @@ public class WebSocketEventListener {
                 System.out.println("User connected: " + memberHistory.getUsername());
 
                 optionalMemberHistory = memberHistoryRepository.findById(memberHistoryId);
+                //최초 입장시
                 if (optionalMemberHistory.isEmpty()) {
                     memberHistoryRepository.save(memberHistory);
-                } else {
+                } else {    //중간 입장 시,
                     optionalMemberHistory.get().historyStateUpdate(Status.COME);
                     memberHistoryRepository.save(optionalMemberHistory.get());
                     redisUtils.setSortedSet(roomId + ":order:cur", optionalMemberHistory.get().getOrders(),optionalMemberHistory.get().getNickName());
-
+                    rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ConferencesEnterExit(MessageType.ENTER_CONFERENCES, jwtUtilForRoom.getNickname(token)));
                 }
             }
 
@@ -116,6 +117,7 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
+        System.out.println("나가자!1\n\n\n\n\n\n\n");
         String sessionId = accessor.getSessionId();
         String[] historyId = redisUtils.getData(sessionId).split(":");
         Integer memberId = Integer.parseInt(historyId[0]);
@@ -129,7 +131,8 @@ public class WebSocketEventListener {
         redisUtils.setDataInSet(roomId + ":out", memberHistory.getNickName(), 7200L);
         redisUtils.removeValueFromSortedSet(roomId + ":order:cur", memberHistory.getNickName());
 
-        rabbitTemplate.convertAndSend("amq.topic", "roomId." + roomId, new ConferencesEnterExit(MessageType.EXIT, memberHistory.getNickName()));
+        rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, new ConferencesEnterExit(MessageType.EXIT, memberHistory.getNickName()));
+
     }
 
     private Integer getMemberId(String email) {
