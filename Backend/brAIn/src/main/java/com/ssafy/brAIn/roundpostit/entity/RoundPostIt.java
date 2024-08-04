@@ -1,7 +1,6 @@
 package com.ssafy.brAIn.roundpostit.entity;
 
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
-import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.vote.entity.Vote;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -24,10 +23,6 @@ public class RoundPostIt {
     @JoinColumn(name = "room_id", referencedColumnName = "id")
     private ConferenceRoom conferenceRoom;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id", referencedColumnName = "id")
-    private Member member;
-
     @Column(name = "content")
     private String content;
 
@@ -41,10 +36,9 @@ public class RoundPostIt {
     private List<Vote> votes;
 
     @Builder
-    public RoundPostIt(String content, ConferenceRoom conferenceRoom,Member member) {
+    public RoundPostIt(String content, ConferenceRoom conferenceRoom) {
         this.content = content;
         this.conferenceRoom = conferenceRoom;
-        this.member = member;
     }
 
     @Builder

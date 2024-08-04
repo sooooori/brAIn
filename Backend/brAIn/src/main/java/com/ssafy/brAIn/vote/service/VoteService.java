@@ -6,6 +6,7 @@ import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
 import com.ssafy.brAIn.roundpostit.repository.RoundPostItRepository;
 import com.ssafy.brAIn.util.RedisUtils;
+import com.ssafy.brAIn.vote.dto.FinalVoteRequest;
 import com.ssafy.brAIn.vote.dto.VoteResponse;
 import com.ssafy.brAIn.vote.dto.VoteResultRequest;
 import com.ssafy.brAIn.vote.entity.Vote;
@@ -146,6 +147,91 @@ public class VoteService {
                 voteRepository.save(vote);
             } else {
                 throw new BadRequestException("중복된 투표입니다.");
+            }
+        }
+    }
+
+    // Step 3
+
+    // 선정된 9개의 투표 결과 에 대해서 다시 임시 투표 진행
+    @Transactional
+    public void finalVote(FinalVoteRequest request) {
+        String tempVoteKey = request.getRoomId() + ":finalVotes:" + request.getRound() + ":" + request.getMemberId();
+
+        // 기존에 투표한 적이 있는지 확인
+        List<Object> existingVotes = redisUtils.getSortedSet(tempVoteKey);
+        for (Object existingPostIt : existingVotes) {
+            redisUtils.removeDataFromSortedSet(tempVoteKey, existingPostIt.toString());
+        }
+
+        // 새로운 투표 추가
+        redisUtils.setSortedSet(tempVoteKey, 1, request.getPostIt());
+    }
+
+    // 타이머 투표 진행
+    @Transactional
+    public void endFinalVoteByTimer(VoteResultRequest voteResultRequest) {
+        String tempVotePattern = voteResultRequest.getConferenceId() + ":finalVotes:" + voteResultRequest.getRound() + ":*";
+        String voteKey = voteResultRequest.getConferenceId() + ":finalVotes:" + voteResultRequest.getRound();
+
+        Set<String> tempVoteKeys = redisUtils.keys(tempVotePattern);
+
+        // 모든 사용자별 임시 데이터를 실제 키로 이동
+        for (String tempVoteKey : tempVoteKeys) {
+            List<VoteResponse> tempResults = redisUtils.getSortedSetWithScores(tempVoteKey);
+            for (VoteResponse result : tempResults) {
+                redisUtils.incrementSortedSetScore(voteKey, result.getScore(), result.getPostIt());
+            }
+
+            // 임시 데이터 삭제
+            redisUtils.deleteKey(tempVoteKey);
+        }
+
+        log.info("Final vote finished");
+    }
+
+    // 전체 결과 9개 중 상위 3개를 따로 보여줌(삭제 x)
+    @Transactional(readOnly = true)
+    public List<VoteResponse> getFinalVoteResults(Integer conferenceId, Integer round) {
+        String key = conferenceId + ":finalVotes:" + round;
+
+        return redisUtils.getSortedSetWithScores(key)
+                .stream()
+                .map(tuple -> new VoteResponse(tuple.getPostIt(), tuple.getScore()))
+                .sorted((v1, v2) -> Integer.compare(v2.getScore(), v1.getScore()))
+                .limit(3) // 상위 3개의 결과만 반환
+                .collect(Collectors.toList());
+    }
+
+    // 최종 투표 결과 db에 갱신
+    @Transactional
+    public void saveTop3FinalResults(List<VoteResponse> votes, VoteResultRequest voteResultRequest) throws ServerErrorException {
+        ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(voteResultRequest.getConferenceId())
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 회의실 ID"));
+
+        // 새로운 점수와 결과 반영
+        for (VoteResponse voteResponse : votes) {
+            RoundPostIt roundPostIt = roundPostItRepository.findByContentAndConferenceRoom_Id(voteResponse.getPostIt(), voteResultRequest.getConferenceId())
+                    .orElseGet(() -> {
+                        log.info("Creating new RoundPostIt for content: {}", voteResponse.getPostIt());
+                        return roundPostItRepository.save(
+                                RoundPostIt.builder()
+                                        .content(voteResponse.getPostIt())
+                                        .conferenceRoom(conferenceRoom)
+                                        .build()
+                        );
+                    });
+
+            roundPostIt.selectedThree();
+            roundPostItRepository.save(roundPostIt);
+            Optional<Vote> existingVote = voteRepository.findByRoundPostItAndConferenceRoom(roundPostIt, conferenceRoom);
+
+            //점수 업데이트
+            if (existingVote.isPresent()) {
+                Vote vote = existingVote.get();
+                vote.updateScore(voteResponse.getScore());
+                vote.updateVoteType(VoteType.FINAL);
+                voteRepository.save(vote);
             }
         }
     }

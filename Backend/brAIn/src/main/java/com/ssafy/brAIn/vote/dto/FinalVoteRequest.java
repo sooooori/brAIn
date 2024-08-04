@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class VoteResultRequest {
-    Integer conferenceId;
-    Integer round;
-    Integer memberId;
+public class FinalVoteRequest {
+    private int roomId;
+    private int round;
+    private int memberId;
+    private String postIt;
 }

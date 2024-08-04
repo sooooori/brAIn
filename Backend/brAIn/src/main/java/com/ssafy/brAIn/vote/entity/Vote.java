@@ -50,4 +50,13 @@ public class Vote {
 //        this.member = member;
     }
 
+    // 최종 투표 갱신
+    public void updateScore(int score) {
+        this.score = score;
+    }
+
+    // Vote Type 갱신
+    public void updateVoteType(VoteType voteType) {
+        this.voteType = voteType;
+    }
 }
