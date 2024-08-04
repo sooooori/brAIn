@@ -109,7 +109,7 @@ def add_postit():
         role="user",
         content= prompt
     )
-    return convert_json("suceess")
+    return "suceess"
 
 
 @app.route('/postIt/make', methods=['POST'])

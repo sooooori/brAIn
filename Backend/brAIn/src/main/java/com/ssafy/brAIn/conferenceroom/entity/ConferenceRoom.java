@@ -73,7 +73,7 @@ public class ConferenceRoom {
     @Builder
     public ConferenceRoom(String subject){
         this.subject = subject;
-        this.step = Step.STEP_0;
+        this.step = Step.WAIT;
         this.isEnd = false;
         this.startTime = new Date();
         this.inviteCode = CommonUtils.generateRandomMixStr(6,true);
