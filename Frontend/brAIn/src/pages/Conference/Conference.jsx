@@ -9,92 +9,96 @@ import axios from 'axios';
 const Conference = () => {
   const [client, setClient] = useState(null);
   const [connected, setConnected] = useState(false);
-  const [participantCount, setParticipantCount] = useState(1);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [participantCount, setParticipantCount] = useState(1); // Participant count
+  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
   const [roomId, setRoomId] = useState(null);
+
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+
   const { secureId } = useParams();
 
   // Fetch roomId when secureId changes
   useEffect(() => {
-    const fetchRoomId = async () => {
+    let isMounted = true;
+    let currentClient = null;
+
+    const fetchDataAndConnect = async () => {
       try {
-        const response = await axios.get('http://localhost/api/v1/conferences', {
-          params: { secureId },
-        });
-        console.log('Fetched roomId:', response.data.roomId);
+        if (isConnecting) return; // 이미 연결 중이면 중단
+        setIsConnecting(true);
+        const response = await axios.post(`http://localhost/api/v1/conferences/${secureId}`, {}, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+          },
+        }); // Replace with your API endpoint
+        localStorage.setItem('roomToken', response.data.jwtForRoom);
         setRoomId(response.data.roomId);
+
+        const newClient = new Client({
+          brokerURL: 'ws://localhost/ws', // WebSocket URL
+          connectHeaders: {
+            Authorization: 'Bearer ' + localStorage.getItem('roomToken')
+          },
+          debug: (str) => {
+            console.log(str);
+          },
+          reconnectDelay: 5000,
+          heartbeatIncoming: 4000,
+          heartbeatOutgoing: 4000,
+        });
+
+        // Set up WebSocket connection
+        newClient.onConnect = (frame) => {
+          setConnected(true);
+          console.log('Connected: ' + frame);
+          newClient.subscribe(`/topic/room.${roomId}`, (message) => {
+            const receivedMessage = JSON.parse(message.body);
+
+            if (receivedMessage.type === 'ENTER_WAITING_ROOM') {
+              countUpMember();
+            }
+          });
+
+          newClient.subscribe(`/topic/start.conferences.${roomId}`, (message) => {
+            const receivedMessage = JSON.parse(message.body);
+            console.log('Received message to start conference:', receivedMessage);
+
+            if (receivedMessage.type === 'START_MEETING') {
+              startMeeting();
+            }
+          });
+        };
+
+        newClient.onStompError = (frame) => {
+          console.error('STOMP error:', frame);
+        };
+
+        setClient(newClient);
+        newClient.activate();
+
+        if (isMounted && !connected) {
+          setClient(newClient);
+          currentClient = newClient;
+          newClient.activate();
+        }
       } catch (error) {
-        console.error('Failed to fetch roomId:', error);
+        console.error('Failed to fetch data:', error);
+      } finally {
+        setIsConnecting(false);
       }
     };
 
-    fetchRoomId();
-  }, [secureId]);
-
-  // Set up WebSocket connection when roomId changes
-  useEffect(() => {
-    if (roomId === null) return;
-
-    const newClient = new Client({
-      brokerURL: 'ws://localhost:8080/ws',
-      connectHeaders: {
-        login: 'user',
-        passcode: 'password',
-      },
-      debug: (str) => {
-        console.log('WebSocket Debug:', str);
-      },
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-    });
-
-    newClient.onConnect = (frame) => {
-      setConnected(true);
-      console.log('Connected: ' + frame);
-
-      newClient.subscribe(`/topic/room.${roomId}`, (message) => {
-        const receivedMessage = JSON.parse(message.body);
-        console.log('Received message:', receivedMessage);
-
-        if (receivedMessage.type === 'ENTER_WAITING_ROOM') {
-          countUpMember();
-        } else if (receivedMessage.type === 'LEAVE_WAITING_ROOM') {
-          countDownMember();
-        }
-      });
-
-      newClient.subscribe(`/topic/start.conferences.${roomId}`, (message) => {
-        const receivedMessage = JSON.parse(message.body);
-        console.log('Received message to start conference:', receivedMessage);
-
-        if (receivedMessage.type === 'START_MEETING') {
-          startMeeting();
-        }
-      });
-    };
-
-    newClient.onStompError = (frame) => {
-      console.error('STOMP error:', frame);
-    };
-
-    setClient(newClient);
-    newClient.activate();
+    fetchDataAndConnect();
 
     return () => {
-      if (newClient) {
-        newClient.deactivate();
+      isMounted = false;
+      if (currentClient) {
+        currentClient.deactivate();
       }
     };
-  }, [roomId]);
-
-  // Show modal when roomId is fetched and WebSocket is connected
-  useEffect(() => {
-    if (roomId && connected) {
-      setIsModalVisible(true);
-    }
-  }, [roomId, connected]);
+  }, [secureId, connected, isConnecting]);
 
   const countUpMember = () => {
     setParticipantCount((prevCount) => prevCount + 1);
