@@ -17,6 +17,7 @@ import com.ssafy.brAIn.member.service.MemberService;
 import com.ssafy.brAIn.stomp.dto.MessageType;
 import com.ssafy.brAIn.stomp.dto.WaitingRoomEnterExit;
 import com.ssafy.brAIn.stomp.response.ConferencesEnterExit;
+import com.ssafy.brAIn.stomp.response.EndMessage;
 import com.ssafy.brAIn.stomp.service.MessageService;
 import com.ssafy.brAIn.util.RedisUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -148,6 +149,12 @@ public class WebSocketEventListener {
 
         String exitUserNickname=getNickName(memberId,roomId);
 
+        //방장이 나가면 방 종료.
+        if(getRole(memberId,roomId).equals(Role.CHIEF)){
+            rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new EndMessage(MessageType.END_CONFERENCE));
+            return;
+        }
+
         //유저가 대기방에 있을 때,
         if (conferenceRoom.getStep().equals(Step.WAIT)) {
             rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.EXIT_WAITING_ROOM));
@@ -161,6 +168,12 @@ public class WebSocketEventListener {
         MemberHistoryId memberHistoryId=new MemberHistoryId(memberId,roomId);
         MemberHistory memberHistory= memberHistoryRepository.findById(memberHistoryId).get();
         return memberHistory.getNickName();
+    }
+
+    private Role getRole(Integer memberId,Integer roomId) {
+        MemberHistoryId memberHistoryId=new MemberHistoryId(memberId,roomId);
+        MemberHistory memberHistory= memberHistoryRepository.findById(memberHistoryId).get();
+        return memberHistory.getRole();
     }
 
     private Integer getMemberId(String email) {

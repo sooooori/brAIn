@@ -12,5 +12,6 @@ public enum MessageType {
     NEXT_ROUND,
     START_CONFERENCE,
     PLUS_TIME,
-    START_VOTE;
+    START_VOTE,
+    END_CONFERENCE;
 }
