@@ -1,13 +1,11 @@
-// components/WaitingModal.js
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setRole, clearRole } from '../../../features/conference/conferenceSlice'; // Adjust the path as needed
 import Button from '../../../components/Button/Button';
 import axios from 'axios';
 import './WaitingModal.css';
 
-const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartMeeting }) => {
+const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartMeeting, client }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [conferenceCode, setConferenceCode] = useState(null);
@@ -16,7 +14,6 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
 
   const navigate = useNavigate();
   const role = useSelector((state) => state.conference.role); // Get role from Redux
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,7 +95,7 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
                 <Button
                   type="fit"
                   onClick={onStartMeeting}
-                  buttonStyle="green"
+                  buttonStyle="black"
                   ariaLabel="Start Meeting"
                   className="waiting-modal-button waiting-modal-button-start"
                 >
