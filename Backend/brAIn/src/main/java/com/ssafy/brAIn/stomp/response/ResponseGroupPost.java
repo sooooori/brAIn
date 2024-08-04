@@ -12,13 +12,15 @@ public class ResponseGroupPost {
 
     private MessageType type;
     private String sender;
+    private String nextUser;
     private int curRound;
     private int nextRound;
     private String content;
 
-    public ResponseGroupPost(MessageType type, String sender,int curRound, int nextRound, String content) {
+    public ResponseGroupPost(MessageType type, String sender, String nextUser, int curRound, int nextRound, String content) {
         this.type = type;
         this.sender = sender;
+        this.nextUser = nextUser;
         this.curRound = curRound;
         this.nextRound = nextRound;
         this.content = content;

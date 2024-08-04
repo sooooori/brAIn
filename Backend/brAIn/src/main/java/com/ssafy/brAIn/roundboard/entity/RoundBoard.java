@@ -28,5 +28,4 @@ public class RoundBoard {
         this.conferenceRoom=conferenceRoom;
         this.currentRound=currentRound;
     }
-    
 }

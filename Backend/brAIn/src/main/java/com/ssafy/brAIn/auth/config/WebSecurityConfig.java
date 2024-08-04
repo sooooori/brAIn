@@ -45,16 +45,17 @@ public class WebSecurityConfig {
                 .logout(logout -> logout
                         .invalidateHttpSession(true)  // 로그아웃 시 세션 무효화
                         .deleteCookies("refreshToken")
-                        .logoutUrl("/api/v1/members/logout")
+                        .logoutUrl("/v1/members/logout")
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);
                         })
                 )
                 .authorizeHttpRequests(requests -> {
                     requests.requestMatchers(  // 허용 URL
-                            "/api/v1/members/join",
-                            "/api/v1/members/login",
-                            "/api/v1/members/refresh",
+                            "/v1/members/join",
+                            "/v1/members/login",
+                            "/v1/members/refresh",
+                            "/v1/members/resetPassword",
                             "/**"
                             ).permitAll();
                     requests.anyRequest().authenticated(); // 모든 URL 인증 필요
@@ -72,7 +73,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 클라이언트 도메인
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost")); // 클라이언트 도메인
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
 //        configuration.setAllowCredentials(true);

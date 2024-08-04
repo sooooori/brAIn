@@ -1,12 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import './Button.css'; // 추가된 CSS 파일 import
 
 // Define button styles
 const BUTTON_STYLES = {
   black: "bg-grayscale-black text-grayscale-white",
   gray: "bg-grayscale-lightgray text-grayscale-black",
   red: "bg-alert-100 text-grayscale-white",
-  blue: "bg-boarlog-100 text-grayscale-white"
+  blue: "bg-boarlog-100 text-grayscale-white",
+  green: "bg-success-100 text-grayscale-white",
+  orange: "bg-warning-100 text-grayscale-black"
 };
 
 Object.freeze(BUTTON_STYLES);
@@ -35,7 +38,7 @@ Button.propTypes = {
   className: PropTypes.string,
   children: PropTypes.node.isRequired,
   value: PropTypes.string,
-  buttonStyle: PropTypes.oneOf(["black", "gray", "red", "blue"]).isRequired,
+  buttonStyle: PropTypes.oneOf(["black", "gray", "red", "blue", "purple"]).isRequired,
   ariaLabel: PropTypes.string
 };
 

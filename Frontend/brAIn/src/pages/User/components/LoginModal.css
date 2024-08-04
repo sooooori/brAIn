@@ -1,0 +1,99 @@
+.modal-header {
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-form h2 {
+    margin-bottom: 20px;
+}
+
+.login-form .form-group {
+    width: 468px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.login-form .form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    align-items: left;
+}
+
+.login-form .form-group input {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.login-form .form-group input::placeholder {
+    font-size: 12px;
+}
+
+.login-form .error-message {
+    color: red;
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.modal-footer button {
+    margin: 5px 0;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.modal-footer .start-button {
+    width: 100%;
+    background-color: #4F4FFB;
+}
+
+.modal-footer .start-button:hover {
+    background-color: #3b3bb5;
+}
+
+.modal-footer .black-button {
+    width: 48%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; 
+    background-color: #020202;
+    color: white;
+}
+
+.modal-footer .black-button:hover {
+    background-color: darkorange;
+}
+
+@media (max-width: 500px) {
+    .login-form {
+        width: 100%;
+    }
+
+    .login-form .form-group {
+        margin-bottom: 15px;
+    }
+}

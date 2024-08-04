@@ -1,33 +1,30 @@
 package com.ssafy.brAIn.stomp.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
-import org.springframework.messaging.Message;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.security.authorization.AuthorizationManager;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.messaging.access.intercept.AuthorizationChannelInterceptor;
-import org.springframework.security.messaging.access.intercept.MessageMatcherDelegatingAuthorizationManager;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
+@Order(Ordered.HIGHEST_PRECEDENCE + 99)
 @Configuration
 @EnableWebSocketMessageBroker
-@EnableWebSecurity
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfig
+        implements WebSocketMessageBrokerConfigurer {
 
-    private final AuthorizationManager<Message<?>> authorizationManager;
+    //private final AuthorizationManager<Message<?>> authorizationManager;
+    private final CsrfChannelInterceptor csrfChannelInterceptor;
 
-    public WebSocketConfig(AuthorizationManager<Message<?>> authorizationManager) {
-        this.authorizationManager = authorizationManager;
+    public WebSocketConfig(CsrfChannelInterceptor csrfChannelInterceptor) {
+        //this.authorizationManager = authorizationManager;
+
+        this.csrfChannelInterceptor = csrfChannelInterceptor;
+
     }
 
     @Override
@@ -35,21 +32,46 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         config.setPathMatcher(new AntPathMatcher("."));
         config.setApplicationDestinationPrefixes("/app")
                 .enableStompBrokerRelay("/topic","/queue", "/exchange", "/amq/queue");
+
     }
+
+
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOrigins("*");
+//                .setHandshakeHandler(new DefaultHandshakeHandler() {
+//                    @Override
+//                    protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
+//                        // Assuming SecurityContextHolder contains Authentication
+//                        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//                        if (authentication != null) {
+//                            return new Principal() {
+//                                @Override
+//                                public String getName() {
+//                                    return authentication.getName();
+//                                }
+//                            };
+//                        }
+//                        return null;
+//                    }
+//                });
+//                .addInterceptors(httpSessionHandshakeInterceptor);
 
     }
 
-//    @Override
-//    public void configureClientInboundChannel(ChannelRegistration registration) {
-//        registration.interceptors(new AuthorizationChannelInterceptor(authorizationManager));
-//    }
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(csrfChannelInterceptor);
+    }
 
 
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        registration.addDecoratorFactory(new SecurityContextWebSocketHandlerDecoratorFactory());
+    }
 
 
 }
+

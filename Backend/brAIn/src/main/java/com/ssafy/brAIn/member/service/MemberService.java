@@ -64,8 +64,17 @@ public class MemberService {
     // 이메일 중복 확인
     public void emailCheck(String email) {
         // 이메일 중복 검사
+        System.out.println(email);
         if (memberRepository.existsMemberByEmail(email)) {
             throw new BadRequestException("Email is already in use");
+        }
+    }
+
+    public void resetEmail(String email) {
+        // 이메일 중복 검사
+        System.out.println(email);
+        if (!memberRepository.existsMemberByEmail(email)) {
+            throw new BadRequestException("Email is not in use");
         }
     }
 
@@ -124,6 +133,7 @@ public class MemberService {
         if (!bCryptPasswordEncoder.matches(password ,member.getPassword())) {
             throw new BadRequestException("Wrong password");
         }
+
         // 회원정보 삭제
         memberRepository.delete(member);
     }
@@ -138,8 +148,7 @@ public class MemberService {
     }
 
     // 비밀번호 재설정
-    public void resetPassword(String token, String newPassword) {
-        String email = JwtUtil.getEmail(token);
+    public void resetPassword(String email, String newPassword) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
 
@@ -147,5 +156,9 @@ public class MemberService {
         String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
         member.resetPassword(encodedPassword);
         memberRepository.save(member);
+    }
+
+    public Optional<Member> findById(Integer memberId) {
+        return memberRepository.findById(memberId);
     }
 }

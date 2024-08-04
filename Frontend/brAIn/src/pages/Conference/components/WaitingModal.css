@@ -1,0 +1,136 @@
+/* WaitingModal.css */
+
+.waiting-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.waiting-modal-content {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 500px;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.waiting-modal-header {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.waiting-modal-body {
+  margin-bottom: 20px;
+}
+
+.waiting-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.waiting-modal-content h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.waiting-modal-content p {
+  margin: 8px 0;
+}
+
+.error {
+  color: #e74c3c;
+  margin-top: 10px;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  z-index: 1;
+}
+
+.loading-overlay p {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.waiting-modal-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.waiting-modal-code pre {
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 0;
+  font-size: 14px;
+  word-break: break-word;
+  overflow-x: auto;
+  color: #333;
+}
+
+.waiting-modal-code-button {
+  margin-left: 10px;
+}
+
+.waiting-modal-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.waiting-modal-button-share {
+  background-color: #007bff;
+  color: white;
+}
+
+.waiting-modal-button-share:hover {
+  background-color: #0056b3;
+}
+
+.waiting-modal-button-cancel {
+  background-color: #dc3545;
+  color: white;
+}
+
+.waiting-modal-button-cancel:hover {
+  background-color: #c82333;
+}
+
+.waiting-modal-button-start {
+  background-color: #28a745;
+  color: white;
+}
+
+.waiting-modal-button-start:hover {
+  background-color: #218838;
+}
