@@ -111,6 +111,20 @@ def add_postit():
     )
     return "suceess"
 
+@app.route('/comment/add', methods=['POST'])
+def add_postit():
+    params = request.get_json()
+    post_it=params['postIt']
+    comment = params['comment']
+    thread_id = params['threadId']
+    prompt = post_it+'에 대한 다른 user의 추가 코멘트입니다.' + comment
+    message = client.beta.threads.messages.create(
+        thread_id=thread_id,
+        role="user",
+        content= prompt
+    )
+    return "suceess"
+
 
 @app.route('/postIt/make', methods=['POST'])
 def round_robin_make_idea():
