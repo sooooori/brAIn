@@ -7,6 +7,7 @@ import LoginOption from './pages/User/LoginOption';
 import Profile from './pages/Profile/Profile';
 import NavBar from './components/Navbar/NavBar';
 import Conference from './pages/Conference/Conference';
+import ConferenceEx from './pages/Conference/ConferenceEx'
 
 function App() {
     return (
@@ -18,6 +19,7 @@ function App() {
                     <Route path="/loginoption" element={<LoginOption />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/conferences/:secureId" element={<Conference />} />
+                    <Route path="/conferenceEx" element = {<ConferenceEx />} />
                 </Routes>
             </div>
         </div>
