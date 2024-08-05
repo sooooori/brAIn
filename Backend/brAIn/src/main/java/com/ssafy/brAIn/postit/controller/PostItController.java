@@ -30,12 +30,8 @@ public class PostItController {
         String contentText = content.get("context");
         System.out.println(contentText);
         System.out.println(token);
-        if(postItService.postItMake(token, contentText)){
-            return ResponseEntity.status(201).body("오케이");
-        }
-        else{
-            return ResponseEntity.status(500).build();
-        }
+        PostItKey postItKey = postItService.postItMake(token, contentText);
+        return ResponseEntity.ok(postItKey);
     }
 
     @DeleteMapping

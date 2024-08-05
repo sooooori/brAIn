@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import WaitingModal from './components/WaitingModal';
 import ConferenceNavbar from '../../components/Navbar/ConferenceNavbar';
+
 import PostItSidebar from './components/PostItSidebar';
 import Timer from './components/Timer';
 import WhiteBoard from './components/WhiteBoard';
@@ -13,21 +14,33 @@ import Button from '../../components/Button/Button';
 import SidebarIcon from '../../assets/svgs/sidebar.svg';
 import './ConferenceEx.css';
 
+import { addUser, removeUser, setUsers, setUserNick } from '../../actions/userActions';
+import { setCurStep, upRound } from '../../actions/conferenceActions';
+
+import { useNavigate } from 'react-router-dom';
+
+
 const Conference = () => {
   const dispatch = useDispatch();
   const role = useSelector((state) => state.conference.role);
   const secureId = useSelector((state) => state.conference.secureId);
-
+  const navigate = useNavigate();
   const [client, setClient] = useState(null);
   const [connected, setConnected] = useState(false);
   const [participantCount, setParticipantCount] = useState(1);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(true);
   const [roomId, setRoomId] = useState(null);
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [notes, setNotes] = useState([]);
   const [showNotes, setShowNotes] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const users = useSelector(state => state.user.users);
+  const nickname = useSelector(state => state.user.nickname)
+  const step = useSelector(state => state.conference.curStep)
+  const round = useSelector(state => state.conference.round)
+  const dispatch = useDispatch();
+  const [isUnmounted, setIsUnmounted] = useState(false);
 
   
   const { secureId: routeSecureId } = useParams();
@@ -50,8 +63,15 @@ const Conference = () => {
           },
         });
 
-        localStorage.setItem('roomToken', response.data.jwtForRoom);
+        // 'roomToken'이 로컬 스토리지에 없을 때만 작업 수행
+        if (!localStorage.getItem('roomToken')) {
+          localStorage.setItem('roomToken', response.data.jwtForRoom);
+          console.log('roomToken이 없어서 새로운 토큰을 저장했습니다.');
+        } else {
+          console.log('roomToken이 이미 존재합니다.');
+        }
         setRoomId(response.data.roomId);
+        dispatch(setUserNick(response.nickname));
 
         const newClient = new Client({
           brokerURL: 'ws://localhost/ws',
@@ -66,6 +86,12 @@ const Conference = () => {
           heartbeatOutgoing: 4000,
         });
 
+        newClient.onmessage = function (event) {
+          if (event.data === 'ping') {
+            socket.send('pong');
+          }
+        };
+
         newClient.onConnect = (frame) => {
           setConnected(true);
           console.log('Connected: ' + frame);
@@ -74,29 +100,22 @@ const Conference = () => {
             handleMessage(receivedMessage);
           });
 
-          newClient.subscribe(`/topic/start.conferences.${roomId}`, (message) => {
-            const receivedMessage = JSON.parse(message.body);
-            console.log('Received message to start conference:', receivedMessage);
+          // newClient.subscribe(`/topic/start.conferences.${roomId}`, (message) => {
+          //   const receivedMessage = JSON.parse(message.body);
+          //   console.log('Received message to start conference:', receivedMessage);
 
-            if (receivedMessage.type === 'START_MEETING') {
-              startMeeting();
-            }
-          });
 
-          newClient.subscribe(`/topic/notes.${roomId}`, (message) => {
-            const receivedMessage = JSON.parse(message.body);
-            setNotes(prevNotes => [...prevNotes, receivedMessage]);
-          });
+          //   if (receivedMessage.type === 'START_MEETING') {
+          //     startMeeting(receivedMessage);
+          //   }
+          // });
         };
 
         newClient.onStompError = (frame) => {
           console.error('STOMP error:', frame);
         };
 
-        setClient(newClient);
-        newClient.activate();
-
-        if (isMounted && !connected) {
+        if (isMounted) {
           setClient(newClient);
           currentClient = newClient;
           newClient.activate();
@@ -116,11 +135,25 @@ const Conference = () => {
         currentClient.deactivate();
       }
     };
+
   }, [routeSecureId, connected, isConnecting]);
 
+  useEffect(() => {
+    console.log(users);
+  }, [users]);
+
+
   const handleMessage = (receivedMessage) => {
-    if (receivedMessage.type === 'ENTER_WAITING_ROOM') {
+    if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
       countUpMember();
+    }
+    else if (receivedMessage.messageType == 'START_CONFERENCE') {
+      console.log("Rldpdpdpdpdpdpdpdppd")
+      dispatch(setUsers(receivedMessage.users));
+      dispatch(setCurStep('STEP_0'))
+    }
+    else if (receivedMessage.messageType == 'ENTER_CONFERENCES') {
+      dispatch(setUserNick(receivedMessage.nickname));
     }
   };
 
@@ -137,13 +170,17 @@ const Conference = () => {
   const startMeeting = () => {
     setIsModalVisible(false);
     setIsMeetingStarted(true);
+    // console.log(users)
   };
 
   const handleStartMeeting = () => {
     if (client) {
       client.publish({
-        destination: `/topic/start.conferences.${roomId}`,
-        body: JSON.stringify({ type: 'START_MEETING' }),
+        destination: `/app/start.conferences.${roomId}`,
+        headers: {
+          'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
+        },
+        //body: JSON.stringify({ type: 'START_MEETING' }),
       });
       startMeeting();
     }
@@ -246,6 +283,10 @@ const Conference = () => {
           </div>
         </div>
       )}
+      <h1>Current Step: {step}</h1>
+      <h2>Current Round: {round}</h2>
+      <h2>Current members: {users}</h2>
+      <h2>nickname: {nickname}</h2>
     </div>
   );
 };
