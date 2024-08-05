@@ -305,4 +305,11 @@ public class MessageService {
         return ai.equals(user);
     }
 
+    public List<String> getUsersInRoom(Integer roomId) {
+        String key = roomId + ":order:cur";
+        return redisUtils.getSortedSet(key).stream()
+                .map(Object::toString)
+                .toList();
+    }
+
 }
