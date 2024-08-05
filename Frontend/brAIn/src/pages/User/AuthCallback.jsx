@@ -50,8 +50,11 @@ const AuthCallback = () => {
         const code = urlParams.get('code');
         const provider = location.pathname.includes('kakao') ? 'kakao' : 'google';
 
-        if (code) {
+        const sessionKey = `${provider}CodeProcessed`;
+
+        if (code && !sessionStorage.getItem(sessionKey)) {
             handleLoginResponse(code, provider);
+            sessionStorage.setItem(sessionKey, 'true');
         }
     }, [location, navigate, dispatch]);
 

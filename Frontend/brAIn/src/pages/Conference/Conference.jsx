@@ -3,7 +3,7 @@ import { Client } from '@stomp/stompjs';
 import WaitingModal from './components/WaitingModal';
 import ConferenceNavbar from '../../components/Navbar/ConferenceNavbar';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../../utils/Axios';
 
 
 const Conference = () => {
@@ -58,7 +58,7 @@ const Conference = () => {
           newClient.subscribe(`/topic/start.conferences.${roomId}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
             console.log('Received message to start conference:', receivedMessage);
-
+            
             if (receivedMessage.type === 'START_MEETING') {
               startMeeting();
             }
@@ -116,7 +116,10 @@ const Conference = () => {
     if (client) {
       client.publish({
         destination: `/topic/start.conferences.${roomId}`,
-        body: JSON.stringify({ type: 'START_MEETING' }),
+        body: JSON.stringify({ 
+          type: 'START_CONFERENCE',  
+        
+        }),
       });
       startMeeting();
     }
