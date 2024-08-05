@@ -1,5 +1,4 @@
-// src/App.jsx
-import { Router, Route, Routes} from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import './App.css';
 
 import Home from './pages/Home/Home'; // Home 페이지 추가

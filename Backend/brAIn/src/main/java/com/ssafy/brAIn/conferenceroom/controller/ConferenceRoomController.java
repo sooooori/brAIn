@@ -62,7 +62,6 @@ public class ConferenceRoomController {
     @GetMapping
     public ResponseEntity<?> getConferenceRoomsInfo(@RequestParam("secureId") String secureId) {
         ConferenceRoom conferenceRoom = conferenceRoomService.findBySecureId(secureId);
-
         ConferenceRoomResponse crr = new ConferenceRoomResponse(conferenceRoom, "");
         return ResponseEntity.status(200).body(crr);
     }

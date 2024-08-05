@@ -1,8 +1,10 @@
 package com.ssafy.brAIn.stomp.service;
 
+import com.ssafy.brAIn.ai.service.AIService;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
+import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.history.entity.MemberHistory;
 import com.ssafy.brAIn.history.entity.MemberHistoryId;
 import com.ssafy.brAIn.history.model.Role;
@@ -30,31 +32,45 @@ public class MessageService {
     private final MemberHistoryService memberHistoryService;
     private final MemberRepository memberRepository;
     private final ConferenceRoomRepository conferenceRoomRepository;
+    private final AIService aiService;
+    private final ConferenceRoomService conferenceRoomService;
 
     public MessageService(RedisUtils redisUtils,
                           MemberRepository memberRepository,
                           MemberHistoryRepository memberHistoryRepository,
                           ConferenceRoomRepository conferenceRoomRepository,
-                          MemberHistoryService memberHistoryService) {
+                          MemberHistoryService memberHistoryService, AIService aiService, ConferenceRoomService conferenceRoomService) {
         this.redisUtils = redisUtils;
         this.memberHistoryRepository = memberHistoryRepository;
         this.memberRepository = memberRepository;
         this.conferenceRoomRepository=conferenceRoomRepository;
         this.memberHistoryService = memberHistoryService;
+        this.aiService = aiService;
+        this.conferenceRoomService = conferenceRoomService;
     }
 
-    public void sendPost(Integer roomId, RequestGroupPost groupPost) {
+    public void sendPost(Integer roomId, RequestGroupPost groupPost,String nickname) {
 
         int round= groupPost.getRound();
         String content=groupPost.getContent();
         String key = roomId + ":" + round;
         redisUtils.setData(key,content,3600L);
+
+        //유저의 상태 submit로 업데이트
+        updateUserState(roomId,nickname,UserState.SUBMIT);
+
     }
 
-    
+//    private void sendPostToAI(Integer roomId, RequestGroupPost groupPost) {
+//        String threadId=conferenceRoomService.findByRoomId(roomId+"").getThreadId();
+//        aiService.addPostIt(groupPost.getContent(),threadId);
+//
+//    }
+
+
     //현재 유저가 마지막 순서인지 확인하는 메서드(테스트 완)
     public boolean isLastOrder(Integer roomId, String nickname) {
-        Double order=redisUtils.getScoreFromSortedSet(roomId+":order:cur",nickname);
+        int order=redisUtils.getScoreFromSortedSet(roomId+":order:cur",nickname).intValue();
         int lastOrder=redisUtils.getSortedSet(roomId+":order:cur").size()-1;
         if (order == lastOrder) {
             return true;
@@ -112,6 +128,8 @@ public class MessageService {
 
         //redis에 나간유저를 저장해놓자.
         redisUtils.setDataInSet(roomId+":out",memberHistory.getNickName(),7200L);
+        redisUtils.removeValueFromSortedSet(roomId + ":order:cur", memberHistory.getNickName());
+
 
         //order에서는 삭제
         //redisUtils.removeValueFromSortedSet(roomId+":order",memberHistory.getNickName());
@@ -141,11 +159,25 @@ public class MessageService {
         //현재 회의룸에 있는 모든 유저들을 가져온다.
         List<MemberHistory> memberHistories=memberHistoryService.getHistoryByRoomId(roomId);
 
+
         //한번 섞어준다.
         Collections.shuffle(memberHistories);
 
-        for(int i=0;i<memberHistories.size();i++){
-            MemberHistory memberHistory=memberHistories.get(i);
+        int aiOrder=makeRandom(memberHistories.size()+1);
+
+        int cnt=0;
+        for(int i=0;i<memberHistories.size()+1;i++){
+
+            //ai 순서 지정
+            if (i == aiOrder) {
+                String aiNickname = redisUtils.getData(roomId + ":ai:nickname");
+                redisUtils.setSortedSet(roomId+":order",i,aiNickname);
+                redisUtils.setSortedSet(roomId+":"+"order:cur",i,aiNickname);
+                cnt=1;
+                continue;
+            }
+
+            MemberHistory memberHistory=memberHistories.get(i-cnt);
             memberHistory.setOrder(i);
             memberHistoryRepository.save(memberHistory);
 
@@ -157,6 +189,10 @@ public class MessageService {
 
         }
         return redisUtils.getSortedSet(roomId+":order");
+    }
+
+    private int makeRandom(int size) {
+        return (int)(Math.random()*size);
     }
 
 
@@ -211,6 +247,19 @@ public class MessageService {
 
         String FirstUser = redisUtils.getUserFromSortedSet(roomId + ":order:cur", 0);
         redisUtils.save(roomId+":curOrder",FirstUser);
+    }
+
+    public String receiveAImessage(Integer roomId) {
+        ConferenceRoom conferenceRoom=conferenceRoomRepository.findById(roomId).get();
+        String threadId = conferenceRoom.getThreadId();
+        String assistantId=conferenceRoom.getAssistantId();
+        return aiService.makePostIt(threadId,assistantId);
+
+    }
+
+    public boolean isAi(Integer roomId,String user) {
+        String ai = redisUtils.getData(roomId + ":ai:nickname");
+        return ai.equals(user);
     }
 
 }

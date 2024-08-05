@@ -64,9 +64,17 @@ public class MemberService {
     // 이메일 중복 확인
     public void emailCheck(String email) {
         // 이메일 중복 검사
-//        System.out.println(email);
+        System.out.println(email);
         if (memberRepository.existsMemberByEmail(email)) {
             throw new BadRequestException("Email is already in use");
+        }
+    }
+
+    public void resetEmail(String email) {
+        // 이메일 중복 검사
+        System.out.println(email);
+        if (!memberRepository.existsMemberByEmail(email)) {
+            throw new BadRequestException("Email is not in use");
         }
     }
 
@@ -148,5 +156,9 @@ public class MemberService {
         String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
         member.resetPassword(encodedPassword);
         memberRepository.save(member);
+    }
+
+    public Optional<Member> findById(Integer memberId) {
+        return memberRepository.findById(memberId);
     }
 }
