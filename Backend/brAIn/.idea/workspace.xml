@@ -6,10 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="46c15ecd-3885-42ed-9a92-5c2da2186c36" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/WaitingModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/WaitingModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/JoinConferenceBack.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/JoinConferenceBack.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewConferenceBack.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewConferenceBack.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/Profile.css" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/Profile.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/Profile.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/Profile.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/LoginOption.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/LoginOption.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/LoginModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/LoginModal.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/utils/Axios.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/utils/Axios.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,21 +51,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.Build brAIn.executor": "Run",
-    "Gradle.brAIn [:BrAInApplication.main()].executor": "Run",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "Spring Boot.BrAInApplication.executor": "Run",
-    "git-widget-placeholder": "feature/waiting__room",
-    "kotlin-language-version-configured": "true",
-    "node.js.selected.package.tslint": "(autodetect)"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Build brAIn.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.brAIn [:BrAInApplication.main()].executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;Spring Boot.BrAInApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/conference__components&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="BrAInApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />

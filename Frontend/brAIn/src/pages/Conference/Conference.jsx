@@ -5,6 +5,7 @@ import ConferenceNavbar from '../../components/Navbar/ConferenceNavbar';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
+
 const Conference = () => {
   const [client, setClient] = useState(null);
   const [connected, setConnected] = useState(false);

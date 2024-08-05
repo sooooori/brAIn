@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Modal from 'react-modal';
 import { Button, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from 'axios';
+import axios from '../../../utils/Axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../features/auth/authSlice';
@@ -69,17 +69,19 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
                         Authorization: `Bearer ${accessToken}`
                     }
                 });
-                const userData = response.data;
 
+                const userData = response.data;
                 const userEmail = userData.member.email;
                 const userName = userData.member.name;
                 const userPhoto = userData.member.photo;
+                const userType = userData.member.social;
 
                 dispatch(login({
                     user: {
                         email: userEmail,
                         name: userName,
-                        photo: userPhoto
+                        photo: userPhoto,
+                        type : userType,
                     },
                     accessToken: accessToken
                 }));
