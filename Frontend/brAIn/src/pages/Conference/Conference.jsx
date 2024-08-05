@@ -1,43 +1,61 @@
-// src/pages/Conference/Conference.jsx
 import React, { useState, useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
 import WaitingModal from './components/WaitingModal';
 import ConferenceNavbar from '../../components/Navbar/ConferenceNavbar';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { addUser, removeUser, setUsers, setUserNick } from '../../actions/userActions';
+import { setCurStep, upRound } from '../../actions/conferenceActions';
+
+import { useNavigate } from 'react-router-dom';
+
 
 const Conference = () => {
+  const navigate = useNavigate();
   const [client, setClient] = useState(null);
   const [connected, setConnected] = useState(false);
-  const [participantCount, setParticipantCount] = useState(1); // Participant count
-  const [isModalVisible, setIsModalVisible] = useState(true); // Modal visibility state
+  const [participantCount, setParticipantCount] = useState(1);
+  const [isModalVisible, setIsModalVisible] = useState(true);
   const [roomId, setRoomId] = useState(null);
-
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const users = useSelector(state => state.user.users);
+  const nickname = useSelector(state => state.user.nickname)
+  const step = useSelector(state => state.conference.curStep)
+  const round = useSelector(state => state.conference.round)
+  const dispatch = useDispatch();
+  const [isUnmounted, setIsUnmounted] = useState(false);
 
   const { secureId } = useParams();
 
-  // Fetch roomId when secureId changes
   useEffect(() => {
     let isMounted = true;
     let currentClient = null;
 
     const fetchDataAndConnect = async () => {
       try {
-        if (isConnecting) return; // 이미 연결 중이면 중단
+        if (isConnecting) return;
         setIsConnecting(true);
         const response = await axios.post(`http://localhost/api/v1/conferences/${secureId}`, {}, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
           },
-        }); // Replace with your API endpoint
-        localStorage.setItem('roomToken', response.data.jwtForRoom);
+        });
+
+        // 'roomToken'이 로컬 스토리지에 없을 때만 작업 수행
+        if (!localStorage.getItem('roomToken')) {
+          localStorage.setItem('roomToken', response.data.jwtForRoom);
+          console.log('roomToken이 없어서 새로운 토큰을 저장했습니다.');
+        } else {
+          console.log('roomToken이 이미 존재합니다.');
+        }
         setRoomId(response.data.roomId);
+        dispatch(setUserNick(response.nickname));
 
         const newClient = new Client({
-          brokerURL: 'ws://localhost/ws', // WebSocket URL
+          brokerURL: 'ws://localhost/ws',
           connectHeaders: {
             Authorization: 'Bearer ' + localStorage.getItem('roomToken')
           },
@@ -49,36 +67,35 @@ const Conference = () => {
           heartbeatOutgoing: 4000,
         });
 
-        // Set up WebSocket connection
+        newClient.onmessage = function (event) {
+          if (event.data === 'ping') {
+            socket.send('pong');
+          }
+        };
+
         newClient.onConnect = (frame) => {
           setConnected(true);
           console.log('Connected: ' + frame);
           newClient.subscribe(`/topic/room.${roomId}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
-
-            if (receivedMessage.type === 'ENTER_WAITING_ROOM') {
-              countUpMember();
-            }
+            handleMessage(receivedMessage);
           });
 
-          newClient.subscribe(`/topic/start.conferences.${roomId}`, (message) => {
-            const receivedMessage = JSON.parse(message.body);
-            console.log('Received message to start conference:', receivedMessage);
+          // newClient.subscribe(`/topic/start.conferences.${roomId}`, (message) => {
+          //   const receivedMessage = JSON.parse(message.body);
+          //   console.log('Received message to start conference:', receivedMessage);
 
-            if (receivedMessage.type === 'START_MEETING') {
-              startMeeting();
-            }
-          });
+          //   if (receivedMessage.type === 'START_MEETING') {
+          //     startMeeting(receivedMessage);
+          //   }
+          // });
         };
 
         newClient.onStompError = (frame) => {
           console.error('STOMP error:', frame);
         };
 
-        setClient(newClient);
-        newClient.activate();
-
-        if (isMounted && !connected) {
+        if (isMounted) {
           setClient(newClient);
           currentClient = newClient;
           newClient.activate();
@@ -98,7 +115,26 @@ const Conference = () => {
         currentClient.deactivate();
       }
     };
-  }, [secureId, connected, isConnecting]);
+  }, [secureId, isConnecting]);
+
+  useEffect(() => {
+    console.log(users);
+  }, [users]);
+
+
+  const handleMessage = (receivedMessage) => {
+    if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
+      countUpMember();
+    }
+    else if (receivedMessage.messageType == 'START_CONFERENCE') {
+      console.log("Rldpdpdpdpdpdpdpdppd")
+      dispatch(setUsers(receivedMessage.users));
+      dispatch(setCurStep('STEP_0'))
+    }
+    else if (receivedMessage.messageType == 'ENTER_CONFERENCES') {
+      dispatch(setUserNick(receivedMessage.nickname));
+    }
+  };
 
   const countUpMember = () => {
     setParticipantCount((prevCount) => prevCount + 1);
@@ -106,20 +142,24 @@ const Conference = () => {
   };
 
   const countDownMember = () => {
-    setParticipantCount((prevCount) => Math.max(prevCount - 1, 1)); // Ensure participant count does not go below 1
+    setParticipantCount((prevCount) => Math.max(prevCount - 1, 1));
     setIsModalVisible(true);
   };
 
   const startMeeting = () => {
     setIsModalVisible(false);
     setIsMeetingStarted(true);
+    // console.log(users)
   };
 
   const handleStartMeeting = () => {
     if (client) {
       client.publish({
-        destination: `/topic/start.conferences.${roomId}`,
-        body: JSON.stringify({ type: 'START_MEETING' }),
+        destination: `/app/start.conferences.${roomId}`,
+        headers: {
+          'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
+        },
+        //body: JSON.stringify({ type: 'START_MEETING' }),
       });
       startMeeting();
     }
@@ -142,10 +182,13 @@ const Conference = () => {
       )}
       {isMeetingStarted && (
         <div className="meeting">
-          {/* Add your meeting-related components here */}
           <h1>Meeting in progress...</h1>
         </div>
       )}
+      <h1>Current Step: {step}</h1>
+      <h2>Current Round: {round}</h2>
+      <h2>Current members: {users}</h2>
+      <h2>nickname: {nickname}</h2>
     </div>
   );
 };
