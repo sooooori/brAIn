@@ -1,0 +1,41 @@
+/* PostIt.css */
+.post-it {
+    border-radius: 4px;
+    padding: 10px;
+    position: relative;
+    margin: 10px;
+    width: 200px;
+    min-height: 100px;
+  }
+  
+  .post-it-content, .post-it-editor {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .edit-button, .delete-button {
+    margin-top: 10px;
+  }
+  
+  /* WhiteBoard.css */
+  .WhiteBoard {
+    padding: 20px;
+  }
+  
+  .WhiteBoard-header {
+    margin-bottom: 20px;
+  }
+  
+  .idea-board {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .idea-form {
+    margin-bottom: 20px;
+  }
+  
+  .idea-input {
+    margin-right: 10px;
+  }
+  

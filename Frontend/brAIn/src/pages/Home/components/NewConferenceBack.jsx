@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Slider } from '@mui/material';
 import Button from '../../../components/Button/Button';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../../utils/Axios';
-import { useDispatch } from 'react-redux';
+import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
 import { setRole } from '../../../features/conference/conferenceSlice'; // Adjust the path as needed
 import './NewConferenceBack.css'; // 스타일을 정의한 CSS 파일을 임포트
+
+import { addUser, removeUser, setUsers, setUserNick } from '../../../actions/userActions';
 
 const NewConferenceBack = ({ 
   handleNewConferenceFalse,
@@ -18,6 +20,7 @@ const NewConferenceBack = ({
   const [title, setTitle] = React.useState('');
   const [preparationTime, setPreparationTime] = React.useState(5); // Default to 5 minutes
   const [roomUrl, setRoomUrl] = React.useState('');
+  const nickname = useSelector((state) => state.user.nickname);
 
   const handleCreateButtonClicked = () => {
     if (title.trim() && preparationTime > 0) {
@@ -30,11 +33,13 @@ const NewConferenceBack = ({
           },
           {
             headers: {
-              Authorization: localStorage.getItem('token'),
+              Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
             },
           }
         )
         .then((result) => {
+          dispatch(setUserNick(result.data.nickname));
+          localStorage.setItem('roomToken', result.data.jwtForRoom);
           setRoomUrl(result.data.secureId);
           dispatch(setRole('host')); // Set the role to host
           handleNewConferenceClickedTrue();
@@ -50,6 +55,11 @@ const NewConferenceBack = ({
       alert('올바른 회의 정보를 입력해주세요.');
     }
   };
+
+  useEffect(() => {
+    // 이 useEffect는 nickname이 변경될 때마다 호출됩니다.
+    console.log(nickname);
+  }, [nickname]);
 
   const handleCloseButtonClicked = () => {
     setTitle('');
