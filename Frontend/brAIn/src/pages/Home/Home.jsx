@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import NewMainCard from './components/NewMainCard';
 import JoinConferenceFront from './components/JoinConferenceFront';
 import JoinConferenceBack from './components/JoinConferenceBack';
@@ -82,6 +82,11 @@ const Home = () => {
       setCenterVisible(false);
     }
   }, [centerInView]);
+
+  useEffect(() => {
+    localStorage.removeItem('roomToken')
+  }, []);
+
 
   return (
     <div className="home-container">

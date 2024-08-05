@@ -11,6 +11,7 @@ import com.ssafy.brAIn.history.model.Status;
 import com.ssafy.brAIn.history.repository.MemberHistoryRepository;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
+import com.ssafy.brAIn.s3.S3Service;
 import com.ssafy.brAIn.util.RandomNicknameGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class MemberHistoryService {
 
     private final MemberHistoryRepository memberHistoryRepository;
     private final MemberRepository memberRepository;
+    private final S3Service s3Service;
 
 
     public List<MemberHistory> getHistoryByRoomId(int roomId) {
@@ -105,4 +107,10 @@ public class MemberHistoryService {
     public void joinRoom(ConferenceRoom conferenceRoom, Member member) {
         memberHistoryRepository.save(MemberHistory.builder().member(member).conferenceRoom(conferenceRoom).id(new MemberHistoryId(member.getId(), conferenceRoom.getId())).role(Role.MEMBER).status(Status.COME).nickName(RandomNicknameGenerator.generateNickname()).orders(0).build());
     };
+
+    // 닉네임에 매칭된 프로필 이미지 URL 가져오기
+    public String getProfileImageUrlForNickname(String nickname) {
+
+        return s3Service.getProfileImageUrl(nickname);
+    }
 }

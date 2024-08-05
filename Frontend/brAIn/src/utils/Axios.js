@@ -14,12 +14,12 @@ axios.interceptors.request.use(
     error => Promise.reject(error)
 );
 
-// 응답 인터셉터: 403 응답을 처리하여 새로운 `accessToken` 발급
+// 응답 인터셉터: 401 응답을 처리하여 새로운 `accessToken` 발급
 axios.interceptors.response.use(
     response => response,
     async error => {
         const originalRequest = error.config;
-        if (error.response.status === 403 && !originalRequest._retry) {
+        if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
                 const response = await axios.post('http://localhost:8080/api/v1/members/refresh', {}, { withCredentials: true });
