@@ -53,6 +53,8 @@ const NavBar = () => {
             // 로컬 스토리지와 쿠키에서 인증 정보 삭제
             localStorage.removeItem('accessToken');
             localStorage.removeItem('user');
+            sessionStorage.removeItem('googleCodeProcessed'); // 세션 스토리지 초기화
+            sessionStorage.removeItem('kakaoCodeProcessed'); // 세션 스토리지 초기화
             Cookies.remove('refreshToken');
             
             // 홈 페이지로 리다이렉트

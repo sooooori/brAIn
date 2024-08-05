@@ -30,11 +30,25 @@ const LoginOptions = () => {
     };
 
     const goToKakaoLogin = () => {
-        window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY_KAKAO}&redirect_uri=${REDIRECT_URI_KAKAO}`;
+        const kakaoUrl =
+        "https://kauth.kakao.com/oauth/authorize" +
+        "?response_type=code" +
+        `&client_id=${REST_API_KEY_KAKAO}` +
+        `&redirect_uri=${REDIRECT_URI_KAKAO}`;
+
+        window.location.href = kakaoUrl;
     };
 
     const goToGoogleLogin = () => {
-        window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${REST_API_KEY_GOOGLE}&redirect_uri=${REDIRECT_URI_GOOGLE}&scope=openid%20email%20profile&prompt=select_account`;
+        const googleUrl =
+        "https://accounts.google.com/o/oauth2/v2/auth" +
+        "?response_type=code" +
+        `&client_id=${REST_API_KEY_GOOGLE}` +
+        `&redirect_uri=${REDIRECT_URI_GOOGLE}` +
+        `&scope=openid%20email%20profile` +
+        "&prompt=select_account";
+
+        window.location.href = googleUrl;
     };
 
     return (

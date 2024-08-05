@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -52,5 +53,16 @@ public class HistoryController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(conference);
+    }
+
+    // 닉네임에 따른 프로필 이미지 가져오기
+    @GetMapping("/image/{nickname}")
+    public ResponseEntity<?> getUserConferenceHistoryNickname(@PathVariable String nickname) {
+        try {
+            String imageUrl = memberHistoryService.getProfileImageUrlForNickname(nickname);
+            return ResponseEntity.ok(Map.of("imageUrl", imageUrl));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }
