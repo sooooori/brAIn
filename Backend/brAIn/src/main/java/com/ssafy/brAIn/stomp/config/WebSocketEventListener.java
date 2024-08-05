@@ -128,7 +128,6 @@ public class WebSocketEventListener {
             redisUtils.save(sessionId, memberId + ":" + roomId);
 
         }
-
     }
 
     @EventListener

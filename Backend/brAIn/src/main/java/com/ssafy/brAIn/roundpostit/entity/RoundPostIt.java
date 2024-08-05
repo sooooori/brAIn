@@ -5,7 +5,6 @@ import com.ssafy.brAIn.comment.entity.Comment;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.roundboard.entity.RoundBoard;
-
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -34,7 +33,6 @@ public class RoundPostIt {
     @ManyToOne
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
-
 
     @Column(name = "content")
     private String content;
