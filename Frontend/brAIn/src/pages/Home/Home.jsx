@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import NewMainCard from './components/NewMainCard';
 import JoinConferenceFront from './components/JoinConferenceFront';
 import JoinConferenceBack from './components/JoinConferenceBack';
@@ -10,6 +10,8 @@ import { useInView } from 'react-intersection-observer';
 import './Home.css';
 import Button from '../../components/Button/Button';
 import { useNavigate } from 'react-router-dom';
+
+import { setUserNick } from '../../actions/userActions';
 
 const Home = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -82,6 +84,11 @@ const Home = () => {
       setCenterVisible(false);
     }
   }, [centerInView]);
+
+  useEffect(() => {
+    localStorage.removeItem('roomToken')
+  }, []);
+
 
   return (
     <div className="home-container">

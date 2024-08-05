@@ -30,11 +30,12 @@ const NewConferenceBack = ({
           },
           {
             headers: {
-              Authorization: localStorage.getItem('token'),
+              Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
             },
           }
         )
         .then((result) => {
+          localStorage.setItem('roomToken', result.data.jwtForRoom);
           setRoomUrl(result.data.secureId);
           dispatch(setRole('host')); // Set the role to host
           handleNewConferenceClickedTrue();
