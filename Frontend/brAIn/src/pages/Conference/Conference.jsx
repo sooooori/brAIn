@@ -9,6 +9,7 @@ import { addUser, removeUser, setUsers, setUserNick } from '../../actions/userAc
 
 import { useNavigate } from 'react-router-dom';
 
+
 const Conference = () => {
   const navigate = useNavigate();
   const [client, setClient] = useState(null);
