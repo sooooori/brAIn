@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom';
+// src/App.jsx
+import { Router, Route, Routes} from 'react-router-dom';
 import './App.css';
 
 import Home from './pages/Home/Home'; // Home 페이지 추가
@@ -19,7 +20,7 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/loginoption" element={<LoginOption />} />
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/conferences" element={<Conference />} />
+                    <Route path="/conferences/:secureId" element={<Conference />} />
                     <Route path="/kakao-redirect" element={<AuthCallback />} />
                     <Route path="/google-redirect" element={<AuthCallback />} />
 
