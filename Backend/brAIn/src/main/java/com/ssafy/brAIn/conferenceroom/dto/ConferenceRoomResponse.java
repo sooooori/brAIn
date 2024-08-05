@@ -34,13 +34,15 @@ public class ConferenceRoomResponse {
     private String secureId;
     private String subject;
     private String roomId;
+    private String nickname;
 
-    public ConferenceRoomResponse(ConferenceRoom conferenceRoom, String jwtForRoom) {
+    public ConferenceRoomResponse(ConferenceRoom conferenceRoom, String jwtForRoom, String nickname) {
         this.inviteCode = conferenceRoom.getInviteCode();
         this.participateUrl = conferenceRoom.getParticipateUrl();
         this.secureId = conferenceRoom.getSecureId();
         this.jwtForRoom = jwtForRoom;
         this.subject = conferenceRoom.getSubject();
         this.roomId = conferenceRoom.getId() + "";
+        this.nickname = nickname;
     }
 }

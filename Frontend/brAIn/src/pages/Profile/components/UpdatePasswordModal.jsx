@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../../features/auth/authSlice';
-import axios from 'axios';
+import axios from '../../../utils/Axios';
 import Cookies from 'js-cookie';
 import './UpdatePasswordModal.css';
 
@@ -36,6 +36,7 @@ const UpdatePasswordModal = ({ isOpen, onRequestClose }) => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
     const { accessToken } = useSelector((state) => state.auth);
 
     const handlePasswordChange = async () => {
@@ -46,7 +47,7 @@ const UpdatePasswordModal = ({ isOpen, onRequestClose }) => {
 
         try {
             await axios.put('http://localhost/api/v1/members/updatePassword', 
-                {newPassword : newPassword },
+                { newPassword: newPassword },
                 {  
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
@@ -54,13 +55,21 @@ const UpdatePasswordModal = ({ isOpen, onRequestClose }) => {
                     }
                 }
             );
-    
+
+            // Show success message
+            setSuccessMessage('비밀번호가 성공적으로 변경되었습니다.');
+
+            // Log out and clear tokens
             dispatch(logout());
             localStorage.removeItem('accessToken');
             localStorage.removeItem('user');
             Cookies.remove('refreshToken');
-            navigate('/');
-            
+
+            // Redirect to home after a short delay
+            setTimeout(() => {
+                navigate('/');
+            }, 2000); // Redirect after 2 seconds
+
         } catch (error) {
             console.error('Password change failed', error);
             setErrorMessage('비밀번호 변경 중 오류가 발생했습니다.');
@@ -72,6 +81,7 @@ const UpdatePasswordModal = ({ isOpen, onRequestClose }) => {
         setNewPassword('');
         setConfirmPassword('');
         setErrorMessage('');
+        setSuccessMessage('');
         onRequestClose();
     };
 
@@ -120,6 +130,7 @@ const UpdatePasswordModal = ({ isOpen, onRequestClose }) => {
                 비밀번호 재설정
             </Button>
             {errorMessage && <p className="error-text">{errorMessage}</p>}
+            {successMessage && <p className="success-text">{successMessage}</p>}
         </Modal>
     );
 };

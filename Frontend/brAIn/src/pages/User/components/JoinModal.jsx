@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { Button, TextField, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from 'axios';
+import axios from '../../../utils/Axios';
 import { useNavigate } from 'react-router-dom';
 import './JoinModal.css';
 
@@ -130,7 +130,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
         .then(response => {
             console.log(response);
             if (response.status === 200) { // 이메일 중복 없음
-                setEmailErrMsg('중복되지 않은 이메일입니다.' + userInfo.email);
+                setEmailErrMsg('중복되지 않은 이메일입니다.');
                 setIsEmailChecked(true); // 이메일이 체크됨
             }
         })

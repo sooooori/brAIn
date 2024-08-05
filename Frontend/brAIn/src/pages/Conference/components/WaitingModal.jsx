@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/Button/Button';
-import axios from 'axios';
+import axios from '../../../utils/Axios';
 import './WaitingModal.css';
 
 const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartMeeting, client }) => {
@@ -91,7 +91,7 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
               >
                 Cancel
               </Button>
-              {role === 'host' && ( // Conditionally render button based on role
+              {/* {role === 'host' && ( // Conditionally render button based on role
                 <Button
                   type="fit"
                   onClick={onStartMeeting}
@@ -101,7 +101,16 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
                 >
                   Start Meeting
                 </Button>
-              )}
+              )} */}
+              <Button
+                type="fit"
+                onClick={onStartMeeting}
+                buttonStyle="black"
+                ariaLabel="Start Meeting"
+                className="waiting-modal-button waiting-modal-button-start"
+              >
+                Start Meeting
+              </Button>
             </div>
           </>
         )}

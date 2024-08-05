@@ -87,7 +87,6 @@ public class MemberHistory implements UserDetails {
         return "";
     }
 
-
     @Override
     public String getUsername() {
         return nickName;

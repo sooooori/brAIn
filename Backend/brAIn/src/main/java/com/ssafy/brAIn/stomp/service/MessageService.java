@@ -13,14 +13,28 @@ import com.ssafy.brAIn.history.repository.MemberHistoryRepository;
 import com.ssafy.brAIn.history.service.MemberHistoryService;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
+import com.ssafy.brAIn.postit.entity.PostIt;
+import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
+import com.ssafy.brAIn.stomp.dto.MessageType;
 import com.ssafy.brAIn.stomp.dto.UserState;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
+
+import com.ssafy.brAIn.util.RandomNicknameGenerator;
+
+import com.ssafy.brAIn.stomp.response.ResponseGroupPost;
+import com.ssafy.brAIn.stomp.response.ResponseMiddleVote;
+
 import com.ssafy.brAIn.util.RedisUtils;
+import com.ssafy.brAIn.vote.dto.VoteRequest;
+import com.ssafy.brAIn.vote.dto.VoteResponse;
+import com.ssafy.brAIn.vote.entity.Vote;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageService {
@@ -114,7 +128,7 @@ public class MessageService {
         //redisUtils.removeValueFromSortedSet(roomId+"order",nickname);
     }
 
-    //멤버가 회의 중 나갔을 때 history 테이블 업데이트(테스트 완)
+    //멤버가 회의 중  history 테이블 업데이트(테스트 완)
     @Transactional
     public void historyUpdate(Integer roomId,String email) {
         Optional<Member> member=memberRepository.findByEmail(email);
@@ -170,6 +184,7 @@ public class MessageService {
 
             //ai 순서 지정
             if (i == aiOrder) {
+                redisUtils.save(roomId + ":ai:nickname", RandomNicknameGenerator.generateNickname());
                 String aiNickname = redisUtils.getData(roomId + ":ai:nickname");
                 redisUtils.setSortedSet(roomId+":order",i,aiNickname);
                 redisUtils.setSortedSet(roomId+":"+"order:cur",i,aiNickname);
@@ -231,11 +246,39 @@ public class MessageService {
         int cur = redisUtils.getScoreFromSortedSet(roomId + ":order", curUser).intValue();
         int compare = redisUtils.getScoreFromSortedSet(roomId + ":order", compareUser).intValue();
 
-
         if (compare < cur) {
             return true;
         }
         return false;
+    }
+
+    //현재 중간 투표 결과 (상위 9개)를 반환한다.
+    public ResponseMiddleVote getMiddleVote(Integer roomId, Integer round) {
+        String key = roomId + ":votes:" + round;
+
+        // 상위 9개의 결과를 추출
+        List<VoteResponse> votes = redisUtils.getSortedSetWithScores(key)
+                .stream()
+                .map(tuple -> new VoteResponse(tuple.getPostIt(), tuple.getScore()))
+                .sorted((v1, v2) -> Integer.compare(v2.getScore(), v1.getScore()))
+                .limit(9)
+                .toList();
+
+        return new ResponseMiddleVote(MessageType.FINISH_MIDDLE_VOTE, votes);
+    }
+
+
+    //현재 최종 투표 결과 (상위 3개)를 반환한다.
+    public ResponseMiddleVote getFinalVote(Integer roomId, Integer round) {
+        String key = roomId + ":finalVotes:" + round;
+        // 상위 9개의 결과를 추출
+        List<VoteResponse> votes = redisUtils.getSortedSetWithScores(key)
+                .stream()
+                .map(tuple -> new VoteResponse(tuple.getPostIt(), tuple.getScore()))
+                .sorted((v1, v2) -> Integer.compare(v2.getScore(), v1.getScore()))
+                .limit(3)
+                .toList();
+        return new ResponseMiddleVote(MessageType.FINISH_FINAL_VOTE, votes);
     }
 
 
