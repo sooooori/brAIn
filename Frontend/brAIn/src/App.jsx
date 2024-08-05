@@ -8,6 +8,7 @@ import LoginOption from './pages/User/LoginOption';
 import Profile from './pages/Profile/Profile';
 import NavBar from './components/Navbar/NavBar'
 import Conference from './pages/Conference/Conference'
+import AuthCallback from './pages/User/AuthCallback';
 
 function App() {
     return (
@@ -19,6 +20,8 @@ function App() {
                     <Route path="/loginoption" element={<LoginOption />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/conferences" element={<Conference />} />
+                    <Route path="/kakao-redirect" element={<AuthCallback />} />
+                    <Route path="/google-redirect" element={<AuthCallback />} />
                 </Routes>
             </div>
         </div>

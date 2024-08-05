@@ -69,17 +69,19 @@ const LoginModal = ({ isOpen, onRequestClose }) => {
                         Authorization: `Bearer ${accessToken}`
                     }
                 });
-                const userData = response.data;
 
+                const userData = response.data;
                 const userEmail = userData.member.email;
                 const userName = userData.member.name;
                 const userPhoto = userData.member.photo;
+                const userType = userData.member.social;
 
                 dispatch(login({
                     user: {
                         email: userEmail,
                         name: userName,
-                        photo: userPhoto
+                        photo: userPhoto,
+                        type : userType,
                     },
                     accessToken: accessToken
                 }));
