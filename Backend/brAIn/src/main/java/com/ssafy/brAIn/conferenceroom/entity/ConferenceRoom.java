@@ -98,6 +98,18 @@ public class ConferenceRoom {
         return this;
     }
 
+    // 타이머 설정
+    public void setTimer(int minutes) {
+        long timerInMillis = minutes * 60 * 1000;
+        this.timer = new Date(System.currentTimeMillis() + timerInMillis);
+    }
+
+
+    // 타이머 종료 확인
+    public boolean isTimerExpired() {
+        return timer != null && new Date().after(timer);
+    }
+
 
     //회의 정보 업데이트 -> 회의록의 내용과 종료 시간
     public void updateConferenceDetails(String conclusion, Date endTime) {

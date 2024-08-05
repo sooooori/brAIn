@@ -276,8 +276,34 @@ public class MessageController {
     }
 
 
+    // 현재 중간 투표 결과 반환
+    // 현재 중간 투표 결과 (상위 9개) 반환
+    @MessageMapping("vote.middleResults.{roomId}.{round}")
+    public void getMiddleVoteResults(@DestinationVariable String roomId, @DestinationVariable Integer round, StompHeaderAccessor accessor) {
+        String token = accessor.getFirstNativeHeader("Authorization");
+        String nickName = jwtUtilForRoom.getNickname(token);
+        ConferenceRoom conferenceRoom = conferenceRoomService.findByRoomId(roomId);
+
+        // 중간 투표 결과 가져오기
+        ResponseMiddleVote voteResults = messageService.getMiddleVote(Integer.parseInt(roomId), round);
+        // 결과를 RabbitMQ로 전송
+        rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, voteResults);
+    }
 
 
+    // 현재 최종 투표 결과 반환
+    // 현재 최종 투표 결과 (상위 3개) 반환
+    @MessageMapping("vote.finalResults.{roomId}.{round}") // (Send Topic 매핑)
+    public void getFinalVoteResults(@DestinationVariable String roomId, @DestinationVariable Integer round, StompHeaderAccessor accessor) {
+        String token = accessor.getFirstNativeHeader("Authorization");
+        String nickName = jwtUtilForRoom.getNickname(token);
+        ConferenceRoom conferenceRoom = conferenceRoomService.findByRoomId(roomId);
+
+        // 최종 투표 결과 가져오기
+        ResponseMiddleVote voteResults = messageService.getFinalVote(Integer.parseInt(roomId), round);
+        // 결과를 RabbitMQ로 전송(Subscribe)
+        rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, voteResults);
+    }
 
 
 
