@@ -177,7 +177,9 @@ public class MessageController {
         //초기화
         messageService.initUserState(Integer.parseInt(roomId));
 
-
+        //0단계 부터  시작.
+        ConferenceRoom conferenceRoom = conferenceRoomService.findByRoomId(roomId).updateStep(Step.STEP_0);
+        conferenceRoomService.updateConferenceRoom(conferenceRoom);
 //        MessagePostProcessor messagePostProcessor = message -> {
 //            message.getMessageProperties().setHeader("Authorization", "회의 토큰");
 //            return message;
