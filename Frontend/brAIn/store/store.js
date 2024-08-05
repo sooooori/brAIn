@@ -10,7 +10,7 @@ const store = configureStore({
     auth: authSlice,
     conference: conferenceSlice,
     user: userReducer,
-    conference: conferenceReducer
+    conferenceInfo: conferenceReducer
   },
 });
 

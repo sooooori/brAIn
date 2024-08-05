@@ -37,9 +37,8 @@ const Conference = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const users = useSelector(state => state.user.users);
   const nickname = useSelector(state => state.user.nickname)
-  const step = useSelector(state => state.conference.curStep)
-  const round = useSelector(state => state.conference.round)
-  const dispatch = useDispatch();
+  const step = useSelector(state => state.conferenceInfo.curStep)
+  const round = useSelector(state => state.conferenceInfo.round)
   const [isUnmounted, setIsUnmounted] = useState(false);
 
   
@@ -67,11 +66,11 @@ const Conference = () => {
         if (!localStorage.getItem('roomToken')) {
           localStorage.setItem('roomToken', response.data.jwtForRoom);
           console.log('roomToken이 없어서 새로운 토큰을 저장했습니다.');
+          dispatch(setUserNick(response.data.nickname));
         } else {
           console.log('roomToken이 이미 존재합니다.');
         }
         setRoomId(response.data.roomId);
-        dispatch(setUserNick(response.nickname));
 
         const newClient = new Client({
           brokerURL: 'ws://localhost/ws',
@@ -142,6 +141,10 @@ const Conference = () => {
     console.log(users);
   }, [users]);
 
+  useEffect(() => {
+    console.log(nickname);
+  }, [nickname]);
+
 
   const handleMessage = (receivedMessage) => {
     if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
@@ -153,7 +156,7 @@ const Conference = () => {
       dispatch(setCurStep('STEP_0'))
     }
     else if (receivedMessage.messageType == 'ENTER_CONFERENCES') {
-      dispatch(setUserNick(receivedMessage.nickname));
+      //dispatch(setUserNick(receivedMessage.nickname));
     }
   };
 
@@ -283,9 +286,9 @@ const Conference = () => {
           </div>
         </div>
       )}
-      <h1>Current Step: {step}</h1>
-      <h2>Current Round: {round}</h2>
-      <h2>Current members: {users}</h2>
+      {/* <h1>Current Step: {step}</h1> */}
+      {/* <h2>Current Round: {round}</h2> */}
+      {/* <h2>Current members: {users}</h2> */}
       <h2>nickname: {nickname}</h2>
     </div>
   );

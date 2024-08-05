@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Slider } from '@mui/material';
 import Button from '../../../components/Button/Button';
 import { Add as AddIcon } from '@mui/icons-material';
@@ -20,7 +20,7 @@ const NewConferenceBack = ({
   const [title, setTitle] = React.useState('');
   const [preparationTime, setPreparationTime] = React.useState(5); // Default to 5 minutes
   const [roomUrl, setRoomUrl] = React.useState('');
-  const nickname = useSelector(state => state.user.nickname)
+  const nickname = useSelector((state) => state.user.nickname);
 
   const handleCreateButtonClicked = () => {
     if (title.trim() && preparationTime > 0) {
@@ -38,7 +38,6 @@ const NewConferenceBack = ({
           }
         )
         .then((result) => {
-          console.log(result.data.nickname)
           dispatch(setUserNick(result.data.nickname));
           localStorage.setItem('roomToken', result.data.jwtForRoom);
           setRoomUrl(result.data.secureId);
@@ -56,6 +55,11 @@ const NewConferenceBack = ({
       alert('올바른 회의 정보를 입력해주세요.');
     }
   };
+
+  useEffect(() => {
+    // 이 useEffect는 nickname이 변경될 때마다 호출됩니다.
+    console.log(nickname);
+  }, [nickname]);
 
   const handleCloseButtonClicked = () => {
     setTitle('');

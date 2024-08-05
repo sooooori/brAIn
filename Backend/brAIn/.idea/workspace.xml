@@ -6,12 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="46c15ecd-3885-42ed-9a92-5c2da2186c36" name="변경" comment="Fix: Code Error 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/Profile.css" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/Profile.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/Profile.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/Profile.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/LoginOption.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/LoginOption.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/LoginModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/LoginModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/utils/Axios.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/utils/Axios.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,22 +37,22 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
-  <component name="GitLabMergeRequestFiltersHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPENED",
-    "assignee": {
-      "type": "org.jetbrains.plugins.gitlab.mergerequest.ui.filters.GitLabMergeRequestsFiltersValue.MergeRequestsMemberFilterValue.MergeRequestsAssigneeFilterValue",
-      "username": "project_701728_bot_19ee4eb4bb096c7a3d0119ccefa28498",
-      "fullname": "OwnerToken"
+  <component name="GitLabMergeRequestFiltersHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPENED&quot;,
+    &quot;assignee&quot;: {
+      &quot;type&quot;: &quot;org.jetbrains.plugins.gitlab.mergerequest.ui.filters.GitLabMergeRequestsFiltersValue.MergeRequestsMemberFilterValue.MergeRequestsAssigneeFilterValue&quot;,
+      &quot;username&quot;: &quot;project_701728_bot_19ee4eb4bb096c7a3d0119ccefa28498&quot;,
+      &quot;fullname&quot;: &quot;OwnerToken&quot;
     }
   }
-}]]></component>
-  <component name="GitLabMergeRequestsSettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "first": "https://lab.ssafy.com/s11-webmobile1-sub2/S11P12B203.git",
-    "second": "dcd23a6f-e932-4a22-ac80-4d18936c09e6"
+}</component>
+  <component name="GitLabMergeRequestsSettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;first&quot;: &quot;https://lab.ssafy.com/s11-webmobile1-sub2/S11P12B203.git&quot;,
+    &quot;second&quot;: &quot;dcd23a6f-e932-4a22-ac80-4d18936c09e6&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -67,21 +61,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.Build brAIn.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.brAIn [:BrAInApplication.main()].executor&quot;: &quot;Run&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;Spring Boot.BrAInApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/conference__components&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build brAIn.executor": "Run",
+    "Gradle.brAIn [:BrAInApplication.main()].executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.BrAInApplication.executor": "Run",
+    "git-widget-placeholder": "develop",
+    "kotlin-language-version-configured": "true",
+    "node.js.selected.package.tslint": "(autodetect)"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="BrAInApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
