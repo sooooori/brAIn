@@ -11,8 +11,6 @@ import './Home.css';
 import Button from '../../components/Button/Button';
 import { useNavigate } from 'react-router-dom';
 
-import { setUserNick } from '../../actions/userActions';
-
 const Home = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [isConferenceSearchClicked, setIsConferenceSearchClicked] = useState(false);

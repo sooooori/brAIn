@@ -1,8 +1,8 @@
-import { ADD_USER, REMOVE_USER, SET_USERS } from '../actions/userActions';
+import { ADD_USER, REMOVE_USER, SET_USERS, SET_USERNICK } from '../actions/userActions';
 
 const initialState = {
     users: [],
-    nickname: ''
+    nickname: "",
 };
 
 const userReducer = (state = initialState, action) => {

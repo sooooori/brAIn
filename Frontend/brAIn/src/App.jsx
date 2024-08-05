@@ -18,7 +18,7 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/loginoption" element={<LoginOption />} />
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/conferences" element={<Conference />} />
+                    <Route path="/conferences/:secureId" element={<Conference />} />
                     <Route path="/kakao-redirect" element={<AuthCallback />} />
                     <Route path="/google-redirect" element={<AuthCallback />} />
                 </Routes>

@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { addUser, removeUser, setUsers, setUserNick } from '../../actions/userActions';
+import { setCurStep, upRound } from '../../actions/conferenceActions';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -21,6 +22,8 @@ const Conference = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const users = useSelector(state => state.user.users);
   const nickname = useSelector(state => state.user.nickname)
+  const step = useSelector(state => state.conference.curStep)
+  const round = useSelector(state => state.conference.round)
   const dispatch = useDispatch();
   const [isUnmounted, setIsUnmounted] = useState(false);
 
@@ -43,12 +46,13 @@ const Conference = () => {
 
         // 'roomToken'이 로컬 스토리지에 없을 때만 작업 수행
         if (!localStorage.getItem('roomToken')) {
-            localStorage.setItem('roomToken', response.data.jwtForRoom);
-            console.log('roomToken이 없어서 새로운 토큰을 저장했습니다.');
+          localStorage.setItem('roomToken', response.data.jwtForRoom);
+          console.log('roomToken이 없어서 새로운 토큰을 저장했습니다.');
         } else {
-            console.log('roomToken이 이미 존재합니다.');
+          console.log('roomToken이 이미 존재합니다.');
         }
         setRoomId(response.data.roomId);
+        dispatch(setUserNick(response.nickname));
 
         const newClient = new Client({
           brokerURL: 'ws://localhost/ws',
@@ -62,10 +66,10 @@ const Conference = () => {
           heartbeatIncoming: 4000,
           heartbeatOutgoing: 4000,
         });
-        
-        newClient.onmessage = function(event) {
+
+        newClient.onmessage = function (event) {
           if (event.data === 'ping') {
-              socket.send('pong');
+            socket.send('pong');
           }
         };
 
@@ -122,11 +126,12 @@ const Conference = () => {
     if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
       countUpMember();
     }
-    else if (receivedMessage.messageType == 'START_CONFERENCE'){
+    else if (receivedMessage.messageType == 'START_CONFERENCE') {
       console.log("Rldpdpdpdpdpdpdpdppd")
       dispatch(setUsers(receivedMessage.users));
+      dispatch(setCurStep('STEP_0'))
     }
-    else if (receivedMessage.messageType == 'ENTER_CONFERENCES'){
+    else if (receivedMessage.messageType == 'ENTER_CONFERENCES') {
       dispatch(setUserNick(receivedMessage.nickname));
     }
   };
@@ -180,6 +185,10 @@ const Conference = () => {
           <h1>Meeting in progress...</h1>
         </div>
       )}
+      <h1>Current Step: {step}</h1>
+      <h2>Current Round: {round}</h2>
+      <h2>Current members: {users}</h2>
+      <h2>nickname: {nickname}</h2>
     </div>
   );
 };
