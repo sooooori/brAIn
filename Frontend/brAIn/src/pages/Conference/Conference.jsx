@@ -10,7 +10,7 @@ const Conference = () => {
   const [client, setClient] = useState(null);
   const [connected, setConnected] = useState(false);
   const [participantCount, setParticipantCount] = useState(1); // Participant count
-  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
+  const [isModalVisible, setIsModalVisible] = useState(true); // Modal visibility state
   const [roomId, setRoomId] = useState(null);
 
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
