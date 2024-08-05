@@ -15,6 +15,7 @@ import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
 import com.ssafy.brAIn.stomp.dto.UserState;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
+import com.ssafy.brAIn.util.RandomNicknameGenerator;
 import com.ssafy.brAIn.util.RedisUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,7 +115,7 @@ public class MessageService {
         //redisUtils.removeValueFromSortedSet(roomId+"order",nickname);
     }
 
-    //멤버가 회의 중 나갔을 때 history 테이블 업데이트(테스트 완)
+    //멤버가 회의 중  history 테이블 업데이트(테스트 완)
     @Transactional
     public void historyUpdate(Integer roomId,String email) {
         Optional<Member> member=memberRepository.findByEmail(email);
@@ -170,6 +171,7 @@ public class MessageService {
 
             //ai 순서 지정
             if (i == aiOrder) {
+                redisUtils.save(roomId + ":ai:nickname", RandomNicknameGenerator.generateNickname());
                 String aiNickname = redisUtils.getData(roomId + ":ai:nickname");
                 redisUtils.setSortedSet(roomId+":order",i,aiNickname);
                 redisUtils.setSortedSet(roomId+":"+"order:cur",i,aiNickname);

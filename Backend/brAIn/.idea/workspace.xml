@@ -6,9 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="46c15ecd-3885-42ed-9a92-5c2da2186c36" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/postit/controller/PostItController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/postit/controller/PostItController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/postit/service/PostItService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/postit/service/PostItService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/controller/ConferenceRoomController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/controller/ConferenceRoomController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/dto/ConferenceRoomResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/dto/ConferenceRoomResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/config/CsrfChannelInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/config/CsrfChannelInterceptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/config/SecurityContextWebSocketHandlerDecorator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/config/SecurityContextWebSocketHandlerDecorator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/config/WebSocketEventListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/config/WebSocketEventListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/controller/MessageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/controller/MessageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/service/MessageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/service/MessageService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,6 +68,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -93,7 +98,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1722354808346</updated>
-      <workItem from="1722817089764" duration="1227000" />
+      <workItem from="1722817089764" duration="12931000" />
     </task>
     <servers />
   </component>
