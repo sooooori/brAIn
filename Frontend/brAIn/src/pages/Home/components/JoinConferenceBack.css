@@ -1,0 +1,70 @@
+.join-conference-back {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px; /* Increased padding for more internal space */
+    position: relative;
+    overflow: hidden;
+    background-color: white;
+    border-radius: 12px; /* Slightly increased border radius for a softer look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Increased shadow for more emphasis */
+    height: 100%;
+    width: 100%;
+    max-width: 600px; /* Increased max-width for a larger card */
+    margin: 0 auto;
+  }
+  
+  .join-conference-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .join-conference-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 40px; /* Increased margin for more spacing */
+  }
+  
+  .close-button {
+    min-width: 40px;
+  }
+  
+  .conference-details {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Ensure items stretch to full width */
+    width: 100%;
+    margin-bottom: 32px; /* Increased margin for more spacing */
+  }
+  
+  .conference-detail-item {
+    margin-bottom: 24px; /* Increased margin for better separation */
+    width: 100%;
+  }
+  
+  .full-width-button {
+    width: 100%;
+    margin-top: 16px; /* Added margin-top for spacing above the button */
+  }
+  
+  .conference-input-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .conference-code-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 32px; /* Increased margin for better spacing */
+  }
+  
