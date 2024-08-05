@@ -13,12 +13,16 @@ import com.ssafy.brAIn.history.repository.MemberHistoryRepository;
 import com.ssafy.brAIn.history.service.MemberHistoryService;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
+import com.ssafy.brAIn.postit.entity.PostIt;
+import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
 import com.ssafy.brAIn.stomp.dto.MessageType;
 import com.ssafy.brAIn.stomp.dto.UserState;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
 import com.ssafy.brAIn.stomp.response.ResponseGroupPost;
 import com.ssafy.brAIn.stomp.response.ResponseMiddleVote;
 import com.ssafy.brAIn.util.RedisUtils;
+import com.ssafy.brAIn.vote.dto.VoteRequest;
+import com.ssafy.brAIn.vote.dto.VoteResponse;
 import com.ssafy.brAIn.vote.entity.Vote;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Service;
@@ -26,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageService {
@@ -245,10 +250,15 @@ public class MessageService {
     //현재 중간 투표 결과 (상위 9개)를 반환한다.
     public ResponseMiddleVote getMiddleVote(Integer roomId, Integer round) {
         String key = roomId + ":votes:" + round;
-        List<Vote> votes = redisUtils.getListFromKey(key)
+
+        // 상위 9개의 결과를 추출
+        List<VoteResponse> votes = redisUtils.getSortedSetWithScores(key)
                 .stream()
-                .map(obj -> (Vote) obj)
+                .map(tuple -> new VoteResponse(tuple.getPostIt(), tuple.getScore()))
+                .sorted((v1, v2) -> Integer.compare(v2.getScore(), v1.getScore()))
+                .limit(9)
                 .toList();
+
         return new ResponseMiddleVote(MessageType.FINISH_MIDDLE_VOTE, votes);
     }
 
@@ -256,9 +266,12 @@ public class MessageService {
     //현재 최종 투표 결과 (상위 3개)를 반환한다.
     public ResponseMiddleVote getFinalVote(Integer roomId, Integer round) {
         String key = roomId + ":finalVotes:" + round;
-        List<Vote> votes = redisUtils.getListFromKey(key)
+        // 상위 9개의 결과를 추출
+        List<VoteResponse> votes = redisUtils.getSortedSetWithScores(key)
                 .stream()
-                .map(obj -> (Vote) obj)
+                .map(tuple -> new VoteResponse(tuple.getPostIt(), tuple.getScore()))
+                .sorted((v1, v2) -> Integer.compare(v2.getScore(), v1.getScore()))
+                .limit(3)
                 .toList();
         return new ResponseMiddleVote(MessageType.FINISH_FINAL_VOTE, votes);
     }

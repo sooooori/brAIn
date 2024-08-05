@@ -156,7 +156,7 @@ public class VoteService {
     // 선정된 9개의 투표 결과 에 대해서 다시 임시 투표 진행
     @Transactional
     public void finalVote(FinalVoteRequest request) {
-        String tempVoteKey = request.getRoomId() + ":finalVotes:" + request.getRound() + ":" + request.getMemberId();
+        String tempVoteKey = request.getRoomId() + ":finalTempVotes:" + request.getRound()+ ":" + request.getMemberId();
 
         // 기존에 투표한 적이 있는지 확인
         List<Object> existingVotes = redisUtils.getSortedSet(tempVoteKey);
@@ -171,7 +171,7 @@ public class VoteService {
     // 타이머 투표 진행
     @Transactional
     public void endFinalVoteByTimer(VoteResultRequest voteResultRequest) {
-        String tempVotePattern = voteResultRequest.getConferenceId() + ":finalVotes:" + voteResultRequest.getRound() + ":*";
+        String tempVotePattern = voteResultRequest.getConferenceId() + ":finalTempVotes:" + voteResultRequest.getRound() + ":*";
         String voteKey = voteResultRequest.getConferenceId() + ":finalVotes:" + voteResultRequest.getRound();
 
         Set<String> tempVoteKeys = redisUtils.keys(tempVotePattern);
