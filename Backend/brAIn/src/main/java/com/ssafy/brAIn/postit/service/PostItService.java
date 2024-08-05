@@ -20,7 +20,7 @@ public class PostItService {
     }
 
 
-    public boolean postItMake(String token, String content){
+    public PostItKey postItMake(String token, String content){
         String roomId = jwtUtilForRoom.getRoomId(token);
         System.out.println(roomId);
         String nickname = jwtUtilForRoom.getNickname(token);
@@ -29,12 +29,10 @@ public class PostItService {
 
         String key = String.format("%s:postIt:%s",roomId,nickname);
         PostItKey postItKey = new PostItKey(content,nickname);
-        try{
-            redisUtils.setDataInSetSerialize(key, postItKey, 3600L);
-            return true;
-        }catch (Exception e){
-            return false;
-        }
+
+        redisUtils.setDataInSetSerialize(key, postItKey, 3600L);
+        return postItKey;
+
     }
 
     public boolean deletePostIt(String token, PostItKey deletePostIt){
