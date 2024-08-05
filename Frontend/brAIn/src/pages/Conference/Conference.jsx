@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
 import { v4 as uuidv4 } from 'uuid';
 import WaitingModal from './components/WaitingModal';
-import MemberList from './components/MemberList';
+
 
 
 const Conference = () => {
@@ -65,7 +65,6 @@ const Conference = () => {
   return (
     <div>
         222222222222222222
-        <MemberList/>
     </div>
     // <div className="waiting-room">
     //   <WaitingModal isVisible={isModalVisible} participantCount={participantCount} />
