@@ -203,7 +203,7 @@ public class MessageService {
 
 
         }
-        return redisUtils.getSortedSet(roomId+":order");
+        return redisUtils.getSortedSet(roomId+":order:cur");
     }
 
     private int makeRandom(int size) {

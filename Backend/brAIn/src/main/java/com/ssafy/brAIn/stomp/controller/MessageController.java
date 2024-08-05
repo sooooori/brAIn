@@ -202,10 +202,6 @@ public class MessageController {
             throw new AuthenticationCredentialsNotFoundException("권한이 없음");
         }
 
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("MessageController Authentication: \n\n\n\n\n" + (authentication != null ? authentication.getAuthorities() : "No Authentication"));
-
         Step nextStep=requestStep.getStep().next();
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseStep(MessageType.NEXT_STEP,nextStep));
         messageService.updateStep(Integer.parseInt(roomId),nextStep);
