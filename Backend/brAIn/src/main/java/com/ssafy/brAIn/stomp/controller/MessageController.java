@@ -180,7 +180,7 @@ public class MessageController {
 
     // 현재 중간 투표 결과 반환
     // 현재 중간 투표 결과 (상위 9개) 반환
-    @MessageMapping("vote.results.{roomId}.{round}")
+    @MessageMapping("vote.middleResults.{roomId}.{round}")
     public void getMiddleVoteResults(@DestinationVariable String roomId, @DestinationVariable Integer round) {
         ResponseMiddleVote voteResults = messageService.getMiddleVote(Integer.parseInt(roomId), round);
         rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, voteResults);
@@ -189,7 +189,7 @@ public class MessageController {
 
     // 현재 최종 투표 결과 반환
     // 현재 최종 투표 결과 (상위 3개) 반환
-    @MessageMapping("vote.results.{roomId}.{round}")
+    @MessageMapping("vote.finalResults.{roomId}.{round}")
     public void getFinalVoteResults(@DestinationVariable String roomId, @DestinationVariable Integer round) {
         ResponseMiddleVote voteResults = messageService.getFinalVote(Integer.parseInt(roomId), round);
         rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, voteResults);
