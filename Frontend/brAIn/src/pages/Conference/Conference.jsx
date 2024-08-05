@@ -1,4 +1,3 @@
-// src/pages/Conference/Conference.jsx
 import React, { useState, useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
 import WaitingModal from './components/WaitingModal';
@@ -9,35 +8,33 @@ import axios from 'axios';
 const Conference = () => {
   const [client, setClient] = useState(null);
   const [connected, setConnected] = useState(false);
-  const [participantCount, setParticipantCount] = useState(1); // Participant count
-  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
+  const [participantCount, setParticipantCount] = useState(1);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [roomId, setRoomId] = useState(null);
-
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
 
   const { secureId } = useParams();
 
-  // Fetch roomId when secureId changes
   useEffect(() => {
     let isMounted = true;
     let currentClient = null;
 
     const fetchDataAndConnect = async () => {
       try {
-        if (isConnecting) return; // 이미 연결 중이면 중단
+        if (isConnecting) return;
         setIsConnecting(true);
         const response = await axios.post(`http://localhost/api/v1/conferences/${secureId}`, {}, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
           },
-        }); // Replace with your API endpoint
+        });
         localStorage.setItem('roomToken', response.data.jwtForRoom);
         setRoomId(response.data.roomId);
 
         const newClient = new Client({
-          brokerURL: 'ws://localhost/ws', // WebSocket URL
+          brokerURL: 'ws://localhost/ws',
           connectHeaders: {
             Authorization: 'Bearer ' + localStorage.getItem('roomToken')
           },
@@ -49,16 +46,12 @@ const Conference = () => {
           heartbeatOutgoing: 4000,
         });
 
-        // Set up WebSocket connection
         newClient.onConnect = (frame) => {
           setConnected(true);
           console.log('Connected: ' + frame);
           newClient.subscribe(`/topic/room.${roomId}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
-
-            if (receivedMessage.type === 'ENTER_WAITING_ROOM') {
-              countUpMember();
-            }
+            handleMessage(receivedMessage);
           });
 
           newClient.subscribe(`/topic/start.conferences.${roomId}`, (message) => {
@@ -100,13 +93,19 @@ const Conference = () => {
     };
   }, [secureId, connected, isConnecting]);
 
+  const handleMessage = (receivedMessage) => {
+    if (receivedMessage.type === 'ENTER_WAITING_ROOM') {
+      countUpMember();
+    }
+  };
+
   const countUpMember = () => {
     setParticipantCount((prevCount) => prevCount + 1);
     setIsModalVisible(true);
   };
 
   const countDownMember = () => {
-    setParticipantCount((prevCount) => Math.max(prevCount - 1, 1)); // Ensure participant count does not go below 1
+    setParticipantCount((prevCount) => Math.max(prevCount - 1, 1));
     setIsModalVisible(true);
   };
 
@@ -142,7 +141,6 @@ const Conference = () => {
       )}
       {isMeetingStarted && (
         <div className="meeting">
-          {/* Add your meeting-related components here */}
           <h1>Meeting in progress...</h1>
         </div>
       )}
