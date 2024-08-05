@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
-import WaitingModal from './components/WaitingModal';
-import ConferenceNavbar from '../../components/Navbar/ConferenceNavbar';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import WaitingModal from './components/WaitingModal';
+import ConferenceNavbar from '../../components/Navbar/ConferenceNavbar';
+
+import PostItSidebar from './components/PostItSidebar';
+import Timer from './components/Timer';
+import WhiteBoard from './components/WhiteBoard';
+import VotedPostIt from './components/VotedPostIt';
+import Button from '../../components/Button/Button';
+import SidebarIcon from '../../assets/svgs/sidebar.svg';
+import './ConferenceEx.css';
+
 import { addUser, removeUser, setUsers, setUserNick } from '../../actions/userActions';
 import { setCurStep, upRound } from '../../actions/conferenceActions';
 
@@ -12,6 +21,9 @@ import { useNavigate } from 'react-router-dom';
 
 
 const Conference = () => {
+  const dispatch = useDispatch();
+  const role = useSelector((state) => state.conference.role);
+  const secureId = useSelector((state) => state.conference.secureId);
   const navigate = useNavigate();
   const [client, setClient] = useState(null);
   const [connected, setConnected] = useState(false);
@@ -20,6 +32,9 @@ const Conference = () => {
   const [roomId, setRoomId] = useState(null);
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [notes, setNotes] = useState([]);
+  const [showNotes, setShowNotes] = useState(false);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const users = useSelector(state => state.user.users);
   const nickname = useSelector(state => state.user.nickname)
   const step = useSelector(state => state.conference.curStep)
@@ -27,17 +42,21 @@ const Conference = () => {
   const dispatch = useDispatch();
   const [isUnmounted, setIsUnmounted] = useState(false);
 
-  const { secureId } = useParams();
+  
+  const { secureId: routeSecureId } = useParams();
 
   useEffect(() => {
     let isMounted = true;
     let currentClient = null;
 
+    
+
     const fetchDataAndConnect = async () => {
       try {
         if (isConnecting) return;
         setIsConnecting(true);
-        const response = await axios.post(`http://localhost/api/v1/conferences/${secureId}`, {}, {
+
+        const response = await axios.post(`http://localhost/api/v1/conferences/${routeSecureId}`, {}, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
@@ -85,6 +104,7 @@ const Conference = () => {
           //   const receivedMessage = JSON.parse(message.body);
           //   console.log('Received message to start conference:', receivedMessage);
 
+
           //   if (receivedMessage.type === 'START_MEETING') {
           //     startMeeting(receivedMessage);
           //   }
@@ -115,7 +135,8 @@ const Conference = () => {
         currentClient.deactivate();
       }
     };
-  }, [secureId, isConnecting]);
+
+  }, [routeSecureId, connected, isConnecting]);
 
   useEffect(() => {
     console.log(users);
@@ -165,15 +186,36 @@ const Conference = () => {
     }
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarVisible((prev) => !prev);
+  };
+
+  const handleCloseSidebar = () => {
+    setIsSidebarVisible(false);
+  };
+
+  const handleReadyButtonClick = () => {
+    // Implement logic for "Ready" button click
+  };
+
+  const handleNextStepClick = () => {
+    // Implement logic for "Next Step" button click
+  };
+
+  const handlePassButtonClick = () => {
+    // Implement logic for "Pass" button click
+    console.log('Pass button clicked');
+  };
+
   return (
     <div className="conference">
-      {isMeetingStarted && <ConferenceNavbar secureId={secureId} />}
+      {isMeetingStarted && <ConferenceNavbar secureId={routeSecureId} />}
       {!isMeetingStarted && (
         <div>
           <WaitingModal
             isVisible={isModalVisible}
             participantCount={participantCount}
-            secureId={secureId}
+            secureId={routeSecureId}
             onClose={() => setIsModalVisible(false)}
             onStartMeeting={handleStartMeeting}
             client={client}
@@ -181,8 +223,64 @@ const Conference = () => {
         </div>
       )}
       {isMeetingStarted && (
-        <div className="meeting">
-          <h1>Meeting in progress...</h1>
+        <div className="meeting-content">
+          <div className="sidebar-container">
+            <Button
+              type="fit"
+              onClick={toggleSidebar}
+              buttonStyle="black"
+              ariaLabel="Toggle Sidebar"
+              className="toggle-sidebar-button"
+            >
+              <img src={SidebarIcon} alt="Sidebar Toggle" className="sidebar-icon" />
+            </Button>
+            <PostItSidebar
+              notes={notes}
+              isVisible={isSidebarVisible}
+              onClose={handleCloseSidebar}
+            />
+          </div>
+          <div className="main-content">
+            <VotedPostIt />
+            <div className="whiteboard-section">
+              <div className="conf-timer-container">
+                <Timer />
+              </div>
+              <div className="whiteboard-container">
+                <WhiteBoard subject="안녕" />
+              </div>
+              <div className="action-buttons-container">
+                <Button
+                  onClick={handleReadyButtonClick}
+                  buttonStyle="purple"
+                  ariaLabel="Ready Button"
+                  className="action-button ready-button"
+                >
+                  <span>준비 완료</span>
+                </Button>
+                {role !== 'host' && (
+                  <>
+                    <Button
+                      onClick={handleNextStepClick}
+                      buttonStyle="purple"
+                      ariaLabel="Next Step Button"
+                      className="action-button next-step-button"
+                    >
+                      <span>다음 단계</span>
+                    </Button>
+                    <Button
+                      onClick={handlePassButtonClick}
+                      buttonStyle="purple"
+                      ariaLabel="Pass Button"
+                      className="action-button pass-button"
+                    >
+                      <span>패스하기</span>
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       )}
       <h1>Current Step: {step}</h1>
