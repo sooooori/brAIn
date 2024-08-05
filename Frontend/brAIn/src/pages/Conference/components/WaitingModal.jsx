@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/Button/Button';
-import axios from 'axios';
+import axios from '../../../utils/Axios';
 import './WaitingModal.css';
 
 const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartMeeting, client }) => {
