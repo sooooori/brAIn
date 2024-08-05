@@ -9,7 +9,7 @@ const Conference = () => {
   const [client, setClient] = useState(null);
   const [connected, setConnected] = useState(false);
   const [participantCount, setParticipantCount] = useState(1);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(true);
   const [roomId, setRoomId] = useState(null);
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -68,10 +68,7 @@ const Conference = () => {
           console.error('STOMP error:', frame);
         };
 
-        setClient(newClient);
-        newClient.activate();
-
-        if (isMounted && !connected) {
+        if (isMounted) {
           setClient(newClient);
           currentClient = newClient;
           newClient.activate();
@@ -91,7 +88,7 @@ const Conference = () => {
         currentClient.deactivate();
       }
     };
-  }, [secureId, connected, isConnecting]);
+  }, [secureId, isConnecting]);
 
   const handleMessage = (receivedMessage) => {
     if (receivedMessage.type === 'ENTER_WAITING_ROOM') {
