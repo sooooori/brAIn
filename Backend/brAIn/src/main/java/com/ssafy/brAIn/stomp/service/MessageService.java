@@ -236,6 +236,12 @@ public class MessageService {
         int cur = redisUtils.getScoreFromSortedSet(roomId + ":order", curUser).intValue();
         int compare = redisUtils.getScoreFromSortedSet(roomId + ":order", compareUser).intValue();
 
+        if (compare < cur) {
+            return true;
+        }
+        return false;
+    }
+
     //현재 중간 투표 결과 (상위 9개)를 반환한다.
     public ResponseMiddleVote getMiddleVote(Integer roomId, Integer round) {
         String key = roomId + ":votes:" + round;
@@ -244,12 +250,6 @@ public class MessageService {
                 .map(obj -> (Vote) obj)
                 .toList();
         return new ResponseMiddleVote(MessageType.FINISH_MIDDLE_VOTE, votes);
-    }
-
-        if (compare < cur) {
-            return true;
-        }
-        return false;
     }
 
 
