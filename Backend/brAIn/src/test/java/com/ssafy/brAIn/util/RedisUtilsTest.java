@@ -12,7 +12,7 @@ class RedisUtilsTest {
     void getScoreFromSortedSet() {
 
         //give
-        RedisUtils redisUtils=new RedisUtils(new RedisTemplate<>());
+        RedisUtils redisUtils=new RedisUtils(new RedisTemplate<>(), new RedisTemplate<>());
 
         //
         Double score=redisUtils.getScoreFromSortedSet("1:order","호랑이1");

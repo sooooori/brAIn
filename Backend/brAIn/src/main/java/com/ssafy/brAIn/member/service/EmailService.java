@@ -3,6 +3,7 @@ package com.ssafy.brAIn.member.service;
 import com.ssafy.brAIn.member.entity.VerificationCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -22,7 +23,10 @@ public class EmailService {
     private String email;
     private final Integer EXPIRATION_TIME_IN_MINUTES = 5; //제한시간 5분
     private final JavaMailSender mailSender;
+
+    @Qualifier("redisTemplate")
     private final RedisTemplate<String, Object> redisTemplate;
+    @Qualifier("redisTemplate1")
     private final RedisTemplate<String, Object> redisTemplate1;
 
     // 인증 코드 발송
