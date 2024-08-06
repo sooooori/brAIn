@@ -116,6 +116,10 @@ public class ConferenceRoom {
         this.conclusion = conclusion;
         this.endTime = endTime;
     }
+
+    public void endConference() {
+        this.isEnd = true;
+    }
 }
 
 // 빌더 패턴을 사용하면 객체를 유연하고 직관적으로 생성할 수 있음, 어느 필드에 어떤 값이 들어가는지 명시적으로 파악할 수 있음.

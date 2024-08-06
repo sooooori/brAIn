@@ -176,6 +176,8 @@ public class WebSocketEventListener {
             //방장이 나가면 방 종료.
             if(getRole(memberId,roomId).equals(Role.CHIEF)){
                 rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new EndMessage(MessageType.END_CONFERENCE));
+                conferenceRoom.endConference();
+                conferenceRoomService.save(conferenceRoom);
                 return;
             }
 
