@@ -1,4 +1,4 @@
-package com.ssafy.brAIn.member.service;
+package com.ssafy.brAIn.s3;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -109,5 +109,29 @@ public class S3Service {
             case "gif" -> "image/gif";
             default -> throw new IllegalArgumentException("Unsupported file extension: " + fileExtension);
         };
+    }
+
+    public String getProfileImageUrl(String nickname) {
+        // 프로필 이미지 폴더에서 nickname에 맞는 이미지 검색
+        String prefix = "conference-image/" + nickname + ".png";
+
+        ListObjectsV2Request listObjectsV2Request = ListObjectsV2Request.builder()
+                .bucket(bucket)
+                .prefix(prefix)
+                .build();
+
+        ListObjectsV2Response listObjectsResponse = s3Client.listObjectsV2(listObjectsV2Request);
+
+        List<S3Object> objects = listObjectsResponse.contents();
+
+        // 이미지가 존재하지 않는 경우 예외 처리
+        if (objects.isEmpty()) {
+            throw new RuntimeException("No images found for nickne : " + nickname);
+        }
+
+        // 첫 번째 객체의 URL 반환 (일반적으로 하나의 이미지가 있다고 가정)
+        S3Object object = objects.get(0);
+
+        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, prefix);
     }
 }

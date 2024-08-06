@@ -128,34 +128,59 @@ public class WebSocketEventListener {
             redisUtils.save(sessionId, memberId + ":" + roomId);
 
         }
-
     }
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-
         String sessionId = accessor.getSessionId();
-        String[] historyId = redisUtils.getData(sessionId).split(":");
-        Integer memberId = Integer.parseInt(historyId[0]);
-        Integer roomId = Integer.parseInt(historyId[1]);
-        Optional<Member> member=memberService.findById(memberId);
 
-        String email=member.get().getEmail();
-        messageService.historyUpdate(roomId,email);
+        // Redis에서 데이터 가져오기
+        String data = redisUtils.getData(sessionId);
 
-        ConferenceRoom conferenceRoom=conferenceRoomService.findByRoomId(roomId+"");
-
-        String exitUserNickname=getNickName(memberId,roomId);
-
-        //유저가 대기방에 있을 때,
-        if (conferenceRoom.getStep().equals(Step.WAIT)) {
-            rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new WaitingRoomEnterExit(MessageType.EXIT_WAITING_ROOM));
-        }else{
-            rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, new ConferencesEnterExit(MessageType.EXIT_CONFERENCES, exitUserNickname));
+        // Redis에서 정보가 없으면 그냥 종료
+        if (data == null || data.isEmpty()) {
+            System.out.println("세션 ID: " + sessionId + "에 대한 Redis 데이터가 없습니다.");
+            return;
         }
 
+        try {
+            // 데이터 분리
+            String[] historyId = data.split(":");
+            Integer memberId = Integer.parseInt(historyId[0]);
+            Integer roomId = Integer.parseInt(historyId[1]);
+
+            // Member 정보 가져오기
+            Optional<Member> member = memberService.findById(memberId);
+            if (!member.isPresent()) {
+                System.out.println("회원 ID: " + memberId + "에 대한 정보가 없습니다.");
+                return;
+            }
+
+            String email = member.get().getEmail();
+
+            // 메시지 서비스 업데이트
+            messageService.historyUpdate(roomId, email);
+
+            // ConferenceRoom 정보 가져오기
+            ConferenceRoom conferenceRoom = conferenceRoomService.findByRoomId(roomId.toString());
+
+            // 사용자 닉네임 가져오기
+            String exitUserNickname = getNickName(memberId, roomId);
+
+            // 대기방 상태 확인 및 메시지 발송
+            if (conferenceRoom.getStep().equals(Step.WAIT)) {
+                rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, new WaitingRoomEnterExit(MessageType.EXIT_WAITING_ROOM));
+            } else {
+                rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, new ConferencesEnterExit(MessageType.EXIT_CONFERENCES, exitUserNickname));
+            }
+        } catch (Exception e) {
+            // 예외 발생 시 로그 출력
+            System.err.println("처리 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+
 
     private String getNickName(Integer memberId,Integer roomId) {
         MemberHistoryId memberHistoryId=new MemberHistoryId(memberId,roomId);

@@ -10,11 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ConferencesEnterExit {
 
-    private MessageType type;
+    private MessageType messageType;
     private String nickname;
 
     public ConferencesEnterExit(MessageType type, String nickname) {
-        this.type = type;
+        this.messageType = type;
         this.nickname = nickname;
     }
 }

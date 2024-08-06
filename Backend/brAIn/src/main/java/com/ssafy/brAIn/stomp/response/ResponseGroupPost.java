@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ResponseGroupPost {
 
-    private MessageType type;
+    private MessageType messageType;
     private String sender;
     private String nextUser;
     private int curRound;
@@ -18,7 +18,7 @@ public class ResponseGroupPost {
     private String content;
 
     public ResponseGroupPost(MessageType type, String sender, String nextUser, int curRound, int nextRound, String content) {
-        this.type = type;
+        this.messageType = type;
         this.sender = sender;
         this.nextUser = nextUser;
         this.curRound = curRound;
