@@ -12,6 +12,7 @@ import WhiteBoard from './components/WhiteBoard';
 import VotedPostIt from './components/VotedPostIt';
 import Button from '../../components/Button/Button';
 import SidebarIcon from '../../assets/svgs/sidebar.svg';
+import MemberList from './components/MemberList';
 import './ConferenceEx.css';
 
 import { addUser, removeUser, setUsers, setUserNick, setCuruser } from '../../actions/userActions';
@@ -313,6 +314,12 @@ const Conference = () => {
               <div className="whiteboard-container">
                 <WhiteBoard subject="안녕" onSubmitClick= {attachPostitOnRoundBoard} />
               </div>
+
+              {/* test */}
+              <div>
+                <MemberList/>
+              </div>
+
               <div className="action-buttons-container">
                 <Button
                   onClick={handleReadyButtonClick}

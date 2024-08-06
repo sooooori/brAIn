@@ -2,16 +2,18 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import './MemberList.css';
 
-const MemberList = ({ users }) => {
+const MemberList = () => {
+
   const nickname = useSelector((state) => state.user.nickname);
   const timer = useSelector((state) => state.conferenceInfo.timer); // 타이머 정보
   const curUser = useSelector((state) => state.conferenceInfo.curUser); // 현재 사용자
+  const users = useSelector((state) => state.conferenceInfo.users); // 현재 사용자
 
   const [currentPage, setCurrentPage] = useState(0);
   const usersPerPage = 6;
 
   useEffect(() => {
-    if (users.length > 0 && curUser) {
+    if (users && curUser) {
       const currentUserIndex = users.indexOf(curUser);
       if (currentUserIndex !== -1) {
         const newPage = Math.floor(currentUserIndex / usersPerPage);
@@ -20,7 +22,7 @@ const MemberList = ({ users }) => {
     }
   }, [users, curUser, usersPerPage]);
 
-  const totalPages = Math.ceil(users.length / usersPerPage);
+  const totalPages = Math.ceil(users / usersPerPage);
 
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) {

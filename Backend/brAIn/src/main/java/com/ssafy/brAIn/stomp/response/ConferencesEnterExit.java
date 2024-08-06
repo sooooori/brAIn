@@ -16,7 +16,7 @@ public class ConferencesEnterExit {
     private String nickname;
     private List<String> users;
 
-    public ConferencesEnterExit(MessageType type, String nickname) {
+    public ConferencesEnterExit(MessageType type, String nickname, List<String> users) {
         this.messageType = type;
         this.nickname = nickname;
         this.users = users;
