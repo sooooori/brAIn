@@ -200,13 +200,13 @@ const Conference = () => {
       startMeeting();
     }
   };
-
-
+///////
+///////
   //라운드 로빈 포스트잇 보드에 저장
   const roundRobinBoardUpdate=(postit)=>{
     
     dispatch(sendToBoard(postit.curRound,postit.content))
-    dispatch(upRound())
+    //dispatch(upRound())
     dispatch(setCuruser(postit.nextUser))
   }
 
