@@ -140,6 +140,12 @@ public class RedisUtils {
         zSetOperations.remove(key, value);
     }
 
+    public boolean isValueInSortedSet(String key, String value) {
+        ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
+        Double score = zSetOps.score(key, value);
+        return score != null;
+    }
+
 
     //sortedSet에서 특정 value삭제
     public void removeValueFromSortedSet(String key, String value) {

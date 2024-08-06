@@ -179,7 +179,9 @@ public class MessageController {
         //초기화
         messageService.initUserState(Integer.parseInt(roomId));
 
-
+        //0단계 부터  시작.
+        ConferenceRoom conferenceRoom = conferenceRoomService.findByRoomId(roomId).updateStep(Step.STEP_0);
+        conferenceRoomService.updateConferenceRoom(conferenceRoom);
 //        MessagePostProcessor messagePostProcessor = message -> {
 //            message.getMessageProperties().setHeader("Authorization", "회의 토큰");
 //            return message;
@@ -199,10 +201,6 @@ public class MessageController {
         if (!role.equals("CHIEF")) {
             throw new AuthenticationCredentialsNotFoundException("권한이 없음");
         }
-
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("MessageController Authentication: \n\n\n\n\n" + (authentication != null ? authentication.getAuthorities() : "No Authentication"));
 
         Step nextStep=requestStep.getStep().next();
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseStep(MessageType.NEXT_STEP,nextStep));
