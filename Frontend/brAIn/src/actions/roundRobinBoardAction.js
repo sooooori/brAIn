@@ -1,12 +1,17 @@
 export const ADD_POSTIT= 'ADD_POSTIT';
+export const RESET_STATE = 'RESET_STATE'
 
-
-const sendToBoard=(round,content)=>{
+export const sendToBoard=(round,content)=>{
     return{
-        type:ADD,
+        type:ADD_POSTIT,
         payload:{
             content:content,
             round:round
         }
     }
 }
+
+
+export const resetRoundBoard = ()=>({
+    type: RESET_STATE
+})

@@ -5,6 +5,7 @@ export const SET_USERNICK = 'SET_USERNICK';
 export const SET_CURUSER = 'SET_CURUSER';
 export const SET_NEXTUSER = 'SET_NEXTUSER';
 export const UPDATE_TIMER = 'UPDATE_TIMER';
+export const RESET_STATE = 'RESET_STATE'
 
 export const addUser = (user) => ({
     type: ADD_USER,
@@ -47,3 +48,7 @@ export const updateTimer = (time) => ({
     payload: time,
 });
 
+
+export const resetUser = ()=>({
+    type: RESET_STATE
+})

@@ -1,34 +1,36 @@
-import { ADD_POSTIT } from "../actions/roundRobinBoardAction";
+import { ADD_POSTIT, RESET_STATE } from "../actions/roundRobinBoardAction";
 
-const initialState={
-    roundRobinBoard:[]
-}
+const initialState = {
+    roundRobinBoard: [[]]
+};
 
-const roundRobinBoardReducer=(state=initialState,action)=>{
+const roundRobinBoardReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case ADD_POSTIT: {
+            const { round, content } = action.payload;
 
-    switch(action.type){
-        case ADD_POSTIT:{
-            const {content,round}=action.payload;
+            // Create a copy of the roundRobinBoard
+            const newBoard = state.roundRobinBoard.map((roundContent, index) => 
+                index === round ? [...roundContent, content] : roundContent
+            );
 
-            const newBoard=[...state.roundRobinBoard];
-
-            if(!newBoard[round]){
-                newBoard[round]=[];
+            // If the round does not exist, initialize it with an array containing the content
+            if (!newBoard[round]) {
+                newBoard[round] = [content];
             }
 
-            newBoard[round].push(content);
-
             return {
-                ...state,roundRobinBoard:newBoard
+                ...state,
+                roundRobinBoard: newBoard
             };
         }
 
+        case RESET_STATE:
+            return initialState;
+
         default:
             return state;
-            
-    } 
-    
-}
+    }
+};
 
-
-
+export default roundRobinBoardReducer;

@@ -15,8 +15,9 @@ import SidebarIcon from '../../assets/svgs/sidebar.svg';
 import MemberList from './components/MemberList';
 import './ConferenceEx.css';
 
-import { addUser, removeUser, setUsers, setUserNick, setCuruser } from '../../actions/userActions';
-import { setCurStep, upRound, setRound } from '../../actions/conferenceActions';
+import { addUser, removeUser, setUsers, setUserNick, setCuruser, resetUser } from '../../actions/userActions';
+import { setCurStep, upRound, setRound, resetConference } from '../../actions/conferenceActions';
+import { sendToBoard, resetRoundBoard } from '../../actions/roundRobinBoardAction';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -33,7 +34,7 @@ const Conference = () => {
   const [roomId, setRoomId] = useState(null);
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [roundRobinBoard, setRoundRobinBoard] = useState([]);
+  //const [roundRobinBoard, setRoundRobinBoard] = useState([]);
 
 
   const [notes, setNotes] = useState([]);
@@ -47,9 +48,8 @@ const Conference = () => {
   const curUser = useSelector(state => state.user.currentUser)
 
   const roundRobinBoard = useSelector(state => state.roundRobinBoard.roundRobinBoard);
-
-
   const { secureId: routeSecureId } = useParams();
+
 
   useEffect(() => {
     let isMounted = true;
@@ -155,7 +155,9 @@ const Conference = () => {
   useEffect(() => {
     console.log(curUser);
   }, [curUser]);
-
+  useEffect(() => {
+    console.log(roundRobinBoard);
+  }, [roundRobinBoard]);
 
   const handleMessage = async (receivedMessage) => {
     if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
@@ -205,13 +207,14 @@ const Conference = () => {
       });
     }
   };
-///////
-///////
+
   //라운드 로빈 포스트잇 보드에 저장
   const roundRobinBoardUpdate=(postit)=>{
     
-    dispatch(sendToBoard(postit.curRound,postit.content))
-    //dispatch(upRound())
+    dispatch(sendToBoard(postit.curRound, postit.content))
+    if (round !== postit.nextRound) {
+      dispatch(setRound(postit.nextRound));
+    }
     dispatch(setCuruser(postit.nextUser))
   }
 

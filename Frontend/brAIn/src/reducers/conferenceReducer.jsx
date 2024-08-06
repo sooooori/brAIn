@@ -1,4 +1,4 @@
-import { SET_CUR_STEP, UP_ROUND, SET_ROUND } from '../actions/conferenceActions';
+import { SET_CUR_STEP, UP_ROUND, SET_ROUND, RESET_STATE } from '../actions/conferenceActions';
 
 const initialState = {
     curStep: 'WAIT',
@@ -23,7 +23,8 @@ const conferenceReducer = (state = initialState, action) => {
                 ...state,
                 round: action.payload, // payload로 전달된 값으로 curStep 업데이트
             };
-
+        case RESET_STATE:
+            return initialState;
 
         default:
             return state; // 알 수 없는 액션 타입인 경우 현재 상태를 반환

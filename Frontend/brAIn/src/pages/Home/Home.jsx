@@ -11,6 +11,10 @@ import './Home.css';
 import Button from '../../components/Button/Button';
 import { useNavigate } from 'react-router-dom';
 
+import { addUser, removeUser, setUsers, setUserNick, setCuruser, resetUser } from '../../actions/userActions';
+import { setCurStep, upRound, setRound, resetConference } from '../../actions/conferenceActions';
+import { sendToBoard, resetRoundBoard } from '../../actions/roundRobinBoardAction';
+
 const Home = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [isConferenceSearchClicked, setIsConferenceSearchClicked] = useState(false);
@@ -20,6 +24,7 @@ const Home = () => {
   const [rightVisible, setRightVisible] = useState(true);
   const [centerVisible, setCenterVisible] = useState(true);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleConferenceSearchClickedTrue = () => {
     setIsConferenceSearchClicked(true);
@@ -52,6 +57,10 @@ const Home = () => {
   const { ref: centerRef, inView: centerInView } = useInView({
     threshold: 0.5,
   });
+
+  dispatch(resetUser())
+  dispatch(resetConference())
+  dispatch(resetRoundBoard())
 
   useEffect(() => {
     if (leftInView) {
