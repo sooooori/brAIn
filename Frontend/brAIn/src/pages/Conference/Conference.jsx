@@ -13,6 +13,11 @@ const Conference = () => {
   const [roomId, setRoomId] = useState(null);
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [roundRobinBoard,setRoundRobinBoard]=useState([]);
+  const [round,setRound]=useState(0);
+
+  //현재 제출자
+  const [curUser,setCurUser]=useState("");
 
   const { secureId } = useParams();
 
@@ -93,6 +98,8 @@ const Conference = () => {
   const handleMessage = (receivedMessage) => {
     if (receivedMessage.type === 'ENTER_WAITING_ROOM') {
       countUpMember();
+    }else if(receivedMessage.type==='SUBMIT_POST_IT'){
+      roundRobinBoardUpdate(receivedMessage);
     }
   };
 
@@ -120,6 +127,43 @@ const Conference = () => {
       startMeeting();
     }
   };
+
+
+  const roundRobinBoardUpdate=(postit)=>{
+    
+    setRoundRobinBoard((prevRoundRobinBoard)=>{
+      const roundRobinBoard=[...prevRoundRobinBoard];
+      if(roundRobinBoard[postit.curRound]){
+        roundRobinBoard[postit.curRound]=[...roundRobinBoard[postit.curRound],postit.content];
+      }else{
+        roundRobinBoard[postit.curRound]=[postit.content];
+      }
+
+      return roundRobinBoard;
+    })
+
+    if(round!==postit.nextRound){
+      setRound(postit.nextRound);
+    }
+
+    setCurUser(postit.nextUser);
+  }
+
+  //라운드 로빈 포스트잇 제출
+  const attachPostitOnRoundBoard=(content)=>{
+    if(client){
+      const postit={
+        round:round,
+        content:content,
+      }
+
+      client.publish({
+        destination:`/app/step1.submit.${roomId}`,
+        headers:{Authorization:localStorage.getItem('roomToken')},
+        body:JSON.stringify(postit)
+      });
+    }
+  }
 
   return (
     <div className="conference">
