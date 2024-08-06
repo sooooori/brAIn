@@ -129,7 +129,7 @@ public class GoogleService {
                     .name(name)
                     .role(Role.USER)
                     .social(Social.Google)
-                    .locked(false)
+                    .locked(true)
                     .loginFailCount(0)
                     .build();
 

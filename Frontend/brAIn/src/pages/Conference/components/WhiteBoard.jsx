@@ -3,6 +3,7 @@ import axios from 'axios';
 import PostIt from './PostIt';
 import './WhiteBoard.css';
 import { useSelector } from 'react-redux';
+import PostItTest from './PostItTest';
 
 const WhiteBoard = ({ subject, onSubmitClick }) => {
   const [ideas, setIdeas] = useState([]);
@@ -111,6 +112,10 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
           ))}
         </div>
       </div>
+      <div>
+        <PostItTest />  
+      </div>
+
       <div className="WhiteBoard-footer">
         <form className="idea-form" /*onSubmit={handleAddIdea}*/>
           <input

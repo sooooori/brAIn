@@ -17,6 +17,7 @@ import './ConferenceEx.css';
 
 import { addUser, removeUser, setUsers, setUserNick, setCuruser } from '../../actions/userActions';
 import { setCurStep, upRound } from '../../actions/conferenceActions';
+import { sendToBoard } from '../../actions/roundRobinBoardAction';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -33,7 +34,6 @@ const Conference = () => {
   const [roomId, setRoomId] = useState(null);
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [roundRobinBoard,setRoundRobinBoard]=useState([]);
 
 
   const [notes, setNotes] = useState([]);
@@ -46,6 +46,7 @@ const Conference = () => {
   const [isUnmounted, setIsUnmounted] = useState(false);
   const curUser = useSelector(state => state.user.currentUser)
 
+  const roundRobinBoard = useSelector(state => state.roundRobinBoard.roundRobinBoard);
 
 
   const { secureId: routeSecureId } = useParams();
@@ -100,7 +101,7 @@ const Conference = () => {
         newClient.onConnect = (frame) => {
           setConnected(true);
           console.log('Connected: ' + frame);
-          newClient.subscribe(`/topic/room.${roomId}`, (message) => {
+          newClient.subscribe(`/topic/room.${response.data.roomId}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
             handleMessage(receivedMessage);
           });
@@ -141,7 +142,7 @@ const Conference = () => {
       }
     };
 
-  }, [routeSecureId, connected, isConnecting]);
+  }, [routeSecureId]);
 
   useEffect(() => {
     console.log(users);
@@ -151,15 +152,20 @@ const Conference = () => {
     console.log(nickname);
   }, [nickname]);
 
+  useEffect(() => {
+    console.log(curUser);
+  }, [curUser]);
+
 
   const handleMessage = async (receivedMessage) => {
     if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
       countUpMember();
-    }else if(receivedMessage.type==='SUBMIT_POST_IT'){
+    } else if (receivedMessage.messageType === 'SUBMIT_POST_IT') {
       roundRobinBoardUpdate(receivedMessage);
     }
     else if (receivedMessage.messageType == 'START_CONFERENCE') {
       console.log("Rldpdpdpdpdpdpdpdppd")
+      startMeeting();
       const updatedUsers = await dispatch(setUsers(receivedMessage.users));
       dispatch(setCuruser(updatedUsers[0].nickname));
       dispatch(setCurStep('STEP_0'))
@@ -197,43 +203,30 @@ const Conference = () => {
         },
         //body: JSON.stringify({ type: 'START_MEETING' }),
       });
-      startMeeting();
     }
   };
-
-
+///////
+///////
+  //라운드 로빈 포스트잇 보드에 저장
   const roundRobinBoardUpdate=(postit)=>{
     
-    setRoundRobinBoard((prevRoundRobinBoard)=>{
-      const roundRobinBoard=[...prevRoundRobinBoard];
-      if(roundRobinBoard[postit.curRound]){
-        roundRobinBoard[postit.curRound]=[...roundRobinBoard[postit.curRound],postit.content];
-      }else{
-        roundRobinBoard[postit.curRound]=[postit.content];
-      }
-
-      return roundRobinBoard;
-    })
-
-    if(round!==postit.nextRound){
-      setRound(postit.nextRound);
-    }
-
-    setCurUser(postit.nextUser);
+    dispatch(sendToBoard(postit.curRound,postit.content))
+    //dispatch(upRound())
+    dispatch(setCuruser(postit.nextUser))
   }
 
   //라운드 로빈 포스트잇 제출
-  const attachPostitOnRoundBoard=(content)=>{
-    if(client){
-      const postit={
-        round:round,
-        content:content,
+  const attachPostitOnRoundBoard = (content) => {
+    if (client) {
+      const postit = {
+        round: round,
+        content: content,
       }
 
       client.publish({
-        destination:`/app/step1.submit.${roomId}`,
-        headers:{Authorization:localStorage.getItem('roomToken')},
-        body:JSON.stringify(postit)
+        destination: `/app/step1.submit.${roomId}`,
+        headers: { Authorization: localStorage.getItem('roomToken') },
+        body: JSON.stringify(postit)
       });
     }
   }
@@ -287,6 +280,9 @@ const Conference = () => {
           />
         </div>
       )}
+      {/* <div>
+        <MemberList />
+      </div> */}
       {isMeetingStarted && (
         <div className="meeting-content">
           <div className="sidebar-container">
@@ -311,17 +307,15 @@ const Conference = () => {
               <div className="conf-timer-container">
                 <Timer />
               </div>
-              <div className="whiteboard-container">
-                <WhiteBoard subject="안녕" onSubmitClick= {attachPostitOnRoundBoard} />
-              </div>
 
-              {/* test */}
-              <div>
-                <MemberList/>
+              {/*  */}
+              <div className="whiteboard-container">
+                <WhiteBoard subject="안녕" onSubmitClick={attachPostitOnRoundBoard} />
               </div>
 
               <div className="action-buttons-container">
                 <Button
+                  type='fit'
                   onClick={handleReadyButtonClick}
                   buttonStyle="purple"
                   ariaLabel="Ready Button"
@@ -329,9 +323,10 @@ const Conference = () => {
                 >
                   <span>준비 완료</span>
                 </Button>
-                {role !== 'host' && (
+                {/*role !== 'host' && (
                   <>
                     <Button
+                      type='fit'
                       onClick={handleNextStepClick}
                       buttonStyle="purple"
                       ariaLabel="Next Step Button"
@@ -340,6 +335,7 @@ const Conference = () => {
                       <span>다음 단계</span>
                     </Button>
                     <Button
+                      type='fit'
                       onClick={handlePassButtonClick}
                       buttonStyle="purple"
                       ariaLabel="Pass Button"
@@ -348,7 +344,25 @@ const Conference = () => {
                       <span>패스하기</span>
                     </Button>
                   </>
-                )}
+                )*/}
+                <Button
+                  type='fit'
+                  onClick={handleNextStepClick}
+                  buttonStyle="purple"
+                  ariaLabel="Next Step Button"
+                  className="action-button next-step-button"
+                >
+                  <span>다음 단계</span>
+                </Button>
+                <Button
+                  type='fit'
+                  onClick={handlePassButtonClick}
+                  buttonStyle="purple"
+                  ariaLabel="Pass Button"
+                  className="action-button pass-button"
+                >
+                  <span>패스하기</span>
+                </Button>
               </div>
             </div>
           </div>
