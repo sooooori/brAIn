@@ -194,6 +194,8 @@ const Conference = () => {
     }
   };
 
+  const 
+
   const toggleSidebar = () => {
     setIsSidebarVisible((prev) => !prev);
   };
@@ -267,7 +269,7 @@ const Conference = () => {
                 <Timer />
               </div>
               <div className="whiteboard-container">
-                <WhiteBoard subject="안녕" />
+                <WhiteBoard subject="안녕" onSubmitClick=c />
               </div>
               <div className="action-buttons-container">
                 <Button
