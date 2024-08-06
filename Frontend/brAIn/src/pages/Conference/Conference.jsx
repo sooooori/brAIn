@@ -14,7 +14,7 @@ import Button from '../../components/Button/Button';
 import SidebarIcon from '../../assets/svgs/sidebar.svg';
 import './ConferenceEx.css';
 
-import { addUser, removeUser, setUsers, setUserNick, setCuruser } from '../../actions/userActions';
+import { addUser, removeUser, setUsers, setUserNick, setCuruser, setNextuser } from '../../actions/userActions';
 import { setCurStep, upRound } from '../../actions/conferenceActions';
 
 import { useNavigate } from 'react-router-dom';
@@ -32,7 +32,7 @@ const Conference = () => {
   const [roomId, setRoomId] = useState(null);
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [roundRobinBoard,setRoundRobinBoard]=useState([]);
+
 
 
   const [notes, setNotes] = useState([]);
@@ -45,6 +45,7 @@ const Conference = () => {
   const [isUnmounted, setIsUnmounted] = useState(false);
   const curUser = useSelector(state => state.user.currentUser)
 
+  const roundRobinBoard = useSelector(state => state.roundRobinBoard.roundRobinBoard);
 
 
   const { secureId: routeSecureId } = useParams();
@@ -201,24 +202,12 @@ const Conference = () => {
   };
 
 
+  //라운드 로빈 포스트잇 보드에 저장
   const roundRobinBoardUpdate=(postit)=>{
     
-    setRoundRobinBoard((prevRoundRobinBoard)=>{
-      const roundRobinBoard=[...prevRoundRobinBoard];
-      if(roundRobinBoard[postit.curRound]){
-        roundRobinBoard[postit.curRound]=[...roundRobinBoard[postit.curRound],postit.content];
-      }else{
-        roundRobinBoard[postit.curRound]=[postit.content];
-      }
-
-      return roundRobinBoard;
-    })
-
-    if(round!==postit.nextRound){
-      setRound(postit.nextRound);
-    }
-
-    dispatch(setCuruser(postit.nextUser));
+    dispatch(sendToBoard(postit.curRound,postit.content))
+    dispatch(upRound())
+    dispatch(setCuruser(postit.nextUser))
   }
 
   //라운드 로빈 포스트잇 제출
