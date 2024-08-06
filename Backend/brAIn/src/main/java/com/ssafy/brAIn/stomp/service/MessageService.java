@@ -207,7 +207,11 @@ public class MessageService {
     }
 
     private int makeRandom(int size) {
-        return (int)(Math.random()*size);
+        int randomValue;
+        do {
+            randomValue = (int)(Math.random() * size);
+        } while (randomValue == 0);
+        return randomValue;
     }
 
 
