@@ -12,10 +12,13 @@ const initialState = {
 
 const userReducer = (state = initialState, action) => {
     switch (action.type) {
-        case SET_USERS:
+        case 'SET_USERS':
             return {
                 ...state,
-                users: action.payload,
+                users: action.payload.map(nickname => ({
+                    nickname: nickname,
+                    ready: false
+                }))
             };
         case ADD_USER:
             return {

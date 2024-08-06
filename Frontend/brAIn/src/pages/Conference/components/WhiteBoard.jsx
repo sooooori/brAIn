@@ -4,7 +4,7 @@ import PostIt from './PostIt';
 import './WhiteBoard.css';
 import { useSelector } from 'react-redux';
 
-const WhiteBoard = ({ subject }) => {
+const WhiteBoard = ({ subject, onSubmitClick }) => {
   const [ideas, setIdeas] = useState([]);
   const token = localStorage.getItem('authToken'); // 인증 토큰 가져오기
   const currentStep = useSelector((state) => state.conference.currentStep); // Redux에서 currentStep 가져오기

@@ -16,10 +16,13 @@ export const removeUser = (userId) => ({
     payload: userId,
 });
 
-export const setUsers = (users) => ({
-    type: SET_USERS,
-    payload: users,
-});
+export const setUsers = (users) => (dispatch, getState) => {
+    dispatch({
+        type: SET_USERS,
+        payload: users
+    });
+    return getState().user.users;
+};
 
 export const setUserNick = (nickname) => ({
     type: SET_USERNICK,
@@ -43,3 +46,4 @@ export const updateTimer = (time) => ({
     type: UPDATE_TIMER,
     payload: time,
 });
+
