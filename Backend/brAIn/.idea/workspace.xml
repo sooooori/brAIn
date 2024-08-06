@@ -4,89 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="46c15ecd-3885-42ed-9a92-5c2da2186c36" name="변경" comment="Fix: Code Error 수정">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/oauth/google/controller/GoogleController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/oauth/google/service/GoogleService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/oauth/kakao/controller/KakaoController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/oauth/kakao/dto/KakaoTokens.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/config/MyWebSocketHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ResponseMiddleVote.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/vote/controller/VoteController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/vote/dto/FinalVoteRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/vote/dto/VoteRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/vote/dto/VoteResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/vote/dto/VoteResultRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/vote/entity/VoteType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/actions/conferenceActions.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/actions/userActions.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/assets/svgs/pass_turn.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/assets/svgs/plus_time.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/assets/svgs/sidebar.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/assets/svgs/timer.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/ConferenceEx.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/ConferenceEx.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/MemberList.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/MemberList.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/PostIt.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/PostIt.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/PostItSidebar.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/PostItSidebar.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/Timer.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/Timer.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/VotedPostIt.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/VotedPostIt.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/WhiteBoard.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/WhiteBoard.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/AuthCallback.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/reducers/conferenceReducer.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/reducers/userReducer.jsx" afterDir="false" />
+    <list default="true" id="a3568f20-fecd-4d60-90d7-b6f824a43d3d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/config/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/config/WebSecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/oauth/kakao/service/KakaoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/oauth/kakao/service/KakaoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/controller/ConferenceRoomController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/controller/ConferenceRoomController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/dto/ConferenceRoomResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/dto/ConferenceRoomResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/entity/ConferenceRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/entity/ConferenceRoom.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/controller/HistoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/controller/HistoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/entity/MemberHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/entity/MemberHistory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/service/MemberHistoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/service/MemberHistoryService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/member/service/MemberService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/member/service/MemberService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/member/service/S3Service.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/s3/S3Service.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/postit/controller/PostItController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/postit/controller/PostItController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/postit/service/PostItService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/postit/service/PostItService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/roundpostit/entity/RoundPostIt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/roundpostit/entity/RoundPostIt.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/roundpostit/repository/RoundPostItRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/roundpostit/repository/RoundPostItRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/config/CsrfChannelInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/config/CsrfChannelInterceptor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/config/SecurityContextWebSocketHandlerDecorator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/config/SecurityContextWebSocketHandlerDecorator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/config/WebSocketEventListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/config/WebSocketEventListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/controller/MessageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/controller/MessageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/dto/MessageType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/dto/MessageType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/service/MessageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/service/MessageService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/util/RedisUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/util/RedisUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/vote/entity/Vote.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/vote/entity/Vote.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/vote/repository/VoteRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/vote/repository/VoteRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/vote/service/VoteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/vote/service/VoteService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/components/Navbar/NavBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/components/Navbar/NavBar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/features/conference/conferenceSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/features/conference/conferenceSlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.css" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/WaitingModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/WaitingModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/Home.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/JoinConferenceBack.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/JoinConferenceBack.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewConferenceBack.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewConferenceBack.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/Profile.css" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/Profile.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/Profile.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/Profile.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/components/UpdatePasswordModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Profile/components/UpdatePasswordModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/SendNumberModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/SendNumberModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/LoginOption.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/LoginOption.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/JoinModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/JoinModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/LoginModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/LoginModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/ResetPasswordModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/User/components/ResetPasswordModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/utils/Axios.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/utils/Axios.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/store/store.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/store/store.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ConferencesEnterExit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ConferencesEnterExit.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,48 +35,14 @@
       </state>
     </system>
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
-  </component>
-  <component name="GitLabMergeRequestFiltersHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPENED&quot;,
-    &quot;assignee&quot;: {
-      &quot;type&quot;: &quot;org.jetbrains.plugins.gitlab.mergerequest.ui.filters.GitLabMergeRequestsFiltersValue.MergeRequestsMemberFilterValue.MergeRequestsAssigneeFilterValue&quot;,
-      &quot;username&quot;: &quot;project_701728_bot_19ee4eb4bb096c7a3d0119ccefa28498&quot;,
-      &quot;fullname&quot;: &quot;OwnerToken&quot;
-    }
-  }
-}</component>
-  <component name="GitLabMergeRequestsSettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;first&quot;: &quot;https://lab.ssafy.com/s11-webmobile1-sub2/S11P12B203.git&quot;,
-    &quot;second&quot;: &quot;dcd23a6f-e932-4a22-ac80-4d18936c09e6&quot;
-  }
-}</component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 8
-}</component>
-  <component name="ProjectId" id="2jyMLO9IWp0F9ll8HJNYnZQHeml" />
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
-  </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Gradle.Build brAIn.executor": "Run",
-    "Gradle.brAIn [:BrAInApplication.main()].executor": "Run",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.BrAInApplication.executor": "Run",
-    "git-widget-placeholder": "Merging feature/AIsocket",
-    "kotlin-language-version-configured": "true",
+    "git-widget-placeholder": "feature/app",
     "node.js.selected.package.tslint": "(autodetect)"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="BrAInApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
@@ -167,54 +53,7 @@
       </method>
     </configuration>
   </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.18034.62" />
-        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.18034.62" />
-      </set>
-    </attachedChunks>
-  </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task active="true" id="Default" summary="디폴트 작업">
-      <changelist id="46c15ecd-3885-42ed-9a92-5c2da2186c36" name="변경" comment="" />
-      <created>1722354808346</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1722354808346</updated>
-      <workItem from="1722817089764" duration="12931000" />
-      <workItem from="1722852515895" duration="4743000" />
-      <workItem from="1722900461910" duration="2472000" />
-    </task>
-    <task id="LOCAL-00001" summary="Fix: Code Error 수정">
-      <option name="closed" value="true" />
-      <created>1722821784145</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1722821784145</updated>
-    </task>
-    <option name="localTasksCounter" value="2" />
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fix: Code Error 수정" />
-    <MESSAGE value="변경" />
-    <option name="LAST_COMMIT_MESSAGE" value="변경" />
   </component>
 </project>

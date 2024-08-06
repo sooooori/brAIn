@@ -209,7 +209,7 @@ const Conference = () => {
         roundRobinBoard[postit.curRound]=[...roundRobinBoard[postit.curRound],postit.content];
       }else{
         roundRobinBoard[postit.curRound]=[postit.content];
-      }
+      }  
 
       return roundRobinBoard;
     })
@@ -218,7 +218,7 @@ const Conference = () => {
       setRound(postit.nextRound);
     }
 
-    setCurUser(postit.nextUser);
+    setCuruser(postit.nextUser);
   }
 
   //라운드 로빈 포스트잇 제출
