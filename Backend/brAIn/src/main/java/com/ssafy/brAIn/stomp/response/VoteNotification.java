@@ -10,9 +10,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class VoteNotification {
 
-    private MessageType type;
+    private MessageType messageType;
 
     public VoteNotification(MessageType type) {
-        this.type = type;
+        this.messageType = type;
     }
 }

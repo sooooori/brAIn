@@ -60,6 +60,23 @@ public class AIService {
                 .block();
     }
 
+
+    public String addComment(String threadId, String postIt, String comment) {
+        String url="/comment/add";
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("threadId", threadId);
+        requestBody.put("postIt", postIt);
+        requestBody.put("comment", comment);
+
+        return webClient
+                .post()
+                .uri(url)
+                .bodyValue(requestBody)
+                .retrieve().bodyToMono(String.class)
+                .block();
+    }
+
+
     public String makeSummary(String threadId, String assistantId) {
         String url="/summary/make";
         Map<String, String> requestBody = new HashMap<>();

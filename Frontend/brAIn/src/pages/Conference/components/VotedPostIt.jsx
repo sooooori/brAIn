@@ -20,7 +20,7 @@ const VotedPostIt = () => {
       }
     };
 
-    fetchVotedPostIts();
+    // fetchVotedPostIts();
   }, []);
 
   return (
