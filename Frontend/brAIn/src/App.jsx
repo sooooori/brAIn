@@ -9,7 +9,6 @@ import Profile from './pages/Profile/Profile';
 import NavBar from './components/Navbar/NavBar'
 import Conference from './pages/Conference/Conference'
 import AuthCallback from './pages/User/AuthCallback';
-import MemberList from './pages/Conference/components/MemberList';
 
 function App() {
     return (
@@ -23,9 +22,6 @@ function App() {
                     <Route path="/conferences/:secureId" element={<Conference />} />
                     <Route path="/kakao-redirect" element={<AuthCallback />} />
                     <Route path="/google-redirect" element={<AuthCallback />} />
-
-                    {/* test */}
-                    <Route path="/test" element={<MemberList />} />
                 </Routes>
             </div>
         </div>

@@ -12,6 +12,7 @@ import WhiteBoard from './components/WhiteBoard';
 import VotedPostIt from './components/VotedPostIt';
 import Button from '../../components/Button/Button';
 import SidebarIcon from '../../assets/svgs/sidebar.svg';
+import MemberList from './components/MemberList';
 import './ConferenceEx.css';
 
 import { addUser, removeUser, setUsers, setUserNick, setCuruser } from '../../actions/userActions';
@@ -32,7 +33,7 @@ const Conference = () => {
   const [roomId, setRoomId] = useState(null);
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [roundRobinBoard,setRoundRobinBoard]=useState([]);
+  const [roundRobinBoard, setRoundRobinBoard] = useState([]);
 
 
   const [notes, setNotes] = useState([]);
@@ -99,7 +100,7 @@ const Conference = () => {
         newClient.onConnect = (frame) => {
           setConnected(true);
           console.log('Connected: ' + frame);
-          newClient.subscribe(`/topic/room.${roomId}`, (message) => {
+          newClient.subscribe(`/topic/room.${response.data.roomId}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
             handleMessage(receivedMessage);
           });
@@ -140,7 +141,7 @@ const Conference = () => {
       }
     };
 
-  }, [routeSecureId, connected, isConnecting]);
+  }, [routeSecureId]);
 
   useEffect(() => {
     console.log(users);
@@ -154,7 +155,7 @@ const Conference = () => {
   const handleMessage = async (receivedMessage) => {
     if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
       countUpMember();
-    }else if(receivedMessage.type==='SUBMIT_POST_IT'){
+    } else if (receivedMessage.type === 'SUBMIT_POST_IT') {
       roundRobinBoardUpdate(receivedMessage);
     }
     else if (receivedMessage.messageType == 'START_CONFERENCE') {
@@ -201,20 +202,20 @@ const Conference = () => {
   };
 
 
-  const roundRobinBoardUpdate=(postit)=>{
-    
-    setRoundRobinBoard((prevRoundRobinBoard)=>{
-      const roundRobinBoard=[...prevRoundRobinBoard];
-      if(roundRobinBoard[postit.curRound]){
-        roundRobinBoard[postit.curRound]=[...roundRobinBoard[postit.curRound],postit.content];
-      }else{
-        roundRobinBoard[postit.curRound]=[postit.content];
-      }  
+  const roundRobinBoardUpdate = (postit) => {
+
+    setRoundRobinBoard((prevRoundRobinBoard) => {
+      const roundRobinBoard = [...prevRoundRobinBoard];
+      if (roundRobinBoard[postit.curRound]) {
+        roundRobinBoard[postit.curRound] = [...roundRobinBoard[postit.curRound], postit.content];
+      } else {
+        roundRobinBoard[postit.curRound] = [postit.content];
+      }
 
       return roundRobinBoard;
     })
 
-    if(round!==postit.nextRound){
+    if (round !== postit.nextRound) {
       setRound(postit.nextRound);
     }
 
@@ -222,17 +223,17 @@ const Conference = () => {
   }
 
   //라운드 로빈 포스트잇 제출
-  const attachPostitOnRoundBoard=(content)=>{
-    if(client){
-      const postit={
-        round:round,
-        content:content,
+  const attachPostitOnRoundBoard = (content) => {
+    if (client) {
+      const postit = {
+        round: round,
+        content: content,
       }
 
       client.publish({
-        destination:`/app/step1.submit.${roomId}`,
-        headers:{Authorization:localStorage.getItem('roomToken')},
-        body:JSON.stringify(postit)
+        destination: `/app/step1.submit.${roomId}`,
+        headers: { Authorization: localStorage.getItem('roomToken') },
+        body: JSON.stringify(postit)
       });
     }
   }
@@ -286,6 +287,9 @@ const Conference = () => {
           />
         </div>
       )}
+      <div>
+        <MemberList />
+      </div>
       {isMeetingStarted && (
         <div className="meeting-content">
           <div className="sidebar-container">
@@ -311,10 +315,14 @@ const Conference = () => {
                 <Timer />
               </div>
               <div className="whiteboard-container">
-                <WhiteBoard subject="안녕" onSubmitClick= {attachPostitOnRoundBoard} />
+                <WhiteBoard subject="안녕" onSubmitClick={attachPostitOnRoundBoard} />
               </div>
+
+              {/* test */}
+
               <div className="action-buttons-container">
                 <Button
+                  type='fit'
                   onClick={handleReadyButtonClick}
                   buttonStyle="purple"
                   ariaLabel="Ready Button"
@@ -325,6 +333,7 @@ const Conference = () => {
                 {role !== 'host' && (
                   <>
                     <Button
+                      type='fit'
                       onClick={handleNextStepClick}
                       buttonStyle="purple"
                       ariaLabel="Next Step Button"
@@ -333,6 +342,7 @@ const Conference = () => {
                       <span>다음 단계</span>
                     </Button>
                     <Button
+                      type='fit'
                       onClick={handlePassButtonClick}
                       buttonStyle="purple"
                       ariaLabel="Pass Button"

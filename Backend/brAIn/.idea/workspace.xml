@@ -4,15 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="a3568f20-fecd-4d60-90d7-b6f824a43d3d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ConferencesEnterExit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ConferencesEnterExit.java" afterDir="false" />
+=======
+    <list default="true" id="e60a2d4d-1767-4dbb-9eb0-201d3f61c89d" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ConferencesEnterExit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ConferencesEnterExit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewConferenceBack.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewConferenceBack.jsx" afterDir="false" />
+>>>>>>> 046cd6156be1e2dfeb1bbc6542c4904e029425e5
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+<<<<<<< HEAD
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -54,6 +62,37 @@
     </configuration>
   </component>
   <component name="TaskManager">
+=======
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 8
+}]]></component>
+  <component name="ProjectId" id="2kGQFQx6nbhCGpnREBnChPoLM5e" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.brAIn [:BrAInApplication.main()].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "test 병합 중",
+    "kotlin-language-version-configured": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="e60a2d4d-1767-4dbb-9eb0-201d3f61c89d" name="변경" comment="" />
+      <created>1722907331079</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1722907331079</updated>
+    </task>
+>>>>>>> 046cd6156be1e2dfeb1bbc6542c4904e029425e5
     <servers />
   </component>
 </project>
