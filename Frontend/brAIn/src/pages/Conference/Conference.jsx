@@ -14,7 +14,7 @@ import Button from '../../components/Button/Button';
 import SidebarIcon from '../../assets/svgs/sidebar.svg';
 import './ConferenceEx.css';
 
-import { addUser, removeUser, setUsers, setUserNick } from '../../actions/userActions';
+import { addUser, removeUser, setUsers, setUserNick, setCuruser } from '../../actions/userActions';
 import { setCurStep, upRound } from '../../actions/conferenceActions';
 
 import { useNavigate } from 'react-router-dom';
@@ -32,6 +32,9 @@ const Conference = () => {
   const [roomId, setRoomId] = useState(null);
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [roundRobinBoard,setRoundRobinBoard]=useState([]);
+
+
   const [notes, setNotes] = useState([]);
   const [showNotes, setShowNotes] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
@@ -40,15 +43,17 @@ const Conference = () => {
   const step = useSelector(state => state.conferenceInfo.curStep)
   const round = useSelector(state => state.conferenceInfo.round)
   const [isUnmounted, setIsUnmounted] = useState(false);
+  const curUser = useSelector(state => state.user.currentUser)
 
-  
+
+
   const { secureId: routeSecureId } = useParams();
 
   useEffect(() => {
     let isMounted = true;
     let currentClient = null;
 
-    
+
 
     const fetchDataAndConnect = async () => {
       try {
@@ -146,17 +151,23 @@ const Conference = () => {
   }, [nickname]);
 
 
-  const handleMessage = (receivedMessage) => {
+  const handleMessage = async (receivedMessage) => {
     if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
       countUpMember();
+    }else if(receivedMessage.type==='SUBMIT_POST_IT'){
+      roundRobinBoardUpdate(receivedMessage);
     }
     else if (receivedMessage.messageType == 'START_CONFERENCE') {
       console.log("Rldpdpdpdpdpdpdpdppd")
-      dispatch(setUsers(receivedMessage.users));
+      const updatedUsers = await dispatch(setUsers(receivedMessage.users));
+      dispatch(setCuruser(updatedUsers[0].nickname));
       dispatch(setCurStep('STEP_0'))
     }
     else if (receivedMessage.messageType == 'ENTER_CONFERENCES') {
-      //dispatch(setUserNick(receivedMessage.nickname));
+      dispatch(setUserNick(receivedMessage.nickname));
+    }
+    else if (receivedMessage.messageType == 'NEXT_STEP') {
+      dispatch(setCurStep(receivedMessage.curStep))
     }
   };
 
@@ -189,6 +200,43 @@ const Conference = () => {
     }
   };
 
+
+  const roundRobinBoardUpdate=(postit)=>{
+    
+    setRoundRobinBoard((prevRoundRobinBoard)=>{
+      const roundRobinBoard=[...prevRoundRobinBoard];
+      if(roundRobinBoard[postit.curRound]){
+        roundRobinBoard[postit.curRound]=[...roundRobinBoard[postit.curRound],postit.content];
+      }else{
+        roundRobinBoard[postit.curRound]=[postit.content];
+      }
+
+      return roundRobinBoard;
+    })
+
+    if(round!==postit.nextRound){
+      setRound(postit.nextRound);
+    }
+
+    setCurUser(postit.nextUser);
+  }
+
+  //라운드 로빈 포스트잇 제출
+  const attachPostitOnRoundBoard=(content)=>{
+    if(client){
+      const postit={
+        round:round,
+        content:content,
+      }
+
+      client.publish({
+        destination:`/app/step1.submit.${roomId}`,
+        headers:{Authorization:localStorage.getItem('roomToken')},
+        body:JSON.stringify(postit)
+      });
+    }
+  }
+
   const toggleSidebar = () => {
     setIsSidebarVisible((prev) => !prev);
   };
@@ -203,6 +251,17 @@ const Conference = () => {
 
   const handleNextStepClick = () => {
     // Implement logic for "Next Step" button click
+    if (client) {
+      client.publish({
+        destination: `/app/next.step.${roomId}`,
+        headers: {
+          'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
+        },
+        body: JSON.stringify({
+          step: step
+        })
+      });
+    }
   };
 
   const handlePassButtonClick = () => {
@@ -210,9 +269,11 @@ const Conference = () => {
     console.log('Pass button clicked');
   };
 
+
+
   return (
     <div className="conference">
-      {isMeetingStarted && <ConferenceNavbar secureId={routeSecureId} />}
+      {/* {isMeetingStarted && <ConferenceNavbar secureId={routeSecureId} />} */}
       {!isMeetingStarted && (
         <div>
           <WaitingModal
@@ -250,7 +311,7 @@ const Conference = () => {
                 <Timer />
               </div>
               <div className="whiteboard-container">
-                <WhiteBoard subject="안녕" />
+                <WhiteBoard subject="안녕" onSubmitClick= {attachPostitOnRoundBoard} />
               </div>
               <div className="action-buttons-container">
                 <Button
@@ -286,10 +347,18 @@ const Conference = () => {
           </div>
         </div>
       )}
-      {/* <h1>Current Step: {step}</h1> */}
-      {/* <h2>Current Round: {round}</h2> */}
-      {/* <h2>Current members: {users}</h2> */}
-      <h2>nickname: {nickname}</h2>
+      <div>Current Step: {step}
+      </div>
+      <div>Current Round: {round}</div>
+      {users.map((user, index) => (
+        <div key={index}>
+          <p>Nickname: {user.nickname}</p>
+          <p>Ready: {user.ready ? 'Yes' : 'No'}</p>
+          {user.nickname === curUser && <p>cur</p>}
+        </div>
+      ))}
+      <div>nickname: {nickname}</div>
+      <div>curuser : {curUser}</div>
     </div>
   );
 };

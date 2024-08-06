@@ -11,11 +11,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ResponseStep {
 
-    private MessageType type;
+    private MessageType messageType;
     private Step curStep;
 
     public ResponseStep(MessageType type, Step curStep) {
-        this.type = type;
+        this.messageType = type;
         this.curStep = curStep;
     }
 }

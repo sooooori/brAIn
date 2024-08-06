@@ -2,7 +2,7 @@ import { SET_CUR_STEP, UP_ROUND } from '../actions/conferenceActions';
 
 const initialState = {
     curStep: 'WAIT',
-    round: 0,
+    round: 1,
 };
 
 const conferenceReducer = (state = initialState, action) => {

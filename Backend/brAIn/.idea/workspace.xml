@@ -156,7 +156,7 @@
     "kotlin-language-version-configured": "true",
     "node.js.selected.package.tslint": "(autodetect)"
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="BrAInApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
@@ -184,6 +184,8 @@
       <option name="presentableId" value="Default" />
       <updated>1722354808346</updated>
       <workItem from="1722817089764" duration="12931000" />
+      <workItem from="1722852515895" duration="4743000" />
+      <workItem from="1722900461910" duration="2472000" />
     </task>
     <task id="LOCAL-00001" summary="Fix: Code Error 수정">
       <option name="closed" value="true" />

@@ -12,12 +12,12 @@ import java.util.List;
 @NoArgsConstructor
 public class ConferencesEnterExit {
 
-    private MessageType type;
+    private MessageType messageType;
     private String nickname;
     private List<String> users;
 
-    public ConferencesEnterExit(MessageType type, String nickname, List<String> users) {
-        this.type = type;
+    public ConferencesEnterExit(MessageType type, String nickname) {
+        this.messageType = type;
         this.nickname = nickname;
         this.users = users;
     }

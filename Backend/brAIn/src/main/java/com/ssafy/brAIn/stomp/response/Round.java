@@ -10,11 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Round {
 
-    private MessageType type;
+    private MessageType messageType;
     private int round;
 
     public Round(MessageType type, int round) {
-        this.type = type;
+        this.messageType = type;
         this.round = round;
     }
 }
