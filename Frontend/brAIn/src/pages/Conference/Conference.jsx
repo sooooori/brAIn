@@ -16,7 +16,7 @@ import MemberList from './components/MemberList';
 import './ConferenceEx.css';
 
 import { addUser, removeUser, setUsers, setUserNick, setCuruser } from '../../actions/userActions';
-import { setCurStep, upRound } from '../../actions/conferenceActions';
+import { setCurStep, upRound, setRound } from '../../actions/conferenceActions';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -151,15 +151,20 @@ const Conference = () => {
     console.log(nickname);
   }, [nickname]);
 
+  useEffect(() => {
+    console.log(curUser);
+  }, [curUser]);
+
 
   const handleMessage = async (receivedMessage) => {
     if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
       countUpMember();
-    } else if (receivedMessage.type === 'SUBMIT_POST_IT') {
+    } else if (receivedMessage.messageType === 'SUBMIT_POST_IT') {
       roundRobinBoardUpdate(receivedMessage);
     }
     else if (receivedMessage.messageType == 'START_CONFERENCE') {
       console.log("Rldpdpdpdpdpdpdpdppd")
+      startMeeting();
       const updatedUsers = await dispatch(setUsers(receivedMessage.users));
       dispatch(setCuruser(updatedUsers[0].nickname));
       dispatch(setCurStep('STEP_0'))
@@ -197,7 +202,6 @@ const Conference = () => {
         },
         //body: JSON.stringify({ type: 'START_MEETING' }),
       });
-      startMeeting();
     }
   };
 
@@ -216,10 +220,10 @@ const Conference = () => {
     })
 
     if (round !== postit.nextRound) {
-      setRound(postit.nextRound);
+      dispatch(setRound(postit.nextRound));
     }
 
-    setCuruser(postit.nextUser);
+    dispatch(setCuruser(postit.nextUser));
   }
 
   //라운드 로빈 포스트잇 제출
@@ -330,7 +334,7 @@ const Conference = () => {
                 >
                   <span>준비 완료</span>
                 </Button>
-                {role !== 'host' && (
+                {/*role !== 'host' && (
                   <>
                     <Button
                       type='fit'
@@ -351,7 +355,25 @@ const Conference = () => {
                       <span>패스하기</span>
                     </Button>
                   </>
-                )}
+                )*/}
+                <Button
+                  type='fit'
+                  onClick={handleNextStepClick}
+                  buttonStyle="purple"
+                  ariaLabel="Next Step Button"
+                  className="action-button next-step-button"
+                >
+                  <span>다음 단계</span>
+                </Button>
+                <Button
+                  type='fit'
+                  onClick={handlePassButtonClick}
+                  buttonStyle="purple"
+                  ariaLabel="Pass Button"
+                  className="action-button pass-button"
+                >
+                  <span>패스하기</span>
+                </Button>
               </div>
             </div>
           </div>
