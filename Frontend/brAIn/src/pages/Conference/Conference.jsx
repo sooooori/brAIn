@@ -46,6 +46,7 @@ const Conference = () => {
   const [isUnmounted, setIsUnmounted] = useState(false);
   const curUser = useSelector(state => state.user.currentUser)
 
+  const roundRobinBoard = useSelector(state => state.roundRobinBoard.roundRobinBoard);
 
 
   const { secureId: routeSecureId } = useParams();
