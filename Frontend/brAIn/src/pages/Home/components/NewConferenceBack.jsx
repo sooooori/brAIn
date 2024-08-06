@@ -3,8 +3,12 @@ import { Box, Typography, TextField, Slider } from '@mui/material';
 import Button from '../../../components/Button/Button';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+
+import axios from '../../../utils/Axios';
+
 import { useSelector, useDispatch } from 'react-redux';
+
+
 import { setRole } from '../../../features/conference/conferenceSlice'; // Adjust the path as needed
 import './NewConferenceBack.css'; // 스타일을 정의한 CSS 파일을 임포트
 

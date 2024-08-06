@@ -2,7 +2,7 @@ export const ADD_USER = 'ADD_USER';
 export const REMOVE_USER = 'REMOVE_USER';
 export const SET_USERS = 'SET_USERS';
 export const SET_USERNICK = 'SET_USERNICK';
-export const SET_CURUSER = 'SET_CUR_USER';
+export const SET_CURUSER = 'SET_CURUSER';
 export const SET_NEXTUSER = 'SET_NEXTUSER';
 export const UPDATE_TIMER = 'UPDATE_TIMER';
 

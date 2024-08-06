@@ -203,11 +203,15 @@ public class MessageService {
 
 
         }
-        return redisUtils.getSortedSet(roomId+":order");
+        return redisUtils.getSortedSet(roomId+":order:cur");
     }
 
     private int makeRandom(int size) {
-        return (int)(Math.random()*size);
+        int randomValue;
+        do {
+            randomValue = (int)(Math.random() * size);
+        } while (randomValue == 0);
+        return randomValue;
     }
 
 
@@ -303,6 +307,13 @@ public class MessageService {
     public boolean isAi(Integer roomId,String user) {
         String ai = redisUtils.getData(roomId + ":ai:nickname");
         return ai.equals(user);
+    }
+
+    public List<String> getUsersInRoom(Integer roomId) {
+        String key = roomId + ":order:cur";
+        return redisUtils.getSortedSet(key).stream()
+                .map(Object::toString)
+                .toList();
     }
 
 }
