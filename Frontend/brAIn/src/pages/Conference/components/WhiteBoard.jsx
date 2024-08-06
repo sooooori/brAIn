@@ -8,11 +8,15 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
   const [ideas, setIdeas] = useState([]);
   const token = localStorage.getItem('authToken'); // 인증 토큰 가져오기
   const currentStep = useSelector((state) => state.conference.currentStep); // Redux에서 currentStep 가져오기
+  const [inputValue, setInputValue] = useState('');
+
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
 
   const handleAddIdea = async (e) => {
     e.preventDefault();
-    const ideaInput = e.target.elements.idea;
-    const newIdea = ideaInput.value.trim();
+    const newIdea = inputValue.trim();
 
     if (newIdea) {
       try {
@@ -21,7 +25,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
         }, {
           headers: {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json', // Content-Type을 application/json으로 설정
+            'Content-Type': 'application/json',
           },
         });
 
@@ -29,7 +33,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
 
         if (key) {
           setIdeas([...ideas, { content: message, key }]);
-          ideaInput.value = ''; // 입력 필드 초기화
+          setInputValue(''); // 입력 필드 초기화
         } else {
           console.error('No key returned from server');
         }
@@ -82,6 +86,10 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
     }
   };
 
+  const handleClick = () => {
+    onSubmitClick(inputValue);
+  };
+
   return (
     <div className="WhiteBoard">
       <header className="WhiteBoard-header">
@@ -104,14 +112,16 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
         </div>
       </div>
       <div className="WhiteBoard-footer">
-        <form className="idea-form" onSubmit={handleAddIdea}>
-          <input 
-            type="text" 
-            name="idea" 
-            placeholder="아이디어를 입력하세요..." 
-            className="idea-input" 
+        <form className="idea-form" /*onSubmit={handleAddIdea}*/>
+          <input
+            type="text"
+            name="idea"
+            value={inputValue}
+            onChange={handleInputChange}
+            placeholder="아이디어를 입력하세요..."
+            className="idea-input"
           />
-          <button type="submit" className="idea-submit-button">제출</button>
+          <button type="button" className="idea-submit-button" onClick={handleClick}>제출</button>
         </form>
       </div>
     </div>
