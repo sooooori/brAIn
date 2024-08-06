@@ -112,7 +112,7 @@ def add_postit():
     return "suceess"
 
 @app.route('/comment/add', methods=['POST'])
-def add_postit():
+def add_comment():
     params = request.get_json()
     post_it=params['postIt']
     comment = params['comment']
