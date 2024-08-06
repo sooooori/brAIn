@@ -11,8 +11,6 @@ import './Home.css';
 import Button from '../../components/Button/Button';
 import { useNavigate } from 'react-router-dom';
 
-import { addUser, removeUser, setUsers, setUserNick, setCuruser, resetUser } from '../../actions/userActions';
-import { setCurStep, upRound, setRound, resetConference } from '../../actions/conferenceActions';
 import { sendToBoard, resetRoundBoard } from '../../actions/roundRobinBoardAction';
 
 const Home = () => {
@@ -58,8 +56,8 @@ const Home = () => {
     threshold: 0.5,
   });
 
-  dispatch(resetUser())
-  dispatch(resetConference())
+  // dispatch(resetUser())
+  // dispatch(resetConference())
   dispatch(resetRoundBoard())
 
   useEffect(() => {

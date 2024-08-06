@@ -1,5 +1,5 @@
 export const ADD_POSTIT= 'ADD_POSTIT';
-export const RESET_STATE = 'RESET_STATE'
+export const RESET_BOARD = 'RESET_BOARD'
 
 export const sendToBoard=(round,content)=>{
     return{
@@ -13,5 +13,5 @@ export const sendToBoard=(round,content)=>{
 
 
 export const resetRoundBoard = ()=>({
-    type: RESET_STATE
+    type: RESET_BOARD
 })

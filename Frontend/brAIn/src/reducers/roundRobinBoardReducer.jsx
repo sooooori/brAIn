@@ -1,4 +1,4 @@
-import { ADD_POSTIT, RESET_STATE } from "../actions/roundRobinBoardAction";
+import { ADD_POSTIT, RESET_BOARD } from "../actions/roundRobinBoardAction";
 
 const initialState = {
     roundRobinBoard: [[]]
@@ -25,8 +25,11 @@ const roundRobinBoardReducer = (state = initialState, action) => {
             };
         }
 
-        case RESET_STATE:
-            return initialState;
+        case RESET_BOARD:
+            return {
+                ...state,
+                roundRobinBoard: [[]]
+            }
 
         default:
             return state;

@@ -374,7 +374,7 @@ const Conference = () => {
       <div>Current Step: {step}
       </div>
       <div>Current Round: {round}</div>
-      {users.map((user, index) => (
+      {/* {users.map((user, index) => (
         <div key={index}>
           <p>Nickname: {user.nickname}</p>
           <p>Ready: {user.ready ? 'Yes' : 'No'}</p>
@@ -382,7 +382,7 @@ const Conference = () => {
         </div>
       ))}
       <div>nickname: {nickname}</div>
-      <div>curuser : {curUser}</div>
+      <div>curuser : {curUser}</div> */}
     </div>
   );
 };
