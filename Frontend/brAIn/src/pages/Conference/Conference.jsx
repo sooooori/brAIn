@@ -311,7 +311,7 @@ const Conference = () => {
                 <Timer />
               </div>
               <div className="whiteboard-container">
-                <WhiteBoard subject="안녕" onSubmitClick=c />
+                <WhiteBoard subject="안녕" onSubmitClick= {attachPostitOnRoundBoard} />
               </div>
               <div className="action-buttons-container">
                 <Button

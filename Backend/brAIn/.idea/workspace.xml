@@ -6,18 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="46c15ecd-3885-42ed-9a92-5c2da2186c36" name="변경" comment="Fix: Code Error 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ConferencesEnterExit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ConferencesEnterExit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ResponseGroupPost.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ResponseGroupPost.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ResponseMiddleVote.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ResponseMiddleVote.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ResponseStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ResponseStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/Round.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/Round.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/VoteNotification.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/VoteNotification.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/actions/userActions.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/actions/userActions.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/VotedPostIt.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/VotedPostIt.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/reducers/conferenceReducer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/reducers/conferenceReducer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/WhiteBoard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/WhiteBoard.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,7 +110,7 @@
       <updated>1722354808346</updated>
       <workItem from="1722817089764" duration="12931000" />
       <workItem from="1722852515895" duration="4743000" />
-      <workItem from="1722900461910" duration="773000" />
+      <workItem from="1722900461910" duration="2472000" />
     </task>
     <task id="LOCAL-00001" summary="Fix: Code Error 수정">
       <option name="closed" value="true" />
