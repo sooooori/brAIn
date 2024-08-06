@@ -205,26 +205,14 @@ const Conference = () => {
       });
     }
   };
-
-
-  const roundRobinBoardUpdate = (postit) => {
-
-    setRoundRobinBoard((prevRoundRobinBoard) => {
-      const roundRobinBoard = [...prevRoundRobinBoard];
-      if (roundRobinBoard[postit.curRound]) {
-        roundRobinBoard[postit.curRound] = [...roundRobinBoard[postit.curRound], postit.content];
-      } else {
-        roundRobinBoard[postit.curRound] = [postit.content];
-      }
-
-      return roundRobinBoard;
-    })
-
-    if (round !== postit.nextRound) {
-      dispatch(setRound(postit.nextRound));
-    }
-
-    dispatch(setCuruser(postit.nextUser));
+///////
+///////
+  //라운드 로빈 포스트잇 보드에 저장
+  const roundRobinBoardUpdate=(postit)=>{
+    
+    dispatch(sendToBoard(postit.curRound,postit.content))
+    //dispatch(upRound())
+    dispatch(setCuruser(postit.nextUser))
   }
 
   //라운드 로빈 포스트잇 제출
