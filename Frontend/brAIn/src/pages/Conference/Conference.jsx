@@ -218,7 +218,7 @@ const Conference = () => {
       setRound(postit.nextRound);
     }
 
-    setCurUser(postit.nextUser);
+    dispatch(setCuruser(postit.nextUser));
   }
 
   //라운드 로빈 포스트잇 제출
