@@ -4,65 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-<<<<<<< HEAD
-    <list default="true" id="a3568f20-fecd-4d60-90d7-b6f824a43d3d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ConferencesEnterExit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ConferencesEnterExit.java" afterDir="false" />
-=======
     <list default="true" id="e60a2d4d-1767-4dbb-9eb0-201d3f61c89d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ConferencesEnterExit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/response/ConferencesEnterExit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewConferenceBack.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewConferenceBack.jsx" afterDir="false" />
->>>>>>> 046cd6156be1e2dfeb1bbc6542c4904e029425e5
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/oauth/google/service/GoogleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/oauth/google/service/GoogleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-<<<<<<< HEAD
-  <component name="ExternalProjectsData">
-    <projectState path="$PROJECT_DIR$">
-      <ProjectState />
-    </projectState>
-  </component>
-  <component name="ExternalProjectsManager">
-    <system id="GRADLE">
-      <state>
-        <projects_view>
-          <tree_state>
-            <expand>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="brAIn" type="f1a62948:ProjectNode" />
-              </path>
-            </expand>
-            <select />
-          </tree_state>
-        </projects_view>
-      </state>
-    </system>
-  </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.Build brAIn.executor": "Run",
-    "Spring Boot.BrAInApplication.executor": "Run",
-    "git-widget-placeholder": "feature/app",
-    "node.js.selected.package.tslint": "(autodetect)"
-  }
-}]]></component>
-  <component name="RunManager">
-    <configuration name="BrAInApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
-      <module name="brAIn.main" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.ssafy.brAIn.BrAInApplication" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-  </component>
-  <component name="TaskManager">
-=======
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
@@ -79,7 +30,7 @@
   "keyToString": {
     "Gradle.brAIn [:BrAInApplication.main()].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "test 병합 중",
+    "git-widget-placeholder": "test",
     "kotlin-language-version-configured": "true"
   }
 }]]></component>
@@ -92,7 +43,6 @@
       <option name="presentableId" value="Default" />
       <updated>1722907331079</updated>
     </task>
->>>>>>> 046cd6156be1e2dfeb1bbc6542c4904e029425e5
     <servers />
   </component>
 </project>
