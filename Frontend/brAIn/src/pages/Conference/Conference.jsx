@@ -32,6 +32,9 @@ const Conference = () => {
   const [roomId, setRoomId] = useState(null);
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [roundRobinBoard,setRoundRobinBoard]=useState([]);
+
+
   const [notes, setNotes] = useState([]);
   const [showNotes, setShowNotes] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
@@ -41,6 +44,7 @@ const Conference = () => {
   const round = useSelector(state => state.conferenceInfo.round)
   const [isUnmounted, setIsUnmounted] = useState(false);
   const curUser = useSelector(state => state.user.currentUser)
+
 
 
   const { secureId: routeSecureId } = useParams();
@@ -150,6 +154,8 @@ const Conference = () => {
   const handleMessage = async (receivedMessage) => {
     if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
       countUpMember();
+    }else if(receivedMessage.type==='SUBMIT_POST_IT'){
+      roundRobinBoardUpdate(receivedMessage);
     }
     else if (receivedMessage.messageType == 'START_CONFERENCE') {
       console.log("Rldpdpdpdpdpdpdpdppd")
@@ -194,6 +200,43 @@ const Conference = () => {
     }
   };
 
+
+  const roundRobinBoardUpdate=(postit)=>{
+    
+    setRoundRobinBoard((prevRoundRobinBoard)=>{
+      const roundRobinBoard=[...prevRoundRobinBoard];
+      if(roundRobinBoard[postit.curRound]){
+        roundRobinBoard[postit.curRound]=[...roundRobinBoard[postit.curRound],postit.content];
+      }else{
+        roundRobinBoard[postit.curRound]=[postit.content];
+      }
+
+      return roundRobinBoard;
+    })
+
+    if(round!==postit.nextRound){
+      setRound(postit.nextRound);
+    }
+
+    setCurUser(postit.nextUser);
+  }
+
+  //라운드 로빈 포스트잇 제출
+  const attachPostitOnRoundBoard=(content)=>{
+    if(client){
+      const postit={
+        round:round,
+        content:content,
+      }
+
+      client.publish({
+        destination:`/app/step1.submit.${roomId}`,
+        headers:{Authorization:localStorage.getItem('roomToken')},
+        body:JSON.stringify(postit)
+      });
+    }
+  }
+
   const toggleSidebar = () => {
     setIsSidebarVisible((prev) => !prev);
   };
@@ -225,6 +268,7 @@ const Conference = () => {
     // Implement logic for "Pass" button click
     console.log('Pass button clicked');
   };
+
 
 
   return (
