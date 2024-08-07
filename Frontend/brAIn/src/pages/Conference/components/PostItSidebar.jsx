@@ -4,12 +4,15 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './PostItSidebar.css';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { useDispatch, useSelector } from 'react-redux';
+import { addNote, deleteNote, updateNote } from '../../../features/note/noteSlice';
 
-const PostItSidebar = ({ isVisible, onClose }) => {
+const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
+  const dispatch = useDispatch();
+  const notes = useSelector(state => state.note.notes);
+  const round = useSelector(state => state.conferenceInfo.round);
   const sidebarRef = useRef(null);
-  const [notes, setNotes] = useState([]); // 메모를 관리하는 상태
-  const [editingIndex, setEditingIndex] = useState(null); // 현재 편집 중인 메모의 인덱스
+  const [editingIndex, setEditingIndex] = useState(null);
 
   // 사이드바 외부 클릭 시 닫히도록 처리
   const handleClickOutside = (event) => {
@@ -32,22 +35,30 @@ const PostItSidebar = ({ isVisible, onClose }) => {
 
   // 새 메모 추가 함수
   const handleAddNote = () => {
-    setNotes([...notes, { content: '' }]); // 빈 메모 추가
-    setEditingIndex(notes.length); // 새로 추가된 메모를 편집 모드로 설정
+    dispatch(addNote('')); // Redux에 빈 노트 추가
+    setEditingIndex(notes.length); // 새로 추가된 노트를 편집 모드로 설정
   };
 
   // 메모 삭제 함수
   const handleDeleteNote = (index) => {
-    setNotes(notes.filter((_, i) => i !== index)); // 해당 인덱스의 메모 삭제
+    const noteId = notes[index].id;
+    dispatch(deleteNote(noteId)); // Redux에서 해당 노트 삭제
     setEditingIndex(null);
   };
 
   // 메모 내용 수정 함수
   const handleEditNote = (index, newContent) => {
-    const updatedNotes = notes.map((note, i) =>
-      i === index ? { content: newContent } : note
-    );
-    setNotes(updatedNotes);
+    const noteId = notes[index].id;
+    dispatch(updateNote({ id: noteId, content: newContent })); // Redux를 사용하여 노트 내용 업데이트
+  };
+
+  // 메모 제출 함수
+  const handleSubmitNote = (index) => {
+    const note = notes[index];
+    const content = note.content;
+
+    // 라운드로빈 보드에 제출
+    onSubmitClick(content);
   };
 
   // 편집 모드 종료 함수
@@ -64,7 +75,7 @@ const PostItSidebar = ({ isVisible, onClose }) => {
       </div>
       <div className="notes-list">
         {notes.map((note, index) => (
-          <div key={index} className="note">
+          <div key={note.id} className="note">
             {editingIndex === index ? (
               <TextField
                 value={note.content}
@@ -92,6 +103,15 @@ const PostItSidebar = ({ isVisible, onClose }) => {
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    size="small"
+                    onClick={() => handleSubmitNote(index)}
+                    className="submit-note-button"
+                  >
+                    제출
+                  </Button>
                 </div>
               </div>
             )}

@@ -5,6 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e60a2d4d-1767-4dbb-9eb0-201d3f61c89d" name="변경" comment="">
+      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/assets/svgs/close.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/assets/svgs/share.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/ConferenceModal.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/ConferenceModal.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/jwt/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/auth/jwt/JwtUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/controller/ConferenceRoomController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/conferenceroom/controller/ConferenceRoomController.java" afterDir="false" />

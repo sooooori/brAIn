@@ -102,19 +102,23 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
         </div>
         <div className="divider-line" />
         <div className="idea-board">
-          {ideas.map((idea) => (
+          {/* {ideas.map((idea) => (
             <PostIt
               key={idea.key}
               content={idea.content}
               onDelete={handleDeleteIdea}
               onUpdate={handleUpdateIdea}
             />
-          ))}
+          ))} */}
+          
+          <div>
+            <PostItTest />  
+          </div>
+
         </div>
       </div>
-      <div>
-        <PostItTest />  
-      </div>
+
+      
 
       <div className="WhiteBoard-footer">
         <form className="idea-form" /*onSubmit={handleAddIdea}*/>

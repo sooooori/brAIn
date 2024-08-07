@@ -1,7 +1,7 @@
 import { ADD_POSTIT, RESET_BOARD } from "../actions/roundRobinBoardAction";
 
 const initialState = {
-    roundRobinBoard: [[]]
+    roundRobinBoard: [[]],
 };
 
 const roundRobinBoardReducer = (state = initialState, action) => {
@@ -30,7 +30,7 @@ const roundRobinBoardReducer = (state = initialState, action) => {
                 ...state,
                 roundRobinBoard: [[]]
             }
-
+        
         default:
             return state;
     }
