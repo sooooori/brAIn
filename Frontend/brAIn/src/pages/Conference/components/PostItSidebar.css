@@ -1,25 +1,26 @@
-/* 사이드바 스타일 */
+/* 사이드바 기본 스타일 */
 .postit-sidebar {
   position: fixed;
+  bottom: 0;
   right: 0;
-  top: 0;
-  width: 350px; /* 사이드바 너비 확장 */
-  height: 100vh; /* 전체 화면 높이 */
+  width: 300px; /* 사이드바 너비 */
+  max-height: 80vh; /* 사이드바 최대 높이 */
   background-color: #ffffff; /* 배경을 흰색으로 변경 */
-  border-left: 2px solid #ccc; /* 사이드바 왼쪽 테두리 */
-  box-shadow: -3px 0 10px rgba(0, 0, 0, 0.2); /* 사이드바 그림자 */
+  border-top-left-radius: 10px; /* 모서리 둥글게 */
+  border-top-right-radius: 10px; /* 모서리 둥글게 */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
   transition: transform 0.3s ease; /* 애니메이션 효과 */
-  transform: translateX(100%); /* 기본적으로 숨겨진 상태 */
+  transform: translateY(100%); /* 기본적으로 숨겨진 상태 */
   overflow-y: auto; /* 내용이 길어질 경우 스크롤 가능 */
   padding: 20px; /* 내부 여백 추가 */
-  z-index: 1000; /* 최상위 z-index */
+  z-index: 2000; /* 사이드바의 z-index를 높여서 다른 요소 위에 표시 */
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* 세로로 정렬 */
 }
 
 /* 사이드바가 보일 때 */
 .postit-sidebar.visible {
-  transform: translateX(0);
+  transform: translateY(0);
 }
 
 /* 사이드바 헤더 스타일 */
@@ -119,3 +120,23 @@
   transform: scale(1.05);
 }
 
+/* 제출 버튼 스타일 */
+.submit-note-button {
+  margin-left: 10px; /* 버튼 사이 여백 */
+}
+
+/* 사이드바 열기 버튼 스타일 */
+.sidebar-open-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #4caf50; /* 녹색 */
+  color: #ffffff;
+  transition: background-color 0.3s, transform 0.3s;
+  z-index: 2001; /* 사이드바보다 위에 위치하도록 설정 */
+}
+
+.sidebar-open-button:hover {
+  background-color: #388e3c;
+  transform: scale(1.05);
+}

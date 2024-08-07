@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import './MemberList.css';
 import Button from '../../../components/Button/Button'; // Assuming you are using a custom Button component
@@ -29,12 +29,21 @@ const MemberList = () => {
     // Slice the users array to get the visible members
     const visibleUsers = users.slice(startIndex, startIndex + 6);
 
+    useEffect(() => {
+        if (profileContainerRef.current && visibleUsers.length) {
+            // Calculate the position to scroll to center the current user
+            const profileWidth = profileContainerRef.current.scrollWidth / visibleUsers.length;
+            const currentUserPosition = visibleUsers.findIndex(user => user.nickname === curUser);
+            profileContainerRef.current.scrollLeft = profileWidth * (currentUserPosition - 2); // Center the current user
+        }
+    }, [curUser, visibleUsers]);
+
     return (
         <div className="carousel-container">
             <Button className="scroll-button left" onClick={scrollLeft}>‹</Button>
             <div className="carousel">
                 <div className="profile-container" ref={profileContainerRef}>
-                    {visibleUsers.map((user) => (
+                    {visibleUsers.length > 0 ? visibleUsers.map((user) => (
                         <div
                             key={user.id}
                             className={`profile ${user.nickname === curUser ? 'highlighted' : ''}`}
@@ -45,10 +54,14 @@ const MemberList = () => {
                             />
                             <p>
                                 {user.nickname}
-                                {user.nickname === curUser.nickname && ' (Me)'}
+                                {user.nickname === curUser && ' (Me)'}
                             </p>
                         </div>
-                    ))}
+                    )) : (
+                        <div className="profile">
+                            <p>No members available</p>
+                        </div>
+                    )}
                 </div>
             </div>
             <Button className="scroll-button right" onClick={scrollRight}>›</Button>

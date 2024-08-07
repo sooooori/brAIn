@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   position: relative;
+  height: 100px;
   width: 100%;
   margin-top: 50px;
   border-bottom: 2px solid #ddd; /* Add a light gray bottom border */
@@ -51,6 +52,7 @@
   overflow-x: auto; /* Enable horizontal scrolling */
   padding: 10px;
   white-space: nowrap; /* Prevent wrapping */
+  scroll-behavior: smooth; /* Smooth scrolling */
 }
 
 .profile {
@@ -60,16 +62,17 @@
   align-items: center;
   margin: 10px;
   padding: 10px;
+  height: 80px;
   border: 1px solid #ccc;
   border-radius: 8px;
   transition: transform 0.3s, box-shadow 0.3s;
   width: 160px; /* Narrow width */
-  min-width: 120px; /* Maintain width */
+  min-width: 10px; /* Maintain width */
 }
 
 .profile img {
-  width: 80px; /* Adjust image size */
-  height: 80px; /* Adjust image size */
+  width: 60px; /* Adjust image size */
+  height: 60px; /* Adjust image size */
   border-radius: 50%;
   margin-bottom: 5px;
 }

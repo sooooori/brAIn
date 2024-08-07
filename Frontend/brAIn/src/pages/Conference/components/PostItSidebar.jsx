@@ -1,5 +1,3 @@
-// PostItSidebar.jsx
-
 import React, { useEffect, useRef, useState } from 'react';
 import { IconButton, TextField, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -12,7 +10,6 @@ import { addNote, deleteNote, updateNote } from '../../../features/note/noteSlic
 const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
   const dispatch = useDispatch();
   const notes = useSelector(state => state.note.notes);
-  const round = useSelector(state => state.conferenceInfo.round);
   const sidebarRef = useRef(null);
   const [editingIndex, setEditingIndex] = useState(null);
 
@@ -69,67 +66,70 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
   };
 
   return (
-    <div ref={sidebarRef} className={`postit-sidebar ${isVisible ? 'visible' : ''}`}>
-      <div className="sidebar-header">
-        <IconButton onClick={onClose} aria-label="close" className="close-button">
-          <CloseIcon />
-        </IconButton>
-      </div>
-      <div className="notes-list">
-        {notes.map((note, index) => (
-          <div key={note.id} className="note">
-            {editingIndex === index ? (
-              <TextField
-                value={note.content}
-                onChange={(e) => handleEditNote(index, e.target.value)}
-                onBlur={handleBlur}
-                autoFocus
-                multiline
-                fullWidth
-                variant="outlined"
-                InputProps={{
-                  style: { fontSize: 14, lineHeight: '1.5', whiteSpace: 'normal' },
-                }}
-              />
-            ) : (
-              <div className="note-content">
-                <p onClick={() => setEditingIndex(index)} className="note-text">
-                  {note.content || '클릭하여 입력하세요...'}
-                </p>
-                <div className="note-actions">
-                  <IconButton
-                    onClick={() => handleDeleteNote(index)}
-                    aria-label="delete"
-                    className="delete-button-side"
-                    size="small"
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    size="small"
-                    onClick={() => handleSubmitNote(index)}
-                    className="submit-note-button"
-                  >
-                    제출
-                  </Button>
+    <>
+      {isVisible && <div className="sidebar-overlay" onClick={onClose}></div>}
+      <div ref={sidebarRef} className={`postit-sidebar ${isVisible ? 'visible' : ''}`}>
+        <div className="sidebar-header">
+          <IconButton onClick={onClose} aria-label="close" className="close-button">
+            <CloseIcon />
+          </IconButton>
+        </div>
+        <div className="notes-list">
+          {notes.map((note, index) => (
+            <div key={note.id} className="note">
+              {editingIndex === index ? (
+                <TextField
+                  value={note.content}
+                  onChange={(e) => handleEditNote(index, e.target.value)}
+                  onBlur={handleBlur}
+                  autoFocus
+                  multiline
+                  fullWidth
+                  variant="outlined"
+                  InputProps={{
+                    style: { fontSize: 14, lineHeight: '1.5', whiteSpace: 'normal' },
+                  }}
+                />
+              ) : (
+                <div className="note-content">
+                  <p onClick={() => setEditingIndex(index)} className="note-text">
+                    {note.content || '클릭하여 입력하세요...'}
+                  </p>
+                  <div className="note-actions">
+                    <IconButton
+                      onClick={() => handleDeleteNote(index)}
+                      aria-label="delete"
+                      className="delete-button-side"
+                      size="small"
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      size="small"
+                      onClick={() => handleSubmitNote(index)}
+                      className="submit-note-button"
+                    >
+                      제출
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        ))}
+              )}
+            </div>
+          ))}
+        </div>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleAddNote}
+          className="add-note-button"
+        >
+          포스트잇 추가
+        </Button>
       </div>
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={handleAddNote}
-        className="add-note-button"
-      >
-        포스트잇 추가
-      </Button>
-    </div>
+    </>
   );
 };
 

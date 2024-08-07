@@ -1,128 +1,79 @@
 /* 전체 컨테이너 스타일 */
 .conference {
   display: flex;
-  flex-direction: column; /* 세로 방향 정렬 */
-  height: 100vh; /* 전체 화면 높이 */
-  width: 100vw; /* 전체 화면 너비 */
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
 }
 
 /* 회의 콘텐츠 스타일 */
 .conference-content {
   display: flex;
-  flex-direction: column; /* 세로 방향 정렬 */
+  flex-direction: column;
   width: 100%;
-  height: calc(100vh - 60px); /* 60px을 헤더 높이로 가정한 경우 조정 */
+  height: calc(100vh - 60px);
 }
 
 /* 회원 목록 컨테이너 스타일 */
 .member-list-container {
-  flex: 1; /* 남은 공간을 차지하도록 설정 */
+  flex: 1;
   padding: 20px;
 }
 
 /* 화이트보드 섹션 스타일 */
 .conference-section {
   display: flex;
-  flex-direction: column; /* 세로 방향 정렬 */
-  flex: 1; /* 남은 공간을 차지하도록 설정 */
-  overflow: auto; /* 넘치는 내용 스크롤 가능 */
+  flex-direction: row;
+  gap: 20px;
+  flex: 1;
+  overflow: auto;
+  position: relative;
 }
 
 /* 사이드바 컨테이너 스타일 */
 .sidebar-container {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 300px; /* 사이드바의 너비 */
+  height: 100%; /* 전체 높이 */
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000; /* 다른 요소 위에 표시되도록 */
 }
 
+.sidebar-container.visible {
+  transform: translateX(0);
+}
 /* 사이드바 토글 버튼 스타일 */
 .toggle-sidebar-button {
-  width: 50px; /* 버튼 너비 조정 */
-  height: 50px; /* 버튼 높이 조정 */
-  display: flex;
-  align-items: center; /* 버튼 내 아이콘 중앙 정렬 */
-  justify-content: center; /* 버튼 내 아이콘 중앙 정렬 */
-  background: black; /* 버튼 배경색 */
-  border: none; /* 기본 테두리 제거 */
-  border-radius: 50%; /* 둥근 버튼 */
-  cursor: pointer; /* 커서 포인터로 변경 */
-  margin: 10px;
+  position: fixed;
+  bottom: 0px;
+  right: 20px;
+  z-index: 1000;
 }
 
 /* 사이드바 아이콘 스타일 */
 .sidebar-icon {
-  width: 24px; /* 아이콘 너비 */
-  height: 24px; /* 아이콘 높이 */
+  width: 24px;
+  height: 24px;
 }
 
 /* 메인 콘텐츠 컨테이너 스타일 */
 .main-content {
   display: flex;
-  flex-direction: column; /* 세로 방향 정렬 */
+  flex-direction: row; /* Row 방향으로 변경 */
   width: 100%;
-  align-items: center; /* 중앙 정렬 */
-}
-
-/* 화이트보드 섹션 스타일 */
-.whiteboard-section {
-  display: flex;
-  flex-direction: row; /* 가로 방향 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
-  width: 100%;
-  position: relative; /* Add relative positioning for stacking context */
-  margin-top: 20px; /* 위쪽 여백 추가 */
-}
-
-/* 타이머 컨테이너 스타일 */
-.conf-timer-container {
-  flex: 1; /* 남은 공간을 차지하도록 설정 */
-  font-size: 2em;
+  height: 100%;
+  position: relative; /* 콘텐츠의 높이를 100%로 설정 */
 }
 
 /* 화이트보드 컨테이너 스타일 */
 .whiteboard-container {
-  width: 80%; /* 화이트보드 너비 */
+  width: calc(100% - 300px); /* 컨테이너의 너비를 100%로 설정 */
   display: flex;
   justify-content: center;
-  margin-top: 20px;
-}
-
-/* 액션 버튼 컨테이너 스타일 */
-.action-buttons-container {
-  display: flex;
-  gap: 15px;
-  justify-content: flex-end; /* 오른쪽 정렬 */
-  margin-left: 20px; /* 타이머와 버튼 사이의 간격 */
-}
-
-/* 액션 버튼 스타일 */
-.action-button {
-  width: 150px;
-  background: #6a0dad; /* 보라색 배경 */
-  color: white; /* 흰색 글씨 */
-  border: none; /* 기본 테두리 제거 */
-  border-radius: 6px; /* 테두리 둥글게 */
-  padding: 10px 20px; /* 버튼 패딩 */
-  font-size: 1rem; /* 폰트 크기 */
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px; /* 아이콘과 텍스트 사이의 간격 */
-  transition: background-color 0.3s; /* 호버 효과 */
-}
-
-.action-button:hover {
-  background-color: #5a0a9d; /* 호버 시 배경 색상 */
-}
-
-/* 준비 완료 아이콘 스타일 */
-.ready-icon {
-  width: 24px;
-  height: 24px;
+  margin-top: 60px;
+  position: relative;
 }
 
 /* 대기 모달 스타일 */
@@ -134,4 +85,14 @@
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* VotedPostIt 컨테이너 스타일 */
+.voted-post-it-container {
+  width: 300px; /* VotedPostIt 컨테이너의 너비 */
+  display: flex;
+  flex-direction: column;
+  left: 30px;
+  gap: 10px;
+  position: absolute; /* 상대 위치로 설정 */
 }

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // HTTP 클라이언트 라이브러리
 import TimerIcon from '../../../assets/svgs/timer.svg'; // 타이머 아이콘
 import PlusTimeIcon from '../../../assets/svgs/plus_time.svg'; // + 버튼 아이콘
-import PassTurnIcon from '../../../assets/svgs/pass_turn.svg'; // 패스 버튼 아이콘
 import './Timer.css'; // 스타일을 위한 CSS 파일
 
 const Timer = ({ roomId }) => {

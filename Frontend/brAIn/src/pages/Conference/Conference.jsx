@@ -4,9 +4,7 @@ import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import WaitingModal from './components/WaitingModal';
-import ConferenceNavbar from '../../components/Navbar/ConferenceNavbar';
 import PostItSidebar from './components/PostItSidebar';
-import Timer from './components/Timer';
 import WhiteBoard from './components/WhiteBoard';
 import VotedPostIt from './components/VotedPostIt';
 import Button from '../../components/Button/Button';
@@ -31,7 +29,6 @@ const Conference = () => {
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [notes, setNotes] = useState([]);
-  const [showNotes, setShowNotes] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const users = useSelector(state => state.user.users);
   const nickname = useSelector(state => state.user.nickname);
@@ -246,50 +243,15 @@ const Conference = () => {
               >
                 <img src={SidebarIcon} alt="Sidebar Toggle" className="sidebar-icon" />
               </Button>
-              <PostItSidebar
-                notes={notes}
-                isVisible={isSidebarVisible}
-                onClose={handleCloseSidebar}
-                onSubmitClick={attachPostitOnRoundBoard}
-              />
             </div>
             <div className="main-content">
-              <div className="whiteboard-section">
-                <div className="conf-timer-container">
-                  <Timer />
-                </div>
-                <div className="action-buttons-container">
-                  <Button
-                    type='fit'
-                    onClick={handleReadyButtonClick}
-                    buttonStyle="purple"
-                    ariaLabel="Ready Button"
-                    className="action-button ready-button"
-                  >
-                    <span>준비 완료</span>
-                  </Button>
-                  <Button
-                    type='fit'
-                    onClick={handleNextStepClick}
-                    buttonStyle="purple"
-                    ariaLabel="Next Step Button"
-                    className="action-button next-step-button"
-                  >
-                    <span>다음 단계</span>
-                  </Button>
-                  <Button
-                    type='fit'
-                    onClick={handlePassButtonClick}
-                    buttonStyle="purple"
-                    ariaLabel="Pass Button"
-                    className="action-button pass-button"
-                  >
-                    <span>패스하기</span>
-                  </Button>
-                </div>
-                <div className="whiteboard-container">
-                  <WhiteBoard subject="안녕" onSubmitClick={attachPostitOnRoundBoard} />
-                </div>
+              <div className="voted-post-it-container">
+                {roundRobinBoard.map((postit, index) => (
+                  <VotedPostIt key={index} content={postit.content} />
+                ))}
+              </div>
+              <div className="whiteboard-container">
+                <WhiteBoard subject="안녕" onSubmitClick={attachPostitOnRoundBoard} />
               </div>
             </div>
           </div>
