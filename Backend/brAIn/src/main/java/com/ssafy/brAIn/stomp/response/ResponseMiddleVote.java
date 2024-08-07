@@ -11,11 +11,11 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class ResponseMiddleVote {
-    private MessageType type;
+    private MessageType messageType;
     private List<VoteResponse> votes;
 
     public ResponseMiddleVote(MessageType type, List<VoteResponse> votes) {
-        this.type = type;
+        this.messageType = type;
         this.votes = votes;
     }
 }

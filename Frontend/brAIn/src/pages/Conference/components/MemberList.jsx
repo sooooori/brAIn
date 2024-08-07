@@ -1,106 +1,67 @@
-import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Client } from '@stomp/stompjs';
-import { setUsers } from '../../../features/conference/conferenceSlice';
-import axios from '../../../utils/Axios';
+import React, { useEffect, useState, useCallback, memo } from 'react';
+import { useSelector } from 'react-redux';
 import './MemberList.css';
 
-const MemberList = ({ roomId }) => {
-  const dispatch = useDispatch();
-  const users = useSelector((state) => state.conference.users); // Redux에서 사용자 정보 가져오기
-  const [currentPage, setCurrentPage] = useState(0);
-  const [currentUser, setCurrentUser] = useState(null);
-  const usersPerPage = 6;
+const MemberList = () => {
+    const users = useSelector((state) => state.user.users) || [];
+    const curUser = useSelector(state => state.user.currentUser)
+    const timer = useSelector((state) => state.conferenceInfo.timer);
+    const nickname = useSelector(state => state.user.nickname);
 
-  // WebSocket 클라이언트 설정
-  useEffect(() => {
-    const client = new Client({
-      brokerURL: 'ws://localhost/ws',
-      connectHeaders: {
-        Authorization: 'Bearer ' + localStorage.getItem('accessToken') // 적절한 인증 헤더 설정
-      },
-      debug: (str) => {
-        console.log(str);
-      },
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-    });
+    const [currentPage, setCurrentPage] = useState(0);
+    const usersPerPage = 6;
 
-    client.onConnect = (frame) => {
-      console.log('Connected: ' + frame);
-      client.subscribe(`/topic/state.user.pass.${roomId}`, (message) => {
-        const receivedMessage = JSON.parse(message.body);
-        if (receivedMessage.type === 'PASS') {
-          setCurrentUser(receivedMessage.curUser);
+    const updateCurrentPage = useCallback(() => {
+        if (users.length > 0 && curUser) {
+            const currentUserIndex = users.findIndex(user => user.nickname === curUser.nickname);
+            if (currentUserIndex !== -1) {
+                setCurrentPage(Math.floor(currentUserIndex / usersPerPage));
+            }
         }
-      });
+    }, [users, curUser, usersPerPage]);
 
-      client.subscribe(`/topic/start.conferences.${roomId}`, (message) => {
-        const receivedMessage = JSON.parse(message.body);
-        if (receivedMessage.type === 'START_CONFERENCE') {
-          dispatch(setUsers(receivedMessage.users));
-        }
-      });
-    };
+    useEffect(() => {
+        updateCurrentPage();
+    }, [updateCurrentPage]);
 
-    client.onStompError = (frame) => {
-      console.error('STOMP error:', frame);
-    };
+    const totalPages = Math.ceil(users.length / usersPerPage);
 
-    client.activate();
+    const handleNextPage = useCallback(() => {
+        setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages - 1));
+    }, [totalPages]);
 
-    return () => {
-      client.deactivate();
-    };
-  }, [dispatch, roomId]);
+    const handlePreviousPage = useCallback(() => {
+        setCurrentPage(prevPage => Math.max(prevPage - 1, 0));
+    }, []);
 
-  // 현재 차례인 사용자의 페이지를 설정
-  useEffect(() => {
-    if (users.length > 0 && currentUser !== null) {
-      const currentUserIndex = users.indexOf(currentUser);
-      if (currentUserIndex !== -1) {
-        const newPage = Math.floor(currentUserIndex / usersPerPage);
-        setCurrentPage(newPage);
-      }
-    }
-  }, [users, currentUser, usersPerPage]);
+    // const displayUsers = users.slice(currentPage * usersPerPage, (currentPage + 1) * usersPerPage);
 
-  const totalPages = Math.ceil(users.length / usersPerPage);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const displayUsers = users.slice(currentPage * usersPerPage, (currentPage + 1) * usersPerPage);
-
-  return (
-    <div className="member-list-container">
-      <div className="profile-container">
-        {displayUsers.map((user, index) => (
-          <div
-            key={index}
-            className={`profile ${user === currentUser ? 'highlighted' : ''}`} // 현재 차례인 사용자 강조
-          >
-            <img src={`https://brain-content-profile.s3.ap-northeast-2.amazonaws.com/random-profile/${user}.png`} alt={`${user}'s profile`} />
-            <p>{user}</p>
-          </div>
-        ))}
-      </div>
-      <div className="pagination">
-        <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
-        <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
-      </div>
-    </div>
-  );
+    return (
+        <div className="member-list-container">
+            <div className="profile-container">
+                {users.map((user) => (
+                    <div
+                        key={user.id} // 고유한 ID를 사용하는 것이 좋습니다
+                        className={`profile ${user.nickname == curUser ? 'highlighted' : ''}`}
+                    >
+                        {user.nickname === nickname && <p>Me</p>}
+                        <img
+                            src={`https://brain-content-profile.s3.ap-northeast-2.amazonaws.com/conference-image/${user.nickname.split(' ').pop()}.png`}
+                            alt={`${user.nickname.split(' ').pop()}`}
+                        />
+                        <p>{user.nickname}</p>
+                    </div>
+                ))}
+            </div>
+            <div className="pagination">
+                <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+            </div>
+            <div className="timer-info">
+                <p>Time Remaining: {timer}</p>
+            </div>
+        </div>
+    );
 };
 
 export default MemberList;

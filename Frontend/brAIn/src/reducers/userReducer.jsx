@@ -1,4 +1,4 @@
-import { ADD_USER, REMOVE_USER, SET_USERS, SET_USERNICK, SET_CURUSER, SET_NEXTUSER, UPDATE_TIMER} from '../actions/userActions';
+import { ADD_USER, REMOVE_USER, SET_USERS, SET_USERNICK, SET_CURUSER, SET_NEXTUSER, UPDATE_TIMER, RESET_STATE } from '../actions/userActions';
 
 const initialState = {
     users: [],
@@ -12,10 +12,13 @@ const initialState = {
 
 const userReducer = (state = initialState, action) => {
     switch (action.type) {
-        case SET_USERS:
+        case 'SET_USERS':
             return {
                 ...state,
-                users: action.payload,
+                users: action.payload.map(nickname => ({
+                    nickname: nickname,
+                    ready: false
+                }))
             };
         case ADD_USER:
             return {
@@ -28,17 +31,17 @@ const userReducer = (state = initialState, action) => {
                 users: state.users.filter(user => user.id !== action.payload),
             };
         case SET_USERNICK:
-            return{
+            return {
                 ...state,
                 nickname: action.payload,
             }
         case SET_CURUSER:
-            return{
+            return {
                 ...state,
                 currentUser: action.payload,
             }
         case SET_NEXTUSER:
-            return{
+            return {
                 ...state,
                 nextUser: action.payload,
             }
@@ -47,6 +50,9 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 timer: action.payload,
             }
+        case RESET_STATE:
+            return initialState;
+
 
         default:
             return state;

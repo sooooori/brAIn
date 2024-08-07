@@ -8,13 +8,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Round {
+public class EndMessage {
 
-    private MessageType messageType;
-    private int round;
+    private MessageType type;
 
-    public Round(MessageType type, int round) {
-        this.messageType = type;
-        this.round = round;
+    public EndMessage(MessageType type) {
+        this.type = type;
     }
 }
