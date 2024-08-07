@@ -4,20 +4,42 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e60a2d4d-1767-4dbb-9eb0-201d3f61c89d" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/assets/svgs/close.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/assets/svgs/share.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/ConferenceModal.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/components/ConferenceModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewConferenceBack.css" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewConferenceBack.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewConferenceBack.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/NewConferenceBack.jsx" afterDir="false" />
-    </list>
+    <list default="true" id="e60a2d4d-1767-4dbb-9eb0-201d3f61c89d" name="변경" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="brAIn" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="brAIn" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="brAIn" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
@@ -35,8 +57,9 @@
   "keyToString": {
     "Gradle.brAIn [:BrAInApplication.main()].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feature/drag",
-    "kotlin-language-version-configured": "true"
+    "git-widget-placeholder": "deploy",
+    "kotlin-language-version-configured": "true",
+    "node.js.selected.package.tslint": "(autodetect)"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
@@ -49,5 +72,9 @@
       <updated>1722907331079</updated>
     </task>
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Feat: Backend DockerFile" />
+    <option name="LAST_COMMIT_MESSAGE" value="Feat: Backend DockerFile" />
   </component>
 </project>
