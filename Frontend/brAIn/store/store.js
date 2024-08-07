@@ -5,6 +5,9 @@ import conferenceSlice from '../src/features/conference/conferenceSlice'
 import userReducer from '../src/reducers/userReducer';
 import conferenceReducer from '../src/reducers/conferenceReducer';
 import roundRobinBoardReducer from '../src/reducers/roundRobinBoardReducer';
+import votedItemReducer from '../src/reducers/votedItemReducer';
+import noteReducer from '../src/features/note/noteSlice';
+
 
 const store = configureStore({
   reducer: {
@@ -13,7 +16,11 @@ const store = configureStore({
     user: userReducer,
     conferenceInfo: conferenceReducer,
     roundRobinBoard: roundRobinBoardReducer,
+    votedItem: votedItemReducer,
+    note: noteReducer,
   },
 });
+
+
 
 export default store;

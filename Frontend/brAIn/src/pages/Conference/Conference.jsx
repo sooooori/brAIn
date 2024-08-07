@@ -21,6 +21,9 @@ import { sendToBoard, resetRoundBoard } from '../../actions/roundRobinBoardActio
 
 import { useNavigate } from 'react-router-dom';
 
+import PostItTest from './components/PostItTest';
+import DragandDropBoard from './components/DragandDropBoard';
+
 
 const Conference = () => {
   const dispatch = useDispatch();
@@ -54,7 +57,6 @@ const Conference = () => {
   useEffect(() => {
     let isMounted = true;
     let currentClient = null;
-
 
 
     const fetchDataAndConnect = async () => {
@@ -156,7 +158,7 @@ const Conference = () => {
     console.log(curUser);
   }, [curUser]);
   useEffect(() => {
-    console.log(roundRobinBoard);
+    console.log(roundRobinBoard.content);
   }, [roundRobinBoard]);
 
   const handleMessage = async (receivedMessage) => {
@@ -286,6 +288,7 @@ const Conference = () => {
       <div>
         <MemberList />
       </div>
+
       {isMeetingStarted && (
         <div className="meeting-content">
           <div className="sidebar-container">
@@ -302,6 +305,7 @@ const Conference = () => {
               notes={notes}
               isVisible={isSidebarVisible}
               onClose={handleCloseSidebar}
+              onSubmitClick={attachPostitOnRoundBoard}
             />
           </div>
           <div className="main-content">
@@ -315,6 +319,7 @@ const Conference = () => {
               </div>
 
               {/* test */}
+
 
               <div className="action-buttons-container">
                 <Button

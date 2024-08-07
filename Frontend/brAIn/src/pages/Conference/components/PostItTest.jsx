@@ -4,8 +4,22 @@ import { useSelector } from 'react-redux';
 import './PostItTest.css'; // CSS 파일을 가져옵니다.
 
 const PostItTest = () => {
-  // Redux 스토어에서 'roundRobinBoard' 상태를 가져옵니다.
   const roundRobinBoard = useSelector((state) => state.roundRobinBoard?.roundRobinBoard || []);
+
+  // 파스텔 톤 색상 배열
+  const colors = [
+    '#fce4ec', // Pastel Pink
+    '#f8bbd0', // Light Pink
+    '#f0f4c3', // Pastel Yellow
+    '#c5e1a5', // Light Green
+    '#bbdefb', // Light Blue
+    '#d1c4e9', // Light Purple
+  ];
+
+  // 랜덤 색상 선택 함수
+  const getRandomColor = () => {
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
 
   return (
     <div className="post-it-board">
@@ -15,11 +29,15 @@ const PostItTest = () => {
       ) : (
         roundRobinBoard.map((roundIdeas, roundIndex) => (
           <div key={roundIndex} className="round-container">
-            <h3>라운드 {roundIndex + 1}</h3>
+            <h3>라운드 {roundIndex}</h3>
             <div className="post-it-container">
               {roundIdeas && roundIdeas.length > 0 ? (
                 roundIdeas.map((idea, ideaIndex) => (
-                  <div key={ideaIndex} className="post-it-card">
+                  <div
+                    key={ideaIndex}
+                    className="post-it-card"
+                    style={{ backgroundColor: getRandomColor() }} // 랜덤 색상 적용
+                  >
                     {idea}
                   </div>
                 ))

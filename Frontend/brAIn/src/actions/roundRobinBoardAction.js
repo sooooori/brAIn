@@ -11,7 +11,6 @@ export const sendToBoard=(round,content)=>{
     }
 }
 
-
 export const resetRoundBoard = ()=>({
     type: RESET_BOARD
 })
