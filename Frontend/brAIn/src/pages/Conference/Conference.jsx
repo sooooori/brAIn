@@ -22,7 +22,6 @@ import { sendToBoard, resetRoundBoard } from '../../actions/roundRobinBoardActio
 import { useNavigate } from 'react-router-dom';
 
 import PostItTest from './components/PostItTest';
-import DragandDropBoard from './components/DragandDropBoard';
 
 
 const Conference = () => {
