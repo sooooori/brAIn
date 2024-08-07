@@ -1,5 +1,8 @@
 package com.ssafy.brAIn.vote.controller;
 
+import com.ssafy.brAIn.auth.jwt.JWTUtilForRoom;
+import com.ssafy.brAIn.member.entity.Member;
+import com.ssafy.brAIn.member.service.MemberService;
 import com.ssafy.brAIn.vote.dto.FinalVoteRequest;
 import com.ssafy.brAIn.vote.dto.VoteRequest;
 import com.ssafy.brAIn.vote.dto.VoteResponse;
@@ -7,11 +10,14 @@ import com.ssafy.brAIn.vote.dto.VoteResultRequest;
 import com.ssafy.brAIn.vote.service.VoteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -20,11 +26,32 @@ import java.util.List;
 public class VoteController {
 
     private final VoteService voteService;
+    private final JWTUtilForRoom jwtUtilForRoom;
+    private final MemberService memberService;
 
     // 투표 결정(진행)
     @PostMapping
-    public ResponseEntity<String> vote(@RequestBody VoteRequest voteRequest) {
-        voteService.vote(voteRequest.getRoomId(), voteRequest.getRound(), voteRequest.getMemberId(), voteRequest.getVotes());
+    public ResponseEntity<String> vote(@RequestBody VoteRequest voteRequest, @RequestHeader HttpHeaders headers) {
+        String token = headers.getFirst("AuthorizationRoom");
+        if(token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        System.out.println(token);
+        String email=jwtUtilForRoom.getUsername(token);
+        System.out.println(email);
+        Optional<Member> member=memberService.findByEmail(email);
+        if(member.isEmpty()) {
+            throw new IllegalArgumentException("일치하는 회원 없음");
+        }
+        Integer memberId=member.get().getId();
+
+        Iterator<String> keys=voteRequest.getVotes().keySet().iterator();
+        while(keys.hasNext()) {
+            String key = keys.next();
+            System.out.println(key+","+voteRequest.getVotes().get(key));
+        }
+
+        voteService.vote(voteRequest.getRoomId(), voteRequest.getStep(), memberId, voteRequest.getVotes());
         return new ResponseEntity<>("Vote successful", HttpStatus.OK);
     }
 
@@ -37,15 +64,15 @@ public class VoteController {
 
     // 투표 결과 집계
     @GetMapping("/results")
-    public ResponseEntity<List<VoteResponse>> voteResults(@RequestParam Integer roomId, @RequestParam Integer round) {
-        List<VoteResponse> results = voteService.getVoteResults(roomId, round);
+    public ResponseEntity<List<VoteResponse>> voteResults(@RequestParam Integer roomId, @RequestParam String step) {
+        List<VoteResponse> results = voteService.getVoteResults(roomId, step);
         return ResponseEntity.ok().body(results);
     }
 
     // 투표 결과 db 저장
     @PostMapping("/saveResults")
     public ResponseEntity<String> saveVoteResults(@RequestBody VoteResultRequest voteResultRequest) {
-        List<VoteResponse> results = voteService.getVoteResults(voteResultRequest.getConferenceId(), voteResultRequest.getRound());
+        List<VoteResponse> results = voteService.getVoteResults(voteResultRequest.getConferenceId(), voteResultRequest.getStep());
         voteService.saveTop9RoundResults(results, voteResultRequest);
         return new ResponseEntity<>("Vote results saved successfully", HttpStatus.OK);
     }
@@ -68,15 +95,15 @@ public class VoteController {
 
     // 최종 투표 결과 집계
     @GetMapping("/finalResults")
-    public ResponseEntity<List<VoteResponse>> getFinalVoteResults(@RequestParam Integer roomId, @RequestParam Integer round) {
-        List<VoteResponse> results = voteService.getFinalVoteResults(roomId, round);
+    public ResponseEntity<List<VoteResponse>> getFinalVoteResults(@RequestParam Integer roomId, @RequestParam String step) {
+        List<VoteResponse> results = voteService.getFinalVoteResults(roomId, step);
         return ResponseEntity.ok().body(results);
     }
 
     // 최종 투표 결과 db 저장
     @PostMapping("/saveFinalResults")
     public ResponseEntity<String> saveFinalResults(@RequestBody VoteResultRequest voteResultRequest) {
-        List<VoteResponse> results = voteService.getFinalVoteResults(voteResultRequest.getConferenceId(), voteResultRequest.getRound());
+        List<VoteResponse> results = voteService.getFinalVoteResults(voteResultRequest.getConferenceId(), voteResultRequest.getStep());
         voteService.saveTop3FinalResults(results, voteResultRequest);
         return new ResponseEntity<>("Final vote results saved successfully", HttpStatus.OK);
     }

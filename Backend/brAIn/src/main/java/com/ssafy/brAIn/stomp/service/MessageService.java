@@ -268,6 +268,8 @@ public class MessageService {
                 .limit(9)
                 .toList();
 
+        System.out.println("확인용!");
+        System.out.println(votes.size());
         return new ResponseMiddleVote(MessageType.FINISH_MIDDLE_VOTE, votes);
     }
 

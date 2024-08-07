@@ -12,6 +12,7 @@ import com.ssafy.brAIn.stomp.request.RequestPass;
 import com.ssafy.brAIn.stomp.request.RequestStep;
 import com.ssafy.brAIn.stomp.response.*;
 import com.ssafy.brAIn.stomp.service.MessageService;
+import com.ssafy.brAIn.vote.dto.VoteResponse;
 import com.sun.jdi.request.StepRequest;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -283,6 +284,14 @@ public class MessageController {
 
         // 중간 투표 결과 가져오기
         ResponseMiddleVote voteResults = messageService.getMiddleVote(Integer.parseInt(roomId), round);
+
+        List<VoteResponse> temp=voteResults.getVotes();
+
+        for(int i=0;i<temp.size();i++){
+            System.out.println(temp.get(i).getPostIt());
+        }
+
+        System.out.println("마지막:"+temp.size());
         // 결과를 RabbitMQ로 전송
         rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, voteResults);
     }

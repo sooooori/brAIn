@@ -1,6 +1,7 @@
 package com.ssafy.brAIn.vote.service;
 
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
+import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
 import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
@@ -36,8 +37,8 @@ public class VoteService {
 
     // 투표 진행 - 임시 저장
     @Transactional
-    public void vote(Integer roomId, Integer round, Integer memberId, Map<String, Integer> votes) {
-        String tempVoteKey = roomId + ":tempVotes:" + round + ":" + memberId;
+    public void vote(Integer roomId, Step step, Integer memberId, Map<String, Integer> votes) {
+        String tempVoteKey = roomId + ":tempVotes:" + step + ":" + memberId;
 
         // 1점, 3점 ,5점 부여
         int score1Point = 0;
@@ -72,6 +73,7 @@ public class VoteService {
         for (Map.Entry<String, Integer> vote : votes.entrySet()) {
             String postIt = vote.getKey();
             Integer newScore = vote.getValue();
+            System.out.println(postIt+":"+newScore);
             redisUtils.setSortedSet(tempVoteKey, newScore, postIt);
         }
     }
@@ -79,8 +81,8 @@ public class VoteService {
     // 타이머에 의해 투표 종료
     @Transactional
     public void endVoteByTimer(VoteResultRequest voteResultRequest) {
-        String tempVotePattern = voteResultRequest.getConferenceId() + ":tempVotes:" + voteResultRequest.getRound() + ":*";
-        String voteKey = voteResultRequest.getConferenceId() + ":votes:" + voteResultRequest.getRound();
+        String tempVotePattern = voteResultRequest.getConferenceId() + ":tempVotes:" + voteResultRequest.getStep() + ":*";
+        String voteKey = voteResultRequest.getConferenceId() + ":votes:" + voteResultRequest.getStep();
 
         Set<String> tempVoteKeys = redisUtils.keys(tempVotePattern);
 
@@ -101,9 +103,9 @@ public class VoteService {
 
     // 전체 결과를 보여줌 (상위 9개)
     @Transactional(readOnly = true)
-    public List<VoteResponse> getVoteResults(Integer conferenceId, Integer round) {
+    public List<VoteResponse> getVoteResults(Integer conferenceId, String step) {
 
-        String key = conferenceId + ":votes:" + round;
+        String key = conferenceId + ":votes:" + step;
 
         return redisUtils.getSortedSetWithScores(key)
                 .stream()
@@ -171,8 +173,8 @@ public class VoteService {
     // 타이머 투표 진행
     @Transactional
     public void endFinalVoteByTimer(VoteResultRequest voteResultRequest) {
-        String tempVotePattern = voteResultRequest.getConferenceId() + ":finalTempVotes:" + voteResultRequest.getRound() + ":*";
-        String voteKey = voteResultRequest.getConferenceId() + ":finalVotes:" + voteResultRequest.getRound();
+        String tempVotePattern = voteResultRequest.getConferenceId() + ":finalTempVotes:" + voteResultRequest.getStep() + ":*";
+        String voteKey = voteResultRequest.getConferenceId() + ":finalVotes:" + voteResultRequest.getStep();
 
         Set<String> tempVoteKeys = redisUtils.keys(tempVotePattern);
 
@@ -192,8 +194,8 @@ public class VoteService {
 
     // 전체 결과 9개 중 상위 3개를 따로 보여줌(삭제 x)
     @Transactional(readOnly = true)
-    public List<VoteResponse> getFinalVoteResults(Integer conferenceId, Integer round) {
-        String key = conferenceId + ":finalVotes:" + round;
+    public List<VoteResponse> getFinalVoteResults(Integer conferenceId, String step) {
+        String key = conferenceId + ":finalVotes:" + step;
 
         return redisUtils.getSortedSetWithScores(key)
                 .stream()

@@ -14,6 +14,7 @@ import Button from '../../components/Button/Button';
 import SidebarIcon from '../../assets/svgs/sidebar.svg';
 import MemberList from './components/MemberList';
 import './ConferenceEx.css';
+import Swal from "sweetalert2"; 
 
 import { addUser, removeUser, setUsers, setUserNick, setCuruser, resetUser } from '../../actions/userActions';
 import { setCurStep, upRound, setRound, resetConference } from '../../actions/conferenceActions';
@@ -51,6 +52,11 @@ const Conference = () => {
 
   const roundRobinBoard = useSelector(state => state.roundRobinBoard.roundRobinBoard);
   const { secureId: routeSecureId } = useParams();
+
+  const votedItems = useSelector(state => state.votedItem.items || []);
+
+  const MINUTES_IN_MS = 6 * 1000;
+  const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
 
 
   useEffect(() => {
@@ -178,7 +184,13 @@ const Conference = () => {
     }
     else if (receivedMessage.messageType == 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep))
-    }
+    }else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
+      await roundRobinBoardUpdate(receivedMessage);
+      step1EndAlarm();
+    }else if(receivedMessage.messageType==='FINISH_MIDDLE_VOTE'){
+      console.log(receivedMessage);
+      console.log(receivedMessage.votes.postit);
+    } 
   };
 
   const countUpMember = () => {
@@ -210,7 +222,7 @@ const Conference = () => {
   };
 
   //라운드 로빈 포스트잇 보드에 저장
-  const roundRobinBoardUpdate=(postit)=>{
+  const roundRobinBoardUpdate=async (postit)=>{
     
     dispatch(sendToBoard(postit.curRound, postit.content))
     if (round !== postit.nextRound) {
@@ -267,6 +279,117 @@ const Conference = () => {
     console.log('Pass button clicked');
   };
 
+  const step1EndAlarm = async () => {
+    try {
+      await Swal.fire({
+        icon: "success",
+        title: '브레인 스토밍이 끝났습니다.',
+        text: '1분 동안 맘에 드는 3개의 아이디어를 골라주세요',
+        timer: 3000
+      });
+  
+      // 알림창이 닫힌 후 타이머 시작
+      await timer();  // timer() 함수는 비동기 함수여야 합니다.
+  
+      if (timeLeft <= 0) {
+        console.log("타이머 종료");
+      }
+      
+      const itemsObject = votedItems.reduce((map, item, index) => {
+        const key = item.content;
+        const value = index * 2 + 1; 
+        map[key] = value;
+        return map;
+      }, {});
+  
+      // 서버에 투표 결과 전송
+      const response = await axios.post(`http://localhost/api/v1/conferences/vote`, {
+        roomId: roomId,
+        round: step,
+        votes: itemsObject
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          AuthorizationRoom:localStorage.getItem('roomToken')
+        }
+      });
+
+      console.log(response);
+
+      await endVote();
+
+    
+  
+      // STOMP 클라이언트를 통해 메시지 전송
+      client.publish({
+        destination: `/app/vote.middleResults.${roomId}.2`,
+        headers: { Authorization: localStorage.getItem('roomToken') }
+      });
+    } catch (error) {
+      console.error("Error during step1EndAlarm:", error);
+    }
+  };
+
+  let timerId;
+
+const timer = async () => {
+  return new Promise(resolve => {
+    const tick = () => {
+      setTimeLeft(prevTimeLeft => {
+        const newTimeLeft = prevTimeLeft - 1000;
+        if (newTimeLeft <= 0) {
+          clearInterval(timerId); // 타이머를 멈춥니다
+          resolve();
+          return 0; // 타이머 종료 후 0으로 설정
+        } else {
+          return newTimeLeft;
+        }
+      });
+    };
+
+    timerId = setInterval(tick, 1000); // 매 초마다 tick 함수를 호출
+  });
+};
+
+  const endVote=async()=>{
+    const response=await axios.post(`http://localhost/api/v1/conferences/vote/endByTimer`,{
+      conferenceId:roomId,
+      round:step
+    },{
+      headers:{
+        'Content-Type': 'application/json',
+        AuthorizationRoom:localStorage.getItem('roomToken')
+      }
+    });
+
+    await Swal.fire({
+      icon: "success",
+      title: '투표가 종료되었습니다.',
+      text: '결과를 확인하세요',
+      showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+      confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
+      cancelButtonColor: '#d33', // cancel 버튼 색깔 지정
+      confirmButtonText: '승인', // confirm 버튼 텍스트 지정
+      cancelButtonText: '취소', // cancel 버튼 텍스트 지정
+    }).then(result=>{
+      if(result.isConfirmed){
+        console.log(getVoteResult());
+      }
+    });
+
+
+  }
+
+  const getVoteResult=async()=>{
+    const response=await axios.get(`http://localhost/api/v1/conferences/vote/results?roomId=${roomId}&step=${step}`,{
+      headers:{
+        'Content-Type': 'application/json',
+        AuthorizationRoom:localStorage.getItem('roomToken')
+      }
+    });
+
+    return response;
+  }
 
 
   return (
@@ -369,6 +492,15 @@ const Conference = () => {
                   className="action-button pass-button"
                 >
                   <span>패스하기</span>
+                </Button>
+                <Button
+                  type='fit'
+                  onClick={step1EndAlarm}
+                  buttonStyle="purple"
+                  ariaLabel="Pass Button"
+                  className="action-button end-button"
+                >
+                  <span>투표하기</span>
                 </Button>
               </div>
             </div>
