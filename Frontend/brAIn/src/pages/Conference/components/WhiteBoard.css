@@ -22,7 +22,7 @@
   
   .WhiteBoard {
     font-family: Arial, sans-serif;
-    width: 600px; /* 고정 너비 설정 */
+    width: 1300px; /* 고정 너비 설정 */
     border: 1px solid #ccc; /* 테두리 추가 (선택 사항) */
     border-radius: 8px; /* 모서리 둥글게 */
     overflow: hidden; /* 내용이 넘칠 때 숨기기 */

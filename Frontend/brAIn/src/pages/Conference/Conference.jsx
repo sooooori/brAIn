@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import WaitingModal from './components/WaitingModal';
 import ConferenceNavbar from '../../components/Navbar/ConferenceNavbar';
-
 import PostItSidebar from './components/PostItSidebar';
 import Timer from './components/Timer';
 import WhiteBoard from './components/WhiteBoard';
@@ -15,14 +14,9 @@ import SidebarIcon from '../../assets/svgs/sidebar.svg';
 import MemberList from './components/MemberList';
 import './ConferenceEx.css';
 
-import { addUser, removeUser, setUsers, setUserNick, setCuruser, resetUser } from '../../actions/userActions';
-import { setCurStep, upRound, setRound, resetConference } from '../../actions/conferenceActions';
-import { sendToBoard, resetRoundBoard } from '../../actions/roundRobinBoardAction';
-
-import { useNavigate } from 'react-router-dom';
-
-import PostItTest from './components/PostItTest';
-
+import { addUser, removeUser, setUsers, setUserNick, setCuruser } from '../../actions/userActions';
+import { setCurStep, upRound, setRound } from '../../actions/conferenceActions';
+import { sendToBoard } from '../../actions/roundRobinBoardAction';
 
 const Conference = () => {
   const dispatch = useDispatch();
@@ -36,27 +30,20 @@ const Conference = () => {
   const [roomId, setRoomId] = useState(null);
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  //const [roundRobinBoard, setRoundRobinBoard] = useState([]);
-
-
   const [notes, setNotes] = useState([]);
   const [showNotes, setShowNotes] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const users = useSelector(state => state.user.users);
-  const nickname = useSelector(state => state.user.nickname)
-  const step = useSelector(state => state.conferenceInfo.curStep)
-  const round = useSelector(state => state.conferenceInfo.round)
-  const [isUnmounted, setIsUnmounted] = useState(false);
-  const curUser = useSelector(state => state.user.currentUser)
-
+  const nickname = useSelector(state => state.user.nickname);
+  const step = useSelector(state => state.conferenceInfo.curStep);
+  const round = useSelector(state => state.conferenceInfo.round);
+  const curUser = useSelector(state => state.user.currentUser);
   const roundRobinBoard = useSelector(state => state.roundRobinBoard.roundRobinBoard);
   const { secureId: routeSecureId } = useParams();
-
 
   useEffect(() => {
     let isMounted = true;
     let currentClient = null;
-
 
     const fetchDataAndConnect = async () => {
       try {
@@ -70,7 +57,6 @@ const Conference = () => {
           },
         });
 
-        // 'roomToken'이 로컬 스토리지에 없을 때만 작업 수행
         if (!localStorage.getItem('roomToken')) {
           localStorage.setItem('roomToken', response.data.jwtForRoom);
           console.log('roomToken이 없어서 새로운 토큰을 저장했습니다.');
@@ -106,16 +92,6 @@ const Conference = () => {
             const receivedMessage = JSON.parse(message.body);
             handleMessage(receivedMessage);
           });
-
-          // newClient.subscribe(`/topic/start.conferences.${roomId}`, (message) => {
-          //   const receivedMessage = JSON.parse(message.body);
-          //   console.log('Received message to start conference:', receivedMessage);
-
-
-          //   if (receivedMessage.type === 'START_MEETING') {
-          //     startMeeting(receivedMessage);
-          //   }
-          // });
         };
 
         newClient.onStompError = (frame) => {
@@ -145,39 +121,20 @@ const Conference = () => {
 
   }, [routeSecureId]);
 
-  useEffect(() => {
-    console.log(users);
-  }, [users]);
-
-  useEffect(() => {
-    console.log(nickname);
-  }, [nickname]);
-
-  useEffect(() => {
-    console.log(curUser);
-  }, [curUser]);
-  useEffect(() => {
-    console.log(roundRobinBoard.content);
-  }, [roundRobinBoard]);
-
   const handleMessage = async (receivedMessage) => {
     if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
       countUpMember();
     } else if (receivedMessage.messageType === 'SUBMIT_POST_IT') {
       roundRobinBoardUpdate(receivedMessage);
-    }
-    else if (receivedMessage.messageType == 'START_CONFERENCE') {
-      console.log("Rldpdpdpdpdpdpdpdppd")
+    } else if (receivedMessage.messageType === 'START_CONFERENCE') {
       startMeeting();
       const updatedUsers = await dispatch(setUsers(receivedMessage.users));
       dispatch(setCuruser(updatedUsers[0].nickname));
-      dispatch(setCurStep('STEP_0'))
-    }
-    else if (receivedMessage.messageType == 'ENTER_CONFERENCES') {
+      dispatch(setCurStep('STEP_0'));
+    } else if (receivedMessage.messageType === 'ENTER_CONFERENCES') {
       dispatch(setUserNick(receivedMessage.nickname));
-    }
-    else if (receivedMessage.messageType == 'NEXT_STEP') {
-      dispatch(setCurStep(receivedMessage.curStep))
+    } else if (receivedMessage.messageType === 'NEXT_STEP') {
+      dispatch(setCurStep(receivedMessage.curStep));
     }
   };
 
@@ -194,7 +151,6 @@ const Conference = () => {
   const startMeeting = () => {
     setIsModalVisible(false);
     setIsMeetingStarted(true);
-    // console.log(users)
   };
 
   const handleStartMeeting = () => {
@@ -202,30 +158,26 @@ const Conference = () => {
       client.publish({
         destination: `/app/start.conferences.${roomId}`,
         headers: {
-          'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
+          'Authorization': localStorage.getItem('roomToken')
         },
-        //body: JSON.stringify({ type: 'START_MEETING' }),
       });
     }
   };
 
-  //라운드 로빈 포스트잇 보드에 저장
-  const roundRobinBoardUpdate=(postit)=>{
-    
-    dispatch(sendToBoard(postit.curRound, postit.content))
+  const roundRobinBoardUpdate = (postit) => {
+    dispatch(sendToBoard(postit.curRound, postit.content));
     if (round !== postit.nextRound) {
       dispatch(setRound(postit.nextRound));
     }
-    dispatch(setCuruser(postit.nextUser))
-  }
+    dispatch(setCuruser(postit.nextUser));
+  };
 
-  //라운드 로빈 포스트잇 제출
   const attachPostitOnRoundBoard = (content) => {
     if (client) {
       const postit = {
         round: round,
         content: content,
-      }
+      };
 
       client.publish({
         destination: `/app/step1.submit.${roomId}`,
@@ -233,7 +185,7 @@ const Conference = () => {
         body: JSON.stringify(postit)
       });
     }
-  }
+  };
 
   const toggleSidebar = () => {
     setIsSidebarVisible((prev) => !prev);
@@ -248,12 +200,11 @@ const Conference = () => {
   };
 
   const handleNextStepClick = () => {
-    // Implement logic for "Next Step" button click
     if (client) {
       client.publish({
         destination: `/app/next.step.${roomId}`,
         headers: {
-          'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
+          'Authorization': localStorage.getItem('roomToken')
         },
         body: JSON.stringify({
           step: step
@@ -263,130 +214,87 @@ const Conference = () => {
   };
 
   const handlePassButtonClick = () => {
-    // Implement logic for "Pass" button click
     console.log('Pass button clicked');
   };
 
-
-
   return (
     <div className="conference">
-      {/* {isMeetingStarted && <ConferenceNavbar secureId={routeSecureId} />} */}
       {!isMeetingStarted && (
-        <div>
-          <WaitingModal
-            isVisible={isModalVisible}
-            participantCount={participantCount}
-            secureId={routeSecureId}
-            onClose={() => setIsModalVisible(false)}
-            onStartMeeting={handleStartMeeting}
-            client={client}
-          />
-        </div>
+        <WaitingModal
+          isVisible={isModalVisible}
+          participantCount={participantCount}
+          secureId={routeSecureId}
+          onClose={() => setIsModalVisible(false)}
+          onStartMeeting={handleStartMeeting}
+          client={client}
+        />
       )}
-      <div>
-        <MemberList />
-      </div>
+      <div className="conference-content">
+        <div className="member-list-container">
+          <MemberList />
+        </div>
 
-      {isMeetingStarted && (
-        <div className="meeting-content">
-          <div className="sidebar-container">
-            <Button
-              type="fit"
-              onClick={toggleSidebar}
-              buttonStyle="black"
-              ariaLabel="Toggle Sidebar"
-              className="toggle-sidebar-button"
-            >
-              <img src={SidebarIcon} alt="Sidebar Toggle" className="sidebar-icon" />
-            </Button>
-            <PostItSidebar
-              notes={notes}
-              isVisible={isSidebarVisible}
-              onClose={handleCloseSidebar}
-              onSubmitClick={attachPostitOnRoundBoard}
-            />
-          </div>
-          <div className="main-content">
-            <VotedPostIt />
-            <div className="whiteboard-section">
-              <div className="conf-timer-container">
-                <Timer />
-              </div>
-              <div className="whiteboard-container">
-                <WhiteBoard subject="안녕" onSubmitClick={attachPostitOnRoundBoard} />
-              </div>
-
-              {/* test */}
-
-
-              <div className="action-buttons-container">
-                <Button
-                  type='fit'
-                  onClick={handleReadyButtonClick}
-                  buttonStyle="purple"
-                  ariaLabel="Ready Button"
-                  className="action-button ready-button"
-                >
-                  <span>준비 완료</span>
-                </Button>
-                {/*role !== 'host' && (
-                  <>
-                    <Button
-                      type='fit'
-                      onClick={handleNextStepClick}
-                      buttonStyle="purple"
-                      ariaLabel="Next Step Button"
-                      className="action-button next-step-button"
-                    >
-                      <span>다음 단계</span>
-                    </Button>
-                    <Button
-                      type='fit'
-                      onClick={handlePassButtonClick}
-                      buttonStyle="purple"
-                      ariaLabel="Pass Button"
-                      className="action-button pass-button"
-                    >
-                      <span>패스하기</span>
-                    </Button>
-                  </>
-                )*/}
-                <Button
-                  type='fit'
-                  onClick={handleNextStepClick}
-                  buttonStyle="purple"
-                  ariaLabel="Next Step Button"
-                  className="action-button next-step-button"
-                >
-                  <span>다음 단계</span>
-                </Button>
-                <Button
-                  type='fit'
-                  onClick={handlePassButtonClick}
-                  buttonStyle="purple"
-                  ariaLabel="Pass Button"
-                  className="action-button pass-button"
-                >
-                  <span>패스하기</span>
-                </Button>
+        {isMeetingStarted && (
+          <div className="conference-section">
+            <div className="sidebar-container">
+              <Button
+                type="fit"
+                onClick={toggleSidebar}
+                buttonStyle="black"
+                ariaLabel="Toggle Sidebar"
+                className="toggle-sidebar-button"
+              >
+                <img src={SidebarIcon} alt="Sidebar Toggle" className="sidebar-icon" />
+              </Button>
+              <PostItSidebar
+                notes={notes}
+                isVisible={isSidebarVisible}
+                onClose={handleCloseSidebar}
+                onSubmitClick={attachPostitOnRoundBoard}
+              />
+            </div>
+            <div className="main-content">
+              <div className="whiteboard-section">
+                <div className="conf-timer-container">
+                  <Timer />
+                </div>
+                <div className="action-buttons-container">
+                  <Button
+                    type='fit'
+                    onClick={handleReadyButtonClick}
+                    buttonStyle="purple"
+                    ariaLabel="Ready Button"
+                    className="action-button ready-button"
+                  >
+                    <span>준비 완료</span>
+                  </Button>
+                  <Button
+                    type='fit'
+                    onClick={handleNextStepClick}
+                    buttonStyle="purple"
+                    ariaLabel="Next Step Button"
+                    className="action-button next-step-button"
+                  >
+                    <span>다음 단계</span>
+                  </Button>
+                  <Button
+                    type='fit'
+                    onClick={handlePassButtonClick}
+                    buttonStyle="purple"
+                    ariaLabel="Pass Button"
+                    className="action-button pass-button"
+                  >
+                    <span>패스하기</span>
+                  </Button>
+                </div>
+                <div className="whiteboard-container">
+                  <WhiteBoard subject="안녕" onSubmitClick={attachPostitOnRoundBoard} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-      <div>Current Step: {step}
+        )}
       </div>
-      <div>Current Round: {round}</div>
-      {/* {users.map((user, index) => (
-        <div key={index}>
-          <p>Nickname: {user.nickname}</p>
-          <p>Ready: {user.ready ? 'Yes' : 'No'}</p>
-          {user.nickname === curUser && <p>cur</p>}
-        </div>
-      ))}
-      <div>nickname: {nickname}</div>
-      <div>curuser : {curUser}</div> */}
     </div>
   );
 };

@@ -93,14 +93,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
 
   return (
     <div className="WhiteBoard">
-      <header className="WhiteBoard-header">
-        <h1>주제: {subject}</h1>
-      </header>
       <div className="WhiteBoard-body">
-        <div className="instruction-container">
-          <p className="instruction">{getInstructionText()}</p>
-        </div>
-        <div className="divider-line" />
         <div className="idea-board">
           {/* {ideas.map((idea) => (
             <PostIt
