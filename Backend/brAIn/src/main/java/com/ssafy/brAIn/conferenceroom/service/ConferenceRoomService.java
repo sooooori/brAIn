@@ -89,7 +89,17 @@ public class ConferenceRoomService {
         return new Date(diffInMillis - TimeZone.getDefault().getRawOffset());
     }
 
-    public void updateConferenceRoom(ConferenceRoom conferenceRoom) {
+    // 회의룸 재설정
+    public void updateConferenceRoom(Integer roomId, String subject, Date startTime) {
+        ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(roomId)
+                .orElse(null);
+
+        if (conferenceRoom == null) {
+            throw new RuntimeException("Conference Room not found");
+        } else {
+            conferenceRoom.updateConferenceRoom(subject, startTime);
+        }
+
         conferenceRoomRepository.save(conferenceRoom);
     }
 }

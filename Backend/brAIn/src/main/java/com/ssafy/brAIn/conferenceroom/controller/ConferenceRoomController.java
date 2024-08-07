@@ -2,10 +2,7 @@ package com.ssafy.brAIn.conferenceroom.controller;
 
 import com.ssafy.brAIn.auth.jwt.JWTUtilForRoom;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
-import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomJoinRequest;
-import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomRequest;
-import com.ssafy.brAIn.conferenceroom.dto.ConferenceRoomResponse;
-import com.ssafy.brAIn.conferenceroom.dto.ConferenceMemberRequest;
+import com.ssafy.brAIn.conferenceroom.dto.*;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.history.model.Role;
@@ -16,8 +13,12 @@ import com.ssafy.brAIn.util.RandomNicknameGenerator;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -98,6 +99,25 @@ public class ConferenceRoomController {
             return ResponseEntity.status(404).body("Conference Room not found");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An error occurred while saving conference history");
+        }
+    }
+
+    // 회의룸 재설정
+    @PutMapping("/updateConferenceRoom")
+    public ResponseEntity<?> updateConferenceRoom(@RequestHeader("Authorization") String token,
+                                                  @RequestBody ConferenceUpdateRequest request) {
+    try {
+        // Barer 접두사 제거
+        String roomToken = token.replace("Bearer ", "");
+        // 회의룸 재설정
+        String roomId = JwtUtil.getConferenceRoomId(roomToken);
+        String subject = request.getSubject();
+        Date startTime = request.getStartTime();
+
+        conferenceRoomService.updateConferenceRoom(Integer.parseInt(roomId), subject, startTime);
+        return ResponseEntity.ok(Map.of("message", "ConferenceRoom update successfully"));
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Conference Room not found");
         }
     }
 }

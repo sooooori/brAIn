@@ -181,7 +181,6 @@ public class MessageController {
 
         //0단계 부터  시작.
         ConferenceRoom conferenceRoom = conferenceRoomService.findByRoomId(roomId).updateStep(Step.STEP_0);
-        conferenceRoomService.updateConferenceRoom(conferenceRoom);
 //        MessagePostProcessor messagePostProcessor = message -> {
 //            message.getMessageProperties().setHeader("Authorization", "회의 토큰");
 //            return message;
@@ -302,14 +301,4 @@ public class MessageController {
         // 결과를 RabbitMQ로 전송(Subscribe)
         rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, voteResults);
     }
-
-
-
-
-
-
-
-
-
-
 }

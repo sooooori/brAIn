@@ -114,10 +114,8 @@ public class JwtUtil {
     }
 
     // Token에서 회의룸 추출
-    public static String getUserConferences(String token){
+    public static String getConferenceRoomId(String token){
         Claims claims = extractToken(token);
-        return claims.get("userConferences").toString();
+        return claims.get("roomId").toString();
     }
-
-
 }

@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.conferenceroom.entity;
 
+import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.history.entity.MemberHistory;
 import com.ssafy.brAIn.util.CommonUtils;
 import com.ssafy.brAIn.util.MeetingUrlGenerator;
@@ -9,9 +10,14 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Entity // 엔티티로 지정
 @Getter
@@ -82,9 +88,9 @@ public class ConferenceRoom {
         this.round = 0;
     }
 
-    public ConferenceRoom update() {
-        //setter가 없기에 update마다 함수를 만들 예정.
-        return this;
+    public void updateConferenceRoom(String subject, Date startTime) {
+        this.subject = subject;
+        this.startTime = startTime;
     }
 
     public ConferenceRoom updateStep(Step step) {
