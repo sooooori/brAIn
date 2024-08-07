@@ -1,0 +1,112 @@
+/* 전체 컨테이너 스타일 */
+.conference {
+  display: flex;
+  flex-direction: row;
+  height: 100vh; /* 전체 화면 높이 */
+  width: 100vw; /* 전체 화면 너비 */
+}
+
+/* 사이드바 컨테이너 스타일 */
+.sidebar-container {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 사이드바 토글 버튼 스타일 */
+.toggle-sidebar-button {
+  width: 50px; /* 버튼 너비 조정 */
+  height: 50px; /* 버튼 높이 조정 */
+  display: flex;
+  align-items: center; /* 버튼 내 아이콘 중앙 정렬 */
+  justify-content: center; /* 버튼 내 아이콘 중앙 정렬 */
+  background: black; /* 버튼 배경색 */
+  border: none; /* 기본 테두리 제거 */
+  border-radius: 50%; /* 둥근 버튼 */
+  cursor: pointer; /* 커서 포인터로 변경 */
+  margin: 10px;
+}
+
+/* 사이드바 아이콘 스타일 */
+.sidebar-icon {
+  width: 24px; /* 아이콘 너비 */
+  height: 24px; /* 아이콘 높이 */
+}
+
+/* 메인 콘텐츠 컨테이너 스타일 */
+.main-content {
+  display: flex;
+  width: 100%;
+}
+
+/* 투표한 포스트잇 컨테이너 스타일 */
+.voted-post-it-container {
+  width: 100px; /* 너비 설정 */
+  height: 150px; /* 높이 설정 */
+  background-color: #f8f9fa; /* 배경색 설정 */
+  border: 1px solid #ccc; /* 테두리 설정 */
+  border-radius: 8px; /* 모서리 둥글게 */
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  overflow-y: auto; /* 내용이 넘칠 때 스크롤 허용 */
+}
+
+/* 화이트보드 섹션 스타일 */
+.whiteboard-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 타이머 컨테이너 스타일 */
+.conf-timer-container {
+  margin-bottom: 20px;
+}
+
+/* 화이트보드 컨테이너 스타일 */
+.whiteboard-container {
+  width: 80%; /* 화이트보드 너비 */
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* 액션 버튼 컨테이너 스타일 */
+.action-buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px; /* 버튼 간격 */
+  margin-top: 20px; /* 버튼 위쪽 여백 */
+}
+
+/* 액션 버튼 스타일 */
+.action-button {
+  width: 150px;
+  background: #6a0dad; /* 보라색 배경 */
+  color: white; /* 흰색 글씨 */
+  border: none; /* 기본 테두리 제거 */
+  border-radius: 6px; /* 테두리 둥글게 */
+  padding: 10px 20px; /* 버튼 패딩 */
+  font-size: 1rem; /* 폰트 크기 */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 아이콘과 텍스트 사이의 간격 */
+  transition: background-color 0.3s; /* 호버 효과 */
+}
+
+.action-button:hover {
+  background-color: #5a0a9d; /* 호버 시 배경 색상 */
+}
+
+/* 준비 완료 아이콘 스타일 */
+.ready-icon {
+  width: 24px;
+  height: 24px;
+}

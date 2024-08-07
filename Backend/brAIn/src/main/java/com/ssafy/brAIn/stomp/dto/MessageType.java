@@ -14,5 +14,6 @@ public enum MessageType {
     PLUS_TIME,
     FINISH_MIDDLE_VOTE, // 중간 투표 종료 : 상위 9개 선정
     FINISH_FINAL_VOTE, // 중간 투표 종료 : 상위 3개 선정
-    START_VOTE;
+    START_VOTE,
+    END_CONFERENCE;
 }

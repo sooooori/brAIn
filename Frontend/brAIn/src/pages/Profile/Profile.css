@@ -1,4 +1,4 @@
-.profile-container {
+.profile-container-default {
     position: relative;
     text-align: center;
     margin-top: 6rem;
@@ -6,6 +6,16 @@
     border-radius: 8%;
     width: 550px;
     height: 580px;
+}
+
+.profile-container-reduced {
+    position: relative;
+    text-align: center;
+    margin-top: 6rem;
+    border: 2px solid black;
+    border-radius: 8%;
+    width: 550px;
+    height: 450px;
 }
 
 .profile-details {

@@ -113,11 +113,11 @@ const Profile = () => {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 },
-                data: deletePassword // 비밀번호를 본문에 포함
+                data: { password: deletePassword } // 비밀번호를 본문에 포함
             });
-    
+
             console.log('Account deleted successfully:', response.data);
-    
+
             dispatch(logout());
             Cookies.remove('refreshToken');
             navigate('/');
@@ -132,12 +132,15 @@ const Profile = () => {
 
     const isAnyModalOpen = isProfileImageModalOpen || isDeleteAccountModalOpen || isUpdatePasswordModalOpen;
 
+    // Determine the class for the profile container based on user type
+    const containerClass = user?.type === 'None' ? 'profile-container-default' : 'profile-container-reduced';
+
     if (isLoading) {
         return <div>Loading...</div>;
     }
 
     return (
-        <div className="profile-container">
+        <div className={`profile-container ${containerClass}`}>
             <div className="profile-details">
                 <div className="profile-image-container">
                     <img
@@ -159,13 +162,17 @@ const Profile = () => {
                     <h3 className="profile-email">Email: {user?.email}</h3>
                 </div>
                 <div className="profile-actions">
-                    <Button onClick={handleChangePassword}>비밀번호 수정하기</Button>
-                    <Button 
-                        className={"profile-exit"}
-                        onClick={() => setIsDeleteAccountModalOpen(true)}
-                    >
-                        회원 탈퇴
-                    </Button>
+                    {user?.type === 'None' && (
+                        <>
+                            <Button onClick={handleChangePassword}>비밀번호 수정하기</Button>
+                            <Button 
+                                className="profile-exit"
+                                onClick={() => setIsDeleteAccountModalOpen(true)}
+                            >
+                                회원 탈퇴
+                            </Button>
+                        </>
+                    )}
                     <Button onClick={handleGoHome}>홈 화면으로 돌아가기</Button>
                 </div>
             </div>

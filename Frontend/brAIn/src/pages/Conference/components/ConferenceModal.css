@@ -1,0 +1,36 @@
+/* ConferenceModal.css */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    width: 90%; /* 모달의 너비를 더 크게 설정 */
+    max-width: 800px; /* 최대 너비 설정 */
+    position: relative;
+}
+
+.modal-content p {
+    margin: 0 0 20px 0; /* 문구와 버튼 사이의 간격 조정 */
+    font-size: 18px;
+}
+
+/* 버튼을 모달 내용 박스 안에서 오른쪽 아래에 위치시키기 */
+.button-container {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    text-align: right;
+}
+

@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import LoginModal from './components/LoginModal';
 import JoinModal from './components/JoinModal';
-import './LoginOption.css'; // Import the CSS file
+import './LoginOption.css';
 
-const LoginOption = () => {
-
+const LoginOptions = () => {
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
+
+    const REST_API_KEY_KAKAO = 'fea30b4314dd7be5eb36b76ffc59be39';
+    const REDIRECT_URI_KAKAO = 'http://localhost/kakao-redirect';  // 프론트엔드 설정된 URL
+
+    const REST_API_KEY_GOOGLE = '266096775787-0uivud8vsborpu2vje1vmpf5a41th71j.apps.googleusercontent.com';
+    const REDIRECT_URI_GOOGLE = 'http://localhost/google-redirect';  // 프론트엔드 설정된 URL
 
     const openLoginModal = () => {
         setIsLoginModalOpen(true);
@@ -24,12 +29,26 @@ const LoginOption = () => {
         setIsJoinModalOpen(false);
     };
 
-    const goToGoogleLogin = () => {
-        window.location.href = `http://localhost:8080/oauth2/authorization/google?redirect_uri=http://localhost:5173/oauth/redirect`;
+    const goToKakaoLogin = () => {
+        const kakaoUrl =
+        "https://kauth.kakao.com/oauth/authorize" +
+        "?response_type=code" +
+        `&client_id=${REST_API_KEY_KAKAO}` +
+        `&redirect_uri=${REDIRECT_URI_KAKAO}`;
+
+        window.location.href = kakaoUrl;
     };
 
-    const goToKakaoLogin = () => {
-        window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=http://localhost:3000/oauth/callback&response_type=code`;
+    const goToGoogleLogin = () => {
+        const googleUrl =
+        "https://accounts.google.com/o/oauth2/v2/auth" +
+        "?response_type=code" +
+        `&client_id=${REST_API_KEY_GOOGLE}` +
+        `&redirect_uri=${REDIRECT_URI_GOOGLE}` +
+        `&scope=openid%20email%20profile` +
+        "&prompt=select_account";
+
+        window.location.href = googleUrl;
     };
 
     return (
@@ -57,4 +76,4 @@ const LoginOption = () => {
     );
 };
 
-export default LoginOption;
+export default LoginOptions;

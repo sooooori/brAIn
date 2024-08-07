@@ -6,6 +6,7 @@ import com.ssafy.brAIn.member.dto.MemberRequest;
 import com.ssafy.brAIn.member.dto.MemberResponse;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
+import com.ssafy.brAIn.s3.S3Service;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

@@ -31,8 +31,8 @@ public class CsrfChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         String conferenceToken = accessor.getFirstNativeHeader("Authorization");
 
-        System.out.println("preSend 시작");
-        System.out.println("conferenceToken: " + conferenceToken);
+//        System.out.println("preSend 시작");
+//        System.out.println("conferenceToken: " + conferenceToken);
 
 
         if (conferenceToken != null && conferenceToken.startsWith("Bearer ")) {
@@ -52,17 +52,17 @@ public class CsrfChannelInterceptor implements ChannelInterceptor {
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Authentication: " + (authentication != null ? authentication.getAuthorities() : "No Authentication"));
-
-        System.out.println("preSend 끝");
+//        System.out.println("Authentication: " + (authentication != null ? authentication.getAuthorities() : "No Authentication"));
+//
+//        System.out.println("preSend 끝");
         return message;
     }
 
     @Override
     public void postSend(Message<?> message, MessageChannel channel, boolean sent) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("PostSend Authentication: " + (authentication != null ? authentication.getAuthorities() : "No Authentication"));
-        System.out.println("Message: " + message);
+//        System.out.println("PostSend Authentication: " + (authentication != null ? authentication.getAuthorities() : "No Authentication"));
+//        System.out.println("Message: " + message);
     }
 
 }

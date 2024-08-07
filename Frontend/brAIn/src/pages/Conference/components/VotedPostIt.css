@@ -1,0 +1,90 @@
+/* VotedPostIt.css */
+
+/* Droppable container 스타일 */
+.droppable-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%; /* 가로폭을 좀 더 넓게 설정 */
+  margin: 0 auto; /* 중앙 정렬 */
+  overflow: hidden; /* 아이템이 컨테이너를 넘지 않도록 설정 */
+  box-sizing: border-box; /* 패딩과 보더를 포함한 박스 크기 조정 */
+}
+
+/* Draggable 아이템 기본 스타일 */
+.draggable-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px; /* 둥근 모서리 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: grab;
+  width: 150px; /* 정사각형의 너비 */
+  height: 150px; /* 정사각형의 높이 */
+  color: #333;
+  font-weight: bold;
+  font-size: 16px;
+  background-color: #f0f0f0; /* 기본 배경색 */
+  overflow: hidden; /* 내용이 넘칠 경우 숨김 */
+  word-break: break-word; /* 긴 내용이 넘치지 않게 줄바꿈 */
+  text-align: center; /* 내용 중앙 정렬 */
+}
+
+/* Draggable 아이템이 드래그 중일 때 스타일 */
+.draggable-item.dragging {
+  background-color: #e0e0e0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: grabbing;
+}
+
+/* Placeholders 스타일 */
+.droppable-placeholder {
+  background-color: #c0c0c0;
+  border: 2px dashed #aaa;
+  width: 150px;
+  height: 150px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+/* 아이템에 서로 다른 배경색을 적용 */
+.draggable-item:nth-child(1) {
+  background-color: #ffadad; /* 연한 빨간색 */
+}
+
+.draggable-item:nth-child(2) {
+  background-color: #ffd6a5; /* 연한 주황색 */
+}
+
+.draggable-item:nth-child(3) {
+  background-color: #fdffb6; /* 연한 노란색 */
+}
+
+.draggable-item:nth-child(4) {
+  background-color: #caffbf; /* 연한 초록색 */
+}
+
+.draggable-item:nth-child(5) {
+  background-color: #9bfbc0; /* 연한 청록색 */
+}
+
+/* Optional: 미디어 쿼리로 반응형 디자인 */
+@media (max-width: 600px) {
+  .droppable-container {
+    padding: 10px;
+    width: 95%; /* 모바일 화면에서는 가로폭을 더 줄임 */
+  }
+
+  .draggable-item {
+    width: 100px; /* 모바일 화면에서는 아이템 너비를 줄임 */
+    height: 100px; /* 모바일 화면에서는 아이템 높이를 줄임 */
+    font-size: 14px;
+  }
+}
+

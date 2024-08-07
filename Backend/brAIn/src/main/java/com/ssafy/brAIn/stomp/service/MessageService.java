@@ -18,8 +18,12 @@ import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
 import com.ssafy.brAIn.stomp.dto.MessageType;
 import com.ssafy.brAIn.stomp.dto.UserState;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
+
+import com.ssafy.brAIn.util.RandomNicknameGenerator;
+
 import com.ssafy.brAIn.stomp.response.ResponseGroupPost;
 import com.ssafy.brAIn.stomp.response.ResponseMiddleVote;
+
 import com.ssafy.brAIn.util.RedisUtils;
 import com.ssafy.brAIn.vote.dto.VoteRequest;
 import com.ssafy.brAIn.vote.dto.VoteResponse;
@@ -124,7 +128,7 @@ public class MessageService {
         //redisUtils.removeValueFromSortedSet(roomId+"order",nickname);
     }
 
-    //멤버가 회의 중 나갔을 때 history 테이블 업데이트(테스트 완)
+    //멤버가 회의 중  history 테이블 업데이트(테스트 완)
     @Transactional
     public void historyUpdate(Integer roomId,String email) {
         Optional<Member> member=memberRepository.findByEmail(email);
@@ -180,6 +184,7 @@ public class MessageService {
 
             //ai 순서 지정
             if (i == aiOrder) {
+                redisUtils.save(roomId + ":ai:nickname", RandomNicknameGenerator.generateNickname());
                 String aiNickname = redisUtils.getData(roomId + ":ai:nickname");
                 redisUtils.setSortedSet(roomId+":order",i,aiNickname);
                 redisUtils.setSortedSet(roomId+":"+"order:cur",i,aiNickname);
@@ -198,11 +203,15 @@ public class MessageService {
 
 
         }
-        return redisUtils.getSortedSet(roomId+":order");
+        return redisUtils.getSortedSet(roomId+":order:cur");
     }
 
     private int makeRandom(int size) {
-        return (int)(Math.random()*size);
+        int randomValue;
+        do {
+            randomValue = (int)(Math.random() * size);
+        } while (randomValue == 0);
+        return randomValue;
     }
 
 
@@ -298,6 +307,13 @@ public class MessageService {
     public boolean isAi(Integer roomId,String user) {
         String ai = redisUtils.getData(roomId + ":ai:nickname");
         return ai.equals(user);
+    }
+
+    public List<String> getUsersInRoom(Integer roomId) {
+        String key = roomId + ":order:cur";
+        return redisUtils.getSortedSet(key).stream()
+                .map(Object::toString)
+                .toList();
     }
 
 }

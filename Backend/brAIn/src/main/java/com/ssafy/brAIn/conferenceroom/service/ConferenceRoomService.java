@@ -88,4 +88,8 @@ public class ConferenceRoomService {
         long diffInMillis = endDate.getTime() - startDate.getTime();
         return new Date(diffInMillis - TimeZone.getDefault().getRawOffset());
     }
+
+    public void updateConferenceRoom(ConferenceRoom conferenceRoom) {
+        conferenceRoomRepository.save(conferenceRoom);
+    }
 }
