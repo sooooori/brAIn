@@ -1,0 +1,45 @@
+services:
+  db:
+    ports:
+      - "3307:3306"
+    networks:
+      - jenkinsnet
+    image: mariadb:latest
+    container_name: brain_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ssafy
+      MYSQL_DATABASE: brAIn
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ssafy
+    volumes:
+      - db-data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    image: jkw1025/backend-testimage:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - jenkinsnet
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=brAIn
+      - DB_USER=root
+      - DB_PASSWORD=ssafy
+    depends_on:
+      - db
+    volumes:
+      - backend-data:/var/lib/backend
+
+
+networks:
+  jenkinsnet:
+    name: jenkinsnet
+
+volumes:
+  db-data:
+  backend-data:
