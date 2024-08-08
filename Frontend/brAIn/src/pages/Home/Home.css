@@ -226,6 +226,7 @@ body {
   
   /* Individual conference card styling */
   .home-conference-card {
+    cursor: pointer;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -255,7 +256,7 @@ body {
 }
 
 .home-pagination button {
-background-color: #f9f9f9;
+background-color: #e0e0e0;
 border: 1px solid #ddd;
 border-radius: 4px;
 padding: 10px 20px;

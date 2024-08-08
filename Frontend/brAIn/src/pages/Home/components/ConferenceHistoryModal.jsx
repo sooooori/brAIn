@@ -23,21 +23,24 @@ const ConferenceHistoryModal = ({ conferenceId, onClose }) => {
     return <div className="conference-history-modal">Loading...</div>;
   }
 
+  const { subject, totalTime, members, conclusion } = conferenceDetails;
+
   return (
     <div className="conference-history-modal">
       <div className="modal-content">
         <button className="close-button" onClick={onClose}>
           &times;
         </button>
-        <h2>{conferenceDetails.subject}</h2>
-        <p>회의 주제: {conferenceDetails.subject}</p>
-        <p>회의 요약: {conferenceDetails.summary}</p>
-        <p>시작 시간: {new Date(conferenceDetails.start_time).toLocaleString()}</p>
-        <p>종료 시간: {new Date(conferenceDetails.end_time).toLocaleString()}</p>
+        <h2>{subject}</h2>
+        <p>회의 주제: {subject}</p>
+        <p>회의 요약: {conclusion || '요약이 없습니다.'}</p>
+        <p>총 시간: {new Date(totalTime).toLocaleString()}</p>
         <h3>참가자 목록</h3>
         <ul>
-          {conferenceDetails.members.map(member => (
-            <li key={member.memberId}>Member ID: {member.memberId}</li>
+          {members.map(member => (
+            <li key={member.memberId}>
+              이름: {member.name} (역할: {member.role})
+            </li>
           ))}
         </ul>
       </div>

@@ -112,8 +112,8 @@ const Home = () => {
   
           console.log('API Response:', response.data);
           
-          if (response.data && Array.isArray(response.data.conferences)) {
-            setConferenceHistory(response.data.conferences);
+          if (response.data && Array.isArray(response.data)) {
+            setConferenceHistory(response.data);
           } else {
             console.error('Unexpected data format:', response.data);
             setConferenceHistory([]);
@@ -191,11 +191,10 @@ const Home = () => {
           <h2 className='home-subtitle-login'>지금까지 참여한 회의 목록 확인</h2>
           <div className="home-conference-list">
             {currentItems.map(conference => (
-              <div key={conference.conferenceId} className="home-conference-card" onClick={() => handleConferenceCardClick(conference.conferenceId)}>
+              <div key={conference.conferenceId} className="home-conference-card" onClick={() => handleConferenceCardClick(conference.conferenceId+1)}>
                 <h3>{conference.subject}</h3>
-                <p>참가자 수: {conference.memberCnt}</p>
-                <p>시작 시간: {new Date(conference.start_time).toLocaleString()}</p>
-                <p>종료 시간: {new Date(conference.end_time).toLocaleString()}</p>
+                <p>참가자 수: {conference.members.length}</p>
+                <p>시작 시간: {new Date(conference.totalTime).toLocaleString()}</p>
               </div>
             ))}
           </div>
@@ -209,7 +208,7 @@ const Home = () => {
               className={`page-number ${currentPage === index + 1 ? 'active' : 'inactive'}`}
               onClick={() => setCurrentPage(index + 1)}
             >
-              {index + 1} / 
+              {index + 1}
             </span>
             ))}
             <button onClick={handleNextPage} disabled={indexOfLastItem >= conferenceHistory.length}>
