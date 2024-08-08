@@ -2,10 +2,7 @@ version: '3.8'
 
 services:
   mariadb:
-    build:
-      context: ./maria
-      dockerfile: Dockerfile
-    container_name: brAIn-mariadb
+    image: mariadb:latest
     environment:
       MYSQL_ROOT_PASSWORD: ssafy
       MYSQL_DATABASE: brAIn
@@ -14,19 +11,12 @@ services:
     ports:
       - "3309:3306"    # MariaDB 포트 매핑
     networks:
-      - my-network  
-    healthcheck:
-      test: ["CMD", "/usr/local/bin/healthcheck.sh"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
+      - my-network
 
   rabbitmq:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: brAIn-rabbitmq
     ports:
       - "5672:5672"    # RabbitMQ 기본 포트
       - "15672:15672"  # RabbitMQ 관리 콘솔 포트
@@ -39,7 +29,6 @@ services:
 
   redis:
     image: redis:latest
-    container_name: brAIn-redis
     ports:
       - "6379:6379"    # Redis 기본 포트
     networks:
@@ -48,7 +37,6 @@ services:
   frontend:
     build:
       context: ./Frontend/brAIn
-    container_name: brAIn-frontend
     ports:
       - "4173:4173"        # 프론트엔드 포트 (필요에 따라 수정)
     networks:
@@ -57,14 +45,10 @@ services:
   backend:
     build:
       context: ./Backend/brAIn
-    container_name: brAIn-backend
     depends_on:
-      mariadb:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_started
-      redis:
-        condition: service_started
+      - mariadb
+      - rabbitmq
+      - redis
     ports:
       - "8080:8080"    # 스프링부트 포트 (필요에 따라 수정)
     networks:
