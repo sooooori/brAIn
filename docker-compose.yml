@@ -1,9 +1,6 @@
-version: '3.8'
-
 services:
-  mariadb:
-    image: mariadb:10.7
-    container_name: mariadb
+  db:
+    image: mariadb:11.4
     environment:
       MYSQL_ROOT_PASSWORD: ssafy
       MYSQL_DATABASE: brAIn
@@ -51,7 +48,7 @@ services:
       context: ./Backend/brAIn
     container_name: backend
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/brAIn
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/brAIn
       - SPRING_DATASOURCE_USERNAME=ssafy
       - SPRING_DATASOURCE_PASSWORD=ssafy
     depends_on:
