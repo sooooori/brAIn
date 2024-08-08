@@ -4,7 +4,7 @@ services:
       - "3307:3306"
     networks:
       - jenkinsnet
-    image: mariadb:latest
+    image: mariadb
     container_name: brain_db
     environment:
       MYSQL_ROOT_PASSWORD: ssafy
@@ -18,7 +18,8 @@ services:
     build:
       context: ./Backend
       dockerfile: Dockerfile
-    image: jkw1025/backend-testimage:latest
+    image: jkw1025/testimage
+    container_name: brain_backend
     ports:
       - "8080:8080"
     networks:
@@ -38,7 +39,8 @@ services:
 
 networks:
   jenkinsnet:
-    name: jenkinsnet
+    name: jenkinsnetd
+    driver: bridge
 
 volumes:
   db-data:
