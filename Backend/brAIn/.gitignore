@@ -7,6 +7,9 @@ build/
 #/application.properties
 #/src/main/resources/application.properties
 
+### 예외 추가 ###
+!build/libs/brAIn-0.0.1-SNAPSHOT.jar
+
 ### STS ###
 .apt_generated
 .classpath
