@@ -32,7 +32,7 @@ public class WebSocketConfig
         config.setPathMatcher(new AntPathMatcher("."));
         config.setApplicationDestinationPrefixes("/app")
                 .enableStompBrokerRelay("/topic", "/queue", "/exchange", "/amq/queue")
-                .setRelayHost("brAIn-rabbitmq")
+                .setRelayHost("rabbitmq")
                 .setRelayPort(61613)
                 .setClientLogin("guest")
                 .setClientPasscode("guest")
