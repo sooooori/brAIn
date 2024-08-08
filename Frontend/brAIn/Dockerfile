@@ -2,7 +2,7 @@
 # Node.js 기반의 프론트엔드 애플리케이션을 예로 들겠습니다.
 
 # Base image
-FROM node:18
+FROM node:20.15.1
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -20,7 +20,7 @@ COPY . .
 RUN npm run build
 
 # 애플리케이션 실행
-CMD ["npm", "start"]
+CMD ["npm", "run", "preview"]
 
 # 애플리케이션이 사용하는 포트
-EXPOSE 80
+EXPOSE 4173
