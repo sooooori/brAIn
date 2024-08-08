@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { IconButton, TextField, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
 import './PostItSidebar.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { addNote, deleteNote, updateNote } from '../../../features/note/noteSlice';
@@ -10,9 +9,9 @@ import { addNote, deleteNote, updateNote } from '../../../features/note/noteSlic
 const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
   const dispatch = useDispatch();
   const notes = useSelector(state => state.note.notes);
-  const round = useSelector(state => state.conferenceInfo.round);
   const sidebarRef = useRef(null);
   const [editingIndex, setEditingIndex] = useState(null);
+  const [notesVisible, setNotesVisible] = useState(true); // 노트 가시성 상태 추가
 
   // 사이드바 외부 클릭 시 닫히도록 처리
   const handleClickOutside = (event) => {
@@ -37,6 +36,7 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
   const handleAddNote = () => {
     dispatch(addNote('')); // Redux에 빈 노트 추가
     setEditingIndex(notes.length); // 새로 추가된 노트를 편집 모드로 설정
+    
   };
 
   // 메모 삭제 함수
@@ -73,7 +73,7 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
           <CloseIcon />
         </IconButton>
       </div>
-      <div className="notes-list">
+      <div className={`notes-list ${notesVisible ? 'visible' : ''}`}>
         {notes.map((note, index) => (
           <div key={note.id} className="note">
             {editingIndex === index ? (
@@ -95,14 +95,13 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
                   {note.content || '클릭하여 입력하세요...'}
                 </p>
                 <div className="note-actions">
-                  <IconButton
+                  <button
                     onClick={() => handleDeleteNote(index)}
                     aria-label="delete"
-                    className="delete-button-side"
-                    size="small"
+                    className="custom-delete-button" // 새로운 버튼 클래스 사용
                   >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
+                    ❌
+                  </button>
                   <Button
                     variant="contained"
                     color="secondary"

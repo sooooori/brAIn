@@ -8,7 +8,7 @@
   background-color: #f9f9f9;
   padding: 20px;
   border-radius: 8px;
-  width: 80%; /* 가로폭을 좀 더 넓게 설정 */
+  width: 100px; /* 가로폭을 좀 더 넓게 설정 */
   margin: 0 auto; /* 중앙 정렬 */
   overflow: hidden; /* 아이템이 컨테이너를 넘지 않도록 설정 */
   box-sizing: border-box; /* 패딩과 보더를 포함한 박스 크기 조정 */

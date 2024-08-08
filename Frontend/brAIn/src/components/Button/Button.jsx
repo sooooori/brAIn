@@ -15,16 +15,17 @@ const BUTTON_STYLES = {
 Object.freeze(BUTTON_STYLES);
 
 // Button component
-const Button = ({ type, onClick, className, children, value, buttonStyle, ariaLabel }) => {
+const Button = ({ type, onClick, className, children, value, buttonStyle, ariaLabel, disabled }) => {
   return (
     <button
       type="button"
       className={`flex flex-row justify-center items-center gap-1 py-3 rounded-xl semibold-18 hover:opacity-70 duration-500 ${
         type === "full" ? "w-full" : type === "fit" ? "px-3 w-fit" : type === "grow" ? "flex-grow basis-0" : ""
-      } ${BUTTON_STYLES[buttonStyle]} ${className}`}
-      onClick={onClick}
+      } ${BUTTON_STYLES[buttonStyle]} ${className} ${disabled ? 'disabled' : ''}`}
+      onClick={disabled ? undefined : onClick}
       value={value}
       aria-label={ariaLabel}
+      disabled={disabled}
     >
       {children}
     </button>
@@ -38,8 +39,9 @@ Button.propTypes = {
   className: PropTypes.string,
   children: PropTypes.node.isRequired,
   value: PropTypes.string,
-  buttonStyle: PropTypes.oneOf(["black", "gray", "red", "blue", "purple"]).isRequired,
-  ariaLabel: PropTypes.string
+  buttonStyle: PropTypes.oneOf(["black", "gray", "red", "blue", "green", "orange"]).isRequired,
+  ariaLabel: PropTypes.string,
+  disabled: PropTypes.bool // Added prop type for disabled
 };
 
 export default Button;
