@@ -305,6 +305,7 @@ const Conference = () => {
               isVisible={isSidebarVisible}
               onClose={handleCloseSidebar}
               onSubmitClick={attachPostitOnRoundBoard}
+              className="post-it-sidebar"
             />
           </div>
           <div className="main-content">

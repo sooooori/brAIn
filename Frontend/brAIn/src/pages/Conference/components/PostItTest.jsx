@@ -46,9 +46,9 @@ const PostItTest = () => {
           <button
             key={index}
             onClick={() => handlePageChange(index)}
-            className={index === currentPage ? 'active' : ''}
+            className={index === currentPage ? 'active' : 'non'}
           >
-            <h3>라운드 {index + 1}</h3>
+            <h3>Rnd.{index + 1}</h3>
           </button>
         ))}
       </div>
