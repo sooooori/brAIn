@@ -3,8 +3,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  notes: [[]],
-  ideas: [[]],
+  notes: [],
+  ideas: [],
 };
 
 const noteSlice = createSlice({

@@ -409,6 +409,7 @@ const timer = async () => {
           <MemberList />
         </div>
 
+
         {isMeetingStarted && (
           <div className="conference-section">
             <div className={`sidebar-container ${isPostItSidebarVisible ? 'visible' : ''}`}>
@@ -419,6 +420,7 @@ const timer = async () => {
                   onSubmitClick={attachPostitOnRoundBoard}
                 />
               ) : (
+
                 <Button
                   type="fit"
                   onClick={togglePostItSidebar}

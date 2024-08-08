@@ -56,6 +56,7 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
+    margin-top: 20px;
     margin-bottom: 150px;
 }
 
@@ -131,7 +132,25 @@ body {
     font-family: 'Gothic', sans-serif;
     font-size: 1.75rem;
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 50px;
+    color: #555;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.home-title-login {
+    font-family: 'Gothic', sans-serif;
+    font-size: 3rem;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #333;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.home-subtitle-login {
+    font-family: 'Gothic', sans-serif;
+    font-size: 1.75rem;
+    text-align: center;
+    margin-bottom: 30px;
     color: #555;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -193,3 +212,82 @@ body {
     background-color: darkorange; /* Darker orange on hover */
 }
 
+/* Container for the list of conferences */
+.home-conference-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Auto-fit columns with a minimum width of 300px */
+    gap: 20px; /* Space between cards */
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px; /* Padding around the list */
+    box-sizing: border-box; /* Include padding in width calculation */
+  }
+  
+  /* Individual conference card styling */
+  .home-conference-card {
+    cursor: pointer;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; /* Include padding and border in width calculation */
+  }
+  
+  /* Conference card heading */
+  .home-conference-card h3 {
+    margin: 0 0 10px;
+    font-size: 1.5rem;
+  }
+  
+  /* Conference card paragraphs */
+  .home-conference-card p {
+    margin: 5px 0;
+    font-size: 1rem;
+  }
+  
+/* 페이지네이션 스타일 */
+.home-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.home-pagination button {
+background-color: #e0e0e0;
+border: 1px solid #ddd;
+border-radius: 4px;
+padding: 10px 20px;
+margin: 0 10px;
+cursor: pointer;
+transition: background-color 0.3s;
+}
+
+.home-pagination button:disabled {
+background-color: #e0e0e0;
+cursor: not-allowed;
+}
+
+.home-pagination button:hover:not(:disabled) {
+background-color: #ddd;
+}
+
+.home-pagination span {
+font-size: 1rem;
+margin: 0 10px;
+cursor: pointer;
+transition: color 0.3s, font-weight 0.3s;
+}
+
+/* 현재 페이지 스타일 */
+.page-number.active {
+font-weight: bold;
+color: blue; /* 현재 페이지 번호를 파란색으로 설정 */
+}
+
+/* 비활성 페이지 스타일 */
+.page-number.inactive {
+color: gray; /* 다른 페이지 번호를 회색으로 설정 */
+}

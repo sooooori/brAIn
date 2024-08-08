@@ -7,6 +7,7 @@
     <list default="true" id="e60a2d4d-1767-4dbb-9eb0-201d3f61c89d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
 <<<<<<< HEAD
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/controller/MessageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/controller/MessageController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/dto/MessageType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/dto/MessageType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/dto/UserState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/dto/UserState.java" afterDir="false" />
@@ -15,6 +16,13 @@
 =======
 >>>>>>> 4d4d3cba8db79411ddb65eed291f235b4e047863
       <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.jsx" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/controller/HistoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/controller/HistoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/service/MemberHistoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/service/MemberHistoryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/Home.css" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/Home.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/Home.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/ConferenceHistoryModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/ConferenceHistoryModal.jsx" afterDir="false" />
+>>>>>>> b13a7f165468c9df580d5928f07af0fa05f689cf
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +75,7 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+<<<<<<< HEAD
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
 <<<<<<< HEAD
@@ -93,6 +102,21 @@
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <module name="brAIn.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.ssafy.brAIn.BrAInApplication" />
+=======
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.brAIn [:BrAInApplication.main()].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "feature/conference/history",
+    "kotlin-language-version-configured": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="BrAInApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.ssafy.brAIn.BrAInApplication" />
+      <module name="brAIn.main" />
+>>>>>>> b13a7f165468c9df580d5928f07af0fa05f689cf
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="com.ssafy.brAIn.*" />
@@ -105,6 +129,7 @@
     </configuration>
     <recent_temporary>
       <list>
+<<<<<<< HEAD
         <item itemvalue="Spring Boot.BrAInApplication" />
       </list>
     </recent_temporary>
@@ -125,6 +150,12 @@
   }
 }</component>
 >>>>>>> 4d4d3cba8db79411ddb65eed291f235b4e047863
+=======
+        <item itemvalue="애플리케이션.BrAInApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+>>>>>>> b13a7f165468c9df580d5928f07af0fa05f689cf
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
