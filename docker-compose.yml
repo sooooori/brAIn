@@ -40,7 +40,7 @@ services:
 
   frontend:
     build:
-      context: ./Frontend/brain
+      context: ./Frontend/brAIn
     container_name: brAIn-frontend
     ports:
       - "4173:4173"        # 프론트엔드 포트 (필요에 따라 수정)
@@ -49,7 +49,7 @@ services:
 
   backend:
     build:
-      context: ./Backend/brain
+      context: ./Backend/brAIn
     container_name: brAIn-backend
     depends_on:
       - mariadb
