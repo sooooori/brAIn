@@ -9,9 +9,9 @@ import WhiteBoard from './components/WhiteBoard';
 import VotedPostIt from './components/VotedPostIt';
 import Button from '../../components/Button/Button';
 import SidebarIcon from '../../assets/svgs/sidebar.svg';
-import SkipIcon from '../../assets/svgs/skip.svg'; // 아이콘 경로
-import PassIcon from '../../assets/svgs/pass.svg'; // 아이콘 경로
-import NextIcon from '../../assets/svgs/next.svg'; // 아이콘 경로
+import SkipIcon from '../../assets/svgs/skip.svg';
+import ReadyIcon from '../../assets/svgs/pass.svg';
+import NextIcon from '../../assets/svgs/next.svg';
 import MemberList from './components/MemberList';
 import Timer from './components/Timer';
 import './Conference.css';
@@ -32,6 +32,7 @@ const Conference = () => {
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isPostItSidebarVisible, setIsPostItSidebarVisible] = useState(false);
+  const [hideButtons, setHideButtons] = useState(false);
 
   const users = useSelector(state => state.user.users);
   const nickname = useSelector(state => state.user.nickname);
@@ -148,6 +149,7 @@ const Conference = () => {
   const startMeeting = () => {
     setIsModalVisible(false);
     setIsMeetingStarted(true);
+    setHideButtons(false);
   };
 
   const handleStartMeeting = () => {
@@ -189,28 +191,16 @@ const Conference = () => {
   };
 
   const handleReadyButtonClick = () => {
-    // Implement logic for "Ready" button click
+
   };
 
   const handleNextStepClick = () => {
-    if (client) {
-      client.publish({
-        destination: `/app/next.step.${roomId}`,
-        headers: {
-          'Authorization': localStorage.getItem('roomToken')
-        },
-        body: JSON.stringify({ step: step })
-      });
-    }
   };
 
   const handlePassButtonClick = () => {
-    console.log('Pass button clicked');
+    }
   };
 
-  const handleSkipButtonClick = () => {
-    console.log('Skip button clicked');
-  };
 
   return (
     <div className="conference">
@@ -251,7 +241,7 @@ const Conference = () => {
               )}
             </div>
             <div className="main-content">
-              <div className="action-panel">
+              <div className={`action-panel`}>
                 <div className="voted-post-it-container">
                   {roundRobinBoard.map((postit, index) => (
                     <VotedPostIt key={index} content={postit.content} />
@@ -260,17 +250,29 @@ const Conference = () => {
                 <div className="conf-timer-container">
                   <Timer />
                 </div>
-                <div className="action-buttons-container">
-                  <Button onClick={handleSkipButtonClick} ariaLabel="Skip">
-                    <img src={SkipIcon} alt="Skip" className="action-icon" />
-                  </Button>
-                  <Button onClick={handlePassButtonClick} ariaLabel="Pass">
-                    <img src={PassIcon} alt="Pass" className="action-icon" />
-                  </Button>
-                  <Button onClick={handleNextStepClick} ariaLabel="Next">
-                    <img src={NextIcon} alt="Next" className="action-icon" />
-                  </Button>
-                </div>
+                {role === 'host' && ( // 호스트일 때만 버튼 표시
+                  <div className="action-buttons-container">
+                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
+                      <img src={ReadyIcon} alt="Ready" className="action-icon" />
+                    </Button>
+                    <Button onClick={handlePassButtonClick} ariaLabel="Skip">
+                      <img src={SkipIcon} alt="Skip" className="action-icon" />
+                    </Button>
+                    <Button onClick={handleNextStepClick} ariaLabel="Next">
+                      <img src={NextIcon} alt="Next" className="action-icon" />
+                    </Button>
+                  </div>
+                )}
+                {role !== 'host' && ( // 호스트일 때만 버튼 표시
+                  <div className="action-buttons-container">
+                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
+                      <img src={ReadyIcon} alt="Ready" className="action-icon" />
+                    </Button>
+                    <Button onClick={handlePassButtonClick} ariaLabel="Skip">
+                      <img src={SkipIcon} alt="Skip" className="action-icon" />
+                    </Button>
+                  </div>
+                )}
               </div>
               <WhiteBoard />
             </div>
