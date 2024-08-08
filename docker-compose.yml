@@ -43,7 +43,7 @@ services:
       context: ./Frontend/brain
     container_name: brAIn-frontend
     ports:
-      - "80:4173"        # 프론트엔드 포트 (필요에 따라 수정)
+      - "4173:4173"        # 프론트엔드 포트 (필요에 따라 수정)
     networks:
       - my-network
 
