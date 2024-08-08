@@ -45,12 +45,7 @@ public class VoteController {
         }
         Integer memberId=member.get().getId();
 
-        Iterator<String> keys=voteRequest.getVotes().keySet().iterator();
-        while(keys.hasNext()) {
-            String key = keys.next();
-            System.out.println(key+","+voteRequest.getVotes().get(key));
-        }
-
+        System.out.println("STEP:"+voteRequest.getStep());
         voteService.vote(voteRequest.getRoomId(), voteRequest.getStep(), memberId, voteRequest.getVotes());
         return new ResponseEntity<>("Vote successful", HttpStatus.OK);
     }
@@ -66,6 +61,9 @@ public class VoteController {
     @GetMapping("/results")
     public ResponseEntity<List<VoteResponse>> voteResults(@RequestParam Integer roomId, @RequestParam String step) {
         List<VoteResponse> results = voteService.getVoteResults(roomId, step);
+        for(VoteResponse voteResponse: results) {
+            System.out.println(voteResponse);
+        }
         return ResponseEntity.ok().body(results);
     }
 

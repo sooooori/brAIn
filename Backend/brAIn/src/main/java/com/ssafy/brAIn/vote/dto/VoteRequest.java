@@ -13,7 +13,7 @@ import java.util.Map;
 public class VoteRequest {
 
     private int roomId;
-    private Step step;
+    private String step;
     //private int memberId;
     private Map<String,Integer> votes;
 }

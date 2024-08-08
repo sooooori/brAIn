@@ -190,7 +190,12 @@ const Conference = () => {
     }else if(receivedMessage.messageType==='FINISH_MIDDLE_VOTE'){
       console.log(receivedMessage);
       console.log(receivedMessage.votes.postit);
-    } 
+    } else if(receivedMessage.messageType=='PASS'){
+      console.log('pass to '+receivedMessage.nextUser)
+      dispatch(setCuruser(receivedMessage.nextUser))
+    } else if(receivedMessage.messageType=='PASS_AND_END'){
+      step1EndAlarm();
+    }
   };
 
   const countUpMember = () => {
@@ -275,7 +280,17 @@ const Conference = () => {
   };
 
   const handlePassButtonClick = () => {
-    // Implement logic for "Pass" button click
+    if (client) {
+      client.publish({
+        destination: `/app/state.user.pass.${roomId}`,
+        headers: {
+          'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
+        },
+        body: JSON.stringify({
+          curRound: round
+        })
+      });
+    }
     console.log('Pass button clicked');
   };
 
@@ -305,7 +320,7 @@ const Conference = () => {
       // 서버에 투표 결과 전송
       const response = await axios.post(`http://localhost/api/v1/conferences/vote`, {
         roomId: roomId,
-        round: step,
+        step: step,
         votes: itemsObject
       }, {
         headers: {
@@ -322,7 +337,7 @@ const Conference = () => {
   
       // STOMP 클라이언트를 통해 메시지 전송
       client.publish({
-        destination: `/app/vote.middleResults.${roomId}.2`,
+        destination: `/app/vote.middleResults.${roomId}.${step}`,
         headers: { Authorization: localStorage.getItem('roomToken') }
       });
     } catch (error) {
@@ -351,14 +366,15 @@ const timer = async () => {
   });
 };
 
-  const endVote=async()=>{
-    const response=await axios.post(`http://localhost/api/v1/conferences/vote/endByTimer`,{
-      conferenceId:roomId,
-      round:step
-    },{
-      headers:{
+  const endVote = async () => {
+  try {
+    const response = await axios.post(`http://localhost/api/v1/conferences/vote/endByTimer`, {
+      conferenceId: roomId,
+      step: step
+    }, {
+      headers: {
         'Content-Type': 'application/json',
-        AuthorizationRoom:localStorage.getItem('roomToken')
+        AuthorizationRoom: localStorage.getItem('roomToken')
       }
     });
 
@@ -371,24 +387,46 @@ const timer = async () => {
       cancelButtonColor: '#d33', // cancel 버튼 색깔 지정
       confirmButtonText: '승인', // confirm 버튼 텍스트 지정
       cancelButtonText: '취소', // cancel 버튼 텍스트 지정
-    }).then(result=>{
-      if(result.isConfirmed){
-        console.log(getVoteResult());
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const voteResults = await getVoteResult();
+        console.log("투표결과");
+        console.log(voteResults);
+
+        if (voteResults && voteResults.length > 0) {
+          voteResults.forEach(vote => {
+            console.log(`PostIt: ${vote.postIt}, Score: ${vote.score}`);
+          });
+        } else {
+          console.log("No vote results found.");
+        }
       }
     });
-
-
+  } catch (error) {
+    console.error("Error ending vote:", error);
   }
+  };
 
-  const getVoteResult=async()=>{
-    const response=await axios.get(`http://localhost/api/v1/conferences/vote/results?roomId=${roomId}&step=${step}`,{
-      headers:{
-        'Content-Type': 'application/json',
-        AuthorizationRoom:localStorage.getItem('roomToken')
-      }
-    });
+  const getVoteResult = async () => {
+    try {
+      const response = await axios.get(`http://localhost/api/v1/conferences/vote/results`, {
+        params: {
+          roomId: roomId,
+          step: step
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          AuthorizationRoom: localStorage.getItem('roomToken')
+        }
+      });
+      return response.data;  // 데이터 반환
+    } catch (error) {
+      console.error("Error fetching vote results:", error);
+    }
+  };
 
-    return response;
+  const voteTestPublish=async ()=>{
+
   }
 
 

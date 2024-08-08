@@ -276,14 +276,14 @@ public class MessageController {
 
     // 현재 중간 투표 결과 반환
     // 현재 중간 투표 결과 (상위 9개) 반환
-    @MessageMapping("vote.middleResults.{roomId}.{round}")
-    public void getMiddleVoteResults(@DestinationVariable String roomId, @DestinationVariable Integer round, StompHeaderAccessor accessor) {
+    @MessageMapping("vote.middleResults.{roomId}.{step}")
+    public void getMiddleVoteResults(@DestinationVariable String roomId, @DestinationVariable String step, StompHeaderAccessor accessor) {
         String token = accessor.getFirstNativeHeader("Authorization");
         String nickName = jwtUtilForRoom.getNickname(token);
         ConferenceRoom conferenceRoom = conferenceRoomService.findByRoomId(roomId);
 
         // 중간 투표 결과 가져오기
-        ResponseMiddleVote voteResults = messageService.getMiddleVote(Integer.parseInt(roomId), round);
+        ResponseMiddleVote voteResults = messageService.getMiddleVote(Integer.parseInt(roomId), step);
 
         List<VoteResponse> temp=voteResults.getVotes();
 

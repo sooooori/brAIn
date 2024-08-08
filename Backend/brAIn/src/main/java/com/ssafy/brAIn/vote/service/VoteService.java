@@ -37,7 +37,7 @@ public class VoteService {
 
     // 투표 진행 - 임시 저장
     @Transactional
-    public void vote(Integer roomId, Step step, Integer memberId, Map<String, Integer> votes) {
+    public void vote(Integer roomId, String step, Integer memberId, Map<String, Integer> votes) {
         String tempVoteKey = roomId + ":tempVotes:" + step + ":" + memberId;
 
         // 1점, 3점 ,5점 부여

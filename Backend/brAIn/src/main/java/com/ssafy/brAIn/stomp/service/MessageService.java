@@ -210,7 +210,7 @@ public class MessageService {
         int randomValue;
         do {
             randomValue = (int)(Math.random() * size);
-        } while (randomValue == 0);
+        } while (randomValue == 0 || randomValue==size-1);
         return randomValue;
     }
 
@@ -257,8 +257,8 @@ public class MessageService {
     }
 
     //현재 중간 투표 결과 (상위 9개)를 반환한다.
-    public ResponseMiddleVote getMiddleVote(Integer roomId, Integer round) {
-        String key = roomId + ":votes:" + round;
+    public ResponseMiddleVote getMiddleVote(Integer roomId, String step) {
+        String key = roomId + ":votes:" + step;
 
         // 상위 9개의 결과를 추출
         List<VoteResponse> votes = redisUtils.getSortedSetWithScores(key)
