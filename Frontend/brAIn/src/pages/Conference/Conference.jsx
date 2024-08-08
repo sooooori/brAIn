@@ -27,7 +27,7 @@ import './Conference.css';
 
 
 import { addUser, removeUser, setUsers, setUserNick, setCuruser } from '../../actions/userActions';
-import { setCurStep, upRound, setRound } from '../../actions/conferenceActions';
+import { setCurStep, upRound, setRound, setRoom } from '../../actions/conferenceActions';
 import { sendToBoard } from '../../actions/roundRobinBoardAction';
 
 const Conference = () => {
@@ -50,6 +50,7 @@ const Conference = () => {
   const round = useSelector(state => state.conferenceInfo.round);
   const curUser = useSelector(state => state.user.currentUser);
   const roundRobinBoard = useSelector(state => state.roundRobinBoard.roundRobinBoard);
+  //const roomId=useSelector(state=>state.conferenceInfo.roomId);
   const { secureId: routeSecureId } = useParams();
 
 
@@ -80,8 +81,10 @@ const Conference = () => {
           localStorage.setItem('roomToken', response.data.jwtForRoom);
           dispatch(setUserNick(response.data.nickname));
         }
-
-        setRoomId(response.data.roomId);
+        if(roomId == null){
+          //dispatch(setRoom(response.data.roomId));
+          setRoomId(response.data.roomId);
+        }
 
         const newClient = new Client({
           brokerURL: 'ws://localhost/ws',
@@ -164,7 +167,7 @@ const Conference = () => {
       dispatch(setCuruser(receivedMessage.nextUser))
     } else if(receivedMessage.messageType=='PASS_AND_END'){
       console.log('투표시작')
-      await setCurStep('STEP_2')
+      dispatch(setCurStep('STEP_2'))
       step1EndAlarm();
     } else if (receivedMessage.messageType === 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep));
@@ -290,19 +293,21 @@ const Conference = () => {
           'Content-Type': 'application/json',
           AuthorizationRoom:localStorage.getItem('roomToken')
         }
-      });
+      }).then(endVote());
 
-      console.log(response);
+      
 
-      await endVote();
+      
 
-    
-  
       // STOMP 클라이언트를 통해 메시지 전송
-      client.publish({
-        destination: `/app/vote.middleResults.${roomId}.${step}`,
-        headers: { Authorization: localStorage.getItem('roomToken') }
-      });
+      if (client) {
+        client.publish({
+          destination: `/app/vote.middleResults.${roomId}.${step}`,
+          headers: { Authorization: localStorage.getItem('roomToken') }
+        });
+      } else {
+        console.error("Client is not connected");
+      }
     } catch (error) {
       console.error("Error during step1EndAlarm:", error);
     }
@@ -341,7 +346,7 @@ const timer = async () => {
       }
     });
 
-    await Swal.fire({
+     Swal.fire({
       icon: "success",
       title: '투표가 종료되었습니다.',
       text: '결과를 확인하세요',
@@ -350,9 +355,9 @@ const timer = async () => {
       cancelButtonColor: '#d33', // cancel 버튼 색깔 지정
       confirmButtonText: '승인', // confirm 버튼 텍스트 지정
       cancelButtonText: '취소', // cancel 버튼 텍스트 지정
-    }).then(async (result) => {
+    }).then((result) => {
       if (result.isConfirmed) {
-        const voteResults = await getVoteResult();
+        const voteResults = getVoteResult();
         console.log("투표결과");
         console.log(voteResults);
 
@@ -371,6 +376,8 @@ const timer = async () => {
   };
 
   const getVoteResult = async () => {
+    console.log("AtgetVoteResult:"+roomId);
+    console.log("step"+step)
     try {
       const response = await axios.get(`http://localhost/api/v1/conferences/vote/results`, {
         params: {
@@ -388,9 +395,7 @@ const timer = async () => {
     }
   };
 
-  const voteTestPublish=async ()=>{
-
-  }
+  
 
   return (
     <div className="conference">
@@ -453,6 +458,9 @@ const timer = async () => {
 
                     <Button onClick={handleNextStepClick} ariaLabel="Next">
                       <img src={NextIcon} alt="Next" className="action-icon" />
+                    </Button>
+                    <Button onClick={step1EndAlarm} ariaLabel="Next">
+                      <img src={NextIcon} alt="투표시작" className="action-icon" />
                     </Button>
                   </div>
                 )}

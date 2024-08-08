@@ -2,6 +2,7 @@ export const SET_CUR_STEP = 'SET_CUR_STEP';
 export const UP_ROUND = 'UP_ROUND';
 export const SET_ROUND = 'SET_ROUND';
 export const RESET_STATE = 'RESET_STATE'
+export const SET_ROOM='SET_ROOM'
 
 export const setCurStep = async (step) => ({
     type: SET_CUR_STEP,
@@ -20,4 +21,9 @@ export const setRound = (round) =>({
 
 export const resetConference = ()=>({
     type: RESET_STATE
+})
+
+export const setRoom=(roomId)=>({
+    type:SET_ROOM,
+    payload:roomId,
 })
