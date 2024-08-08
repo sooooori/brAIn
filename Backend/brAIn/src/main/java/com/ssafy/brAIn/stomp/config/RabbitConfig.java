@@ -25,7 +25,7 @@ public class RabbitConfig {
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory factory = new CachingConnectionFactory();
-        factory.setHost("rabbitmq");
+        factory.setHost("brAIn-rabbitmq");
         factory.setPort(5672);
         factory.setVirtualHost("/");
         factory.setUsername("guest");
