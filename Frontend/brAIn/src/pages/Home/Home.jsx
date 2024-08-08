@@ -23,7 +23,7 @@ const Home = () => {
   const [leftVisible, setLeftVisible] = useState(true);
   const [rightVisible, setRightVisible] = useState(true);
   const [centerVisible, setCenterVisible] = useState(true);
-  const [selectedConferenceId, setSelectedConferenceId] = useState(null); // 추가된 상태
+  const [selectedConferenceId, setSelectedConferenceId] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
@@ -31,6 +31,7 @@ const Home = () => {
   const [conferenceHistory, setConferenceHistory] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleConferenceSearchClickedTrue = () => {
     setIsConferenceSearchClicked(true);
@@ -69,7 +70,7 @@ const Home = () => {
   useEffect(() => {
     if (leftInView) {
       setLeftVisible(true);
-      const timer = setTimeout(() => setLeftVisible(false), 3000); // 3 seconds
+      const timer = setTimeout(() => setLeftVisible(false), 3000);
       return () => clearTimeout(timer);
     } else {
       setLeftVisible(false);
@@ -79,7 +80,7 @@ const Home = () => {
   useEffect(() => {
     if (rightInView) {
       setRightVisible(true);
-      const timer = setTimeout(() => setRightVisible(false), 3000); // 3 seconds
+      const timer = setTimeout(() => setRightVisible(false), 3000);
       return () => clearTimeout(timer);
     } else {
       setRightVisible(false);
@@ -89,7 +90,7 @@ const Home = () => {
   useEffect(() => {
     if (centerInView) {
       setCenterVisible(true);
-      const timer = setTimeout(() => setCenterVisible(false), 3000); // 3 seconds
+      const timer = setTimeout(() => setCenterVisible(false), 3000);
       return () => clearTimeout(timer);
     } else {
       setCenterVisible(false);
@@ -109,9 +110,7 @@ const Home = () => {
               Authorization: `Bearer ${accessToken}`
             }
           });
-  
-          console.log('API Response:', response.data);
-          
+          console.log(response.data)
           if (response.data && Array.isArray(response.data)) {
             setConferenceHistory(response.data);
           } else {
@@ -144,11 +143,21 @@ const Home = () => {
     }
   };
 
-  const handleConferenceCardClick = (conferenceId) => {
-    setSelectedConferenceId(conferenceId);
+  const handleOpenModal = (conferenceId) => {
+    console.log("Clicked conferenceId:", conferenceId);
+    const id = Number(conferenceId);
+    console.log("Converted ID:", id); // Check the type and value
+    if (!isNaN(id) && id > 0) {
+      setSelectedConferenceId(id);
+      setIsModalOpen(true);
+    } else {
+      console.error("Invalid conferenceId:", conferenceId);
+    }
   };
 
-  const handleModalClose = () => {
+  // 모달 닫기 핸들러
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
     setSelectedConferenceId(null);
   };
 
@@ -191,10 +200,13 @@ const Home = () => {
           <h2 className='home-subtitle-login'>지금까지 참여한 회의 목록 확인</h2>
           <div className="home-conference-list">
             {currentItems.map(conference => (
-              <div key={conference.conferenceId} className="home-conference-card" onClick={() => handleConferenceCardClick(conference.conferenceId+1)}>
-                <h3>{conference.subject}</h3>
-                <p>참가자 수: {conference.members.length}</p>
-                <p>시작 시간: {new Date(conference.totalTime).toLocaleString()}</p>
+              <div 
+                key={conference.conferenceId} 
+                className="home-conference-card" 
+                onClick={() => handleOpenModal(conference.roomId)}>
+                <h3>회의 주제 : {conference.subject}</h3>
+                <p>참가자: {conference.members.map(member => member.name).join(', ')}</p>
+                <p>시작 시간 : {new Date(conference.totalTime).toLocaleString()}</p>
               </div>
             ))}
           </div>
@@ -203,21 +215,24 @@ const Home = () => {
               Previous
             </button>
             {Array.from({ length: Math.ceil(conferenceHistory.length / itemsPerPage) }, (_, index) => (
-            <span
-              key={index + 1}
-              className={`page-number ${currentPage === index + 1 ? 'active' : 'inactive'}`}
-              onClick={() => setCurrentPage(index + 1)}
-            >
-              {index + 1}
-            </span>
+              <span
+                key={index + 1}
+                className={`page-number ${currentPage === index + 1 ? 'active' : 'inactive'}`}
+                onClick={() => setCurrentPage(index + 1)}
+              >
+                {index + 1}
+              </span>
             ))}
             <button onClick={handleNextPage} disabled={indexOfLastItem >= conferenceHistory.length}>
               Next
             </button>
           </div>
-          {selectedConferenceId && (
-            <ConferenceHistoryModal conferenceId={selectedConferenceId} onClose={handleModalClose} />
-          )}
+
+          <ConferenceHistoryModal 
+            isOpen={isModalOpen}
+            conferenceId={selectedConferenceId}
+            onClose={handleCloseModal} />
+
         </>
       ) : (
         <div>

@@ -36,15 +36,11 @@ public class HistoryController {
     //사용자의 개별 회의 ID 조회
     @GetMapping("/{conferenceId}")
     public ResponseEntity<ConferenceMemberRequest> getUserConferenceHistoryDetails(@RequestHeader("Authorization") String token, @PathVariable int conferenceId) {
-        log.info(" token = {} ", token);
-        String memberEmail;
-        try {
-            memberEmail = JwtUtil.getEmail(token);
-            log.info(" memberEmail = {} ", memberEmail);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // JWT 파싱 실패 시
-        }
-        ConferenceMemberRequest conference = memberHistoryService.getHistoryDetails(memberEmail, conferenceId);
+        // Barer 접두사 제거
+        String accessToken = token.replace("Bearer ", "");
+        // 사용자 이메일 추출
+        String email = JwtUtil.getEmail(accessToken);
+        ConferenceMemberRequest conference = memberHistoryService.getHistoryDetails(email, conferenceId);
         if (conference == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
