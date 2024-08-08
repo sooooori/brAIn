@@ -2,22 +2,35 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from '../../../utils/Axios';
 import './ConferenceHistoryModal.css';
+import { useSelector } from 'react-redux';
 
-const ConferenceHistoryModal = ({ conferenceId, onClose }) => {
+const ConferenceHistoryModal = ({ isOpen, conferenceId, onClose }) => {
   const [conferenceDetails, setConferenceDetails] = useState(null);
-
+  const accessToken = useSelector((state) => state.auth.accessToken);
+  
+  const id = conferenceId;
+  
   useEffect(() => {
-    const fetchConferenceDetails = async () => {
-      try {
-        const response = await axios.get(`http://localhost/api/v1/conferences/history/${conferenceId}`);
-        setConferenceDetails(response.data);
-      } catch (error) {
-        console.error('Error fetching conference details:', error);
-      }
-    };
+    if (id) {
+      const fetchConferenceDetails = async () => {
+        try {
+          const response = await axios.get(`http://localhost/api/v1/conferences/history/${id}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          });
+          console.log("API Response:", response); // Add this to check the API response
+          setConferenceDetails(response.data);
+        } catch (error) {
+          console.error('Error fetching conference details:', error);
+        }
+      };
 
-    fetchConferenceDetails();
-  }, [conferenceId]);
+      fetchConferenceDetails();
+    }
+  }, [id, accessToken]);
+
+  if (!isOpen) return null; // Close modal if not open
 
   if (!conferenceDetails) {
     return <div className="conference-history-modal">Loading...</div>;
@@ -26,23 +39,37 @@ const ConferenceHistoryModal = ({ conferenceId, onClose }) => {
   const { subject, totalTime, members, conclusion } = conferenceDetails;
 
   return (
-    <div className="conference-history-modal">
-      <div className="modal-content">
+    <div className="modal-overlay">
+      <div className="conference-history-modal">
         <button className="close-button" onClick={onClose}>
           &times;
         </button>
-        <h2>{subject}</h2>
-        <p>회의 주제: {subject}</p>
-        <p>회의 요약: {conclusion || '요약이 없습니다.'}</p>
-        <p>총 시간: {new Date(totalTime).toLocaleString()}</p>
-        <h3>참가자 목록</h3>
-        <ul>
-          {members.map(member => (
-            <li key={member.memberId}>
-              이름: {member.name} (역할: {member.role})
-            </li>
-          ))}
-        </ul>
+        <div className="modal-content">
+          <div className="modal-section">
+            <h2>회의 주제</h2>
+            <div className="info-box">
+                {subject}
+
+            </div>
+          </div>
+          <div className='modal-section'>
+            <h2>회의 정보</h2>
+            <div className='info-box'>
+                <p>회의 시간 : {new Date(totalTime).toLocaleString()}</p>
+                <p>참여 인원 : {members.length} 명 {members.map(member => (
+                    <li key={member.memberId}>
+                        이름: {member.name}
+                    </li>
+                    ))}
+                </p>
+            </div>
+          </div>
+
+          <div className="modal-section">
+            <h2>회의 요약</h2>
+            <div className="info-box">{conclusion || '요약이 없습니다.'}</div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -51,6 +78,7 @@ const ConferenceHistoryModal = ({ conferenceId, onClose }) => {
 ConferenceHistoryModal.propTypes = {
   conferenceId: PropTypes.number.isRequired,
   onClose: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
 };
 
 export default ConferenceHistoryModal;

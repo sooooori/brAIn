@@ -215,10 +215,10 @@ body {
 /* Container for the list of conferences */
 .home-conference-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Auto-fit columns with a minimum width of 300px */
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); /* Auto-fit columns with a minimum width of 300px */
     gap: 20px; /* Space between cards */
     width: 100%;
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 20px; /* Padding around the list */
     box-sizing: border-box; /* Include padding in width calculation */
@@ -271,7 +271,7 @@ cursor: not-allowed;
 }
 
 .home-pagination button:hover:not(:disabled) {
-background-color: #ddd;
+background-color: darkorange;
 }
 
 .home-pagination span {
@@ -291,3 +291,13 @@ color: blue; /* 현재 페이지 번호를 파란색으로 설정 */
 .page-number.inactive {
 color: gray; /* 다른 페이지 번호를 회색으로 설정 */
 }
+
+/* Modal 스타일 */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    /* 기타 스타일 */
+  }
