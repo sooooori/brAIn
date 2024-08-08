@@ -25,12 +25,12 @@ services:
     networks:
       - jenkinsnet
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_NAME=brAIn
-      - DB_USER=root
-      - DB_PASSWORD=ssafy
+      - SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/brAIn?allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME: ssafy
+      - SPRING_DATASOURCE_PASSWORD: ssafy
+      - SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MariaDBDialect
+
     depends_on:
       - db
     volumes:
