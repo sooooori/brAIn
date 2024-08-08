@@ -12,7 +12,13 @@ services:
     ports:
       - "3309:3306"    # MariaDB 포트 매핑
     networks:
-      - my-network
+      - my-network  
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "--silent"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
 
 
   rabbitmq:
@@ -52,9 +58,12 @@ services:
       context: ./Backend/brAIn
     container_name: brAIn-backend
     depends_on:
-      - mariadb
-      - rabbitmq
-      - redis
+      mariadb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      redis:
+        condition: service_started
     ports:
       - "8080:8080"    # 스프링부트 포트 (필요에 따라 수정)
     networks:
