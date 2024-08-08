@@ -3,6 +3,7 @@ version: '3.8'
 services:
   mariadb:
     image: mariadb:10.7
+    container_name: mariadb
     environment:
       MYSQL_ROOT_PASSWORD: ssafy
       MYSQL_DATABASE: brAIn
@@ -17,6 +18,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: rabbitmq
     ports:
       - "5672:5672"    # RabbitMQ 기본 포트
       - "15672:15672"  # RabbitMQ 관리 콘솔 포트
@@ -29,6 +31,7 @@ services:
 
   redis:
     image: redis:latest
+    container_name: redis
     ports:
       - "6379:6379"    # Redis 기본 포트
     networks:
@@ -37,6 +40,7 @@ services:
   frontend:
     build:
       context: ./Frontend/brAIn
+    container_name: frontend
     ports:
       - "4173:4173"        # 프론트엔드 포트 (필요에 따라 수정)
     networks:
@@ -45,6 +49,7 @@ services:
   backend:
     build:
       context: ./Backend/brAIn
+    container_name: backend
     depends_on:
       - mariadb
       - rabbitmq
