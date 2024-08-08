@@ -60,18 +60,19 @@ public class MessageController {
 
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
-        System.out.println(nickname);
+        System.out.println(nickname+"님이 포스트잇을 제출했습니다.");
         ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId);
         aiService.addPostIt(groupPost.getContent(), cr.getThreadId());
 
 
         messageService.sendPost(Integer.parseInt(roomId),groupPost,nickname);
+        //messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
         ResponseGroupPost responseGroupPost=makeResponseGroupPost(groupPost,Integer.parseInt(roomId),nickname);
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, responseGroupPost);
 
         //끝나면 종료
-        boolean isStep1End = messageService.isStep1EndCondition(Integer.parseInt(roomId));
-        if(isStep1End)return;
+        if(responseGroupPost.getMessageType().equals(MessageType.SUBMIT_POST_IT_AND_END))return;
+
 
         //만약 다음 사람이 ai라면 추가적인 로직 필요
         String nextUser=messageService.NextOrder(Integer.parseInt(roomId),nickname);
@@ -91,7 +92,8 @@ public class MessageController {
             aiGroupPost=new RequestGroupPost(groupPost.getRound(),aiPostIt);
         }
 
-        messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,nickname);
+        messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,nextUser);
+        //messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
         ResponseGroupPost aiResponseGroupPost=makeResponseGroupPost(aiGroupPost,Integer.parseInt(roomId),nextUser);
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, aiResponseGroupPost);
 
@@ -101,8 +103,11 @@ public class MessageController {
         String nextUser=messageService.NextOrder(roomId,nickname);
 
         if (messageService.isLastOrder(roomId, nickname)) {
+            System.out.println("마지막 사람만 이곳에 와야한다.");
             messageService.initUserState(roomId);
             if (messageService.isStep1EndCondition(roomId)) {
+                messageService.updateStep(roomId,Step.STEP_2);
+
                 return new ResponseGroupPost(MessageType.SUBMIT_POST_IT_AND_END,nickname,null,groupPost.getRound(), groupPost.getRound()+1, groupPost.getContent());
             }
                 return new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,nextUser,groupPost.getRound(), groupPost.getRound()+1, groupPost.getContent());
@@ -232,8 +237,11 @@ public class MessageController {
         //현재 유저가 라운드의 마지막 유저라면
         if (messageService.isLastOrder(Integer.parseInt(roomId),nickname)) {
             //종료 조건이라면
+            System.out.println("마지막 사람 패스했을 때, 종료조건 만족?:"+messageService.isStep1EndCondition(Integer.parseInt(roomId)));
             if (messageService.isStep1EndCondition(Integer.parseInt(roomId))) {
-                rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.PASS_AND_END,nickname));
+                System.out.println("패스 후 종료");
+                messageService.updateStep(Integer.parseInt(roomId),Step.STEP_2);
+                rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponsePassAndEnd(MessageType.PASS_AND_END,nickname));
                 messageService.initUserState(Integer.parseInt(roomId));
                 return;
             }
@@ -248,6 +256,7 @@ public class MessageController {
         //System.out.println("aiPostIt:"+aiPostIt);
 
 
+
         boolean curUserIsLast=messageService.isLastOrder(Integer.parseInt(roomId),nickname);
 
         RequestGroupPost aiGroupPost=null;
@@ -257,7 +266,9 @@ public class MessageController {
             aiGroupPost=new RequestGroupPost(pass.getCurRound(),aiPostIt);
         }
 
-        messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,nickname);
+        messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,nextMember);
+        //messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
+
         ResponseGroupPost aiResponseGroupPost=makeResponseGroupPost(aiGroupPost,Integer.parseInt(roomId),nextMember);
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, aiResponseGroupPost);
 

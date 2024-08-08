@@ -194,6 +194,8 @@ const Conference = () => {
       console.log('pass to '+receivedMessage.nextUser)
       dispatch(setCuruser(receivedMessage.nextUser))
     } else if(receivedMessage.messageType=='PASS_AND_END'){
+      console.log('투표시작')
+      await setCurStep('STEP_2')
       step1EndAlarm();
     }
   };
@@ -295,6 +297,8 @@ const Conference = () => {
   };
 
   const step1EndAlarm = async () => {
+    
+    
     try {
       await Swal.fire({
         icon: "success",

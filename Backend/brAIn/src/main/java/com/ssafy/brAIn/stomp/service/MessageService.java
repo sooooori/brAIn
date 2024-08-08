@@ -85,7 +85,7 @@ public class MessageService {
     //현재 유저가 마지막 순서인지 확인하는 메서드(테스트 완)
     public boolean isLastOrder(Integer roomId, String nickname) {
         int order=redisUtils.getScoreFromSortedSet(roomId+":order:cur",nickname).intValue();
-        int lastOrder=redisUtils.getSortedSet(roomId+":order:cur").size()-1;
+        int lastOrder=redisUtils.getLastElementFromSortedSet(roomId+":order:cur").intValue();
         if (order == lastOrder) {
             return true;
         }
@@ -104,10 +104,15 @@ public class MessageService {
         int len=nicknames.size();
 
         nicknames.forEach((nickname)->{
+            System.out.println("모든유저 조회하긴함?"+nickname);
+            System.out.println(redisUtils.getData(roomId+":"+nickname));
             if(redisUtils.getData(roomId+":"+nickname).equals("PASS")){
+                System.out.println(nickname+":"+count);
                 count.getAndIncrement();
             }
         });
+        System.out.println("전체사이즈:"+len);
+        System.out.println("종료조건:"+count);
 
         return count.get() > len * (2.0 / 3.0);
 

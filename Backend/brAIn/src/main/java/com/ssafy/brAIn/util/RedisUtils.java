@@ -185,4 +185,24 @@ public class RedisUtils {
         }
 
     }
+
+
+    public Double getLastElementFromSortedSet(String key) {
+        ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
+        Set<ZSetOperations.TypedTuple<Object>> result = zSetOps.reverseRangeWithScores(key, 0, 0);
+
+        if (result != null && !result.isEmpty()) {
+            ZSetOperations.TypedTuple<Object> lastElement = result.iterator().next();
+            Object value = lastElement.getValue();
+            Double score = lastElement.getScore();
+
+//            System.out.println("Value: " + value);
+//            System.out.println("Score: " + score);
+            return score;
+        } else {
+            //System.out.println("Sorted Set is empty or key does not exist.");
+            throw new RuntimeException("Sorted Set is empty or key does not exist.");
+        }
+
+    }
 }

@@ -3,7 +3,7 @@ export const UP_ROUND = 'UP_ROUND';
 export const SET_ROUND = 'SET_ROUND';
 export const RESET_STATE = 'RESET_STATE'
 
-export const setCurStep = (step) => ({
+export const setCurStep = async (step) => ({
     type: SET_CUR_STEP,
     payload: step,
 });
