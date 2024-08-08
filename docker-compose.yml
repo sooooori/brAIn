@@ -26,7 +26,7 @@ services:
       - jenkinsnet
     environment:
       - SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/brAIn?allowPublicKeyRetrieval=true&useSSL=false
-      - SPRING_DATASOURCE_USERNAME: ssafy
+      - SPRING_DATASOURCE_USERNAME: root
       - SPRING_DATASOURCE_PASSWORD: ssafy
       - SPRING_JPA_HIBERNATE_DDL_AUTO: update
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MariaDBDialect
