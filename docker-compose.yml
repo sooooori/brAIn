@@ -50,6 +50,10 @@ services:
     build:
       context: ./Backend/brAIn
     container_name: backend
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/brAIn
+      - SPRING_DATASOURCE_USERNAME=ssafy
+      - SPRING_DATASOURCE_PASSWORD=ssafy
     depends_on:
       - mariadb
       - rabbitmq
