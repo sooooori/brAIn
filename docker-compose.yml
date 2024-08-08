@@ -1,47 +1,65 @@
+version: '3.8'
+
 services:
-  db:
-    ports:
-      - "3307:3306"
-    networks:
-      - jenkinsnet
-    image: mariadb
-    container_name: brain_db
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
     environment:
       MYSQL_ROOT_PASSWORD: ssafy
       MYSQL_DATABASE: brAIn
-      MYSQL_USER: root
+      MYSQL_USER: ssafy
       MYSQL_PASSWORD: ssafy
-    volumes:
-      - db-data:/var/lib/mysql
+    ports:
+      - "3309:3306"    # MariaDB 포트 매핑
+    networks:
+      - my-network
+
+
+  rabbitmq:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"    # RabbitMQ 기본 포트
+      - "15672:15672"  # RabbitMQ 관리 콘솔 포트
+      - "61613:61613"  # RabbitMQ STOMP 포트 추가
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - my-network
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"    # Redis 기본 포트
+    networks:
+      - my-network
+
+  frontend:
+    build:
+      context: ./Frontend/brain
+    container_name: frontend
+    ports:
+      - "80:80"        # 프론트엔드 포트 (필요에 따라 수정)
+    networks:
+      - my-network
 
   backend:
     build:
-      context: ./Backend
-      dockerfile: Dockerfile
-    image: jkw1025/testimage
-    container_name: brain_backend
-    ports:
-      - "8080:8080"
-    networks:
-      - jenkinsnet
-    environment:
-      - SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/brAIn?allowPublicKeyRetrieval=true&useSSL=false
-      - SPRING_DATASOURCE_USERNAME: root
-      - SPRING_DATASOURCE_PASSWORD: ssafy
-      - SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MariaDBDialect
-
+      context: ./Backend/brain
+    container_name: backend
     depends_on:
-      - db
-    volumes:
-      - backend-data:/var/lib/backend
-
+      - mariadb
+      - rabbitmq
+      - redis
+    ports:
+      - "8080:8080"    # 스프링부트 포트 (필요에 따라 수정)
+    networks:
+      - my-network
 
 networks:
-  jenkinsnet:
-    name: jenkinsnetd
+  my-network:
     driver: bridge
-
-volumes:
-  db-data:
-  backend-data:
