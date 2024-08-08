@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { IconButton, TextField, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
 import './PostItSidebar.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { addNote, deleteNote, updateNote } from '../../../features/note/noteSlice';
@@ -12,6 +11,7 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
   const notes = useSelector(state => state.note.notes);
   const sidebarRef = useRef(null);
   const [editingIndex, setEditingIndex] = useState(null);
+  const [notesVisible, setNotesVisible] = useState(true); // 노트 가시성 상태 추가
 
   // 사이드바 외부 클릭 시 닫히도록 처리
   const handleClickOutside = (event) => {
@@ -36,6 +36,7 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
   const handleAddNote = () => {
     dispatch(addNote('')); // Redux에 빈 노트 추가
     setEditingIndex(notes.length); // 새로 추가된 노트를 편집 모드로 설정
+    
   };
 
   // 메모 삭제 함수
@@ -66,70 +67,66 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
   };
 
   return (
-    <>
-      {isVisible && <div className="sidebar-overlay" onClick={onClose}></div>}
-      <div ref={sidebarRef} className={`postit-sidebar ${isVisible ? 'visible' : ''}`}>
-        <div className="sidebar-header">
-          <IconButton onClick={onClose} aria-label="close" className="close-button">
-            <CloseIcon />
-          </IconButton>
-        </div>
-        <div className="notes-list">
-          {notes.map((note, index) => (
-            <div key={note.id} className="note">
-              {editingIndex === index ? (
-                <TextField
-                  value={note.content}
-                  onChange={(e) => handleEditNote(index, e.target.value)}
-                  onBlur={handleBlur}
-                  autoFocus
-                  multiline
-                  fullWidth
-                  variant="outlined"
-                  InputProps={{
-                    style: { fontSize: 14, lineHeight: '1.5', whiteSpace: 'normal' },
-                  }}
-                />
-              ) : (
-                <div className="note-content">
-                  <p onClick={() => setEditingIndex(index)} className="note-text">
-                    {note.content || '클릭하여 입력하세요...'}
-                  </p>
-                  <div className="note-actions">
-                    <IconButton
-                      onClick={() => handleDeleteNote(index)}
-                      aria-label="delete"
-                      className="delete-button-side"
-                      size="small"
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      size="small"
-                      onClick={() => handleSubmitNote(index)}
-                      className="submit-note-button"
-                    >
-                      제출
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={handleAddNote}
-          className="add-note-button"
-        >
-          포스트잇 추가
-        </Button>
+    <div ref={sidebarRef} className={`postit-sidebar ${isVisible ? 'visible' : ''}`}>
+      <div className="sidebar-header">
+        <IconButton onClick={onClose} aria-label="close" className="close-button">
+          <CloseIcon />
+        </IconButton>
       </div>
-    </>
+      <div className={`notes-list ${notesVisible ? 'visible' : ''}`}>
+        {notes.map((note, index) => (
+          <div key={note.id} className="note">
+            {editingIndex === index ? (
+              <TextField
+                value={note.content}
+                onChange={(e) => handleEditNote(index, e.target.value)}
+                onBlur={handleBlur}
+                autoFocus
+                multiline
+                fullWidth
+                variant="outlined"
+                InputProps={{
+                  style: { fontSize: 14, lineHeight: '1.5', whiteSpace: 'normal' },
+                }}
+              />
+            ) : (
+              <div className="note-content">
+                <p onClick={() => setEditingIndex(index)} className="note-text">
+                  {note.content || '클릭하여 입력하세요...'}
+                </p>
+                <div className="note-actions">
+                  <button
+                    onClick={() => handleDeleteNote(index)}
+                    aria-label="delete"
+                    className="custom-delete-button" // 새로운 버튼 클래스 사용
+                  >
+                    ❌
+                  </button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    size="small"
+                    onClick={() => handleSubmitNote(index)}
+                    className="submit-note-button"
+                  >
+                    제출
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<AddIcon />}
+        onClick={handleAddNote}
+        className="add-note-button"
+      >
+        포스트잇 추가
+      </Button>
+    </div>
   );
 };
 

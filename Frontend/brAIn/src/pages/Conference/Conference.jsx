@@ -2,15 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import WaitingModal from './components/WaitingModal';
 import PostItSidebar from './components/PostItSidebar';
 import WhiteBoard from './components/WhiteBoard';
 import VotedPostIt from './components/VotedPostIt';
 import Button from '../../components/Button/Button';
 import SidebarIcon from '../../assets/svgs/sidebar.svg';
+import SkipIcon from '../../assets/svgs/skip.svg'; // 아이콘 경로
+import PassIcon from '../../assets/svgs/pass.svg'; // 아이콘 경로
+import NextIcon from '../../assets/svgs/next.svg'; // 아이콘 경로
 import MemberList from './components/MemberList';
-import './ConferenceEx.css';
+import Timer from './components/Timer';
+import './Conference.css';
 
 import { addUser, removeUser, setUsers, setUserNick, setCuruser } from '../../actions/userActions';
 import { setCurStep, upRound, setRound } from '../../actions/conferenceActions';
@@ -20,7 +24,6 @@ const Conference = () => {
   const dispatch = useDispatch();
   const role = useSelector((state) => state.conference.role);
   const secureId = useSelector((state) => state.conference.secureId);
-  const navigate = useNavigate();
   const [client, setClient] = useState(null);
   const [connected, setConnected] = useState(false);
   const [participantCount, setParticipantCount] = useState(1);
@@ -28,8 +31,8 @@ const Conference = () => {
   const [roomId, setRoomId] = useState(null);
   const [isMeetingStarted, setIsMeetingStarted] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [notes, setNotes] = useState([]);
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const [isPostItSidebarVisible, setIsPostItSidebarVisible] = useState(false);
+
   const users = useSelector(state => state.user.users);
   const nickname = useSelector(state => state.user.nickname);
   const step = useSelector(state => state.conferenceInfo.curStep);
@@ -56,11 +59,9 @@ const Conference = () => {
 
         if (!localStorage.getItem('roomToken')) {
           localStorage.setItem('roomToken', response.data.jwtForRoom);
-          console.log('roomToken이 없어서 새로운 토큰을 저장했습니다.');
           dispatch(setUserNick(response.data.nickname));
-        } else {
-          console.log('roomToken이 이미 존재합니다.');
         }
+
         setRoomId(response.data.roomId);
 
         const newClient = new Client({
@@ -78,13 +79,12 @@ const Conference = () => {
 
         newClient.onmessage = function (event) {
           if (event.data === 'ping') {
-            socket.send('pong');
+            newClient.publish({ destination: '/app/pong', body: 'pong' });
           }
         };
 
         newClient.onConnect = (frame) => {
           setConnected(true);
-          console.log('Connected: ' + frame);
           newClient.subscribe(`/topic/room.${response.data.roomId}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
             handleMessage(receivedMessage);
@@ -184,12 +184,8 @@ const Conference = () => {
     }
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarVisible((prev) => !prev);
-  };
-
-  const handleCloseSidebar = () => {
-    setIsSidebarVisible(false);
+  const togglePostItSidebar = () => {
+    setIsPostItSidebarVisible(prev => !prev);
   };
 
   const handleReadyButtonClick = () => {
@@ -203,15 +199,17 @@ const Conference = () => {
         headers: {
           'Authorization': localStorage.getItem('roomToken')
         },
-        body: JSON.stringify({
-          step: step
-        })
+        body: JSON.stringify({ step: step })
       });
     }
   };
 
   const handlePassButtonClick = () => {
     console.log('Pass button clicked');
+  };
+
+  const handleSkipButtonClick = () => {
+    console.log('Skip button clicked');
   };
 
   return (
@@ -233,26 +231,48 @@ const Conference = () => {
 
         {isMeetingStarted && (
           <div className="conference-section">
-            <div className="sidebar-container">
-              <Button
-                type="fit"
-                onClick={toggleSidebar}
-                buttonStyle="black"
-                ariaLabel="Toggle Sidebar"
-                className="toggle-sidebar-button"
-              >
-                <img src={SidebarIcon} alt="Sidebar Toggle" className="sidebar-icon" />
-              </Button>
+            <div className={`sidebar-container ${isPostItSidebarVisible ? 'visible' : ''}`}>
+              {isPostItSidebarVisible ? (
+                <PostItSidebar
+                  isVisible={isPostItSidebarVisible}
+                  onClose={togglePostItSidebar}
+                  onSubmitClick={attachPostitOnRoundBoard}
+                />
+              ) : (
+                <Button
+                  type="fit"
+                  onClick={togglePostItSidebar}
+                  buttonStyle="black"
+                  ariaLabel="Toggle Post-It Sidebar"
+                  className="toggle-postit-sidebar-button"
+                >
+                  <img src={SidebarIcon} alt="Post-It Sidebar Toggle" className="sidebar-icon" />
+                </Button>
+              )}
             </div>
             <div className="main-content">
-              <div className="voted-post-it-container">
-                {roundRobinBoard.map((postit, index) => (
-                  <VotedPostIt key={index} content={postit.content} />
-                ))}
+              <div className="action-panel">
+                <div className="voted-post-it-container">
+                  {roundRobinBoard.map((postit, index) => (
+                    <VotedPostIt key={index} content={postit.content} />
+                  ))}
+                </div>
+                <div className="conf-timer-container">
+                  <Timer />
+                </div>
+                <div className="action-buttons-container">
+                  <Button onClick={handleSkipButtonClick} ariaLabel="Skip">
+                    <img src={SkipIcon} alt="Skip" className="action-icon" />
+                  </Button>
+                  <Button onClick={handlePassButtonClick} ariaLabel="Pass">
+                    <img src={PassIcon} alt="Pass" className="action-icon" />
+                  </Button>
+                  <Button onClick={handleNextStepClick} ariaLabel="Next">
+                    <img src={NextIcon} alt="Next" className="action-icon" />
+                  </Button>
+                </div>
               </div>
-              <div className="whiteboard-container">
-                <WhiteBoard subject="안녕" onSubmitClick={attachPostitOnRoundBoard} />
-              </div>
+              <WhiteBoard />
             </div>
           </div>
         )}
