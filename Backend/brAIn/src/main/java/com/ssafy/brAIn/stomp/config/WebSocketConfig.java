@@ -31,9 +31,18 @@ public class WebSocketConfig
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.setPathMatcher(new AntPathMatcher("."));
         config.setApplicationDestinationPrefixes("/app")
-                .enableStompBrokerRelay("/topic","/queue", "/exchange", "/amq/queue");
-
+                .enableStompBrokerRelay("/topic", "/queue", "/exchange", "/amq/queue")
+                .setRelayHost("rabbitmq")
+                .setRelayPort(61613)
+                .setClientLogin("guest")
+                .setClientPasscode("guest")
+                .setSystemLogin("guest")
+                .setSystemPasscode("guest")
+                .setVirtualHost("/")
+                .setSystemHeartbeatSendInterval(5000)
+                .setSystemHeartbeatReceiveInterval(4000);
     }
+
 
 
 
