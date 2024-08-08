@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   mariadb:
-    image: mariadb:latest
+    build:
+      context: ./maria
+      dockerfile: Dockerfile
     container_name: brAIn-mariadb
     environment:
       MYSQL_ROOT_PASSWORD: ssafy
