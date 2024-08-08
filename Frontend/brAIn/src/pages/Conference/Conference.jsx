@@ -52,9 +52,11 @@ const Conference = () => {
   const roundRobinBoard = useSelector(state => state.roundRobinBoard.roundRobinBoard);
   //const roomId=useSelector(state=>state.conferenceInfo.roomId);
   const { secureId: routeSecureId } = useParams();
+  const [data,setData]=useState(null);
 
 
   const votedItems = useSelector(state => state.votedItem.items || []);
+
 
   const MINUTES_IN_MS = 6 * 1000;
   const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
@@ -109,6 +111,7 @@ const Conference = () => {
           setConnected(true);
           newClient.subscribe(`/topic/room.${response.data.roomId}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
+            setData(receivedMessage);
             handleMessage(receivedMessage);
           });
         };
@@ -138,7 +141,7 @@ const Conference = () => {
       }
     };
 
-  }, [routeSecureId]);
+  }, [routeSecureId,roomId]);
 
   const handleMessage = async (receivedMessage) => {
     if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
@@ -168,6 +171,7 @@ const Conference = () => {
     } else if(receivedMessage.messageType=='PASS_AND_END'){
       console.log('투표시작')
       dispatch(setCurStep('STEP_2'))
+      await new Promise(resolve => setTimeout(resolve, 1000));
       step1EndAlarm();
     } else if (receivedMessage.messageType === 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep));
@@ -276,12 +280,16 @@ const Conference = () => {
         console.log("타이머 종료");
       }
       
+      console.log(votedItems)
       const itemsObject = votedItems.reduce((map, item, index) => {
         const key = item.content;
-        const value = index * 2 + 1; 
+        const value = 5-index*2; 
         map[key] = value;
         return map;
       }, {});
+
+      console.log('itemsObject:', itemsObject);  // 결과 확인
+
   
       // 서버에 투표 결과 전송
       const response = await axios.post(`http://localhost/api/v1/conferences/vote`, {
@@ -300,14 +308,14 @@ const Conference = () => {
       
 
       // STOMP 클라이언트를 통해 메시지 전송
-      if (client) {
-        client.publish({
-          destination: `/app/vote.middleResults.${roomId}.${step}`,
-          headers: { Authorization: localStorage.getItem('roomToken') }
-        });
-      } else {
-        console.error("Client is not connected");
-      }
+    //   if (client) {
+    //     client.publish({
+    //       destination: `/app/vote.middleResults.${roomId}.${step}`,
+    //       headers: { Authorization: localStorage.getItem('roomToken') }
+    //     });
+    //   } else {
+    //     console.error("Client is not connected");
+    //   }
     } catch (error) {
       console.error("Error during step1EndAlarm:", error);
     }

@@ -70,6 +70,8 @@ public class VoteService {
         }
 
         // 투표 갱신
+        System.out.println("투표 저장이 안돼!!!!!!!!!!!");
+        System.out.println(votes.entrySet().size());
         for (Map.Entry<String, Integer> vote : votes.entrySet()) {
             String postIt = vote.getKey();
             Integer newScore = vote.getValue();
@@ -94,7 +96,7 @@ public class VoteService {
             }
 
             // 임시 데이터 삭제
-            redisUtils.deleteKey(tempVoteKey);
+            //redisUtils.deleteKey(tempVoteKey);
         }
 
         log.info("Vote Finished");

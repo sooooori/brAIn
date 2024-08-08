@@ -36,6 +36,7 @@ const PostItTest = () => {
   // 투표 핸들러
   const handleVote = (round, index, content) => {
     dispatch(addItem(round, index, content));
+    console.log("투표핸들러 몇번호출?")
   };
 
   return (

@@ -101,7 +101,8 @@ public class MessageService {
                 .map(Object::toString)
                 .toList();
 
-        int len=nicknames.size();
+        //ai제외하고
+        int len=nicknames.size()-1;
 
         nicknames.forEach((nickname)->{
             System.out.println("모든유저 조회하긴함?"+nickname);
@@ -215,7 +216,7 @@ public class MessageService {
         int randomValue;
         do {
             randomValue = (int)(Math.random() * size);
-        } while (randomValue == 0 || randomValue==size-1);
+        } while (randomValue == 0 );
         return randomValue;
     }
 

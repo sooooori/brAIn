@@ -3,29 +3,30 @@
   position: fixed;
   right: 0;
   top: 0;
-  width: 200px;
-  height: 55vh;
+  width: 300px;
+  height: 65vh;
   background-color: #ffffff;
   border-left: 2px solid #ccc;
   box-shadow: -3px 0 10px rgba(0, 0, 0, 0.2);
   overflow-y: auto;
-  overflow-x: hidden; /* 수평 스크롤 막기 */
-  padding: 20px;
-  z-index: 10000; /* WhiteBoard보다 높은 z-index 설정 */
-  display: none; /* 처음에는 숨김 */
+  overflow-x: hidden;
+  padding: 10px; /* 좌우 패딩 및 상하 패딩 수정 */
+  z-index: 10000;
+  display: none;
   flex-direction: column;
   opacity: 0;
-  pointer-events: none; /* 클릭 이벤트 차단 */
-  transition: opacity 0.3s ease; /* 오직 투명도만 변환 */
+  pointer-events: none;
+  transition: opacity 0.3s ease;
   transform: translateY(-30%);
 }
 
 /* 사이드바가 보일 때 */
 .postit-sidebar.visible {
-  display: flex; /* 보일 때는 flex로 전환 */
+  display: flex;
   margin-top: auto;
-  opacity: 1; /* 투명도 조정으로 나타남 */
-  pointer-events: auto; /* 클릭 가능 */
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 11000;
 }
 
 /* 사이드바 헤더 스타일 */
@@ -33,21 +34,24 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 10px 0;
-  margin-bottom: 20px;
+  position: absolute; /* 절대 위치 설정 */
+  top: 0; /* 상단에 위치 */
+  right: 0; /* 우측에 위치 */
+  padding: 5px; /* 패딩 조정 */
+  width: 100%; /* 너비 전체 사용 */
+  background-color: #ffffff; /* 배경색 추가 */
+  box-sizing: border-box; /* 패딩 포함하여 박스 크기 설정 */
+  z-index: 12000;
 }
 
 /* 닫기 버튼 스타일 */
 .close-button {
-<<<<<<< HEAD
   color: #333;
-=======
-  /* color: #333;  */
->>>>>>> b13a7f165468c9df580d5928f07af0fa05f689cf
   background-color: transparent;
   transition: transform 0.2s, color 0.2s;
   font-size: 24px;
   padding: 5px;
+  z-index: 13000;
 }
 
 .close-button:hover {
@@ -67,8 +71,10 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: space-between;
   min-height: 60px;
   position: relative;
+  margin-top: 50px; /* 닫기 버튼 아래에 위치하도록 여백 추가 */
 }
 
 .note:hover {
@@ -78,13 +84,16 @@
 /* 노트 내용 스타일 */
 .note-content {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .note-text {
   flex-grow: 1;
   margin-bottom: 10px;
   word-break: break-word;
-  font-size: 16px; /* 글씨 크기 확대 */
+  font-size: 16px;
   white-space: normal;
   overflow-wrap: break-word;
 }
@@ -92,8 +101,10 @@
 /* 노트 액션 스타일 */
 .note-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 5px;
   width: 100%;
+  align-items: center;
 }
 
 /* 새로운 삭제 버튼 스타일 */
@@ -102,15 +113,24 @@
   border: none;
   color: #333;
   cursor: pointer;
-  padding: 4px; /* 버튼 크기 줄이기 */
+  padding: 4px;
+  font-size: 12px;
   transition: transform 0.2s, color 0.2s;
-  font-size: 16px; /* 버튼 글씨 크기 확대 */
 }
 
 .custom-delete-button:hover {
   color: #f44336;
   transform: scale(1.1);
 }
+
+/* 제출 버튼 스타일 */
+.submit-note-button {
+  font-size: 12px;
+  padding: 4px 8px;
+  min-width: auto;
+  height: 24px;
+}
+
 
 /* 노트 리스트 스타일 */
 .notes-list {
@@ -139,5 +159,4 @@
 .add-note-button:hover {
   background-color: #388e3c;
   transform: scale(1.05);
-
 }

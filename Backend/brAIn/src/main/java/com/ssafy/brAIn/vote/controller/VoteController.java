@@ -1,8 +1,10 @@
 package com.ssafy.brAIn.vote.controller;
 
 import com.ssafy.brAIn.auth.jwt.JWTUtilForRoom;
+import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.service.MemberService;
+import com.ssafy.brAIn.util.RedisUtils;
 import com.ssafy.brAIn.vote.dto.FinalVoteRequest;
 import com.ssafy.brAIn.vote.dto.VoteRequest;
 import com.ssafy.brAIn.vote.dto.VoteResponse;
@@ -28,6 +30,7 @@ public class VoteController {
     private final VoteService voteService;
     private final JWTUtilForRoom jwtUtilForRoom;
     private final MemberService memberService;
+    private final RedisUtils redisUtils;
 
     // 투표 결정(진행)
     @PostMapping
@@ -45,7 +48,7 @@ public class VoteController {
         }
         Integer memberId=member.get().getId();
 
-        System.out.println("STEP:"+voteRequest.getStep());
+        System.out.println(voteRequest.getVotes().size());
         voteService.vote(voteRequest.getRoomId(), voteRequest.getStep(), memberId, voteRequest.getVotes());
         return new ResponseEntity<>("Vote successful", HttpStatus.OK);
     }
@@ -60,6 +63,7 @@ public class VoteController {
     // 투표 결과 집계
     @GetMapping("/results")
     public ResponseEntity<List<VoteResponse>> voteResults(@RequestParam Integer roomId, @RequestParam String step) {
+        step= "STEP_2";
         List<VoteResponse> results = voteService.getVoteResults(roomId, step);
         for(VoteResponse voteResponse: results) {
             System.out.println(voteResponse);
