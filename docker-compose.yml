@@ -14,7 +14,7 @@ services:
     networks:
       - my-network  
     healthcheck:
-      test: ["CMD-SHELL", "nc -z localhost 3306"]
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 3306"]
       interval: 10s
       retries: 5
       start_period: 60s
