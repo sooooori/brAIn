@@ -17,9 +17,6 @@ import MemberList from './components/MemberList';
 import './ConferenceEx.css';
 import Swal from "sweetalert2"; 
 
-import { addUser, removeUser, setUsers, setUserNick, setCuruser, resetUser } from '../../actions/userActions';
-import { setCurStep, upRound, setRound, resetConference } from '../../actions/conferenceActions';
-import { sendToBoard, resetRoundBoard } from '../../actions/roundRobinBoardAction';
 
 import { useNavigate } from 'react-router-dom';
 
