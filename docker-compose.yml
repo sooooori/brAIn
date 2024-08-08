@@ -16,12 +16,11 @@ services:
     networks:
       - my-network  
     healthcheck:
-      test: ["CMD-SHELL", "nc -z 127.0.0.1 3306"]
+      test: ["CMD", "/usr/local/bin/healthcheck.sh"]
       interval: 10s
       retries: 5
-      start_period: 60s
+      start_period: 30s
       timeout: 10s
-
 
   rabbitmq:
     build:
