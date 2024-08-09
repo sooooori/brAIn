@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e60a2d4d-1767-4dbb-9eb0-201d3f61c89d" name="변경" comment="Feat: Dockerfile 설정 추가">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../../docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -154,7 +154,7 @@
       <workItem from="1723077504867" duration="680000" />
       <workItem from="1723090089204" duration="6921000" />
       <workItem from="1723115076652" duration="6833000" />
-      <workItem from="1723160920634" duration="9649000" />
+      <workItem from="1723160920634" duration="10647000" />
     </task>
     <task id="LOCAL-00001" summary="Feat: test commit">
       <option name="closed" value="true" />
