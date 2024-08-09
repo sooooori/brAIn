@@ -191,6 +191,7 @@ public class MessageController {
 //            message.getMessageProperties().setHeader("Authorization", "회의 토큰");
 //            return message;
 //        };
+
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users));
 
     }

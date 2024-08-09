@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useSelector, useDispatch } from 'react-redux';
-import { reorder } from '../../../actions/votedItemAction';
+import { reorderItems } from '../../../actions/votedItemAction';
 import './VotedPostIt.css';
 
 const VotedPostIt = React.memo(() => {
@@ -19,7 +19,7 @@ const VotedPostIt = React.memo(() => {
     reorderedItems.splice(destination.index, 0, movedItem);
 
     // Redux 스토어에 업데이트된 아이템 목록을 디스패치합니다.
-    dispatch(reorder(reorderedItems));
+    dispatch(reorderItems(reorderedItems));
   };
 
   // --- requestAnimationFrame 초기화
