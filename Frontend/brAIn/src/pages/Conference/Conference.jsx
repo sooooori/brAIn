@@ -44,6 +44,7 @@ const Conference = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isPostItSidebarVisible, setIsPostItSidebarVisible] = useState(false);
   const [hideButtons, setHideButtons] = useState(false);
+  const [subject, setSubject] = useState('');
 
   const users = useSelector(state => state.user.users);
   const nickname = useSelector(state => state.user.nickname);
@@ -54,13 +55,14 @@ const Conference = () => {
   //const roomId=useSelector(state=>state.conferenceInfo.roomId);
   const { secureId: routeSecureId } = useParams();
   const [data,setData]=useState(null);
-
-
+  
   const votedItems = useSelector(state => state.votedItem.items || []);
-
-
+  
+  
   const MINUTES_IN_MS = 6 * 1000;
+  const [time, setTime] = useState(null);
   const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
+  const [timerActive, setTimerActive] = useState(false);
 
   //투표결과 모달관련
   const [voteResults, setVoteResults] = useState([]);
@@ -92,6 +94,25 @@ const Conference = () => {
           //dispatch(setRoom(response.data.roomId));
           setRoomId(response.data.roomId);
         }
+
+        if (subject === ''){
+          setSubject(response.data.subject);
+        }
+
+        const time_response = await axios.get(`http://localhost/api/v1/conferences/time`, {
+          params: {
+            secureId: routeSecureId,
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+          },
+        });
+
+        if (time === null) {
+          setTime(time_response.data.time);
+        }
+
 
         const newClient = new Client({
           brokerURL: 'ws://localhost/ws',
@@ -148,7 +169,59 @@ const Conference = () => {
       }
     };
 
-  }, [routeSecureId,roomId]);
+  }, [routeSecureId,roomId, time]);
+
+  useEffect(() => {
+    if (step === 'STEP_0' && !timerActive) {
+      // Start the timer if it's step0 and no other timer is running
+      setTimerActive(true);
+      startTimer();
+    }
+  }, [step]);
+
+  const startTimer = async () => {
+    try {
+      await Swal.fire({
+        icon: "info",
+        title: '준비 시간이 시작되었습니다.',
+        text: '준비를 마치세요.',
+        timer: 3000
+      });
+
+      await timer();
+
+      if (timeLeft <= 0) {
+        await Swal.fire({
+          icon: "warning",
+          title: '준비 시간이 끝났습니다.',
+          text: '다음 단계로 진행하세요.',
+        });
+      }
+    } catch (error) {
+      console.error("Error during timer:", error);
+    }
+  };
+
+  const timer = async () => {
+    return new Promise(resolve => {
+      const tick = () => {
+        setTimeLeft(prevTimeLeft => {
+          const newTimeLeft = prevTimeLeft - 1000;
+          if (newTimeLeft <= 0) {
+            clearInterval(timerId); // Stop the timer
+            resolve();
+            return 0; // Set timer to 0 after it ends
+          } else {
+            return newTimeLeft;
+          }
+        });
+      };
+
+      timerId = setInterval(tick, 1000); // Call tick every second
+    });
+  };
+
+
 
   const handleMessage = async (receivedMessage) => {
     if (receivedMessage.messageType == 'ENTER_WAITING_ROOM') {
@@ -325,25 +398,6 @@ const Conference = () => {
 
   let timerId;
 
-const timer = async () => {
-  return new Promise(resolve => {
-    const tick = () => {
-      setTimeLeft(prevTimeLeft => {
-        const newTimeLeft = prevTimeLeft - 1000;
-        if (newTimeLeft <= 0) {
-          clearInterval(timerId); // 타이머를 멈춥니다
-          resolve();
-          return 0; // 타이머 종료 후 0으로 설정
-        } else {
-          return newTimeLeft;
-        }
-      });
-    };
-
-    timerId = setInterval(tick, 1000); // 매 초마다 tick 함수를 호출
-  });
-};
-
   const endVote = async (step) => {
   try {
     const response = await axios.post(`http://localhost/api/v1/conferences/vote/endByTimer`, {
@@ -466,7 +520,7 @@ const timer = async () => {
                   
                 </div>
                 <div className="conf-timer-container">
-                  <Timer />
+                  <Timer time={time}/>
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
@@ -497,7 +551,7 @@ const timer = async () => {
                 )}
 
               </div>
-              <WhiteBoard />
+              <WhiteBoard subject={subject} />
             </div>
           </div>
         )}

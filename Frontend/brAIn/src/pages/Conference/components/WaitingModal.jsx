@@ -69,16 +69,18 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
             {error && <p className="error">{error}</p>}
             {conferenceCode && (
               <div className="waiting-modal-code">
-                <pre>{conferenceCode}</pre>
-                <Button
-                  type="fit"
-                  onClick={handleShareCode}
-                  buttonStyle="blue"
-                  ariaLabel="Share conference code"
-                  className="waiting-modal-code-button"
-                >
-                  {isSharing ? 'Copied!' : 'Share Code'}
-                </Button>
+                <div className="conference-code-container">
+                  <span className="conference-code">참여 코드 : {conferenceCode}</span>
+                  <Button
+                    type="fit"
+                    onClick={handleShareCode}
+                    buttonStyle="blue"
+                    ariaLabel="Share conference code"
+                    className="waiting-modal-code-button"
+                  >
+                    {isSharing ? 'Copied!' : 'Share Code'}
+                  </Button>
+                </div>
               </div>
             )}
             <div className="waiting-modal-footer">
@@ -91,7 +93,7 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
               >
                 Cancel
               </Button>
-              {/* {role === 'host' && ( // Conditionally render button based on role
+              {role === 'host' && (
                 <Button
                   type="fit"
                   onClick={onStartMeeting}
@@ -101,16 +103,7 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
                 >
                   Start Meeting
                 </Button>
-              )} */}
-              <Button
-                type="fit"
-                onClick={onStartMeeting}
-                buttonStyle="black"
-                ariaLabel="Start Meeting"
-                className="waiting-modal-button waiting-modal-button-start"
-              >
-                Start Meeting
-              </Button>
+              )}
             </div>
           </>
         )}
