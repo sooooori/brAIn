@@ -1,6 +1,6 @@
 services:
   db:
-    image: mariadb:11.4
+    image: mysql:8.0  # MariaDB에서 MySQL로 변경
     container_name: db
     environment:
       MYSQL_ROOT_PASSWORD: ssafy
@@ -8,7 +8,7 @@ services:
       MYSQL_USER: ssafy
       MYSQL_PASSWORD: ssafy
     ports:
-      - "3306:3306"    # MariaDB 포트 매핑
+      - "3306:3306"    # MySQL 포트 매핑
     networks:
       - brain-net
 
@@ -49,11 +49,11 @@ services:
       context: ./Backend/brAIn
     container_name: backend
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/brAIn?characterEncoding=utf8mb4&serverTimezone=Asia/Seoul
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/brAIn?characterEncoding=utf8mb4&serverTimezone=Asia/Seoul
       - SPRING_DATASOURCE_USERNAME=ssafy
       - SPRING_DATASOURCE_PASSWORD=ssafy
     depends_on:
-      - mariadb
+      - db
       - rabbitmq
       - redis
     ports:
