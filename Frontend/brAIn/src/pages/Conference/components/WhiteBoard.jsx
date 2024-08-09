@@ -98,7 +98,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
   return (
     <div className="WhiteBoard">
       <div className="WhiteBoard-header">
-        <h2>주제 : </h2>
+        <h2>주제 : {subject} </h2>
       </div>
       <div className="WhiteBoard-body">
         <div className="idea-board">

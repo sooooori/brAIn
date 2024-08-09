@@ -1,12 +1,11 @@
-import React, { useEffect, useState, useCallback, memo } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import './MemberList.css';
 
 const MemberList = () => {
     const users = useSelector((state) => state.user.users) || [];
-    const curUser = useSelector(state => state.user.currentUser)
-    const timer = useSelector((state) => state.conferenceInfo.timer);
-    const nickname = useSelector(state => state.user.nickname);
+    const curUser = useSelector((state) => state.user.currentUser);
+    const nickname = useSelector((state) => state.user.nickname);
 
     const [currentPage, setCurrentPage] = useState(0);
     const usersPerPage = 6;
@@ -28,38 +27,47 @@ const MemberList = () => {
 
     const handleNextPage = useCallback(() => {
         setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages - 1));
-    }, [totalPages]);
+        document.querySelector('.profile-container').scrollBy({ left: 180 * usersPerPage, behavior: 'smooth' });
+    }, [totalPages, usersPerPage]);
 
     const handlePreviousPage = useCallback(() => {
         setCurrentPage(prevPage => Math.max(prevPage - 1, 0));
-    }, []);
-
-    // const displayUsers = users.slice(currentPage * usersPerPage, (currentPage + 1) * usersPerPage);
+        document.querySelector('.profile-container').scrollBy({ left: -180 * usersPerPage, behavior: 'smooth' });
+    }, [usersPerPage]);
 
     return (
-        <div className="member-list-container">
-            <div className="profile-container">
-                {users.map((user) => (
-                    <div
-                        key={user.id} // 고유한 ID를 사용하는 것이 좋습니다
-                        className={`profile ${user.nickname == curUser ? 'highlighted' : ''}`}
-                    >
-                        {user.nickname === nickname && <p>Me</p>}
-                        <img
-                            src={`https://brain-content-profile.s3.ap-northeast-2.amazonaws.com/conference-image/${user.nickname.split(' ').pop()}.png`}
-                            alt={`${user.nickname.split(' ').pop()}`}
-                        />
-                        <p>{user.nickname}</p>
-                    </div>
-                ))}
+        <div className="carousel-container">
+            <button 
+                className="scroll-button left" 
+                onClick={handlePreviousPage} 
+                disabled={currentPage === 0}
+            >
+                &lt;
+            </button>
+            <div className="carousel">
+                <div className="profile-container">
+                    {users.map((user) => (
+                        <div
+                            key={user.id}
+                            className={`profile ${user.nickname === curUser ? 'highlighted' : ''}`}
+                        >
+                            {user.nickname === nickname && <p>Me</p>}
+                            <img
+                                src={`https://brain-content-profile.s3.ap-northeast-2.amazonaws.com/conference-image/${user.nickname.split(' ').pop()}.png`}
+                                alt={`${user.nickname.split(' ').pop()}`}
+                            />
+                            <p>{user.nickname}</p>
+                        </div>
+                    ))}
+                </div>
             </div>
-            <div className="pagination">
-                <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
-                <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
-            </div>
-            <div className="timer-info">
-                <p>Time Remaining: {timer}</p>
-            </div>
+            <button 
+                className="scroll-button right" 
+                onClick={handleNextPage} 
+                disabled={currentPage === totalPages - 1}
+            >
+                &gt;
+            </button>
         </div>
     );
 };
