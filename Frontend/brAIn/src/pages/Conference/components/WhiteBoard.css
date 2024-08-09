@@ -88,11 +88,14 @@
   flex-wrap: wrap;
   gap: 10px;
   overflow-y: auto; /* 세로 스크롤 허용 */
+  /* align-items: center; */
+  justify-content: center;
 }
 
 .idea-item {
   flex: 0 1 calc(33.333% - 10px); /* 3개씩 가로 정렬 */
   box-sizing: border-box;
+  justify-content: center;
 }
 
 .post-it {
