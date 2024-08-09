@@ -29,6 +29,7 @@ import './Conference.css';
 import { addUser, removeUser, setUsers, setUserNick, setCuruser } from '../../actions/userActions';
 import { setCurStep, upRound, setRound, setRoom } from '../../actions/conferenceActions';
 import { sendToBoard } from '../../actions/roundRobinBoardAction';
+import VoteResultsModal from './components/VoteResultsModal';
 
 const Conference = () => {
   const dispatch = useDispatch();
@@ -60,6 +61,10 @@ const Conference = () => {
 
   const MINUTES_IN_MS = 6 * 1000;
   const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
+
+  //투표결과 모달관련
+  const [voteResults, setVoteResults] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
 
@@ -361,13 +366,15 @@ const timer = async () => {
     }).then(async(result) => {
       if (result.isConfirmed) {
         const voteResults = await getVoteResult(step);
-        console.log("투표결과");
-        console.log(voteResults);
+        // console.log("투표결과");
+        // console.log(voteResults);
 
         if (voteResults && voteResults.length > 0) {
-          voteResults.forEach(vote => {
-            console.log(`PostIt: ${vote.postIt}, Score: ${vote.score}`);
-          });
+          // voteResults.forEach(vote => {
+          //   console.log(`PostIt: ${vote.postIt}, Score: ${vote.score}`);
+          // });
+          setVoteResults(voteResults);
+          setIsModalOpen(true); // 모달 열기
         } else {
           console.log("No vote results found.");
         }
@@ -382,6 +389,7 @@ const timer = async () => {
     
     try {
       console.log("getVoteREsult",step)
+      console.log(roomId);
       const response = await axios.get(`http://localhost/api/v1/conferences/vote/results`, {
         params: {
           roomId: roomId,
@@ -401,7 +409,14 @@ const timer = async () => {
   
 
   return (
+    
     <div className="conference">
+      {isModalOpen && (
+        <VoteResultsModal 
+          voteResults={voteResults} 
+          onClose={() => setIsModalOpen(false)} 
+        />
+      )}
       {!isMeetingStarted && (
         <WaitingModal
           isVisible={isModalVisible}

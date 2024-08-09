@@ -63,7 +63,7 @@ public class VoteController {
     // 투표 결과 집계
     @GetMapping("/results")
     public ResponseEntity<List<VoteResponse>> voteResults(@RequestParam Integer roomId, @RequestParam String step) {
-        step= "STEP_2";
+
         List<VoteResponse> results = voteService.getVoteResults(roomId, step);
         for(VoteResponse voteResponse: results) {
             System.out.println(voteResponse);

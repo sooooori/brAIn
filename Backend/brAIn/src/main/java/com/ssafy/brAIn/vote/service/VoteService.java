@@ -35,7 +35,6 @@ public class VoteService {
 
     private final RedisUtils redisUtils;
 
-    private static int votePerson;
 
     // 투표 진행 - 임시 저장
     @Transactional
@@ -98,7 +97,13 @@ public class VoteService {
             // 임시 데이터 삭제
             //redisUtils.deleteKey(tempVoteKey);
         }
-        votePerson++;
+        if(redisUtils.isKeyExists(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total")){
+            redisUtils.save(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total",
+                    (Integer.parseInt(redisUtils.getData(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total"))+1)+"");
+        }else{
+            redisUtils.save(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total",1+"");
+        }
+
         log.info("Vote Finished");
     }
 
@@ -114,6 +119,7 @@ public class VoteService {
         while(true){
 
             int totalUser=redisUtils.getSortedSet(conferenceId+":order:cur").size();
+            int votePerson=Integer.parseInt(redisUtils.getData(conferenceId+":votes:"+step+":total"));
             if(votePerson==totalUser-1){
                 break;
             }
