@@ -52,9 +52,11 @@ const Conference = () => {
   const roundRobinBoard = useSelector(state => state.roundRobinBoard.roundRobinBoard);
   //const roomId=useSelector(state=>state.conferenceInfo.roomId);
   const { secureId: routeSecureId } = useParams();
+  const [data,setData]=useState(null);
 
 
   const votedItems = useSelector(state => state.votedItem.items || []);
+
 
   const MINUTES_IN_MS = 6 * 1000;
   const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
@@ -109,6 +111,7 @@ const Conference = () => {
           setConnected(true);
           newClient.subscribe(`/topic/room.${response.data.roomId}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
+            setData(receivedMessage);
             handleMessage(receivedMessage);
           });
         };
@@ -129,6 +132,8 @@ const Conference = () => {
       }
     };
 
+    
+
     fetchDataAndConnect();
 
     return () => {
@@ -138,7 +143,7 @@ const Conference = () => {
       }
     };
 
-  }, [routeSecureId]);
+  }, [routeSecureId,roomId]);
 
   const handleMessage = async (receivedMessage) => {
     if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
@@ -158,7 +163,7 @@ const Conference = () => {
       dispatch(setCurStep(receivedMessage.curStep))
     }else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
       await roundRobinBoardUpdate(receivedMessage);
-      step1EndAlarm();
+      dispatch(step1EndAlarm());
     }else if(receivedMessage.messageType==='FINISH_MIDDLE_VOTE'){
       console.log(receivedMessage);
       console.log(receivedMessage.votes.postit);
@@ -258,9 +263,7 @@ const Conference = () => {
 
   };
 
-  const step1EndAlarm = async () => {
-    
-    
+  const step1EndAlarm = () => async (dispatch, getState) => {
     try {
       await Swal.fire({
         icon: "success",
@@ -269,45 +272,42 @@ const Conference = () => {
         timer: 3000
       });
   
-      // 알림창이 닫힌 후 타이머 시작
-      await timer();  // timer() 함수는 비동기 함수여야 합니다.
+      // 타이머 시작
+      await timer();
   
       if (timeLeft <= 0) {
         console.log("타이머 종료");
       }
-      
+  
+      // 상태 업데이트 후 후속 작업을 수행하기 위해 상태를 확인
+      const state = getState();
+      const votedItems = state.votedItem.items;
+  
+      console.log(votedItems);  // 상태가 업데이트된 후 출력
+  
       const itemsObject = votedItems.reduce((map, item, index) => {
         const key = item.content;
-        const value = index * 2 + 1; 
+        const value = 5 - index * 2;
         map[key] = value;
         return map;
       }, {});
   
+      console.log('itemsObject:', itemsObject);
+  
       // 서버에 투표 결과 전송
-      const response = await axios.post(`http://localhost/api/v1/conferences/vote`, {
+      await axios.post(`http://localhost/api/v1/conferences/vote`, {
         roomId: roomId,
         step: step,
         votes: itemsObject
       }, {
         headers: {
           'Content-Type': 'application/json',
-          AuthorizationRoom:localStorage.getItem('roomToken')
+          AuthorizationRoom: localStorage.getItem('roomToken')
         }
-      }).then(endVote());
-
-      
-
-      
-
-      // STOMP 클라이언트를 통해 메시지 전송
-      if (client) {
-        client.publish({
-          destination: `/app/vote.middleResults.${roomId}.${step}`,
-          headers: { Authorization: localStorage.getItem('roomToken') }
-        });
-      } else {
-        console.error("Client is not connected");
-      }
+      });
+  
+      // 투표 종료 처리
+      await endVote();
     } catch (error) {
       console.error("Error during step1EndAlarm:", error);
     }

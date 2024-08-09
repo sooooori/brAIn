@@ -4,7 +4,7 @@ export const SET_ROUND = 'SET_ROUND';
 export const RESET_STATE = 'RESET_STATE'
 export const SET_ROOM='SET_ROOM'
 
-export const setCurStep = async (step) => ({
+export const setCurStep = (step) => ({
     type: SET_CUR_STEP,
     payload: step,
 });

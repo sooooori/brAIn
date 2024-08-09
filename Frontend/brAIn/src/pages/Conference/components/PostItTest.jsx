@@ -83,6 +83,7 @@ const PostItTest = () => {
 
   // 투표 핸들러
   const handleVote = (round, index, content) => {
+    console.log('Dispatching vote with:', { round, index, content });
     dispatch(addItem(round, index, content));
   };
 

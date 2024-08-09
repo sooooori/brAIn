@@ -104,10 +104,10 @@ public class MessageController {
 
         if (messageService.isLastOrder(roomId, nickname)) {
             System.out.println("마지막 사람만 이곳에 와야한다.");
-            messageService.initUserState(roomId);
+
             if (messageService.isStep1EndCondition(roomId)) {
                 messageService.updateStep(roomId,Step.STEP_2);
-
+                messageService.initUserState(roomId);
                 return new ResponseGroupPost(MessageType.SUBMIT_POST_IT_AND_END,nickname,null,groupPost.getRound(), groupPost.getRound()+1, groupPost.getContent());
             }
                 return new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,nextUser,groupPost.getRound(), groupPost.getRound()+1, groupPost.getContent());
@@ -191,6 +191,7 @@ public class MessageController {
 //            message.getMessageProperties().setHeader("Authorization", "회의 토큰");
 //            return message;
 //        };
+
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users));
 
     }

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useSelector, useDispatch } from 'react-redux';
-import { reorder } from '../../../actions/votedItemAction';
+import { reorderItems } from '../../../actions/votedItemAction';
 import './VotedPostIt.css';
 
-const VotedPostIt = () => {
+const VotedPostIt = React.memo(() => {
   const dispatch = useDispatch();
   const votedItems = useSelector(state => state.votedItem.items || []);
-  console.log('votedItems:', votedItems);
+  //console.log('votedItems:', votedItems);
 
   // --- Draggable이 Droppable로 드래그 되었을 때 실행되는 이벤트
   const onDragEnd = ({ source, destination }) => {
@@ -19,7 +19,7 @@ const VotedPostIt = () => {
     reorderedItems.splice(destination.index, 0, movedItem);
 
     // Redux 스토어에 업데이트된 아이템 목록을 디스패치합니다.
-    dispatch(reorder(reorderedItems));
+    dispatch(reorderItems(reorderedItems));
   };
 
   // --- requestAnimationFrame 초기화
@@ -71,6 +71,6 @@ const VotedPostIt = () => {
       </Droppable>
     </DragDropContext>
   );
-};
+});
 
 export default VotedPostIt;

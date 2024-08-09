@@ -84,6 +84,7 @@ public class MessageService {
 
     //현재 유저가 마지막 순서인지 확인하는 메서드(테스트 완)
     public boolean isLastOrder(Integer roomId, String nickname) {
+        System.out.println("isLastOrder:"+nickname);
         int order=redisUtils.getScoreFromSortedSet(roomId+":order:cur",nickname).intValue();
         int lastOrder=redisUtils.getLastElementFromSortedSet(roomId+":order:cur").intValue();
         if (order == lastOrder) {
@@ -101,7 +102,8 @@ public class MessageService {
                 .map(Object::toString)
                 .toList();
 
-        int len=nicknames.size();
+        //ai제외하고
+        int len=nicknames.size()-1;
 
         nicknames.forEach((nickname)->{
             System.out.println("모든유저 조회하긴함?"+nickname);
@@ -215,7 +217,7 @@ public class MessageService {
         int randomValue;
         do {
             randomValue = (int)(Math.random() * size);
-        } while (randomValue == 0 || randomValue==size-1);
+        } while (randomValue == 0 );
         return randomValue;
     }
 
@@ -299,8 +301,11 @@ public class MessageService {
 //                .filter((user)->redisUtils.isKeyExists(roomId+":"+user))
                 .forEach((user)->redisUtils.save(roomId+":"+user,UserState.NONE.toString()));
 
+
         String FirstUser = redisUtils.getUserFromSortedSet(roomId + ":order:cur", 0);
         redisUtils.save(roomId+":curOrder",FirstUser);
+
+
     }
 
     public String receiveAImessage(Integer roomId) {

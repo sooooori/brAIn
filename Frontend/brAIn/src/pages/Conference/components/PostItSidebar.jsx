@@ -100,7 +100,7 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
                     aria-label="delete"
                     className="custom-delete-button" // 새로운 버튼 클래스 사용
                   >
-                    ❌
+                    🗑️
                   </button>
                   <Button
                     variant="contained"
