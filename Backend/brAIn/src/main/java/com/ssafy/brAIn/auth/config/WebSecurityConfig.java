@@ -76,13 +76,12 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost")); // 클라이언트 도메인
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost", "http://localhost:4173", "https://i11b203.p.ssafy.io")); // 클라이언트 도메>인
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
 //        configuration.setAllowCredentials(true);
 
-        configuration.addAllowedOrigin("*");
-        configuration.setAllowCredentials(false);
+        configuration.setAllowCredentials(true);
 
         // WebSocket을 위한 추가 설정
         configuration.addAllowedHeader("Sec-WebSocket-Extensions");
