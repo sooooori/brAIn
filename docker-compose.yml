@@ -10,7 +10,8 @@ services:
       - "3306:3306"    # MySQL 포트 매핑
     networks:
       - brain-net
-  aiServer:
+
+  aiserver:
     build: ./Backend/aiServer
     ports:
       - "5000:5000"
