@@ -49,7 +49,7 @@ services:
       context: ./Backend/brAIn
     container_name: backend
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/brAIn?allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/brAIn?allowPublicKeyRetrieval=true&useSSL=false
       - SPRING_DATASOURCE_USERNAME=ssafy
       - SPRING_DATASOURCE_PASSWORD=ssafy
     depends_on:
