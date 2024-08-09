@@ -19,7 +19,7 @@ const ConferenceHistoryModal = ({ isOpen, conferenceId, onClose }) => {
               Authorization: `Bearer ${accessToken}`
             }
           });
-          console.log("API Response:", response); // Add this to check the API response
+          console.log("API Response:", response);
           setConferenceDetails(response.data);
         } catch (error) {
           console.error('Error fetching conference details:', error);
@@ -30,7 +30,7 @@ const ConferenceHistoryModal = ({ isOpen, conferenceId, onClose }) => {
     }
   }, [id, accessToken]);
 
-  if (!isOpen) return null; // Close modal if not open
+  if (!isOpen) return null;
 
   if (!conferenceDetails) {
     return <div className="conference-history-modal">Loading...</div>;
@@ -48,26 +48,24 @@ const ConferenceHistoryModal = ({ isOpen, conferenceId, onClose }) => {
           <div className="modal-section">
             <h2>회의 주제</h2>
             <div className="info-box">
-                {subject}
-
+              {subject}
             </div>
           </div>
-          <div className='modal-section'>
+
+          <div className="modal-section">
             <h2>회의 정보</h2>
-            <div className='info-box'>
-                <p>회의 시간 : {new Date(totalTime).toLocaleString()}</p>
-                <p>참여 인원 : {members.length} 명 {members.map(member => (
-                    <li key={member.memberId}>
-                        이름: {member.name}
-                    </li>
-                    ))}
-                </p>
+            <div className="info-box">
+              <p>회의 시간: {new Date(totalTime).toLocaleString()}</p>
+              <p>참여 인원: {members.length} 명</p>
+              <p>참가자: {members.map(member => member.name).join(', ')}</p>
             </div>
           </div>
 
           <div className="modal-section">
             <h2>회의 요약</h2>
-            <div className="info-box">{conclusion || '요약이 없습니다.'}</div>
+            <div className="info-box">
+              {conclusion || '요약이 없습니다.'}
+            </div>
           </div>
         </div>
       </div>

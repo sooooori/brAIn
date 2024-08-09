@@ -10,7 +10,6 @@ import { useInView } from 'react-intersection-observer';
 import './Home.css';
 import Button from '../../components/Button/Button';
 import { useNavigate } from 'react-router-dom';
-
 import { resetRoundBoard } from '../../actions/roundRobinBoardAction';
 import axios from '../../utils/Axios';
 import ConferenceHistoryModal from './components/ConferenceHistoryModal';
@@ -26,7 +25,6 @@ const Home = () => {
   const [selectedConferenceId, setSelectedConferenceId] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
   const accessToken = useSelector((state) => state.auth.accessToken);
   const [conferenceHistory, setConferenceHistory] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -110,7 +108,6 @@ const Home = () => {
               Authorization: `Bearer ${accessToken}`
             }
           });
-          console.log(response.data)
           if (response.data && Array.isArray(response.data)) {
             setConferenceHistory(response.data);
           } else {
@@ -131,22 +128,28 @@ const Home = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = conferenceHistory.slice(indexOfFirstItem, indexOfLastItem);
 
+  const pageCount = Math.ceil(conferenceHistory.length / itemsPerPage);
+  const pageNumbers = Array.from({ length: pageCount }, (_, index) => index + 1);
+
+  // 표시할 페이지 번호 범위 계산
+  const startIndex = Math.floor((currentPage - 1) / 10) * 10 + 1;
+  const endIndex = Math.min(startIndex + 9, pageCount);
+  const visiblePageNumbers = pageNumbers.slice(startIndex - 1, endIndex);
+
   const handleNextPage = () => {
-    if (indexOfLastItem < conferenceHistory.length) {
-      setCurrentPage(prevPage => prevPage + 1);
+    if (endIndex < pageCount) {
+      setCurrentPage(prevPage => Math.min(prevPage + 10, pageCount));
     }
   };
 
   const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(prevPage => prevPage - 1);
+    if (startIndex > 1) {
+      setCurrentPage(prevPage => Math.max(prevPage - 10, 1));
     }
   };
 
   const handleOpenModal = (conferenceId) => {
-    console.log("Clicked conferenceId:", conferenceId);
     const id = Number(conferenceId);
-    console.log("Converted ID:", id); // Check the type and value
     if (!isNaN(id) && id > 0) {
       setSelectedConferenceId(id);
       setIsModalOpen(true);
@@ -211,19 +214,19 @@ const Home = () => {
             ))}
           </div>
           <div className="home-pagination">
-            <button onClick={handlePreviousPage} disabled={currentPage === 1}>
+            <button onClick={handlePreviousPage} disabled={startIndex === 1}>
               Previous
             </button>
-            {Array.from({ length: Math.ceil(conferenceHistory.length / itemsPerPage) }, (_, index) => (
+            {visiblePageNumbers.map(pageNumber => (
               <span
-                key={index + 1}
-                className={`page-number ${currentPage === index + 1 ? 'active' : 'inactive'}`}
-                onClick={() => setCurrentPage(index + 1)}
+                key={pageNumber}
+                className={`page-number ${currentPage === pageNumber ? 'active' : 'inactive'}`}
+                onClick={() => setCurrentPage(pageNumber)}
               >
-                {index + 1}
+                {pageNumber}
               </span>
             ))}
-            <button onClick={handleNextPage} disabled={indexOfLastItem >= conferenceHistory.length}>
+            <button onClick={handleNextPage} disabled={endIndex >= pageCount}>
               Next
             </button>
           </div>

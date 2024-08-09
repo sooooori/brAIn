@@ -247,8 +247,7 @@ body {
     font-size: 1rem;
   }
   
-/* 페이지네이션 스타일 */
-.home-pagination {
+  .home-pagination {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -256,40 +255,40 @@ body {
 }
 
 .home-pagination button {
-background-color: #e0e0e0;
-border: 1px solid #ddd;
-border-radius: 4px;
-padding: 10px 20px;
-margin: 0 10px;
-cursor: pointer;
-transition: background-color 0.3s;
+    background-color: #e0e0e0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px 20px;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .home-pagination button:disabled {
-background-color: #e0e0e0;
-cursor: not-allowed;
+    background-color: #f0f0f0;
+    cursor: not-allowed;
 }
 
 .home-pagination button:hover:not(:disabled) {
-background-color: darkorange;
+    background-color: darkorange;
 }
 
 .home-pagination span {
-font-size: 1rem;
-margin: 0 10px;
-cursor: pointer;
-transition: color 0.3s, font-weight 0.3s;
+    font-size: 1rem;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: color 0.3s, font-weight 0.3s;
 }
 
 /* 현재 페이지 스타일 */
 .page-number.active {
-font-weight: bold;
-color: blue; /* 현재 페이지 번호를 파란색으로 설정 */
+    font-weight: bold;
+    color: blue;
 }
 
 /* 비활성 페이지 스타일 */
 .page-number.inactive {
-color: gray; /* 다른 페이지 번호를 회색으로 설정 */
+    color: gray;
 }
 
 /* Modal 스타일 */
@@ -300,4 +299,6 @@ color: gray; /* 다른 페이지 번호를 회색으로 설정 */
     transform: translate(-50%, -50%);
     z-index: 1000;
     /* 기타 스타일 */
+    justify-content: center;
+    align-items: center;
   }

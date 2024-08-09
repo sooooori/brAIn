@@ -39,11 +39,7 @@
 
 /* 닫기 버튼 스타일 */
 .close-button {
-<<<<<<< HEAD
   color: #333;
-=======
-  /* color: #333;  */
->>>>>>> b13a7f165468c9df580d5928f07af0fa05f689cf
   background-color: transparent;
   transition: transform 0.2s, color 0.2s;
   font-size: 24px;
