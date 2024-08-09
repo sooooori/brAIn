@@ -458,9 +458,9 @@ const timer = async () => {
             <div className="main-content">
               <div className={`action-panel`}>
                 <div className="voted-post-it-container">
-                  {roundRobinBoard.map((postit, index) => (
-                    <VotedPostIt key={index} content={postit.content} />
-                  ))}
+                  
+                    <VotedPostIt/>
+                  
                 </div>
                 <div className="conf-timer-container">
                   <Timer />

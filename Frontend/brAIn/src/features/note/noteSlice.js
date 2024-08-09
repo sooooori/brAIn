@@ -19,7 +19,7 @@ const noteSlice = createSlice({
       const noteIndex = state.notes.findIndex(note => note.id === action.payload);
       if (noteIndex !== -1) {
         const [note] = state.notes.splice(noteIndex, 1);
-        state.ideas.push(note);
+        //state.ideas.push(note);
       }
     },
     deleteNote: (state, action) => {
