@@ -86,7 +86,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
             return;
         }
 
-        axios.post('http://localhost/api/v1/members/sendAuthNumber', {
+        axios.post(process.env.REACT_APP_API_BASE_URL+'/v1/members/sendAuthNumber', {
             email: userInfo.email,
         })
         .then(response => {
@@ -124,7 +124,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
             return;
         }
 
-        axios.post('http://localhost/api/v1/members/checkEmail', 
+        axios.post(process.env.REACT_APP_API_BASE_URL+'/v1/members/checkEmail', 
             { email: userInfo.email }
         )
         .then(response => {
