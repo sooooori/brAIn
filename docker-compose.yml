@@ -7,6 +7,8 @@ services:
       MYSQL_DATABASE: brAIn
       MYSQL_USER: ssafy
       MYSQL_PASSWORD: ssafy
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
     ports:
       - "3306:3306"    # MySQL 포트 매핑
     networks:
