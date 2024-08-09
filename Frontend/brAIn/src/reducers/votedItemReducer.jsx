@@ -21,6 +21,7 @@ const votedItemReducer=(state=initialState,action)=>{
             if(newItems.length<3){
                 newItems.push(item);
             }
+           
 
             return { ...state, items: newItems };
             

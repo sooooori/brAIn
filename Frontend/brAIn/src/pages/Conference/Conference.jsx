@@ -163,6 +163,7 @@ const Conference = () => {
       dispatch(setCurStep(receivedMessage.curStep))
     }else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
       await roundRobinBoardUpdate(receivedMessage);
+      dispatch(setCurStep('STEP_2'));
       dispatch(step1EndAlarm());
     }else if(receivedMessage.messageType==='FINISH_MIDDLE_VOTE'){
       console.log(receivedMessage);
@@ -172,8 +173,8 @@ const Conference = () => {
       dispatch(setCuruser(receivedMessage.nextUser))
     } else if(receivedMessage.messageType=='PASS_AND_END'){
       console.log('투표시작')
-      dispatch(setCurStep('STEP_2'))
-      step1EndAlarm();
+      dispatch(setCurStep('STEP_2'));
+      dispatch(step1EndAlarm());
     } else if (receivedMessage.messageType === 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep));
 
@@ -282,7 +283,7 @@ const Conference = () => {
       // 상태 업데이트 후 후속 작업을 수행하기 위해 상태를 확인
       const state = getState();
       const votedItems = state.votedItem.items;
-  
+      const step=state.conferenceInfo.curStep;
       console.log(votedItems);  // 상태가 업데이트된 후 출력
   
       const itemsObject = votedItems.reduce((map, item, index) => {
@@ -293,6 +294,7 @@ const Conference = () => {
       }, {});
   
       console.log('itemsObject:', itemsObject);
+      console.log('step:', state.conferenceInfo.curStep);
   
       // 서버에 투표 결과 전송
       await axios.post(`http://localhost/api/v1/conferences/vote`, {
@@ -307,7 +309,7 @@ const Conference = () => {
       });
   
       // 투표 종료 처리
-      await endVote();
+      await endVote(step);
     } catch (error) {
       console.error("Error during step1EndAlarm:", error);
     }
@@ -334,7 +336,7 @@ const timer = async () => {
   });
 };
 
-  const endVote = async () => {
+  const endVote = async (step) => {
   try {
     const response = await axios.post(`http://localhost/api/v1/conferences/vote/endByTimer`, {
       conferenceId: roomId,
@@ -345,8 +347,9 @@ const timer = async () => {
         AuthorizationRoom: localStorage.getItem('roomToken')
       }
     });
+    
 
-     Swal.fire({
+    Swal.fire({
       icon: "success",
       title: '투표가 종료되었습니다.',
       text: '결과를 확인하세요',
@@ -355,9 +358,9 @@ const timer = async () => {
       cancelButtonColor: '#d33', // cancel 버튼 색깔 지정
       confirmButtonText: '승인', // confirm 버튼 텍스트 지정
       cancelButtonText: '취소', // cancel 버튼 텍스트 지정
-    }).then((result) => {
+    }).then(async(result) => {
       if (result.isConfirmed) {
-        const voteResults = getVoteResult();
+        const voteResults = await getVoteResult(step);
         console.log("투표결과");
         console.log(voteResults);
 
@@ -375,10 +378,10 @@ const timer = async () => {
   }
   };
 
-  const getVoteResult = async () => {
-    console.log("AtgetVoteResult:"+roomId);
-    console.log("step"+step)
+  const getVoteResult = async (step) => {
+    
     try {
+      console.log("getVoteREsult",step)
       const response = await axios.get(`http://localhost/api/v1/conferences/vote/results`, {
         params: {
           roomId: roomId,

@@ -35,6 +35,8 @@ public class VoteService {
 
     private final RedisUtils redisUtils;
 
+    private static int votePerson;
+
     // 투표 진행 - 임시 저장
     @Transactional
     public void vote(Integer roomId, String step, Integer memberId, Map<String, Integer> votes) {
@@ -70,8 +72,6 @@ public class VoteService {
         }
 
         // 투표 갱신
-        System.out.println("투표 저장이 안돼!!!!!!!!!!!");
-        System.out.println(votes.entrySet().size());
         for (Map.Entry<String, Integer> vote : votes.entrySet()) {
             String postIt = vote.getKey();
             Integer newScore = vote.getValue();
@@ -98,7 +98,7 @@ public class VoteService {
             // 임시 데이터 삭제
             //redisUtils.deleteKey(tempVoteKey);
         }
-
+        votePerson++;
         log.info("Vote Finished");
     }
 
@@ -108,6 +108,16 @@ public class VoteService {
     public List<VoteResponse> getVoteResults(Integer conferenceId, String step) {
 
         String key = conferenceId + ":votes:" + step;
+        String tempVotePattern = conferenceId + ":tempVotes:" + step + ":*";
+
+
+        while(true){
+
+            int totalUser=redisUtils.getSortedSet(conferenceId+":order:cur").size();
+            if(votePerson==totalUser-1){
+                break;
+            }
+        }
 
         return redisUtils.getSortedSetWithScores(key)
                 .stream()
