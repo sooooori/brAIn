@@ -124,7 +124,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
             return;
         }
 
-        axios.post(process.env.REACT_APP_API_BASE_URL+'/v1/members/checkEmail', 
+        axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/members/checkEmail`, 
             { email: userInfo.email }
         )
         .then(response => {
