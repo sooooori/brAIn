@@ -42,19 +42,15 @@ public class ConferenceRoomController {
         ConferenceRoom cr = conferenceRoomRequest.toConferenceRoom();
         ConferenceRoom saveCr = conferenceRoomService.save(cr);
         token = token.split(" ")[1];
-        System.out.println(token);
         Claims claims = JwtUtil.extractToken(token);
         String email = claims.get("email").toString();
-        System.out.println(email);
 
         String randomNick = RandomNicknameGenerator.generateNickname();
 
         String jwtTokenForRoom = jwtUtilForRoom.createJwt("access", email, "CHIEF", randomNick, saveCr.getId()+"", 100000000L);
 //        Member member = memberService.findByEmail(email).orElse(null);
 //        memberHistoryService.createRoom(saveCr, member);
-        System.out.println(jwtTokenForRoom);
         ConferenceRoomResponse crr = new ConferenceRoomResponse(cr, jwtTokenForRoom, randomNick);
-        System.out.println(crr.toString());
         return ResponseEntity.status(201).body(crr);
     }
 
@@ -68,6 +64,7 @@ public class ConferenceRoomController {
 
     @GetMapping
     public ResponseEntity<?> getConferenceRoomsInfo(@RequestParam("secureId") String secureId) {
+        System.out.println("여기되나요");
         ConferenceRoom conferenceRoom = conferenceRoomService.findBySecureId(secureId);
         ConferenceRoomResponse crr = new ConferenceRoomResponse(conferenceRoom, "", "");
         return ResponseEntity.status(200).body(crr);

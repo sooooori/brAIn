@@ -41,7 +41,7 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
     };
 
     fetchData();
-  }, [isVisible, secureId]);
+  }, [isVisible, secureId,participantCount]);
 
   const handleShareCode = () => {
     navigator.clipboard.writeText(conferenceCode);

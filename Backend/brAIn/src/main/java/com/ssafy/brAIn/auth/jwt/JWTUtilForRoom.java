@@ -60,7 +60,6 @@ public class JWTUtilForRoom {
     }
 
     public Authentication getAuthentication(String token){
-        System.out.println("1번:"+token);
         String username = getUsername(token);
         int memberId=memberService.findByEmail(username).get().getId();
         String role = getRole(token);

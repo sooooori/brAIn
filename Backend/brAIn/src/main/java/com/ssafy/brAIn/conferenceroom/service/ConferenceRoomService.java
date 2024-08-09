@@ -34,9 +34,8 @@ public class ConferenceRoomService {
     public ConferenceRoom save(ConferenceRoom conferenceRoom) {
         //Map<String, Object> res = OpenAiService.sendPostRequest(conferenceRoom.getSubject());
         AIAssistant assistant= aiService.makeAIAssistant(conferenceRoom.getSubject());
-        System.out.println(assistant.getAssistantId());
-        System.out.println(assistant.getThreadId());
-        //System.out.println(res.toString());
+
+
         conferenceRoom.updateAi(assistant.getAssistantId(), assistant.getThreadId());
         return conferenceRoomRepository.save(conferenceRoom);
     }

@@ -151,13 +151,14 @@ const Conference = () => {
   }, [routeSecureId,roomId]);
 
   const handleMessage = async (receivedMessage) => {
-    if (receivedMessage.messageType === 'ENTER_WAITING_ROOM') {
+    if (receivedMessage.messageType == 'ENTER_WAITING_ROOM') {
+      console.log("들어옴");
       countUpMember();
-    } else if (receivedMessage.messageType === 'SUBMIT_POST_IT') {
+    } else if (receivedMessage.messageType == 'SUBMIT_POST_IT') {
       roundRobinBoardUpdate(receivedMessage);
     } else if (receivedMessage.messageType === 'START_CONFERENCE') {
       startMeeting();
-      const updatedUsers = await dispatch(setUsers(receivedMessage.users));
+      const updatedUsers = dispatch(setUsers(receivedMessage.users));
       dispatch(setCuruser(updatedUsers[0].nickname));
       dispatch(setCurStep('STEP_0'));
     } else if (receivedMessage.messageType === 'ENTER_CONFERENCES') {
@@ -187,8 +188,11 @@ const Conference = () => {
   };
 
   const countUpMember = () => {
-    setParticipantCount((prevCount) => prevCount + 1);
-    setIsModalVisible(true);
+      setParticipantCount((prevCount) => {
+      console.log('Previous Count:', prevCount);
+      return prevCount + 1;
+      });    
+      setIsModalVisible(true);
   };
 
   const countDownMember = () => {

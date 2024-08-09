@@ -27,7 +27,7 @@ const ConferenceNavbar = ({ secureId }) => {
       try {
         const token = localStorage.getItem('authToken');
         const response = await axios.get('http://localhost/api/v1/conferences', {
-          params: { secureId },
+          params: { secureId:secureId },
           headers: {
             'Authorization': `Bearer ${token}`,
           },
