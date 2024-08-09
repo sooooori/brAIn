@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../../../actions/votedItemAction';
 import './PostItTest.css';
@@ -21,7 +21,6 @@ const PostItTest = () => {
   // 파스텔 톤 색상 배열
   const colors = [
     '#F8CFCF', // 분홍색
-    '#C2E0FF', // 파란색
     '#FFFFC2', // 노란색
     '#C9E4C5', // 녹색
     '#D6C0EB', // 보라색
@@ -30,56 +29,23 @@ const PostItTest = () => {
     '#D0E6F8'  // 파스텔 블루
   ];
 
-  // 라운드별 포스트잇 아이디어와 색상을 매칭하기 위한 상태
+  // 아이디어별 색상을 매칭하기 위한 상태
   const [postItColors, setPostItColors] = useState({});
-  const [roundUsedColors, setRoundUsedColors] = useState({}); // 현재 라운드에서 사용된 색상
 
   // 랜덤 색상 선택 함수
-  const getColorForIdea = useCallback((roundIndex, idea) => {
-    // 라운드 인덱스와 아이디어를 결합하여 고유 키 생성
-    const ideaKey = `${roundIndex}-${idea}`;
-    const currentRoundColors = roundUsedColors[roundIndex] || new Set();
+  const getColorForIdea = useCallback((roundIndex, ideaIndex) => {
+    const uniqueKey = `${roundIndex}-${ideaIndex}`;
+    if (!(uniqueKey in postItColors)) {
+      const remainingColors = colors.filter(color => !Object.values(postItColors).includes(color));
+      const selectedColor = remainingColors.length > 0
+        ? remainingColors[Math.floor(Math.random() * remainingColors.length)]
+        : colors[Math.floor(Math.random() * colors.length)];
 
-    if (!(ideaKey in postItColors)) {
-      let selectedColor;
-      const availableColors = colors.filter(color => !currentRoundColors.has(color));
-
-      if (availableColors.length === 0) {
-        // 모든 색상이 사용된 경우 색상 목록을 초기화
-        setRoundUsedColors(prev => ({
-          ...prev,
-          [roundIndex]: new Set()
-        }));
-      }
-
-      // 색상을 랜덤으로 선택
-      do {
-        const colorIndex = Math.floor(Math.random() * colors.length);
-        selectedColor = colors[colorIndex];
-      } while (currentRoundColors.has(selectedColor) && availableColors.length > 0);
-
-      // 선택된 색상을 상태에 저장
-      setPostItColors(prevColors => ({ ...prevColors, [ideaKey]: selectedColor }));
-      setRoundUsedColors(prev => ({
-        ...prev,
-        [roundIndex]: new Set([...currentRoundColors, selectedColor])
-      }));
-
+      setPostItColors(prevColors => ({ ...prevColors, [uniqueKey]: selectedColor }));
       return selectedColor;
     }
-    
-    // 이미 색상이 지정된 아이디어에는 저장된 색상 반환
-    return postItColors[ideaKey];
-  }, [colors, postItColors, roundUsedColors]);
-
-  // 페이지 변경 시 색상 목록 초기화
-  useEffect(() => {
-    // 현재 페이지의 라운드 색상 기록을 초기화
-    setRoundUsedColors(prev => ({
-      ...prev,
-      [currentPage]: new Set()
-    }));
-  }, [currentPage]);
+    return postItColors[uniqueKey];
+  }, [colors, postItColors]);
 
   // 투표 핸들러
   const handleVote = (round, index, content) => {
@@ -112,7 +78,7 @@ const PostItTest = () => {
                   <div
                     key={ideaIndex}
                     className="post-it-card"
-                    style={{ backgroundColor: getColorForIdea(currentPage, idea) }} // 라운드별 랜덤 색상 적용
+                    style={{ backgroundColor: getColorForIdea(roundIndex, ideaIndex) }} // 아이디어별 랜덤 색상 적용
                   >
                     {idea}
                     <button onClick={() => handleVote(currentPage + 1, ideaIndex, idea)}>Vote</button>
