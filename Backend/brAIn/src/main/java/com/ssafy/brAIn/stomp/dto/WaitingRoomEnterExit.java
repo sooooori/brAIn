@@ -9,9 +9,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class WaitingRoomEnterExit {
 
-    private MessageType type;
+    private MessageType messageType;
 
     public WaitingRoomEnterExit(MessageType type) {
-        this.type = type;
+        this.messageType = type;
     }
 }

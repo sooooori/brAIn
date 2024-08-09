@@ -152,7 +152,6 @@ const Conference = () => {
 
   const handleMessage = async (receivedMessage) => {
     if (receivedMessage.messageType == 'ENTER_WAITING_ROOM') {
-      console.log("들어옴");
       countUpMember();
     } else if (receivedMessage.messageType == 'SUBMIT_POST_IT') {
       roundRobinBoardUpdate(receivedMessage);
