@@ -6,7 +6,7 @@ import userReducer from '../src/reducers/userReducer';
 import conferenceReducer from '../src/reducers/conferenceReducer';
 import roundRobinBoardReducer from '../src/reducers/roundRobinBoardReducer';
 import votedItemReducer from '../src/reducers/votedItemReducer';
-import noteReducer from '../src/features/note/noteSlice';
+import noteReducer from '../src/reducers/noteReducer';
 
 
 const store = configureStore({

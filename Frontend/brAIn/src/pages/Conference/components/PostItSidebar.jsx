@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import './PostItSidebar.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNote, deleteNote, updateNote } from '../../../features/note/noteSlice';
+import { addNote, deleteNote, updateNote } from '../../../actions/noteActions';
 
 const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
   const dispatch = useDispatch();
@@ -49,7 +49,7 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
   // 메모 내용 수정 함수
   const handleEditNote = (index, newContent) => {
     const noteId = notes[index].id;
-    dispatch(updateNote({ id: noteId, content: newContent })); // Redux를 사용하여 노트 내용 업데이트
+    dispatch(updateNote(noteId, newContent)); // Redux를 사용하여 노트 내용 업데이트
   };
 
   // 메모 제출 함수
