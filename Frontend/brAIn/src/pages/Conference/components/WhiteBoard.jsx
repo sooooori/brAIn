@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PostIt from './PostIt';
 import './WhiteBoard.css';
 import { useSelector } from 'react-redux';
 import PostItTest from './PostItTest';
+import Timer from './Timer'; // 타이머 컴포넌트 임포트
+import passImg from '../../../assets/svgs/pass.svg';
+import nextImg from '../../../assets/svgs/next.svg';
+import skipImg from '../../../assets/svgs/skip.svg';
 
 const WhiteBoard = ({ subject, onSubmitClick }) => {
   const [ideas, setIdeas] = useState([]);
@@ -21,7 +25,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
 
     if (newIdea) {
       try {
-        const response = await axios.post('http://localhost/api/v1/postIts', {
+        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/postIts`, {
           content: newIdea,
         }, {
           headers: {
@@ -46,7 +50,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
 
   const handleDeleteIdea = async (key) => {
     try {
-      await axios.delete(`http://localhost/api/v1/postIts/${key}`, {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/v1/postIts/${key}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -59,7 +63,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
 
   const handleUpdateIdea = async (key, newContent) => {
     try {
-      await axios.put(`http://localhost/api/v1/postIts/${key}`, {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/v1/postIts/${key}`, {
         content: newContent,
       }, {
         headers: {
@@ -93,35 +97,18 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
 
   return (
     <div className="WhiteBoard">
-      <header className="WhiteBoard-header">
-        <h1>주제: {subject}</h1>
-      </header>
+      <div className="WhiteBoard-header">
+        <h2>주제 : </h2>
+      </div>
       <div className="WhiteBoard-body">
-        <div className="instruction-container">
-          <p className="instruction">{getInstructionText()}</p>
-        </div>
-        <div className="divider-line" />
         <div className="idea-board">
-          {/* {ideas.map((idea) => (
-            <PostIt
-              key={idea.key}
-              content={idea.content}
-              onDelete={handleDeleteIdea}
-              onUpdate={handleUpdateIdea}
-            />
-          ))} */}
-          
           <div>
             <PostItTest />  
           </div>
-
         </div>
       </div>
-
-      
-
       <div className="WhiteBoard-footer">
-        <form className="idea-form" /*onSubmit={handleAddIdea}*/>
+        <form className="idea-form" onSubmit={handleAddIdea}>
           <input
             type="text"
             name="idea"

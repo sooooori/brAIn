@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.vote.dto;
 
+import com.ssafy.brAIn.conferenceroom.entity.Step;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.Map;
 public class VoteRequest {
 
     private int roomId;
-    private int round;
-    private int memberId;
+    private String step;
+    //private int memberId;
     private Map<String,Integer> votes;
 }

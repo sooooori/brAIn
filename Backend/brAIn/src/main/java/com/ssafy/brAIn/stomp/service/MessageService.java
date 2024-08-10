@@ -84,8 +84,9 @@ public class MessageService {
 
     //현재 유저가 마지막 순서인지 확인하는 메서드(테스트 완)
     public boolean isLastOrder(Integer roomId, String nickname) {
+        System.out.println("isLastOrder:"+nickname);
         int order=redisUtils.getScoreFromSortedSet(roomId+":order:cur",nickname).intValue();
-        int lastOrder=redisUtils.getSortedSet(roomId+":order:cur").size()-1;
+        int lastOrder=redisUtils.getLastElementFromSortedSet(roomId+":order:cur").intValue();
         if (order == lastOrder) {
             return true;
         }
@@ -101,13 +102,19 @@ public class MessageService {
                 .map(Object::toString)
                 .toList();
 
-        int len=nicknames.size();
+        //ai제외하고
+        int len=nicknames.size()-1;
 
         nicknames.forEach((nickname)->{
+            System.out.println("모든유저 조회하긴함?"+nickname);
+            System.out.println(redisUtils.getData(roomId+":"+nickname));
             if(redisUtils.getData(roomId+":"+nickname).equals("PASS")){
+                System.out.println(nickname+":"+count);
                 count.getAndIncrement();
             }
         });
+        System.out.println("전체사이즈:"+len);
+        System.out.println("종료조건:"+count);
 
         return count.get() > len * (2.0 / 3.0);
 
@@ -210,7 +217,7 @@ public class MessageService {
         int randomValue;
         do {
             randomValue = (int)(Math.random() * size);
-        } while (randomValue == 0);
+        } while (randomValue == 0 );
         return randomValue;
     }
 
@@ -257,8 +264,8 @@ public class MessageService {
     }
 
     //현재 중간 투표 결과 (상위 9개)를 반환한다.
-    public ResponseMiddleVote getMiddleVote(Integer roomId, Integer round) {
-        String key = roomId + ":votes:" + round;
+    public ResponseMiddleVote getMiddleVote(Integer roomId, String step) {
+        String key = roomId + ":votes:" + step;
 
         // 상위 9개의 결과를 추출
         List<VoteResponse> votes = redisUtils.getSortedSetWithScores(key)
@@ -268,6 +275,8 @@ public class MessageService {
                 .limit(9)
                 .toList();
 
+        System.out.println("확인용!");
+        System.out.println(votes.size());
         return new ResponseMiddleVote(MessageType.FINISH_MIDDLE_VOTE, votes);
     }
 
@@ -292,8 +301,11 @@ public class MessageService {
 //                .filter((user)->redisUtils.isKeyExists(roomId+":"+user))
                 .forEach((user)->redisUtils.save(roomId+":"+user,UserState.NONE.toString()));
 
+
         String FirstUser = redisUtils.getUserFromSortedSet(roomId + ":order:cur", 0);
         redisUtils.save(roomId+":curOrder",FirstUser);
+
+
     }
 
     public String receiveAImessage(Integer roomId) {

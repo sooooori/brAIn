@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VoteResultRequest {
     Integer conferenceId;
-    Integer round;
-    Integer memberId;
+    String step;
+    //Integer memberId;
 }

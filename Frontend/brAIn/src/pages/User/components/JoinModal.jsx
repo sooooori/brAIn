@@ -86,7 +86,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
             return;
         }
 
-        axios.post(process.env.REACT_APP_API_BASE_URL+'/v1/members/sendAuthNumber', {
+        axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/members/sendAuthNumber`, {
             email: userInfo.email,
         })
         .then(response => {
@@ -103,7 +103,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
     };
 
     const handleVerifyCode = () => {
-        axios.post('http://localhost/api/v1/members/authNumber', {
+        axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/members/authNumber`, {
             email: userInfo.email,
             code: userInfo.emailVerificationCode,
         })
@@ -196,7 +196,7 @@ const JoinModal = ({ isOpen, onRequestClose }) => {
         }
 
         axios
-            .post('http://localhost/api/v1/members/join', {
+            .post(`${import.meta.env.VITE_API_BASE_URL}/v1/members/join`, {
                 email: userInfo.email,
                 password: userInfo.password,
                 name: userInfo.name,

@@ -34,9 +34,8 @@ public class ConferenceRoomService {
     public ConferenceRoom save(ConferenceRoom conferenceRoom) {
         //Map<String, Object> res = OpenAiService.sendPostRequest(conferenceRoom.getSubject());
         AIAssistant assistant= aiService.makeAIAssistant(conferenceRoom.getSubject());
-        System.out.println(assistant.getAssistantId());
-        System.out.println(assistant.getThreadId());
-        //System.out.println(res.toString());
+
+
         conferenceRoom.updateAi(assistant.getAssistantId(), assistant.getThreadId());
         return conferenceRoomRepository.save(conferenceRoom);
     }
@@ -89,7 +88,17 @@ public class ConferenceRoomService {
         return new Date(diffInMillis - TimeZone.getDefault().getRawOffset());
     }
 
-    public void updateConferenceRoom(ConferenceRoom conferenceRoom) {
+    // 회의룸 재설정
+    public void updateConferenceRoom(Integer roomId, String subject, Date startTime) {
+        ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(roomId)
+                .orElse(null);
+
+        if (conferenceRoom == null) {
+            throw new RuntimeException("Conference Room not found");
+        } else {
+            conferenceRoom.updateConferenceRoom(subject, startTime);
+        }
+
         conferenceRoomRepository.save(conferenceRoom);
     }
 }

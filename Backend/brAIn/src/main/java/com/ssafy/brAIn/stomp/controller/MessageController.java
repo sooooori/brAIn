@@ -12,6 +12,7 @@ import com.ssafy.brAIn.stomp.request.RequestPass;
 import com.ssafy.brAIn.stomp.request.RequestStep;
 import com.ssafy.brAIn.stomp.response.*;
 import com.ssafy.brAIn.stomp.service.MessageService;
+import com.ssafy.brAIn.vote.dto.VoteResponse;
 import com.sun.jdi.request.StepRequest;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -59,18 +60,19 @@ public class MessageController {
 
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
-        System.out.println(nickname);
+        System.out.println(nickname+"님이 포스트잇을 제출했습니다.");
         ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId);
         aiService.addPostIt(groupPost.getContent(), cr.getThreadId());
 
 
         messageService.sendPost(Integer.parseInt(roomId),groupPost,nickname);
+        //messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
         ResponseGroupPost responseGroupPost=makeResponseGroupPost(groupPost,Integer.parseInt(roomId),nickname);
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, responseGroupPost);
 
         //끝나면 종료
-        boolean isStep1End = messageService.isStep1EndCondition(Integer.parseInt(roomId));
-        if(isStep1End)return;
+        if(responseGroupPost.getMessageType().equals(MessageType.SUBMIT_POST_IT_AND_END))return;
+
 
         //만약 다음 사람이 ai라면 추가적인 로직 필요
         String nextUser=messageService.NextOrder(Integer.parseInt(roomId),nickname);
@@ -90,7 +92,8 @@ public class MessageController {
             aiGroupPost=new RequestGroupPost(groupPost.getRound(),aiPostIt);
         }
 
-        messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,nickname);
+        messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,nextUser);
+        //messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
         ResponseGroupPost aiResponseGroupPost=makeResponseGroupPost(aiGroupPost,Integer.parseInt(roomId),nextUser);
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, aiResponseGroupPost);
 
@@ -100,8 +103,11 @@ public class MessageController {
         String nextUser=messageService.NextOrder(roomId,nickname);
 
         if (messageService.isLastOrder(roomId, nickname)) {
-            messageService.initUserState(roomId);
+            System.out.println("마지막 사람만 이곳에 와야한다.");
+
             if (messageService.isStep1EndCondition(roomId)) {
+                messageService.updateStep(roomId,Step.STEP_2);
+                messageService.initUserState(roomId);
                 return new ResponseGroupPost(MessageType.SUBMIT_POST_IT_AND_END,nickname,null,groupPost.getRound(), groupPost.getRound()+1, groupPost.getContent());
             }
                 return new ResponseGroupPost(MessageType.SUBMIT_POST_IT,nickname,nextUser,groupPost.getRound(), groupPost.getRound()+1, groupPost.getContent());
@@ -181,11 +187,11 @@ public class MessageController {
 
         //0단계 부터  시작.
         ConferenceRoom conferenceRoom = conferenceRoomService.findByRoomId(roomId).updateStep(Step.STEP_0);
-        conferenceRoomService.updateConferenceRoom(conferenceRoom);
 //        MessagePostProcessor messagePostProcessor = message -> {
 //            message.getMessageProperties().setHeader("Authorization", "회의 토큰");
 //            return message;
 //        };
+
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users));
 
     }
@@ -232,8 +238,11 @@ public class MessageController {
         //현재 유저가 라운드의 마지막 유저라면
         if (messageService.isLastOrder(Integer.parseInt(roomId),nickname)) {
             //종료 조건이라면
+            System.out.println("마지막 사람 패스했을 때, 종료조건 만족?:"+messageService.isStep1EndCondition(Integer.parseInt(roomId)));
             if (messageService.isStep1EndCondition(Integer.parseInt(roomId))) {
-                rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.PASS_AND_END,nickname));
+                System.out.println("패스 후 종료");
+                messageService.updateStep(Integer.parseInt(roomId),Step.STEP_2);
+                rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponsePassAndEnd(MessageType.PASS_AND_END,nickname));
                 messageService.initUserState(Integer.parseInt(roomId));
                 return;
             }
@@ -248,6 +257,7 @@ public class MessageController {
         //System.out.println("aiPostIt:"+aiPostIt);
 
 
+
         boolean curUserIsLast=messageService.isLastOrder(Integer.parseInt(roomId),nickname);
 
         RequestGroupPost aiGroupPost=null;
@@ -257,7 +267,9 @@ public class MessageController {
             aiGroupPost=new RequestGroupPost(pass.getCurRound(),aiPostIt);
         }
 
-        messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,nickname);
+        messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,nextMember);
+        //messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
+
         ResponseGroupPost aiResponseGroupPost=makeResponseGroupPost(aiGroupPost,Integer.parseInt(roomId),nextMember);
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, aiResponseGroupPost);
 
@@ -276,14 +288,22 @@ public class MessageController {
 
     // 현재 중간 투표 결과 반환
     // 현재 중간 투표 결과 (상위 9개) 반환
-    @MessageMapping("vote.middleResults.{roomId}.{round}")
-    public void getMiddleVoteResults(@DestinationVariable String roomId, @DestinationVariable Integer round, StompHeaderAccessor accessor) {
+    @MessageMapping("vote.middleResults.{roomId}.{step}")
+    public void getMiddleVoteResults(@DestinationVariable String roomId, @DestinationVariable String step, StompHeaderAccessor accessor) {
         String token = accessor.getFirstNativeHeader("Authorization");
         String nickName = jwtUtilForRoom.getNickname(token);
         ConferenceRoom conferenceRoom = conferenceRoomService.findByRoomId(roomId);
 
         // 중간 투표 결과 가져오기
-        ResponseMiddleVote voteResults = messageService.getMiddleVote(Integer.parseInt(roomId), round);
+        ResponseMiddleVote voteResults = messageService.getMiddleVote(Integer.parseInt(roomId), step);
+
+        List<VoteResponse> temp=voteResults.getVotes();
+
+        for(int i=0;i<temp.size();i++){
+            System.out.println(temp.get(i).getPostIt());
+        }
+
+        System.out.println("마지막:"+temp.size());
         // 결과를 RabbitMQ로 전송
         rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, voteResults);
     }
@@ -302,14 +322,4 @@ public class MessageController {
         // 결과를 RabbitMQ로 전송(Subscribe)
         rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, voteResults);
     }
-
-
-
-
-
-
-
-
-
-
 }

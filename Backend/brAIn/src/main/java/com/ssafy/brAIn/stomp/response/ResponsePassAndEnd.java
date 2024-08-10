@@ -1,20 +1,18 @@
 package com.ssafy.brAIn.stomp.response;
 
-
 import com.ssafy.brAIn.stomp.dto.MessageType;
-import com.ssafy.brAIn.stomp.dto.UserState;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ResponseUserState {
+public class ResponsePassAndEnd {
 
-    private UserState messagetype;
+    private MessageType messageType;
     private String curUser;
 
-    public ResponseUserState(UserState type, String curUser) {
-        this.messagetype = type;
+    public ResponsePassAndEnd(MessageType messageType, String curUser) {
+        this.messageType = messageType;
         this.curUser = curUser;
     }
 }

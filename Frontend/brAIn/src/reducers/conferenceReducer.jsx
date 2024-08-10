@@ -1,12 +1,19 @@
-import { SET_CUR_STEP, UP_ROUND, SET_ROUND, RESET_STATE } from '../actions/conferenceActions';
+import { SET_CUR_STEP, UP_ROUND, SET_ROUND, RESET_STATE,SET_ROOM } from '../actions/conferenceActions';
 
 const initialState = {
+    roomId:1,
     curStep: 'WAIT',
     round: 1,
 };
 
 const conferenceReducer = (state = initialState, action) => {
     switch (action.type) {
+        case SET_ROOM:
+            return{
+                ...state,
+                roomId:action.payload,
+            }
+
         case SET_CUR_STEP:
             return {
                 ...state,

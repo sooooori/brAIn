@@ -57,7 +57,9 @@ public class MemberHistoryService {
                             conferenceRoom.getId(),
                             conferenceRoom.getSubject(),
                             conferenceRoom.getConclusion(),
-                            getTimeDifference(conferenceRoom.getStartTime(), conferenceRoom.getEndTime()),
+// endTime 생기면 추후 주석 해제하고, getStartTime 지우기(endTime없어서 현재 에러남)
+//                            getTimeDifference(conferenceRoom.getStartTime(), conferenceRoom.getEndTime()),
+                            conferenceRoom.getStartTime(),
                             memberResponses
                     );
                 })
@@ -87,7 +89,8 @@ public class MemberHistoryService {
                 conferenceRoom.getId(),
                 conferenceRoom.getSubject(),
                 conferenceRoom.getConclusion(),
-                getTimeDifference(conferenceRoom.getStartTime(), conferenceRoom.getEndTime()),
+//                getTimeDifference(conferenceRoom.getStartTime(), conferenceRoom.getEndTime()),
+                conferenceRoom.getStartTime(),
                 memberResponses
         );
     }

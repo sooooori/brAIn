@@ -12,13 +12,13 @@ const AuthCallback = () => {
     useEffect(() => {
         const handleLoginResponse = async (code, provider) => {
             try {
-                const response = await axios.get(`http://localhost/api/v1/members/login/${provider}?code=${code}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/members/login/${provider}?code=${code}`);
                 const { accessToken, message } = response.data;
 
                 if (message === 'Login successful') {
                     localStorage.setItem('accessToken', accessToken);
 
-                    const userResponse = await axios.get('http://localhost/api/v1/members/member', {
+                    const userResponse = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/members/member`, {
                         headers: {
                             Authorization: `Bearer ${accessToken}`
                         }

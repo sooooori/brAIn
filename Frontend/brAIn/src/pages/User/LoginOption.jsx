@@ -8,10 +8,10 @@ const LoginOptions = () => {
     const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
 
     const REST_API_KEY_KAKAO = 'fea30b4314dd7be5eb36b76ffc59be39';
-    const REDIRECT_URI_KAKAO = 'http://localhost/kakao-redirect';  // 프론트엔드 설정된 URL
+    const REDIRECT_URI_KAKAO = `${import.meta.env.VITE_BASE_URL}/kakao-redirect`;  // 프론트엔드 설정된 URL
 
     const REST_API_KEY_GOOGLE = '266096775787-0uivud8vsborpu2vje1vmpf5a41th71j.apps.googleusercontent.com';
-    const REDIRECT_URI_GOOGLE = 'http://localhost/google-redirect';  // 프론트엔드 설정된 URL
+    const REDIRECT_URI_GOOGLE = `${import.meta.env.VITE_BASE_URL}/google-redirect`;  // 프론트엔드 설정된 URL
 
     const openLoginModal = () => {
         setIsLoginModalOpen(true);

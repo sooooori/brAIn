@@ -11,12 +11,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ResponseRoundState {
 
-    private UserState type;
+    private UserState messageType;
     private String curUser;
     private String nextUser;
 
     public ResponseRoundState(UserState type, String curUser, String nextUser) {
-        this.type = type;
+        this.messageType = type;
         this.curUser = curUser;
         this.nextUser = nextUser;
     }

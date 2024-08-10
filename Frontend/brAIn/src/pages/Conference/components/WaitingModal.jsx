@@ -23,7 +23,7 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
 
         try {
           const token = localStorage.getItem('authToken');
-          const response = await axios.get('http://localhost/api/v1/conferences', {
+          const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences`, {
             params: { secureId },
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -41,7 +41,7 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
     };
 
     fetchData();
-  }, [isVisible, secureId]);
+  }, [isVisible, secureId,participantCount]);
 
   const handleShareCode = () => {
     navigator.clipboard.writeText(conferenceCode);

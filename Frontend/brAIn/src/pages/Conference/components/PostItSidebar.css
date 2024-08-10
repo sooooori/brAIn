@@ -3,23 +3,30 @@
   position: fixed;
   right: 0;
   top: 0;
-  width: 350px; /* 사이드바 너비 확장 */
-  height: 100vh; /* 전체 화면 높이 */
-  background-color: #ffffff; /* 배경을 흰색으로 변경 */
-  border-left: 2px solid #ccc; /* 사이드바 왼쪽 테두리 */
-  box-shadow: -3px 0 10px rgba(0, 0, 0, 0.2); /* 사이드바 그림자 */
-  transition: transform 0.3s ease; /* 애니메이션 효과 */
-  transform: translateX(100%); /* 기본적으로 숨겨진 상태 */
-  overflow-y: auto; /* 내용이 길어질 경우 스크롤 가능 */
-  padding: 20px; /* 내부 여백 추가 */
-  z-index: 1000; /* 최상위 z-index */
-  display: flex;
+  width: 300px;
+  height: 65vh;
+  background-color: #ffffff;
+  border-left: 2px solid #ccc;
+  box-shadow: -3px 0 10px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px; /* 좌우 패딩 및 상하 패딩 수정 */
+  z-index: 10000;
+  display: none;
   flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  transform: translateY(-30%);
 }
 
 /* 사이드바가 보일 때 */
 .postit-sidebar.visible {
-  transform: translateX(0);
+  display: flex;
+  margin-top: auto;
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 11000;
 }
 
 /* 사이드바 헤더 스타일 */
@@ -27,89 +34,124 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 10px 0;
-  margin-bottom: 20px;
+  position: absolute; /* 절대 위치 설정 */
+  top: 0; /* 상단에 위치 */
+  right: 0; /* 우측에 위치 */
+  padding: 5px; /* 패딩 조정 */
+  width: 100%; /* 너비 전체 사용 */
+  background-color: #ffffff; /* 배경색 추가 */
+  box-sizing: border-box; /* 패딩 포함하여 박스 크기 설정 */
+  z-index: 12000;
 }
 
 /* 닫기 버튼 스타일 */
 .close-button {
-  color: #333; /* 회색 */
+  color: #333;
   background-color: transparent;
   transition: transform 0.2s, color 0.2s;
   font-size: 24px;
   padding: 5px;
+  z-index: 13000;
 }
 
 .close-button:hover {
-  color: #f44336; /* 빨간색 */
+  color: #f44336;
   transform: scale(1.1);
 }
 
 /* 포스트잇 메모 스타일 */
 .note {
-  background-color: #fff8dc; /* 포스트잇 색상 */
+  background-color: #fff8dc;
   padding: 10px;
   margin-bottom: 15px;
-  border-radius: 10px; /* 모서리 둥글게 */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: transform 0.2s;
   display: flex;
-  flex-direction: column; /* 세로로 정렬 */
-  align-items: flex-start; /* 왼쪽 정렬 */
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
   min-height: 60px;
-  position: relative; /* 삭제 버튼 배치를 위해 상대 위치 사용 */
+  position: relative;
+  margin-top: 50px; /* 닫기 버튼 아래에 위치하도록 여백 추가 */
 }
 
 .note:hover {
-  transform: scale(1.02); /* 호버 시 확대 */
+  transform: scale(1.02);
 }
 
 /* 노트 내용 스타일 */
 .note-content {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .note-text {
   flex-grow: 1;
-  margin-bottom: 10px; /* 텍스트와 버튼 사이 여백 */
-  word-break: break-word; /* 텍스트가 긴 경우 줄바꿈 */
-  font-size: 14px;
-  white-space: normal; /* 텍스트 줄바꿈 가능 */
-  overflow-wrap: break-word; /* 텍스트가 줄바꿈되어 잘리지 않도록 설정 */
+  margin-bottom: 10px;
+  word-break: break-word;
+  font-size: 16px;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 /* 노트 액션 스타일 */
 .note-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 5px;
   width: 100%;
+  align-items: center;
 }
 
-/* 삭제 버튼 스타일 */
-.delete-button-side {
-  color: #333; /* 회색 */
+/* 새로운 삭제 버튼 스타일 */
+.custom-delete-button {
+  background-color: transparent;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 12px;
   transition: transform 0.2s, color 0.2s;
-  padding: 2px;
 }
 
-.delete-button-side:hover {
-  color: #f44336; /* 빨간색 */
+.custom-delete-button:hover {
+  color: #f44336;
   transform: scale(1.1);
 }
+
+/* 제출 버튼 스타일 */
+.submit-note-button {
+  font-size: 12px;
+  padding: 4px 8px;
+  min-width: auto;
+  height: 24px;
+}
+
 
 /* 노트 리스트 스타일 */
 .notes-list {
   flex-grow: 1;
   overflow-y: auto;
-  padding-right: 10px; /* 오른쪽 여백 */
+  overflow-x: hidden; /* 수평 스크롤 막기 */
+  padding-right: 10px;
   margin-bottom: 20px;
+  display: none; /* 처음에는 숨김 */
+  z-index: 10010; /* 노트 리스트의 z-index 설정 */
+}
+
+/* 노트 리스트가 보일 때 */
+.notes-list.visible {
+  display: block; /* 버튼 클릭 시 보이도록 설정 */
 }
 
 /* 포스트잇 추가 버튼 스타일 */
 .add-note-button {
   width: 100%;
-  background-color: #4caf50; /* 녹색 */
+  background-color: #4caf50;
   color: #ffffff;
   transition: background-color 0.3s, transform 0.3s;
 }
@@ -118,4 +160,3 @@
   background-color: #388e3c;
   transform: scale(1.05);
 }
-
