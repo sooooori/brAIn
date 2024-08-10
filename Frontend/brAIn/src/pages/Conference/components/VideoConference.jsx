@@ -18,6 +18,16 @@ const VideoConference = () => {
     const [currentVideoDevice, setCurrentVideoDevice] = useState(undefined);
     const OV = new OpenVidu();
 
+    const username = "OPENVIDUAPP";
+    const password = "ssafybrain"; // Replace with your actual OPENVIDU_SECRET
+    const credentials = btoa(`${username}:${password}`);
+
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${credentials}`
+    };
+
+
     useEffect(() => {
         window.addEventListener('beforeunload', onbeforeunload);
         if (mySessionId && myUserName) {
@@ -153,21 +163,26 @@ const VideoConference = () => {
 
     async function createSession(sessionId) {
         try {
-            const response = await axios.post(`${APPLICATION_SERVER_URL}/sessions`, { customSessionId: sessionId }, {
-                headers: { 'Content-Type': 'application/json' },
-            });
+            const response = await axios.post(
+                `${APPLICATION_SERVER_URL}/openvidu/api/sessions`,
+                { customSessionId: sessionId },
+                { headers }
+            );
             return response.data.sessionId;
         } catch (error) {
             console.error('Error creating session:', error);
             return sessionId;
         }
     }
-
+    
+    // Example function to create a token
     async function createToken(sessionId) {
         try {
-            const response = await axios.post(`${APPLICATION_SERVER_URL}/sessions/${sessionId}/connection`, {}, {
-                headers: { 'Content-Type': 'application/json' },
-            });
+            const response = await axios.post(
+                `${APPLICATION_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
+                {},
+                { headers }
+            );
             return response.data.token;
         } catch (error) {
             console.error('Error creating token:', error);
