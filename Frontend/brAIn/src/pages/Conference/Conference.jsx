@@ -144,6 +144,11 @@ const Conference = () => {
             setData(receivedMessage);
             handleMessage(receivedMessage);
           });
+
+          newClient.subscribe(`/queue/room.${response.data.roomId}.${nickname}`,(message)=>{
+            const receivedMessage=JSON.parse(message.body);
+            handleMessageForIndividual(receivedMessage);
+          })
         };
 
         newClient.onStompError = (frame) => {
@@ -262,6 +267,13 @@ const Conference = () => {
 
     }
   };
+
+  const handleMessageForIndividual= async(receivedMessage)=>{
+    if(receivedMessage.messageType=='STEP3_FOR_USER'){
+      console.log('step3 start');
+      console.log(receivedMessage.step3ForUser);
+    }
+  }
 
   const countUpMember = () => {
       setParticipantCount((prevCount) => {
@@ -467,6 +479,19 @@ const Conference = () => {
     }
   };
 
+  const step3start=()=>{
+    if (client) {
+      client.publish({
+        destination: `/app/vote.middleResults.${roomId}.${step}`,
+        headers: {
+          'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
+        },
+        
+      });
+    }
+    console.log('Step3 button click');
+  }
+
   
 
   return (
@@ -538,8 +563,8 @@ const Conference = () => {
                     <Button onClick={handleNextStepClick} ariaLabel="Next">
                       <img src={NextIcon} alt="Next" className="action-icon" />
                     </Button>
-                    <Button onClick={step1EndAlarm} ariaLabel="Next">
-                      <img src={NextIcon} alt="투표시작" className="action-icon" />
+                    <Button onClick={step3start} ariaLabel="Next">
+                      <img src={NextIcon} alt="투표정보 가져오기" className="action-icon" />
                     </Button>
                   </div>
                 )}

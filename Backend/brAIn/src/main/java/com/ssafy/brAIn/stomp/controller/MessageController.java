@@ -28,6 +28,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -288,6 +289,7 @@ public class MessageController {
 
     // 현재 중간 투표 결과 반환
     // 현재 중간 투표 결과 (상위 9개) 반환
+    // 유저마다 다른 순서로 감
     @MessageMapping("vote.middleResults.{roomId}.{step}")
     public void getMiddleVoteResults(@DestinationVariable String roomId, @DestinationVariable String step, StompHeaderAccessor accessor) {
         String token = accessor.getFirstNativeHeader("Authorization");
@@ -297,15 +299,25 @@ public class MessageController {
         // 중간 투표 결과 가져오기
         ResponseMiddleVote voteResults = messageService.getMiddleVote(Integer.parseInt(roomId), step);
 
-        List<VoteResponse> temp=voteResults.getVotes();
+        List<VoteResponse> votes=voteResults.getVotes();
 
-        for(int i=0;i<temp.size();i++){
-            System.out.println(temp.get(i).getPostIt());
+        for(int i=0;i<votes.size();i++){
+            System.out.println(votes.get(i).getPostIt());
         }
 
-        System.out.println("마지막:"+temp.size());
-        // 결과를 RabbitMQ로 전송
-        rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, voteResults);
+        List<String> usersInRoom = messageService.getUsersInRoom(Integer.parseInt(roomId));
+        for(int i=0;i<usersInRoom.size();i++){
+            List<String> step3ForUser=new ArrayList<>();
+            for(int j=0;j<votes.size();j++){
+                step3ForUser.add(votes.get((i+j)%votes.size()).getPostIt());
+            }
+            Step3ForUser step3ForUserResponse=new Step3ForUser(MessageType.STEP3_FOR_USER,step3ForUser);
+            System.out.println(usersInRoom.get(i));
+            rabbitTemplate.convertAndSend("room."+roomId+"."+usersInRoom.get(i),step3ForUserResponse);
+        }
+
+
+
     }
 
 
