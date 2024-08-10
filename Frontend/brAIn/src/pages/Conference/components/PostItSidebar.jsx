@@ -11,7 +11,8 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
   const notes = useSelector(state => state.note.notes);
   const sidebarRef = useRef(null);
   const [editingIndex, setEditingIndex] = useState(null);
-  const [notesVisible, setNotesVisible] = useState(true); // 노트 가시성 상태 추가
+  const [notesVisible, setNotesVisible] = useState(true);
+  const step = useSelector(state => state.conferenceInfo.curStep);
 
   // 사이드바 외부 클릭 시 닫히도록 처리
   const handleClickOutside = (event) => {
@@ -34,22 +35,21 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
 
   // 새 메모 추가 함수
   const handleAddNote = () => {
-    dispatch(addNote('')); // Redux에 빈 노트 추가
+    dispatch(addNote(''));
     setEditingIndex(notes.length); // 새로 추가된 노트를 편집 모드로 설정
-    
   };
 
   // 메모 삭제 함수
   const handleDeleteNote = (index) => {
     const noteId = notes[index].id;
-    dispatch(deleteNote(noteId)); // Redux에서 해당 노트 삭제
+    dispatch(deleteNote(noteId));
     setEditingIndex(null);
   };
 
   // 메모 내용 수정 함수
   const handleEditNote = (index, newContent) => {
     const noteId = notes[index].id;
-    dispatch(updateNote({ id: noteId, content: newContent })); // Redux를 사용하여 노트 내용 업데이트
+    dispatch(updateNote({ id: noteId, content: newContent }));
   };
 
   // 메모 제출 함수
@@ -57,17 +57,19 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
     const note = notes[index];
     const content = note.content;
     dispatch(submitNote(note.id));
-    // 라운드로빈 보드에 제출
     onSubmitClick(content);
   };
 
   // 편집 모드 종료 함수
   const handleBlur = () => {
-    setEditingIndex(null); // 편집 모드를 종료
+    setEditingIndex(null);
   };
 
+  // 사이드바 스타일 결정
+  const sidebarClasses = `postit-sidebar ${isVisible ? 'visible' : ''} ${step === 'STEP_0' ? 'expanded' : ''}`;
+
   return (
-    <div ref={sidebarRef} className={`postit-sidebar ${isVisible ? 'visible' : ''}`}>
+    <div ref={sidebarRef} className={sidebarClasses}>
       <div className="sidebar-header">
         <IconButton onClick={onClose} aria-label="close" className="close-button">
           <CloseIcon />
@@ -98,19 +100,22 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
                   <button
                     onClick={() => handleDeleteNote(index)}
                     aria-label="delete"
-                    className="custom-delete-button" // 새로운 버튼 클래스 사용
+                    className="custom-delete-button"
                   >
                     🗑️
                   </button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    size="small"
-                    onClick={() => handleSubmitNote(index)}
-                    className="submit-note-button"
-                  >
-                    제출
-                  </Button>
+                  {/* STEP_0일 때 제출 버튼 숨기기 */}
+                  {step !== 'STEP_0' && (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      size="small"
+                      onClick={() => handleSubmitNote(index)}
+                      className="submit-note-button"
+                    >
+                      제출
+                    </Button>
+                  )}
                 </div>
               </div>
             )}

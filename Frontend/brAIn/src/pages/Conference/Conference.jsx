@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
-import axios from 'axios';
+import axios from '../../utils/Axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import WaitingModal from './components/WaitingModal';
@@ -59,9 +59,9 @@ const Conference = () => {
   const votedItems = useSelector(state => state.votedItem.items || []);
   
   
-  const MINUTES_IN_MS = 6 * 1000;
+  // const MINUTES_IN_MS = 6 * 1000;
   const [time, setTime] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
+  const [timeLeft, setTimeLeft] = useState(null);
   const [timerActive, setTimerActive] = useState(false);
 
   //투표결과 모달관련
@@ -113,7 +113,10 @@ const Conference = () => {
           setTime(time_response.data.time);
         }
 
-
+        if (timeLeft === null){
+          setTimeLeft(time_response.data.time)
+        }
+        
         const newClient = new Client({
           brokerURL: 'ws://localhost/ws',
           connectHeaders: {
@@ -169,7 +172,7 @@ const Conference = () => {
       }
     };
 
-  }, [routeSecureId,roomId, time]);
+  }, [routeSecureId,roomId, time, timeLeft]);
 
   useEffect(() => {
     if (step === 'STEP_0' && !timerActive) {
@@ -179,6 +182,8 @@ const Conference = () => {
     }
   }, [step]);
 
+
+  
   const startTimer = async () => {
     try {
       await Swal.fire({
@@ -189,14 +194,15 @@ const Conference = () => {
       });
 
       await timer();
-
-      if (timeLeft <= 0) {
+      
+      console.log("알람 전 timeleft",timeLeft)
+     
         await Swal.fire({
           icon: "warning",
           title: '준비 시간이 끝났습니다.',
           text: '다음 단계로 진행하세요.',
         });
-      }
+      
     } catch (error) {
       console.error("Error during timer:", error);
     }
@@ -207,8 +213,10 @@ const Conference = () => {
       const tick = () => {
         setTimeLeft(prevTimeLeft => {
           const newTimeLeft = prevTimeLeft - 1000;
+          console.log(newTimeLeft)
           if (newTimeLeft <= 0) {
             clearInterval(timerId); // Stop the timer
+            setTimeLeft(0)
             resolve();
             return 0; // Set timer to 0 after it ends
           } else {
@@ -216,12 +224,10 @@ const Conference = () => {
           }
         });
       };
-
+      
       timerId = setInterval(tick, 1000); // Call tick every second
     });
   };
-
-
 
   const handleMessage = async (receivedMessage) => {
     if (receivedMessage.messageType == 'ENTER_WAITING_ROOM') {
@@ -325,7 +331,20 @@ const Conference = () => {
   };
 
   const handleNextStepClick = () => {
-  };
+    if (client){
+      client.publish({
+        destination: `/app/next.step.${roomId}`,
+        headers:{
+          'Authorization': localStorage.getItem('roomToken')
+        },
+        body: JSON.stringify({
+          step: step
+        })
+      });
+    }
+
+    console.log('Next Step Btn Clicked')
+  };  
 
   const handlePassButtonClick = () => {
 
@@ -463,8 +482,6 @@ const Conference = () => {
     }
   };
 
-  
-
   return (
     
     <div className="conference">
@@ -498,6 +515,7 @@ const Conference = () => {
                   isVisible={isPostItSidebarVisible}
                   onClose={togglePostItSidebar}
                   onSubmitClick={attachPostitOnRoundBoard}
+                  className={step === 'STEP_0' ? 'expanded' : ''}
                 />
               ) : (
 
@@ -551,7 +569,7 @@ const Conference = () => {
                 )}
 
               </div>
-              <WhiteBoard subject={subject} />
+                <WhiteBoard subject={subject} /> 
             </div>
           </div>
         )}

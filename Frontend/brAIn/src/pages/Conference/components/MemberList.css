@@ -77,10 +77,21 @@
   margin-bottom: 5px;
 }
 
+/* 프로필 텍스트 스타일 */
 .profile p {
   margin: 0;
-  font-size: 12px; /* Adjust font size */
+  font-size: 14px; /* 조정된 폰트 크기 */
   text-align: center;
+  display: flex; /* 플렉스 레이아웃으로 인라인 요소 배치 */
+  align-items: center; /* 수직 중앙 정렬 */
+  font-weight: bold;
+}
+
+.me-label {
+  margin-left: 5px; /* 닉네임과 (Me) 사이의 여백 */
+  font-size: 14px; /* 폰트 크기 조정 */
+  color: #007bff; /* 색상 조정 */
+  font-weight: bold;
 }
 
 .profile.highlighted {
