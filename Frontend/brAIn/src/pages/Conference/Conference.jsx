@@ -178,7 +178,7 @@ const Conference = () => {
       }
     };
 
-  }, [routeSecureId,roomId, time]);
+  }, [routeSecureId,roomId, time,time]);
 
   useEffect(() => {
     if (step === 'STEP_0' && !timerActive) {
@@ -213,6 +213,8 @@ const Conference = () => {
 
   const timer = async () => {
     return new Promise(resolve => {
+      let timerId;
+
       const tick = () => {
         setTimeLeft(prevTimeLeft => {
           const newTimeLeft = prevTimeLeft - 1000;
@@ -225,7 +227,7 @@ const Conference = () => {
           }
         });
       };
-
+      console.log("leftTime:",timeLeft);
       timerId = setInterval(tick, 1000); // Call tick every second
     });
   };
@@ -248,6 +250,9 @@ const Conference = () => {
     }
     else if (receivedMessage.messageType == 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep))
+      if(curStep=='STEP_3'){
+        step3start();
+      }
     }else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
       await roundRobinBoardUpdate(receivedMessage);
       dispatch(setCurStep('STEP_2'));
@@ -373,6 +378,7 @@ const Conference = () => {
       // 타이머 시작
       await timer();
   
+      console.log(timeLeft);
       if (timeLeft <= 0) {
         console.log("타이머 종료");
       }
@@ -412,7 +418,6 @@ const Conference = () => {
     }
   };
 
-  let timerId;
 
   const endVote = async (step) => {
   try {
