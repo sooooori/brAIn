@@ -153,10 +153,10 @@ const VideoConference = () => {
 
     async function createSession(sessionId) {
         try {
-            const response = await axios.post(`${APPLICATION_SERVER_URL}v1/openvidu/sessions`, { customSessionId: sessionId }, {
+            const response = await axios.post(`${APPLICATION_SERVER_URL}/sessions`, { customSessionId: sessionId }, {
                 headers: { 'Content-Type': 'application/json' },
             });
-            return response.data;
+            return response.data.sessionId;
         } catch (error) {
             console.error('Error creating session:', error);
             return sessionId;
@@ -165,10 +165,10 @@ const VideoConference = () => {
 
     async function createToken(sessionId) {
         try {
-            const response = await axios.post(`${APPLICATION_SERVER_URL}v1/openvidu/sessions/${sessionId}/connections`, {}, {
+            const response = await axios.post(`${APPLICATION_SERVER_URL}/sessions/${sessionId}/connection`, {}, {
                 headers: { 'Content-Type': 'application/json' },
             });
-            return response.data;
+            return response.data.token;
         } catch (error) {
             console.error('Error creating token:', error);
         }
