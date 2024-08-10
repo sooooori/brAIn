@@ -1,23 +1,26 @@
 from flask import Flask, request, jsonify
 from openai import OpenAI
 import json
+from typing_extensions import override
+from openai import AssistantEventHandler
 import time
+import unicodedata
 
-# OpenAI API Key
-API_KEY = 'sk-proj-8JiLVZK2dojt4n6785OAT3BlbkFJ0hSiaAEqWjms3ACsQuTT'
-client = OpenAI(api_key=API_KEY)
+ASSITANT_ID = 'asst_0I7SoatXnsvE47YRSKMJnc22'
+client = OpenAI(api_key='sk-proj-8JiLVZK2dojt4n6785OAT3BlbkFJ0hSiaAEqWjms3ACsQuTT')
 
-ASSISTANT_ID = 'asst_0I7SoatXnsvE47YRSKMJnc22'
-
-class EventHandler:
+class EventHandler(AssistantEventHandler):
     def __init__(self):
+        super().__init__()
         self.generated_text = ""
         self.buffer = ""
     
-    def on_text_created(self, text):
+    @override
+    def on_text_created(self, text) -> None:
         self.buffer += text.value
         self._process_buffer()
     
+    @override
     def on_text_delta(self, delta, snapshot):
         self.buffer += delta.value
         self._process_buffer()
@@ -33,7 +36,7 @@ class EventHandler:
 
     def _split_first_char(self, text):
         for i in range(1, len(text) + 1):
-            if unicodedata.category(text[i-1])[0] != 'M':  # M is for combining characters
+            if unicodedata.category(text[i-1])[0] != 'M':  # M는 결합 문자를 의미
                 return text[:i], text[i:]
         return '', text
 
@@ -46,27 +49,35 @@ class EventHandler:
     def get_generated_text(self):
         return self.generated_text[1:]
 
-def make_assistant(subject):
+def make_assitant(subject):
     assistant = client.beta.assistants.create(
         name="회의 참가자",
-        instructions=f"우리가 브레인 스토밍중인 주제는 {subject}입니다. 우리는 라운드로빈 방식으로 돌아가며 아이디어를 내고 있습니다",
+        instructions= f"우리가 브레인 스토밍중인 주제는 {subject}입니다. 우리는 라운드로빈 방식으로 돌아가며 아이디어를 내고 있습니다",
         model="gpt-3.5-turbo-16k",
     )
-    print(f"[생성한 Assistants ID]\n{assistant.id}")
-    return assistant.id
+    # 생성된 챗봇의 정보를 JSON 형태로 출력합니다.
+    print(json.dumps(json.loads(assistant.model_dump_json()), indent=2))
+    ASSISTANT_ID = assistant.id
+    print(f"[생성한 Assistants ID]\n{ASSISTANT_ID}")
+    return ASSISTANT_ID
 
 def wait_on_run(run, thread):
+    # 주어진 실행(run)이 완료될 때까지 대기합니다.
+    # status 가 "queued" 또는 "in_progress" 인 경우에는 계속 polling 하며 대기합니다.
     while run.status == "queued" or run.status == "in_progress":
+        # run.status 를 업데이트합니다.
         run = client.beta.threads.runs.retrieve(
             thread_id=thread.id,
             run_id=run.id,
         )
+        # API 요청 사이에 잠깐의 대기 시간을 두어 서버 부하를 줄입니다.
         time.sleep(0.5)
     return run
 
 def show_json(obj):
-    print(json.dumps(obj, indent=2))
-
+    # obj의 모델을 JSON 형태로 변환한 후 출력합니다.
+    print(json.dumps(json.loads(obj.model_dump_json()), indent=2))
+    
 def convert_json(obj):
     return json.loads(obj.model_dump_json())
 
@@ -76,11 +87,11 @@ app = Flask(__name__)
 def make_thread():
     params = request.get_json()
     subject = params['subject']
-    assistant_id = make_assistant(subject)
+    assitant_id = make_assitant(subject)
     thread = client.beta.threads.create()
     response = {
-        "assistantId": assistant_id,
-        "threadId": thread.id
+        "assistantId": assitant_id,
+        "threadId" : thread.id
     }
     return jsonify(response)
 
@@ -90,26 +101,26 @@ def add_postit():
     post_it = params['postIt']
     thread_id = params['threadId']
     prompt = '다른 user의 아이디어입니다.' + post_it
-    client.beta.threads.messages.create(
+    message = client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
-        content=prompt
+        content= prompt
     )
-    return "success"
+    return "suceess"
 
 @app.route('/comment/add', methods=['POST'])
 def add_comment():
     params = request.get_json()
-    post_it = params['postIt']
+    post_it=params['postIt']
     comment = params['comment']
     thread_id = params['threadId']
-    prompt = post_it + '에 대한 다른 user의 추가 코멘트입니다.' + comment
-    client.beta.threads.messages.create(
+    prompt = post_it+'에 대한 다른 user의 추가 코멘트입니다.' + comment
+    message = client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
-        content=prompt
+        content= prompt
     )
-    return "success"
+    return "suceess"
 
 @app.route('/postIt/make', methods=['POST'])
 def round_robin_make_idea():
@@ -118,10 +129,10 @@ def round_robin_make_idea():
     assistant_id = params['assistantId']
     event_handler = EventHandler()
 
-    client.beta.threads.messages.create(
+    message = client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
-        content="너는 브레인 스토밍 회의에 참가한 사람입니다.\
+        content= "너는 브레인 스토밍 회의에 참가한 사람입니다.\
             주제에 관련한 아이디어를 하나만 추가로 내주세요.\
             당신 또한 자신의 아이디어를 한두문장으로만 나타내야합니다.\
             다른 사람의 아이디어에 코멘트를 달 필요는 없습니다.\
@@ -144,10 +155,10 @@ def summary_ideas():
     thread_id = params['threadId']
     assistant_id = params['assistantId']
     event_handler = EventHandler()
-    client.beta.threads.messages.create(
+    message = client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
-        content=f"지금까지 우리와 네가 낸 의견들을 정리하여 회의록으로 정리해주세요.\
+        content= f"지금까지 우리와 네가 낸 의견들을 정리하여 회의록으로 정리해주세요.\
         주제를 잊어선 안됩니다. 일부 의견만 언급해서는 안됩니다.\
         나왔던 의견들을 회의록 형식으로 정리하여야 합니다.\
         '패스'라고 말한 의견은 제외해주세요.\
@@ -176,10 +187,10 @@ def persona_make():
         이로 인해 나올 수 있는 제품 및 방향성을 제공해주세요.\
         페르소나의 형식에 맞춰서 너가 전부 작성해주세요"
     event_handler = EventHandler()
-    client.beta.threads.messages.create(
+    message = client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
-        content=prompt
+        content= prompt
     )
     with client.beta.threads.runs.stream(
         thread_id=thread_id,
@@ -204,10 +215,10 @@ def swot_make():
         SWOT분석만 만들면 됩니다. 다른 산출물을 만들 필요는 없습니다.\
         형식에 맞춰서 너가 전부 작성해주세요"
     event_handler = EventHandler()
-    client.beta.threads.messages.create(
+    message = client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
-        content=prompt
+        content= prompt
     )
     with client.beta.threads.runs.stream(
         thread_id=thread_id,
