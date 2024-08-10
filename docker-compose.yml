@@ -72,3 +72,6 @@ services:
 networks:
   brain-net:
     driver: bridge
+
+volumes:
+  db_data:
