@@ -6,6 +6,7 @@ import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
+import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
 import com.ssafy.brAIn.stomp.dto.*;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
 import com.ssafy.brAIn.stomp.request.RequestPass;

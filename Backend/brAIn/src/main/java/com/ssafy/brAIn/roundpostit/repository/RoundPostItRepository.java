@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface RoundPostItRepository extends JpaRepository<RoundPostIt, Integer> {
     Optional<RoundPostIt> findByContentAndConferenceRoom_Id(String content, int conferenceRoomId);
+    Optional<RoundPostIt> findByContent(String content);
 }

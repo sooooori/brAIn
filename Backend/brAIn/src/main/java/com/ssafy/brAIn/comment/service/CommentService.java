@@ -139,4 +139,8 @@ public class CommentService {
         // 모든 댓글이 ready인지 확인
         return roundPostIt.getComments().stream().allMatch(Comment::isReady);
     }
+
+    public List<Comment> findByPostItId(RoundPostIt roundPostIt) {
+        return commentRepository.findByRoundPostIt(roundPostIt);
+    }
 }
