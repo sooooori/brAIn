@@ -66,11 +66,15 @@ const MemberList = () => {
                             {passStatus[user.nickname] && (
                                 <span className="pass-indicator">PASS</span>
                             )}
+
                             <img
                                 src={`https://brain-content-profile.s3.ap-northeast-2.amazonaws.com/conference-image/${user.nickname.split(' ').pop()}.png`}
                                 alt={`${user.nickname.split(' ').pop()}`}
                             />
-                            <p>{user.nickname}</p>
+                            <p>
+                                {user.nickname} 
+                                {user.nickname === nickname && <span className="me-label">(Me)</span>}
+                            </p>
                         </div>
                     ))}
                 </div>

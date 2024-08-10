@@ -124,4 +124,8 @@
   margin-top: 20px;
 }
 
-
+/* 흐림 효과 추가 */
+.whiteboard-blurred {
+  filter: blur(2px);
+  transition: filter 0.3s ease;
+}
