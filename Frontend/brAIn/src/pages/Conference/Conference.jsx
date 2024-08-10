@@ -59,9 +59,9 @@ const Conference = () => {
   const votedItems = useSelector(state => state.votedItem.items || []);
   
   
-  // const MINUTES_IN_MS = 6 * 1000;
+  const MINUTES_IN_MS = 6 * 1000;
   const [time, setTime] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
   const [timerActive, setTimerActive] = useState(false);
 
   //투표결과 모달관련
@@ -187,7 +187,7 @@ const Conference = () => {
     };
 
 
-  }, [routeSecureId, roomId, time, timeLeft]);
+  }, [routeSecureId, roomId, time]);
 
   // 라운드 변경 시 패스 상태 초기화
   useEffect(() => {

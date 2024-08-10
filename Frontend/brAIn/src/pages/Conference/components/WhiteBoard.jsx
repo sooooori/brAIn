@@ -6,12 +6,16 @@ import './WhiteBoard.css';
 import passImg from '../../../assets/svgs/pass.svg';
 import nextImg from '../../../assets/svgs/next.svg';
 import skipImg from '../../../assets/svgs/skip.svg';
+import { useDispatch } from 'react-redux';
+import { addComments } from '../../../actions/commentsAction';
+import CommentBoard from './CommentBoard';
 
 const WhiteBoard = ({ subject, onSubmitClick }) => {
   const [ideas, setIdeas] = useState([]);
   const token = localStorage.getItem('authToken'); // 인증 토큰 가져오기
   const step = useSelector((state) => state.conferenceInfo.curStep); // Redux에서 currentStep 가져오기
   const [inputValue, setInputValue] = useState('');
+  const dispatch=useDispatch();
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -23,22 +27,16 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
 
     if (newIdea) {
       try {
-        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/postIts`, {
+        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/comment/create`, {
           content: newIdea,
         }, {
           headers: {
-            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
 
-        const { message, key } = response.data;
-
-        if (key) {
-          setIdeas([...ideas, { content: message, key }]);
-          setInputValue(''); // 입력 필드 초기화
-        } else {
-          console.error('No key returned from server');
+        if(response.status===200){
+          dispatch(addComments(newIdea));
         }
       } catch (error) {
         console.error('Error saving post-it:', error);
@@ -95,6 +93,9 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
 
   // 조건부 렌더링을 위해 step === 'STEP_0'에 대한 boolean 값
   const isStepZero = step === 'STEP_0';
+  const isStepOne=step==='STEP_1';
+  const isStepTwo=step==='STEP_2';
+  const isStepThree=step==='STEP_3';
 
   return (
     <div className="WhiteBoard">
@@ -102,10 +103,17 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
         <h2>주제 : {subject} </h2>
       </div>
       {/* step이 'STEP_0'일 때 WhiteBoard-body와 WhiteBoard-footer를 숨김 */}
-      {!isStepZero && (
+      {(isStepOne||isStepTwo) && (
         <div className="WhiteBoard-body">
           <div className="idea-board">
             <PostItTest />
+          </div>
+        </div>
+      )}
+      {isStepThree && (
+        <div className="WhiteBoard-body">
+          <div className="idea-board">
+            <CommentBoard/>
           </div>
         </div>
       )}
@@ -120,7 +128,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
               placeholder="아이디어를 입력하세요..."
               className="idea-input"
             />
-            <button type="button" className="idea-submit-button" onClick={handleClick}>제출</button>
+            <button type="button" className="idea-submit-button" onClick={handleAddIdea}>제출</button>
           </form>
         </div>
       )}
