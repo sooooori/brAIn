@@ -9,7 +9,7 @@ services:
     ports:
       - "3306:3306"    # MySQL 포트 매핑
     volumes:
-      - db_data:/var/lib/mysql  # 볼륨 마운트 설정
+      - ./db_data:/var/lib/mysql  # 볼륨 마운트 설정
     networks:
       - brain-net
 
