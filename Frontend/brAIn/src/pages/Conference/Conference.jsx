@@ -79,7 +79,7 @@ const Conference = () => {
         if (isConnecting) return;
         setIsConnecting(true);
 
-        const response = await axios.post(`http://localhost/api/v1/conferences/${routeSecureId}`, {}, {
+        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/${routeSecureId}`, {}, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
@@ -119,7 +119,7 @@ const Conference = () => {
 
 
         const newClient = new Client({
-          brokerURL: 'ws://localhost/ws',
+          brokerURL: `${import.meta.env.VITE_WSS_BASE_URL}`,
           connectHeaders: {
             Authorization: 'Bearer ' + localStorage.getItem('roomToken')
           },
@@ -382,7 +382,7 @@ const Conference = () => {
       console.log('step:', state.conferenceInfo.curStep);
   
       // 서버에 투표 결과 전송
-      await axios.post(`http://localhost/api/v1/conferences/vote`, {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/vote`, {
         roomId: roomId,
         step: step,
         votes: itemsObject
@@ -404,7 +404,7 @@ const Conference = () => {
 
   const endVote = async (step) => {
   try {
-    const response = await axios.post(`http://localhost/api/v1/conferences/vote/endByTimer`, {
+    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/vote/endByTimer`, {
       conferenceId: roomId,
       step: step
     }, {
@@ -451,7 +451,7 @@ const Conference = () => {
     try {
       console.log("getVoteREsult",step)
       console.log(roomId);
-      const response = await axios.get(`http://localhost/api/v1/conferences/vote/results`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/vote/results`, {
         params: {
           roomId: roomId,
           step: step

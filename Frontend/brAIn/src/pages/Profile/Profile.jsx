@@ -49,7 +49,7 @@ const Profile = () => {
         const fetchUserData = async () => {
             try {
                 if (accessToken && !user) {  // 리덕스 상태에 사용자 정보가 없을 때만 호출
-                    const response = await axios.get('http://localhost/api/v1/members/member', {
+                    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/members/member`, {
                         headers: {
                             Authorization: `Bearer ${accessToken}`
                         }
@@ -80,7 +80,7 @@ const Profile = () => {
             };
 
             try {
-                const response = await axios.put('http://localhost/api/v1/members/updatePhoto', requestBody, {
+                const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/v1/members/updatePhoto`, requestBody, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
                         'Content-Type': 'application/json'
@@ -109,7 +109,7 @@ const Profile = () => {
     const handleDeleteAccount = async () => {
         try {
             // 요청 본문에 비밀번호를 포함
-            const response = await axios.delete('http://localhost/api/v1/members/member', {
+            const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/v1/members/member`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 },

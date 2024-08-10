@@ -13,7 +13,7 @@ const PostIt = ({ content, key, onDelete, onUpdate }) => {
 
   const handleSaveClick = async () => {
     try {
-      await axios.put(`http://localhost/api/v1/postIts/${key}`, { content: newContent });
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/v1/postIts/${key}`, { content: newContent });
       onUpdate(key, newContent); // 상위 컴포넌트에 업데이트 알리기
       setIsEditing(false);
     } catch (error) {
@@ -28,7 +28,7 @@ const PostIt = ({ content, key, onDelete, onUpdate }) => {
 
   const handleDeleteClick = async () => {
     try {
-      await axios.delete(`http://localhost/api/v1/postIts/${key}`);
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/v1/postIts/${key}`);
       onDelete(key); // 상위 컴포넌트에 삭제 알리기
     } catch (error) {
       console.error('Error deleting post-it:', error);

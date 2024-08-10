@@ -46,7 +46,7 @@ const UpdatePasswordModal = ({ isOpen, onRequestClose }) => {
         }
 
         try {
-            await axios.put('http://localhost/api/v1/members/updatePassword', 
+            await axios.put(`${import.meta.env.VITE_API_BASE_URL}/v1/members/updatePassword`, 
                 { newPassword: newPassword },
                 {  
                     headers: {

@@ -41,7 +41,7 @@ const NavBar = () => {
         try {
             const token = localStorage.getItem('accessToken');
             const refreshToken = Cookies.get('refreshToken');
-            await axios.post('http://localhost/api/v1/members/logout', { refreshToken: refreshToken }, {
+            await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/members/logout`, { refreshToken: refreshToken }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

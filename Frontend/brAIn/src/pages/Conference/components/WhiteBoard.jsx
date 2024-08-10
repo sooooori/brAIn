@@ -25,7 +25,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
 
     if (newIdea) {
       try {
-        const response = await axios.post('http://localhost/api/v1/postIts', {
+        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/postIts`, {
           content: newIdea,
         }, {
           headers: {
@@ -50,7 +50,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
 
   const handleDeleteIdea = async (key) => {
     try {
-      await axios.delete(`http://localhost/api/v1/postIts/${key}`, {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/v1/postIts/${key}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -63,7 +63,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
 
   const handleUpdateIdea = async (key, newContent) => {
     try {
-      await axios.put(`http://localhost/api/v1/postIts/${key}`, {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/v1/postIts/${key}`, {
         content: newContent,
       }, {
         headers: {
