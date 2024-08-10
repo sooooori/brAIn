@@ -9,6 +9,7 @@ import { addNote, deleteNote, submitNote, updateNote } from '../../../features/n
 const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
   const dispatch = useDispatch();
   const notes = useSelector(state => state.note.notes);
+  const nickname = useSelector(state => state.user.nickname);
   const sidebarRef = useRef(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [notesVisible, setNotesVisible] = useState(true); // 노트 가시성 상태 추가

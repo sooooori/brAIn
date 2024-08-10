@@ -26,7 +26,7 @@ import Timer from './components/Timer';
 import './Conference.css';
 
 
-import { addUser, removeUser, setUsers, setUserNick, setCuruser } from '../../actions/userActions';
+import { addUser, removeUser, setUsers, setUserNick, setCuruser, updatePassStatus, resetPassStatus, } from '../../actions/userActions';
 import { setCurStep, upRound, setRound, setRoom } from '../../actions/conferenceActions';
 import { sendToBoard } from '../../actions/roundRobinBoardAction';
 import VoteResultsModal from './components/VoteResultsModal';
@@ -160,9 +160,9 @@ const Conference = () => {
       } finally {
         setIsConnecting(false);
       }
-    };
+    };  
 
-    
+
 
     fetchDataAndConnect();
 
@@ -173,7 +173,12 @@ const Conference = () => {
       }
     };
 
-  }, [routeSecureId,roomId, time]);
+  }, [routeSecureId, roomId, time]);
+
+  // 라운드 변경 시 패스 상태 초기화
+  useEffect(() => {
+    dispatch(resetPassStatus());
+  }, [round, dispatch]);
 
   useEffect(() => {
     if (step === 'STEP_0' && !timerActive) {
@@ -240,26 +245,27 @@ const Conference = () => {
     } else if (receivedMessage.messageType === 'ENTER_CONFERENCES') {
       dispatch(setUserNick(receivedMessage.nickname));
 
-    }
-    else if (receivedMessage.messageType == 'NEXT_STEP') {
+    } else if (receivedMessage.messageType == 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep))
-    }else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
+    } else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
       await roundRobinBoardUpdate(receivedMessage);
       dispatch(setCurStep('STEP_2'));
       dispatch(step1EndAlarm());
-    }else if(receivedMessage.messageType==='FINISH_MIDDLE_VOTE'){
+    } else if(receivedMessage.messageType==='FINISH_MIDDLE_VOTE'){
       console.log(receivedMessage);
       console.log(receivedMessage.votes.postit);
     } else if(receivedMessage.messageType=='PASS'){
-      console.log('pass to '+receivedMessage.nextUser)
-      dispatch(setCuruser(receivedMessage.nextUser))
+      console.log('pass to '+receivedMessage.nextUser);
+      console.log('User who passed:', receivedMessage.curUser);
+      dispatch(updatePassStatus(receivedMessage.curUser));
+      dispatch(setCuruser(receivedMessage.nextUser));
+      dispatch(updatePassStatus(receivedMessage.userNickname));
     } else if(receivedMessage.messageType=='PASS_AND_END'){
       console.log('투표시작')
       dispatch(setCurStep('STEP_2'));
       dispatch(step1EndAlarm());
     } else if (receivedMessage.messageType === 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep));
-
     }
   };
 
@@ -332,21 +338,38 @@ const Conference = () => {
   };
 
   const handlePassButtonClick = () => {
-
     if (client) {
+      const currentIndex = users.findIndex((user) => user.nickname === curUser);
+  
+      // 현재 사용자 닉네임 가져오기
+      const currentUserNickname = users[currentIndex]?.nickname;
+  
+      // 유효성 검사: 닉네임이 정의되지 않은 경우 로그 출력
+      if (!currentUserNickname) {
+        console.error('Current user nickname is undefined. Check users array:', users);
+        return;
+      }
+  
+      // 사용자 패스 정보 전송
       client.publish({
         destination: `/app/state.user.pass.${roomId}`,
         headers: {
-          'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
+          Authorization: localStorage.getItem('roomToken'),
         },
         body: JSON.stringify({
-          curRound: round
-        })
+          curRound: round,
+          userNickname: currentUserNickname, // 패스한 사용자의 닉네임
+        }),
       });
+  
+      // 패스 상태 업데이트
+      dispatch(updatePassStatus(currentUserNickname));
+  
+      // 다음 사용자로 이동
+      const nextUserIndex = (currentIndex + 1) % users.length;
+      const nextUser = users[nextUserIndex].nickname;
+      dispatch(setCuruser(nextUser));
     }
-    console.log('Pass button clicked');
-
-
   };
 
   const step1EndAlarm = () => async (dispatch, getState) => {
@@ -531,7 +554,7 @@ const Conference = () => {
                     <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
                       <img src={ReadyIcon} alt="Ready" className="action-icon" />
                     </Button>
-                    <Button onClick={handlePassButtonClick} ariaLabel="Skip">
+                    <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
                       <img src={SkipIcon} alt="Skip" className="action-icon" />
                     </Button>
 
@@ -548,7 +571,7 @@ const Conference = () => {
                     <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
                       <img src={ReadyIcon} alt="Ready" className="action-icon" />
                     </Button>
-                    <Button onClick={handlePassButtonClick} ariaLabel="Skip">
+                    <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
                       <img src={SkipIcon} alt="Skip" className="action-icon" />
                     </Button>
                   </div>
