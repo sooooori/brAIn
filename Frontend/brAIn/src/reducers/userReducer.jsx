@@ -1,4 +1,4 @@
-import { ADD_USER, REMOVE_USER, SET_USERS, SET_USERNICK, SET_CURUSER, SET_NEXTUSER, UPDATE_TIMER, RESET_STATE, UPDATE_PASS_STATUS, RESET_PASS_STATUS } from '../actions/userActions';
+import { ADD_USER, REMOVE_USER, SET_USERS, SET_USERNICK, SET_CURUSER, SET_NEXTUSER, UPDATE_TIMER, RESET_STATE, UPDATE_PASS_STATUS, RESET_PASS_STATUS, UPDATE_READY_STATUS, RESET_READY_STATUS, } from '../actions/userActions';
 
 const initialState = {
     users: [],
@@ -7,6 +7,7 @@ const initialState = {
     nextUser: "",
     timer: 0,
     passStatus: {},
+    readyStatus: {},
 };
 
 const userReducer = (state = initialState, action) => {
@@ -65,6 +66,21 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 passStatus: {}, // 패스 상태 초기화
+            };
+
+        case UPDATE_READY_STATUS:
+            return {
+                ...state,
+                readyStatus: {
+                    ...state.readyStatus,
+                    [action.payload]: true,
+                },
+            };
+
+        case RESET_READY_STATUS:
+            return {
+                ...state,
+                readyStatus: {},
             };
 
 

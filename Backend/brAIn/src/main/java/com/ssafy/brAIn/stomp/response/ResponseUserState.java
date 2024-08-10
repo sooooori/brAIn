@@ -10,11 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResponseUserState {
 
-    private UserState messagetype;
+    private UserState messageType;
     private String curUser;
+    private String nextUser;
 
-    public ResponseUserState(UserState type, String curUser) {
-        this.messagetype = type;
+    public ResponseUserState(UserState type, String curUser, String nextUser) {
+        this.messageType = type;
         this.curUser = curUser;
+        this.nextUser = nextUser;
     }
 }
