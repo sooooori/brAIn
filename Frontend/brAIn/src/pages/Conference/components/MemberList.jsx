@@ -62,7 +62,6 @@ const MemberList = () => {
                             className={`profile ${
                                 user.nickname === curUser ? 'highlighted' : ''}`}
                         >
-                            {user.nickname === nickname && <p>Me</p>}
                             {passStatus[user.nickname] && (
                                 <span className="pass-indicator">PASS</span>
                             )}

@@ -111,6 +111,13 @@ const Conference = () => {
 
         if (time === null) {
           setTime(time_response.data.time);
+          console.log(time_response.data.time.type)
+          console.log(time)
+        }
+
+        if (timeLeft === null) {
+          const timeLeft = time // time을 숫자로 변환하고 밀리초로 변환
+          setTimeLeft(timeLeft);
         }
 
         const countMemberInWaitingroom=await axios.get(`http://localhost/api/v1/conferences/countUser/${roomId}`);
@@ -180,7 +187,7 @@ const Conference = () => {
     };
 
 
-  }, [routeSecureId, roomId, time]);
+  }, [routeSecureId, roomId, time, timeLeft]);
 
   // 라운드 변경 시 패스 상태 초기화
   useEffect(() => {
@@ -233,7 +240,6 @@ const Conference = () => {
           console.log(newTimeLeft)
           if (newTimeLeft <= 0) {
             clearInterval(timerId); // Stop the timer
-            setTimeLeft(0)
             resolve();
             return 0; // Set timer to 0 after it ends
           } else {

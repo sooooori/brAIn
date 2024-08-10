@@ -139,7 +139,7 @@ public class ConferenceRoomController {
 
             String time = redisUtils.getData(roomId+":time:init");
 
-            return ResponseEntity.ok(Map.of("time", time));
+            return ResponseEntity.ok(Map.of("time", Integer.parseInt(time)*60*1000));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No time");
         }
