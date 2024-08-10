@@ -23,7 +23,7 @@ const ConferenceEx = () => {
     const fetchConferenceSubject = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        const response = await axios.get('http://localhost/api/v1/conferences', {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences`, {
           params: { secureId },
           headers: {
             'Authorization': `Bearer ${token}`,

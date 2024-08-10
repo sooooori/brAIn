@@ -103,7 +103,7 @@ const Home = () => {
     if (isAuthenticated && accessToken) {
       const fetchConferenceHistory = async () => {
         try {
-          const response = await axios.get('http://localhost/api/v1/conferences/history', {
+          const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/history`, {
             headers: {
               Authorization: `Bearer ${accessToken}`
             }

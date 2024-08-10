@@ -26,7 +26,7 @@ const ConferenceNavbar = ({ secureId }) => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        const response = await axios.get('http://localhost/api/v1/conferences', {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences`, {
           params: { secureId:secureId },
           headers: {
             'Authorization': `Bearer ${token}`,

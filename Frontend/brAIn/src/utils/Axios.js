@@ -22,7 +22,7 @@ axios.interceptors.response.use(
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
-                const response = await axios.post('http://localhost:8080/api/v1/members/refresh', {}, { withCredentials: true });
+                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/members/refresh`, {}, { withCredentials: true });
                 const { accessToken } = response.data;
                 
                 // // 새로운 accessToken을 로컬 스토리지에 저장

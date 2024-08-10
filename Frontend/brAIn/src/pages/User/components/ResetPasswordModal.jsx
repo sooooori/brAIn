@@ -82,12 +82,12 @@ const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
         }
 
         // Check if the email exists in the database
-        axios.post('http://localhost/api/v1/members/resetEmail', { email: email })
+        axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/members/resetEmail`, { email: email })
             .then(response => {
                 if (response.data.message === 'Email check successfully') {
                     // If email exists, send the verification code
 
-                    return axios.post('http://localhost/api/v1/members/sendAuthNumber', { email });
+                    return axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/members/sendAuthNumber`, { email });
                 } else {
                     setErrorMessage('가입된 회원이 아닙니다.');
                     setSuccessMessage('');
@@ -120,7 +120,7 @@ const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
             return;
         }
 
-        axios.post('http://localhost/api/v1/members/authNumber', { email, code: verificationCode })
+        axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/members/authNumber`, { email, code: verificationCode })
             .then(() => {
                 setSuccessMessage('인증번호가 확인되었습니다.');
                 setErrorMessage('');
@@ -138,7 +138,7 @@ const ResetPasswordModal = ({ isOpen, onRequestClose }) => {
             return;
         }
 
-        axios.put('http://localhost/api/v1/members/resetPassword', { email, newPassword })
+        axios.put(`${import.meta.env.VITE_API_BASE_URL}/v1/members/resetPassword`, { email, newPassword })
             .then(response => {
                 if (response.status === 200) {
                     setSuccessMessage('비밀번호가 성공적으로 재설정되었습니다.');

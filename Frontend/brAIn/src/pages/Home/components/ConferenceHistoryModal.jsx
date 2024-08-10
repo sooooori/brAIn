@@ -14,7 +14,7 @@ const ConferenceHistoryModal = ({ isOpen, conferenceId, onClose }) => {
     if (id) {
       const fetchConferenceDetails = async () => {
         try {
-          const response = await axios.get(`http://localhost/api/v1/conferences/history/${id}`, {
+          const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/history/${id}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`
             }

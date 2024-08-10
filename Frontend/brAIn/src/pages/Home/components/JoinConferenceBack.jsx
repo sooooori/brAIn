@@ -26,7 +26,7 @@ const JoinConferenceBack = ({
       alert('회의 코드를 올바르게 입력해주세요.');
     } else {
       axios
-        .post(`http://localhost/api/v1/conferences/join`, {
+        .post(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/join`, {
           inviteCode: codeInputs.join('')
         })
         .then((result) => {

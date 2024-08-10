@@ -26,7 +26,7 @@ const NewConferenceBack = ({
     if (title.trim() && preparationTime > 0) {
       axios
         .post(
-          `http://localhost/api/v1/conferences`,
+          `${import.meta.env.VITE_API_BASE_URL}/v1/conferences`,
           {
             subject: title,
             time: preparationTime,
