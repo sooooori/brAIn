@@ -113,6 +113,10 @@ const Conference = () => {
           setTime(time_response.data.time);
         }
 
+        const countMemberInWaitingroom=await axios.get(`http://localhost/api/v1/conferences/countUser/${roomId}`);
+        console.log("인원",countMemberInWaitingroom.data);
+        setParticipantCount(countMemberInWaitingroom.data+1);
+
 
         const newClient = new Client({
           brokerURL: 'ws://localhost/ws',

@@ -6,10 +6,12 @@ import com.ssafy.brAIn.conferenceroom.dto.*;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.history.model.Role;
+import com.ssafy.brAIn.history.model.Status;
 import com.ssafy.brAIn.history.service.MemberHistoryService;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.service.MemberService;
 import com.ssafy.brAIn.util.RandomNicknameGenerator;
+import com.ssafy.brAIn.util.RedisUtils;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -31,6 +34,8 @@ public class ConferenceRoomController {
 
     @Autowired
     private JWTUtilForRoom jwtUtilForRoom;
+    @Autowired
+    private RedisUtils redisUtils;
 
     @GetMapping("/{roomId}")
     public ResponseEntity<?> getConferenceRoom(@PathVariable String roomId) {
@@ -64,7 +69,6 @@ public class ConferenceRoomController {
 
     @GetMapping
     public ResponseEntity<?> getConferenceRoomsInfo(@RequestParam("secureId") String secureId) {
-        System.out.println("여기되나요");
         ConferenceRoom conferenceRoom = conferenceRoomService.findBySecureId(secureId);
         ConferenceRoomResponse crr = new ConferenceRoomResponse(conferenceRoom, "", "");
         return ResponseEntity.status(200).body(crr);
@@ -116,5 +120,14 @@ public class ConferenceRoomController {
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Conference Room not found");
         }
+    }
+
+    @GetMapping("/countUser/{roomId}")
+    public ResponseEntity<?> countUser(@RequestHeader("Authorization") String token, @PathVariable String roomId) {
+        int come = memberHistoryService.getHistoryByRoomId(Integer.parseInt(roomId)).stream()
+                .filter((memberHistory -> memberHistory.getStatus().equals(Status.COME)))
+                .toList().size();
+
+        return ResponseEntity.ok(come);
     }
 }
