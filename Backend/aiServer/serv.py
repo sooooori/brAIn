@@ -1,16 +1,14 @@
 import json
 from flask import Flask, request, jsonify
-from openai import OpenAI
-from openai import AssistantEventHandler
+import openai  # 올바른 openai 라이브러리 임포트
 import time
 import unicodedata
 
 ASSISTANT_ID = 'asst_0I7SoatXnsvE47YRSKMJnc22'
-client = OpenAI(api_key='sk-proj-8JiLVZK2dojt4n6785OAT3BlbkFJ0hSiaAEqWjms3ACsQuTT')
+openai.api_key = 'sk-proj-8JiLVZK2dojt4n6785OAT3BlbkFJ0hSiaAEqWjms3ACsQuTT'
 
-class EventHandler(AssistantEventHandler):
+class EventHandler:
     def __init__(self):
-        super().__init__()
         self.generated_text = ""
         self.buffer = ""
     
@@ -47,7 +45,7 @@ class EventHandler(AssistantEventHandler):
         return self.generated_text[1:]
 
 def make_assistant(subject):
-    assistant = client.beta.assistants.create(
+    assistant = openai.Assistant.create(  # Assistant 생성 방법에 맞게 수정 필요
         name="회의 참가자",
         instructions= f"우리가 브레인 스토밍중인 주제는 {subject}입니다. 우리는 라운드로빈 방식으로 돌아가며 아이디어를 내고 있습니다",
         model="gpt-3.5-turbo-16k",
@@ -57,7 +55,7 @@ def make_assistant(subject):
 
 def wait_on_run(run, thread):
     while run.status == "queued" or run.status == "in_progress":
-        run = client.beta.threads.runs.retrieve(
+        run = openai.Threads.retrieve_run(  # Threads 사용법 수정 필요
             thread_id=thread.id,
             run_id=run.id,
         )
@@ -74,7 +72,7 @@ def make_thread():
     params = request.get_json()
     subject = params['subject']
     assistant_id = make_assistant(subject)
-    thread = client.beta.threads.create()
+    thread = openai.Threads.create()  # Threads 생성 방법 수정 필요
     response = {
         "assistantId": assistant_id,
         "threadId" : thread.id
@@ -87,7 +85,7 @@ def add_postit():
     post_it = params['postIt']
     thread_id = params['threadId']
     prompt = '다른 user의 아이디어입니다.' + post_it
-    message = client.beta.threads.messages.create(
+    message = openai.Threads.create_message(  # 메시지 생성 방법 수정 필요
         thread_id=thread_id,
         role="user",
         content= prompt
@@ -97,11 +95,11 @@ def add_postit():
 @app.route('/comment/add', methods=['POST'])
 def add_comment():
     params = request.get_json()
-    post_it=params['postIt']
+    post_it = params['postIt']
     comment = params['comment']
     thread_id = params['threadId']
-    prompt = post_it+'에 대한 다른 user의 추가 코멘트입니다.' + comment
-    message = client.beta.threads.messages.create(
+    prompt = post_it + '에 대한 다른 user의 추가 코멘트입니다.' + comment
+    message = openai.Threads.create_message(  # 메시지 생성 방법 수정 필요
         thread_id=thread_id,
         role="user",
         content= prompt
@@ -115,10 +113,10 @@ def round_robin_make_idea():
     assistant_id = params['assistantId']
     event_handler = EventHandler()
 
-    message = client.beta.threads.messages.create(
+    message = openai.Threads.create_message(  # 메시지 생성 방법 수정 필요
         thread_id=thread_id,
         role="user",
-        content= "너는 브레인 스토밍 회의에 참가한 사람입니다.\
+        content="너는 브레인 스토밍 회의에 참가한 사람입니다.\
             주제에 관련한 아이디어를 하나만 추가로 내주세요.\
             당신 또한 자신의 아이디어를 한두문장으로만 나타내야합니다.\
             다른 사람의 아이디어에 코멘트를 달 필요는 없습니다.\
@@ -126,7 +124,7 @@ def round_robin_make_idea():
             최대한 평범하게 사람이 대화하는것 처럼 답해주세요"
     )
 
-    with client.beta.threads.runs.stream(
+    with openai.Threads.stream_run(  # Run을 스트리밍하는 방법 수정 필요
         thread_id=thread_id,
         assistant_id=assistant_id,
         event_handler=event_handler,
@@ -141,17 +139,17 @@ def summary_ideas():
     thread_id = params['threadId']
     assistant_id = params['assistantId']
     event_handler = EventHandler()
-    message = client.beta.threads.messages.create(
+    message = openai.Threads.create_message(  # 메시지 생성 방법 수정 필요
         thread_id=thread_id,
         role="user",
-        content= f"지금까지 우리와 네가 낸 의견들을 정리하여 회의록으로 정리해주세요.\
+        content=f"지금까지 우리와 네가 낸 의견들을 정리하여 회의록으로 정리해주세요.\
         주제를 잊어선 안됩니다. 일부 의견만 언급해서는 안됩니다.\
         나왔던 의견들을 회의록 형식으로 정리하여야 합니다.\
         '패스'라고 말한 의견은 제외해주세요.\
         너가 낸 의견도 넣어서 정리해주세요. 반드시요. 꼭.\
         주제, 아이디어, 의견 정리, 향후 조치에 대해 정리해야 합니다.",
     )
-    with client.beta.threads.runs.stream(
+    with openai.Threads.stream_run(  # Run을 스트리밍하는 방법 수정 필요
         thread_id=thread_id,
         assistant_id=assistant_id,
         event_handler=event_handler,
@@ -173,12 +171,12 @@ def persona_make():
         이로 인해 나올 수 있는 제품 및 방향성을 제공해주세요.\
         페르소나의 형식에 맞춰서 너가 전부 작성해주세요"
     event_handler = EventHandler()
-    message = client.beta.threads.messages.create(
+    message = openai.Threads.create_message(  # 메시지 생성 방법 수정 필요
         thread_id=thread_id,
         role="user",
-        content= prompt
+        content=prompt
     )
-    with client.beta.threads.runs.stream(
+    with openai.Threads.stream_run(  # Run을 스트리밍하는 방법 수정 필요
         thread_id=thread_id,
         assistant_id=assistant_id,
         event_handler=event_handler,
@@ -201,12 +199,12 @@ def swot_make():
         SWOT분석만 만들면 됩니다. 다른 산출물을 만들 필요는 없습니다.\
         형식에 맞춰서 너가 전부 작성해주세요"
     event_handler = EventHandler()
-    message = client.beta.threads.messages.create(
+    message = openai.Threads.create_message(  # 메시지 생성 방법 수정 필요
         thread_id=thread_id,
         role="user",
-        content= prompt
+        content=prompt
     )
-    with client.beta.threads.runs.stream(
+    with openai.Threads.stream_run(  # Run을 스트리밍하는 방법 수정 필요
         thread_id=thread_id,
         assistant_id=assistant_id,
         event_handler=event_handler,
