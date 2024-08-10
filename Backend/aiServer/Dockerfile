@@ -11,7 +11,7 @@ COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 애플리케이션 코드 복사
-COPY Backend/aiServer/app.py /app/app.py
+COPY app.py /app/app.py
 
 # 애플리케이션 실행
 CMD ["python", "/app/app.py"]
