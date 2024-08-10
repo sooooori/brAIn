@@ -9,11 +9,12 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedHeaders("Authorization", "Content-Type")
-                .exposedHeaders("Custom-Header")
-                .maxAge(3600);
+        registry.addMapping("/**")  // 모든 경로에 대해 CORS 허용
+                .allowedOrigins("http://localhost:4173", "https://i11b203.p.ssafy.io")  // 허용할 도메인
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // 허용할 HTTP 메소드
+                .allowedHeaders("Authorization", "Content-Type", "Accept")  // 허용할 헤더
+                .exposedHeaders("Sec-WebSocket-Extensions", "Sec-WebSocket-Key", 
+                               "Sec-WebSocket-Version", "Sec-WebSocket-Protocol")  // WebSocket 관련 헤더
+                .allowCredentials(true);  // 자격 증명(쿠키 등) 허용 여부
     }
 }
