@@ -4,7 +4,7 @@ import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideoComponent from './UserVideoComponent';
 
-const APPLICATION_SERVER_URL = 'https://i11b203.p.ssafy.io/openvidu/apii';
+const APPLICATION_SERVER_URL = 'https://i11b203.p.ssafy.io/openvidu/api';
 const DEFAULT_SESSION_ID = null;
 
 const VideoConference = () => {

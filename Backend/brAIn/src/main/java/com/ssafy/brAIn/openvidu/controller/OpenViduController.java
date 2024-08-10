@@ -56,7 +56,7 @@ public class OpenViduController {
      * @param params    The Connection properties
      * @return The Token associated to the Connection
      */
-    @PostMapping("/v1/openvidu/sessions/{sessionId}/connections")
+    @PostMapping("/v1/openvidu/sessions/{sessionId}/connection")
     public ResponseEntity<String> createConnection(@PathVariable("sessionId") String sessionId,
                                                    @RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
