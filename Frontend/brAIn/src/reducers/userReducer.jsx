@@ -1,13 +1,12 @@
-import { ADD_USER, REMOVE_USER, SET_USERS, SET_USERNICK, SET_CURUSER, SET_NEXTUSER, UPDATE_TIMER, RESET_STATE } from '../actions/userActions';
+import { ADD_USER, REMOVE_USER, SET_USERS, SET_USERNICK, SET_CURUSER, SET_NEXTUSER, UPDATE_TIMER, RESET_STATE, UPDATE_PASS_STATUS, RESET_PASS_STATUS } from '../actions/userActions';
 
 const initialState = {
     users: [],
     nickname: "",
-    // 답변 패스
     currentUser: "",
     nextUser: "",
-    // 타이머
     timer: 0,
+    passStatus: {},
 };
 
 const userReducer = (state = initialState, action) => {
@@ -52,6 +51,21 @@ const userReducer = (state = initialState, action) => {
             }
         case RESET_STATE:
             return initialState;
+
+        case UPDATE_PASS_STATUS:
+            return {
+                ...state,
+                passStatus: {
+                    ...state.passStatus,
+                    [action.payload]: true, // 해당 사용자의 패스 상태를 true로 설정
+                },
+            };
+
+        case RESET_PASS_STATUS:
+            return {
+                ...state,
+                passStatus: {}, // 패스 상태 초기화
+            };
 
 
         default:

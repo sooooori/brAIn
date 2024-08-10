@@ -6,13 +6,20 @@ const MemberList = () => {
     const users = useSelector((state) => state.user.users) || [];
     const curUser = useSelector((state) => state.user.currentUser);
     const nickname = useSelector((state) => state.user.nickname);
+    const passStatus = useSelector((state) => state.user.passStatus);
 
     const [currentPage, setCurrentPage] = useState(0);
     const usersPerPage = 6;
 
+    useEffect(() => {
+        console.log('Pass Status:', passStatus);
+      }, [passStatus]);
+
     const updateCurrentPage = useCallback(() => {
         if (users.length > 0 && curUser) {
-            const currentUserIndex = users.findIndex(user => user.nickname === curUser.nickname);
+            const currentUserIndex = users.findIndex(
+                (user) => user.nickname === curUser
+            );
             if (currentUserIndex !== -1) {
                 setCurrentPage(Math.floor(currentUserIndex / usersPerPage));
             }
@@ -35,6 +42,9 @@ const MemberList = () => {
         document.querySelector('.profile-container').scrollBy({ left: -180 * usersPerPage, behavior: 'smooth' });
     }, [usersPerPage]);
 
+    const startIndex = currentPage * usersPerPage;
+    const displayedUsers = users.slice(startIndex, startIndex + usersPerPage);
+
     return (
         <div className="carousel-container">
             <button 
@@ -46,12 +56,16 @@ const MemberList = () => {
             </button>
             <div className="carousel">
                 <div className="profile-container">
-                    {users.map((user) => (
+                    {displayedUsers.map((user) => (
                         <div
-                            key={user.id}
-                            className={`profile ${user.nickname === curUser ? 'highlighted' : ''}`}
+                            key={user.id || user.nickname}
+                            className={`profile ${
+                                user.nickname === curUser ? 'highlighted' : ''}`}
                         >
                             {user.nickname === nickname && <p>Me</p>}
+                            {passStatus[user.nickname] && (
+                                <span className="pass-indicator">PASS</span>
+                            )}
                             <img
                                 src={`https://brain-content-profile.s3.ap-northeast-2.amazonaws.com/conference-image/${user.nickname.split(' ').pop()}.png`}
                                 alt={`${user.nickname.split(' ').pop()}`}
