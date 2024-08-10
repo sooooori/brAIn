@@ -165,7 +165,7 @@ async function createSession(sessionId) {
     try {
         console.log(headers)
         const response = await axios.post(
-            `${APPLICATION_SERVER_URL}/openvidu/api/sessions`,
+            `${APPLICATION_SERVER_URL}/sessions`,
             { customSessionId: sessionId },
             { headers }
         );
@@ -181,7 +181,7 @@ async function createToken(sessionId) {
     try {
         console.log(headers)
         const response = await axios.post(
-            `${APPLICATION_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
+            `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connection`,
             {},
             { headers }
         );
