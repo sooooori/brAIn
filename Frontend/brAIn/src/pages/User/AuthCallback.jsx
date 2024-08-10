@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from '../../utils/Axios';
+// import axios from '../../utils/Axios';
+import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { login } from '../../features/auth/authSlice';
 
