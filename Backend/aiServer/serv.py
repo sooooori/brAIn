@@ -1,13 +1,11 @@
+import json
 from flask import Flask, request, jsonify
 from openai import OpenAI
-from IPython.display import display
-import json
-from typing_extensions import override
 from openai import AssistantEventHandler
 import time
 import unicodedata
 
-ASSITANT_ID = 'asst_0I7SoatXnsvE47YRSKMJnc22'
+ASSISTANT_ID = 'asst_0I7SoatXnsvE47YRSKMJnc22'
 client = OpenAI(api_key='sk-proj-8JiLVZK2dojt4n6785OAT3BlbkFJ0hSiaAEqWjms3ACsQuTT')
 
 class EventHandler(AssistantEventHandler):
@@ -16,12 +14,10 @@ class EventHandler(AssistantEventHandler):
         self.generated_text = ""
         self.buffer = ""
     
-    @override
     def on_text_created(self, text) -> None:
         self.buffer += text.value
         self._process_buffer()
     
-    @override
     def on_text_delta(self, delta, snapshot):
         self.buffer += delta.value
         self._process_buffer()
@@ -50,37 +46,24 @@ class EventHandler(AssistantEventHandler):
     def get_generated_text(self):
         return self.generated_text[1:]
 
-    
-
-def make_assitant(subject):
+def make_assistant(subject):
     assistant = client.beta.assistants.create(
         name="회의 참가자",
         instructions= f"우리가 브레인 스토밍중인 주제는 {subject}입니다. 우리는 라운드로빈 방식으로 돌아가며 아이디어를 내고 있습니다",
         model="gpt-3.5-turbo-16k",
     )
-    # 생성된 챗봇의 정보를 JSON 형태로 출력합니다.
-    show_json(assistant)
-    ASSISTANT_ID = assistant.id
-    print(f"[생성한 Assistants ID]\n{ASSISTANT_ID}")
-    return ASSISTANT_ID
+    print(f"[생성한 Assistants ID]\n{assistant.id}")
+    return assistant.id
 
 def wait_on_run(run, thread):
-    # 주어진 실행(run)이 완료될 때까지 대기합니다.
-    # status 가 "queued" 또는 "in_progress" 인 경우에는 계속 polling 하며 대기합니다.
     while run.status == "queued" or run.status == "in_progress":
-        # run.status 를 업데이트합니다.
         run = client.beta.threads.runs.retrieve(
             thread_id=thread.id,
             run_id=run.id,
         )
-        # API 요청 사이에 잠깐의 대기 시간을 두어 서버 부하를 줄입니다.
         time.sleep(0.5)
     return run
 
-def show_json(obj):
-    # obj의 모델을 JSON 형태로 변환한 후 출력합니다.
-    display(json.loads(obj.model_dump_json()))
-    
 def convert_json(obj):
     return json.loads(obj.model_dump_json())
 
@@ -90,10 +73,10 @@ app = Flask(__name__)
 def make_thread():
     params = request.get_json()
     subject = params['subject']
-    assitant_id = make_assitant(subject)
+    assistant_id = make_assistant(subject)
     thread = client.beta.threads.create()
     response = {
-        "assistantId": assitant_id,
+        "assistantId": assistant_id,
         "threadId" : thread.id
     }
     return jsonify(response)
@@ -109,7 +92,7 @@ def add_postit():
         role="user",
         content= prompt
     )
-    return "suceess"
+    return "success"
 
 @app.route('/comment/add', methods=['POST'])
 def add_comment():
@@ -123,8 +106,7 @@ def add_comment():
         role="user",
         content= prompt
     )
-    return "suceess"
-
+    return "success"
 
 @app.route('/postIt/make', methods=['POST'])
 def round_robin_make_idea():
@@ -183,16 +165,6 @@ def persona_make():
     thread_id = params['threadId']
     assistant_id = params['assistantId']
     idea = params['idea']
-    # details = params['details']
-    # prompt = f"우리는 지금까지 나온 아이디어중에 {idea}라는 내용이 있습니다. 세부 내용으로는"
-    # for item in details:
-    #     prompt += f", {item['detail']}"
-    # prompt += "들이 나왔습니다. 이러한 아이디어에 대한 사용자 페르소나를 만들어주겠습니까?\
-    #     세부 내용에 대해 대답하는 것이 아닌 아이디어에 대한 세부내용까지 고려하여 페르소나를 만들어주세요\
-    #     페르소나만 만들면 됩니다. 다른 산출물을 만들 필요는 없습니다.\
-    #     나이, 직업, 관심사, 특징 및 행동을 정리하고\
-    #     이로 인해 나올 수 있는 제품 및 방향성을 제공해주세요.\
-    #     페르소나의 형식에 맞춰서 너가 전부 작성해주세요"
     prompt = f"우리는 지금까지 나온 아이디어중에 {idea}라는 내용이 있습니다.\
         이러한 아이디어에 대한 사용자 페르소나를 만들어주겠습니까?\
         세부 내용에 대해 대답하는 것이 아닌 아이디어에 대한 세부내용까지 고려하여 페르소나를 만들어주세요\
@@ -213,7 +185,6 @@ def persona_make():
     ) as stream:
         stream.until_done()
     return event_handler.get_generated_text()
-
 
 @app.route('/swot/make', methods=['POST'])
 def swot_make():
@@ -249,5 +220,3 @@ def user():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
