@@ -4,7 +4,7 @@ import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideoComponent from './UserVideoComponent';
 
-const APPLICATION_SERVER_URL = 'https://i11b203.p.ssafy.io/api';
+const APPLICATION_SERVER_URL = 'https://i11b203.p.ssafy.io/openvidu/api';
 const DEFAULT_SESSION_ID = null;
 
 const VideoConference = () => {
@@ -165,7 +165,7 @@ async function createSession(sessionId) {
     try {
         console.log(headers)
         const response = await axios.post(
-            `${APPLICATION_SERVER_URL}/v1/openvidu/sessions`,
+            `${APPLICATION_SERVER_URL}/sessions`,
             { customSessionId: sessionId },
             { headers }
         );
@@ -181,7 +181,7 @@ async function createToken(sessionId) {
     try {
         console.log(headers)
         const response = await axios.post(
-            `${APPLICATION_SERVER_URL}/v1/openvidu/sessions/${sessionId}/connection`,
+            `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connection`,
             {},
             { headers }
         );
