@@ -12,6 +12,7 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
   const [conferenceCode, setConferenceCode] = useState(null);
   const [conferenceSubject, setConferenceSubject] = useState(null);
   const [isSharing, setIsSharing] = useState(false);
+  const token = localStorage.getItem('accessToken');
 
   const navigate = useNavigate();
   const role = useSelector((state) => state.conference.role); // Get role from Redux
@@ -23,7 +24,6 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
         setError(null);
 
         try {
-          const token = localStorage.getItem('accessToken');
           const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences`, {
             params: { secureId },
             headers: {
