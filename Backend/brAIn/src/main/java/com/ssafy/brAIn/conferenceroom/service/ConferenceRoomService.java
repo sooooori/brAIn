@@ -114,6 +114,7 @@ public class ConferenceRoomService {
         conferenceRoomRepository.save(conferenceRoom);
     }
 
+    // 회의 결과 요약 정보
     public String generateMeetingReport(Integer roomId) {
         // Step 1: 특정 회의실 정보와 투표 결과 가져오기
         ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(roomId)
@@ -136,57 +137,63 @@ public class ConferenceRoomService {
         List<Vote> allIdeas = new ArrayList<>(topThreeIdeas);
         allIdeas.addAll(remainingIdeas);
 
-        // Step 3: 보고서 작성 시작
-        StringBuilder reportBuilder = new StringBuilder();
-        reportBuilder.append("Meeting Report\n\n");
-        reportBuilder.append("Subject: ").append(conferenceRoom.getSubject()).append("\n\n");  // 회의 주제 추가
-        reportBuilder.append("Top 3 Ideas:\n");
-
-        // Step 4: 상위 3개의 아이디어에 대해 관련 정보 추가
-        for (Vote vote : topThreeIdeas) {
-            RoundPostIt postIt = vote.getRoundPostIt(); // 투표와 연결된 포스트잇 가져오기
-            String ideaContent = postIt.getContent(); // 포스트잇 내용 가져오기
-            List<Comment> participantComments = commentRepository.findByRoundPostIt_Id(postIt.getId()); // 포스트잇에 대한 코멘트 가져오기
-
-            reportBuilder.append("Idea: ").append(ideaContent).append("\n");
-            reportBuilder.append("Participant Comments:\n");
-            for (Comment comment : participantComments) {
-                reportBuilder.append(" - ").append(comment.getContent()).append("\n");
-            }
-            reportBuilder.append("\n"); // 다음 아이디어와의 구분을 위해 빈 줄 추가
-        }
-
-        // Step 5: 나머지 아이디어에 대해 관련 정보 추가
-        reportBuilder.append("Other Ideas:\n");
-        for (Vote vote : remainingIdeas) {
-            RoundPostIt postIt = vote.getRoundPostIt(); // 투표와 연결된 포스트잇 가져오기
-            String ideaContent = postIt.getContent(); // 포스트잇 내용 가져오기
-            List<Comment> participantComments = commentRepository.findByRoundPostIt_Id(postIt.getId()); // 포스트잇에 대한 코멘트 가져오기
-
-            reportBuilder.append("Idea: ").append(ideaContent).append("\n");
-            reportBuilder.append("Participant Comments:\n");
-            for (Comment comment : participantComments) {
-                reportBuilder.append(" - ").append(comment.getContent()).append("\n");
-            }
-            reportBuilder.append("\n"); // 다음 아이디어와의 구분을 위해 빈 줄 추가
-        }
-
-        // Step 6: 전체 아이디어에 대한 종합 페르소나 및 SWOT 분석 추가
+        // Step 3: 전체 아이디어 내용 수집
         String allIdeasContent = allIdeas.stream()
                 .map(vote -> vote.getRoundPostIt().getContent())
                 .collect(Collectors.joining("\n"));
-
-        String personaResult = aiService.personaMake(allIdeasContent, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
-        reportBuilder.append("Persona Analysis:\n").append(personaResult).append("\n");
 
         List<String> allDetails = allIdeas.stream()
                 .flatMap(vote -> commentRepository.findByRoundPostIt_Id(vote.getRoundPostIt().getId()).stream().map(Comment::getContent))
                 .collect(Collectors.toList());
 
+        // Step 4: AI를 이용한 전체 요약본 생성
+        String summary = aiService.makeSummary(conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
+
+        // Step 5: 페르소나 및 SWOT 분석 추가 (필요한 경우)
+        String personaResult = aiService.personaMake(allIdeasContent, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
         String swotResult = aiService.swotMake(allIdeasContent, allDetails, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
+
+        // Step 6: 최종 보고서 구성
+        StringBuilder reportBuilder = new StringBuilder();
+        reportBuilder.append("Meeting Report\n\n");
+        reportBuilder.append("Subject: ").append(conferenceRoom.getSubject()).append("\n\n");  // 회의 주제 추가
+        reportBuilder.append("Summary:\n").append(summary).append("\n\n");  // AI 요약본 추가
+
+        // Step 7: 각 아이디어와 그에 따른 코멘트 추가
+        reportBuilder.append("Top 3 Ideas:\n");
+        for (Vote vote : topThreeIdeas) {
+            RoundPostIt postIt = vote.getRoundPostIt();
+            String ideaContent = postIt.getContent();
+            List<Comment> participantComments = commentRepository.findByRoundPostIt_Id(postIt.getId());
+
+            reportBuilder.append("Idea: ").append(ideaContent).append("\n");
+            reportBuilder.append("Participant Comments:\n");
+            for (Comment comment : participantComments) {
+                reportBuilder.append(" - ").append(comment.getContent()).append("\n");
+            }
+            reportBuilder.append("\n"); // 다음 아이디어와의 구분을 위해 빈 줄 추가
+        }
+
+        reportBuilder.append("Other Ideas:\n");
+        for (Vote vote : remainingIdeas) {
+            RoundPostIt postIt = vote.getRoundPostIt();
+            String ideaContent = postIt.getContent();
+            List<Comment> participantComments = commentRepository.findByRoundPostIt_Id(postIt.getId());
+
+            reportBuilder.append("Idea: ").append(ideaContent).append("\n");
+            reportBuilder.append("Participant Comments:\n");
+            for (Comment comment : participantComments) {
+                reportBuilder.append(" - ").append(comment.getContent()).append("\n");
+            }
+            reportBuilder.append("\n"); // 다음 아이디어와의 구분을 위해 빈 줄 추가
+        }
+
+        // Step 8: 페르소나 및 SWOT 분석 결과 추가
+        reportBuilder.append("Persona Analysis:\n").append(personaResult).append("\n\n");
         reportBuilder.append("SWOT Analysis:\n").append(swotResult).append("\n");
 
-        // Step 7: 최종 보고서 반환
+        // Step 9: 최종 보고서 반환
         return reportBuilder.toString();
     }
+
 }
