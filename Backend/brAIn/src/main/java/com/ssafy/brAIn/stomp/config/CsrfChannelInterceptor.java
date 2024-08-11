@@ -29,7 +29,7 @@ public class CsrfChannelInterceptor implements ChannelInterceptor {
 
 
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        String conferenceToken = accessor.getFirstNativeHeader("Authorization");
+        String conferenceToken = accessor.getFirstNativeHeader("AuthorizationRoom");
 
 //        System.out.println("preSend 시작");
 //        System.out.println("conferenceToken: " + conferenceToken);

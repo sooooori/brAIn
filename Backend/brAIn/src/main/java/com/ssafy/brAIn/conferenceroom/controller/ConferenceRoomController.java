@@ -85,10 +85,11 @@ public class ConferenceRoomController {
     @PostMapping("/{url}")
     public ResponseEntity<?> joinConferenceRoom(@PathVariable String url, @RequestHeader("Authorization") String token) {
         ConferenceRoom findConference = conferenceRoomService.findBySecureId(url);
+
         token = token.split(" ")[1];
         Claims claims = JwtUtil.extractToken(token);
         String email = claims.get("email").toString();
-
+        System.out.println("방은 들어감");
         String randomNick = RandomNicknameGenerator.generateNickname();
 
         String jwtTokenForRoom = jwtUtilForRoom.createJwt("access", email, "MEMBER", randomNick, findConference.getId()+"", 100000000L);

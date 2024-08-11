@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.comment.controller;
 
+import com.ssafy.brAIn.auth.jwt.JWTUtilForRoom;
 import com.ssafy.brAIn.comment.dto.CommentCreateRequest;
 import com.ssafy.brAIn.comment.dto.CommentRequest;
 import com.ssafy.brAIn.comment.dto.RoundPostItContent;
@@ -21,10 +22,11 @@ public class CommentController {
 
     private final CommentService commentService;
     private final RoundPostItService roundPostItService;
+    private final JWTUtilForRoom jwtUtilForRoom;
 
     // 코멘트 생성
     @PostMapping("/create")
-    public ResponseEntity<?> createComment(@RequestHeader("Authorization") String token,
+    public ResponseEntity<?> createComment(@RequestHeader("AuthorizationRoom") String token,
                                            @RequestBody CommentCreateRequest commentCreateRequest) {
         String accessToken = token.replace("Bearer ", "");
         Integer roundPostItId = commentCreateRequest.getRoundPostItId();
@@ -36,7 +38,7 @@ public class CommentController {
 
     // 코멘트 수정
     @PutMapping("/update")
-    public ResponseEntity<?> updateComment(@RequestHeader("Authorization") String token,
+    public ResponseEntity<?> updateComment(@RequestHeader("AuthorizationRoom") String token,
                                            @RequestBody CommentCreateRequest commentCreateRequest) {
         String accessToken = token.replace("Bearer ", "");
         Integer roundPostItId = commentCreateRequest.getRoundPostItId();
@@ -48,7 +50,7 @@ public class CommentController {
 
     // 코멘트 삭제
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteComment(@RequestHeader("Authorization") String token,
+    public ResponseEntity<?> deleteComment(@RequestHeader("AuthorizationRoom") String token,
                                            @RequestBody CommentRequest commentRequest) {
         String accessToken = token.replace("Bearer ", "");
         Integer roundPostItId = commentRequest.getRoundPostItId();
@@ -60,7 +62,7 @@ public class CommentController {
 
     // Ready 상태 설정
     @PutMapping("/{roundPostItId}/ready")
-    public ResponseEntity<?> changeReady(@RequestHeader("Authorization") String token,
+    public ResponseEntity<?> changeReady(@RequestHeader("AuthorizationRoom") String token,
                                          @PathVariable Integer roundPostItId) {
         String accessToken = token.replace("Bearer ", "");
 
@@ -76,9 +78,10 @@ public class CommentController {
     }
 
     @PostMapping
-    public ResponseEntity<?> getComment(@RequestBody RoundPostItContent roundPostItContent, @RequestHeader("Authorization") String token) {
-        String accessToken = token.replace("Bearer ", "");
-        RoundPostIt roundPostIt=roundPostItService.findByContent(roundPostItContent.getContent()).get();
+    public ResponseEntity<?> getComment(@RequestBody RoundPostItContent roundPostItContent, @RequestHeader("AuthorizationRoom") String token) {
+        String roomToken = token.replace("Bearer ", "");
+        String roomId=jwtUtilForRoom.getRoomId(roomToken);
+        RoundPostIt roundPostIt=roundPostItService.findByContentAndRoom(roundPostItContent.getContent(),roomId).get();
 
         List<Comment> comments=commentService.findByPostItId(roundPostIt);
 
