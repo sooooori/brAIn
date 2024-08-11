@@ -1,0 +1,75 @@
+services:
+  db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: ssafy
+      MYSQL_DATABASE: brAIn
+      MYSQL_USER: ssafy
+      MYSQL_PASSWORD: ssafy
+    ports:
+      - "3306:3306"    # MySQL 포트 매핑
+    volumes:
+      - ./db_data:/var/lib/mysql  # 볼륨 마운트 설정
+    networks:
+      - brain-net
+
+  aiserver:
+    build: ./Backend/aiServer
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+    networks:
+      - brain-net
+
+  rabbitmq:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5672:5672"    # RabbitMQ 기본 포트
+      - "15672:15672"  # RabbitMQ 관리 콘솔 포트
+      - "61613:61613"  # RabbitMQ STOMP 포트 추가
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - brain-net
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"    # Redis 기본 포트
+    networks:
+      - brain-net
+
+  frontend:
+    build:
+      context: ./Frontend/brAIn
+    ports:
+      - "4173:4173"        # 프론트엔드 포트 (필요에 따라 수정)
+    networks:
+      - brain-net
+
+  backend:
+    build:
+      context: ./Backend/brAIn
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/brAIn?allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=ssafy
+      - SPRING_DATASOURCE_PASSWORD=ssafy
+    depends_on:
+      - db
+      - rabbitmq
+      - redis
+    ports:
+      - "8080:8080"    # 스프링부트 포트 (필요에 따라 수정)
+    networks:
+      - brain-net
+
+networks:
+  brain-net:
+    driver: bridge
+
+volumes:
+  db_data:

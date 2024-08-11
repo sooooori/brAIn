@@ -30,6 +30,7 @@ import { addUser, removeUser, setUsers, setUserNick, setCuruser, updatePassStatu
 import { setCurStep, upRound, setRound, setRoom } from '../../actions/conferenceActions';
 import { sendToBoard } from '../../actions/roundRobinBoardAction';
 import VoteResultsModal from './components/VoteResultsModal';
+import VideoConference from './components/VideoConference';
 
 const Conference = () => {
   const dispatch = useDispatch();
@@ -631,7 +632,8 @@ const Conference = () => {
                 )}
 
               </div>
-                <WhiteBoard subject={subject} /> 
+              <WhiteBoard subject={subject} /> 
+              <VideoConference></VideoConference>
             </div>
           </div>
         )}

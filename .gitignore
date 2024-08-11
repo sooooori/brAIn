@@ -1,0 +1,7 @@
+# 무시할 파일 및 폴더 목록
+
+# 모든 workspace.xml 파일 무시
+**/workspace.xml
+
+# 루트의 db-data 폴더 무시
+/db_data/

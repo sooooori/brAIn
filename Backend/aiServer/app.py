@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from openai import OpenAI
-from IPython.display import display
 import json
 from typing_extensions import override
 from openai import AssistantEventHandler
@@ -50,8 +49,6 @@ class EventHandler(AssistantEventHandler):
     def get_generated_text(self):
         return self.generated_text[1:]
 
-    
-
 def make_assitant(subject):
     assistant = client.beta.assistants.create(
         name="회의 참가자",
@@ -59,7 +56,7 @@ def make_assitant(subject):
         model="gpt-3.5-turbo-16k",
     )
     # 생성된 챗봇의 정보를 JSON 형태로 출력합니다.
-    show_json(assistant)
+    print(json.dumps(json.loads(assistant.model_dump_json()), indent=2))
     ASSISTANT_ID = assistant.id
     print(f"[생성한 Assistants ID]\n{ASSISTANT_ID}")
     return ASSISTANT_ID
@@ -79,7 +76,7 @@ def wait_on_run(run, thread):
 
 def show_json(obj):
     # obj의 모델을 JSON 형태로 변환한 후 출력합니다.
-    display(json.loads(obj.model_dump_json()))
+    print(json.dumps(json.loads(obj.model_dump_json()), indent=2))
     
 def convert_json(obj):
     return json.loads(obj.model_dump_json())
@@ -124,7 +121,6 @@ def add_comment():
         content= prompt
     )
     return "suceess"
-
 
 @app.route('/postIt/make', methods=['POST'])
 def round_robin_make_idea():
@@ -183,16 +179,6 @@ def persona_make():
     thread_id = params['threadId']
     assistant_id = params['assistantId']
     idea = params['idea']
-    # details = params['details']
-    # prompt = f"우리는 지금까지 나온 아이디어중에 {idea}라는 내용이 있습니다. 세부 내용으로는"
-    # for item in details:
-    #     prompt += f", {item['detail']}"
-    # prompt += "들이 나왔습니다. 이러한 아이디어에 대한 사용자 페르소나를 만들어주겠습니까?\
-    #     세부 내용에 대해 대답하는 것이 아닌 아이디어에 대한 세부내용까지 고려하여 페르소나를 만들어주세요\
-    #     페르소나만 만들면 됩니다. 다른 산출물을 만들 필요는 없습니다.\
-    #     나이, 직업, 관심사, 특징 및 행동을 정리하고\
-    #     이로 인해 나올 수 있는 제품 및 방향성을 제공해주세요.\
-    #     페르소나의 형식에 맞춰서 너가 전부 작성해주세요"
     prompt = f"우리는 지금까지 나온 아이디어중에 {idea}라는 내용이 있습니다.\
         이러한 아이디어에 대한 사용자 페르소나를 만들어주겠습니까?\
         세부 내용에 대해 대답하는 것이 아닌 아이디어에 대한 세부내용까지 고려하여 페르소나를 만들어주세요\
@@ -213,7 +199,6 @@ def persona_make():
     ) as stream:
         stream.until_done()
     return event_handler.get_generated_text()
-
 
 @app.route('/swot/make', methods=['POST'])
 def swot_make():
@@ -248,6 +233,4 @@ def user():
     return 'Hello, User!'
 
 if __name__ == '__main__':
-    app.run(debug=True)
-
-
+    app.run(host='0.0.0.0', port=5000, debug=False)
