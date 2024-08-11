@@ -23,7 +23,7 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
         setError(null);
 
         try {
-          const token = localStorage.getItem('authToken');
+          const token = localStorage.getItem('accessToken');
           const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences`, {
             params: { secureId },
             headers: {
