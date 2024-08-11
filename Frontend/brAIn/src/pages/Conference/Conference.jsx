@@ -121,9 +121,14 @@ const Conference = () => {
           setTimeLeft(timeLeft);
         }
 
-        // const countMemberInWaitingroom=await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/countUser/${roomId}`);
-        // console.log("인원",countMemberInWaitingroom.data);
-        // setParticipantCount(countMemberInWaitingroom.data+1);
+        const countMemberInWaitingroom=await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/countUser/${roomId}`,{},{
+          headers: {
+            'Content-Type': 'application/json',
+            AuthorizationRoom: localStorage.getItem('accessToken')
+          }
+        });
+        console.log("인원",countMemberInWaitingroom.data);
+        setParticipantCount(countMemberInWaitingroom.data+1);
 
 
 
