@@ -17,7 +17,7 @@ const VideoConference = () => {
     const [subscribers, setSubscribers] = useState([]);
     const [currentVideoDevice, setCurrentVideoDevice] = useState(undefined);
     const OV = new OpenVidu();
-    const customAxios = axios.create();
+
     const username = "OPENVIDUAPP";
     const password = "ssafybrain"; // Replace with your actual OPENVIDU_SECRET
     const credentials = btoa(`${username}:${password}`);
@@ -164,7 +164,7 @@ const VideoConference = () => {
 async function createSession(sessionId) {
     try {
         console.log(headers)
-        const response = await customAxios.post(
+        const response = await axios.post(
             `${APPLICATION_SERVER_URL}/sessions`,
             { customSessionId: sessionId },
             { headers }
@@ -180,7 +180,7 @@ async function createSession(sessionId) {
 async function createToken(sessionId) {
     try {
         console.log(headers)
-        const response = await customAxios.post(
+        const response = await axios.post(
             `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connection`,
             {},
             { headers }
