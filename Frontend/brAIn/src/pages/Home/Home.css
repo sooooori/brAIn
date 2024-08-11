@@ -1,0 +1,304 @@
+body {
+    margin: 0;
+    font-family: 'Gothic', sans-serif;
+    /* background: url('images/back-tmp.png') no-repeat center center fixed; */
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.perspective {
+    perspective: 1000px; 
+}
+
+.card {
+    position: relative;
+    width: 300px;
+    height: 400px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    transform-origin: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.rotate-left {
+    transform: rotateY(-180deg);
+}
+
+.rotate-right {
+    transform: rotateY(180deg);
+}
+
+.backface-hidden {
+    backface-visibility: hidden;
+}
+
+.home-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 60px);
+    padding: 20px;
+    margin-top: 30px;
+    margin-bottom: 100px;
+}
+
+.card-container {
+    display: flex;
+    gap: 150px;
+    perspective: 1000px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 150px;
+}
+
+.card-container > div {
+    position: relative;
+    transform-style: preserve-3d;
+}
+
+.intro-container {
+    margin-top : 80px;
+    width: 90%;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 50px;
+}
+
+.intro-container img {
+    max-width: 100%;
+    height: auto;
+}
+
+.section {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+    margin-bottom: 30px;
+    background-color: #ffffff;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.section img {
+    max-width: 80%;
+    height: auto;
+    max-height: 80%;
+}
+
+.section.fade-left {
+    
+    opacity: 1;
+    transform: translateX(-50px);
+}
+
+.section.fade-right {
+    opacity: 1;
+    transform: translateX(50px);
+}
+
+.section.fade-center {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section.fade-out {
+    opacity: 0;
+    transition: opacity 1s ease-out;
+}
+
+.home-title {
+    font-family: 'Gothic', sans-serif;
+    font-size: 3rem;
+    margin-bottom: 60px;
+    text-align: center;
+    color: #333;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.home-subtitle {
+    font-family: 'Gothic', sans-serif;
+    font-size: 1.75rem;
+    text-align: center;
+    margin-bottom: 50px;
+    color: #555;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.home-title-login {
+    font-family: 'Gothic', sans-serif;
+    font-size: 3rem;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #333;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.home-subtitle-login {
+    font-family: 'Gothic', sans-serif;
+    font-size: 1.75rem;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #555;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.home-intro {
+    text-align: center;
+    color: #333;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.button-primary {
+    background-color: rgb(0, 0, 0); /* Black background color */
+    width: 300px;
+    font-size: 0.875rem; /* Adjust font size if necessary */
+    padding: 4px 8px; /* Further reduce padding to make the button smaller */
+    margin-top: 15px; /* Adjust margin for appropriate spacing */
+    cursor: pointer;
+    border: none; /* Remove default border */
+    border-radius: 4px; /* Rounded corners for a softer look */
+    color: white; /* Button text color */
+    display: inline-block; /* Ensure button size fits its content */
+    text-align: center; /* Center text within the button */
+    line-height: 1.5; /* Adjust line height if necessary */
+    transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+.button-primary:hover {
+    background-color: darkorange; /* Darker orange on hover */
+}
+
+
+/* Intro section styling */
+.home-intro {
+    text-align: center;
+    color: #333;
+    padding: 20px; /* Add padding to intro section */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-radius: 10px; /* Rounded corners */
+    background-color: rgba(255, 255, 255, 0.8); /* White background with slight transparency */
+}
+
+/* Button styling */
+.button-primary {
+    background-color: rgb(0, 0, 0); /* Use orange as primary color */
+    font-size: 1.25rem; /* Adjust button font size */
+    padding: 10px 20px; /* Adjust padding for better spacing */
+    margin-top: 30px; /* Increase space above button */
+    cursor: pointer;
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners for the button */
+    color: white; /* Button text color */
+    transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+.button-primary:hover {
+    background-color: darkorange; /* Darker orange on hover */
+}
+
+/* Container for the list of conferences */
+.home-conference-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); /* Auto-fit columns with a minimum width of 300px */
+    gap: 20px; /* Space between cards */
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px; /* Padding around the list */
+    box-sizing: border-box; /* Include padding in width calculation */
+  }
+  
+  /* Individual conference card styling */
+  .home-conference-card {
+    cursor: pointer;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; /* Include padding and border in width calculation */
+  }
+  
+  /* Conference card heading */
+  .home-conference-card h3 {
+    margin: 0 0 10px;
+    font-size: 1.5rem;
+  }
+  
+  /* Conference card paragraphs */
+  .home-conference-card p {
+    margin: 5px 0;
+    font-size: 1rem;
+  }
+  
+  .home-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.home-pagination button {
+    background-color: #e0e0e0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px 20px;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.home-pagination button:disabled {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+}
+
+.home-pagination button:hover:not(:disabled) {
+    background-color: darkorange;
+}
+
+.home-pagination span {
+    font-size: 1rem;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: color 0.3s, font-weight 0.3s;
+}
+
+/* 현재 페이지 스타일 */
+.page-number.active {
+    font-weight: bold;
+    color: blue;
+}
+
+/* 비활성 페이지 스타일 */
+.page-number.inactive {
+    color: gray;
+}
+
+/* Modal 스타일 */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    /* 기타 스타일 */
+    justify-content: center;
+    align-items: center;
+  }

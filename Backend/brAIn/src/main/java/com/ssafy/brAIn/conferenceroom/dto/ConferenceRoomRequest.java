@@ -10,10 +10,9 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ConferenceRoomRequest {
     private String subject;
-    private int maxParticipate;
     private int time;
 
     public ConferenceRoom toConferenceRoom() {
-        return ConferenceRoom.builder().subject(subject).maxParticipate(maxParticipate).time(time).build();
+        return ConferenceRoom.builder().subject(subject).build();
     }
 }

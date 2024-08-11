@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.roundboard.entity;
 
+import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -27,5 +28,4 @@ public class RoundBoard {
         this.conferenceRoom=conferenceRoom;
         this.currentRound=currentRound;
     }
-    
 }

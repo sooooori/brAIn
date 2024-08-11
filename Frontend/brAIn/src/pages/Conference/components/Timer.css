@@ -1,0 +1,70 @@
+/* Timer.css */
+
+.timer-container {
+  border: 2px solid #6a0dad; /* 보라색 경계선 */
+  border-radius: 8px; /* 테두리 둥글게 */
+  padding: 10px;
+  width: 200px; /* 타이머 컨테이너의 너비 조정 */
+  height: 30px; /* 타이머 컨테이너의 높이 조정 */
+  text-align: center;
+  background-color: #f9f9f9; /* 밝은 배경 색상 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 약간의 그림자 */
+  margin: 10px auto; /* 상하 마진 조정 */
+  display: flex; /* 내부 요소를 가로로 배치 */
+  align-items: center; /* 세로 중앙 정렬 */
+  gap: 30px;
+}
+
+.timer-icon {
+  width: 30px; /* 타이머 아이콘 크기 감소 */
+  height: 30px;
+}
+
+.timer-display {
+  font-weight: bold;
+  font-size: 1.5em; /* 폰트 크기 감소 */
+  font-family: 'Courier New', Courier, monospace;
+  color: #333; /* 타이머 텍스트 색상 */
+  
+}
+
+.timer-buttons {
+  display: flex;
+  gap: 5px; /* 버튼 간격 조정 */
+}
+
+.timer-button {
+  background: white; /* 버튼 배경 색상 */
+  border: 2px solid #000000; /* 버튼 테두리 색상 */
+  border-radius: 6px; /* 버튼 테두리 둥글게 */
+  cursor: pointer;
+  padding: 5px; /* 버튼 패딩 감소 */
+  transition: background-color 0.3s, border-color 0.3s; /* 부드러운 전환 효과 */
+  display: flex; /* 버튼 내부 아이콘 정렬 */
+  align-items: center;
+  justify-content: center;
+}
+
+.button-icon {
+  width: 15px; /* 아이콘 크기 감소 */
+  height: 15px;
+}
+
+.timer-button.add-time {
+  color: #6a0dad; /* + 버튼 텍스트 색상 */
+}
+
+.timer-button.pass-turn {
+  color: #ff4d4d; /* 패스 버튼 텍스트 색상 */
+}
+
+.timer-button:hover {
+  background-color: #f1f1f1; /* 버튼 호버 배경색 */
+  border-color: #6a0dad; /* 버튼 호버 테두리 색상 */
+}
+
+.timer-button.pass-turn:hover {
+  background-color: #f1f1f1; /* 패스 버튼 호버 배경색 */
+  border-color: #e60000; /* 패스 버튼 호버 테두리 색상 */
+}
+

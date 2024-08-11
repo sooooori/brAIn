@@ -1,0 +1,132 @@
+/* Existing styles */
+.modal-header {
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.signup-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.signup-box {
+    width: 100%;
+    max-width: 500px;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.logo-img-join {
+    width: 150px; /* 로고 크기 조정 */
+    height: auto;
+    margin-right: 60px;
+}
+
+.header-text h1 {
+    margin: 10px 0;
+    font-size: 40px;
+}
+
+.header-text p {
+    margin: 0;
+    font-size: 18px;
+}
+
+.input-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.input-field label {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.input-field .MuiTextField-root {
+    width: 100%;
+}
+
+.status-message {
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.status-message.invalid {
+    color: red;
+}
+
+.timer {
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.submit-button {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.submit-button:hover:not(:disabled) {
+    background-color: darkorange;
+}
+
+@media (max-width: 500px) {
+    .signup-box {
+        width: 100%;
+    }
+
+    .input-field {
+        margin-bottom: 15px;
+    }
+}
+
+/* Adjusted styles for button width */
+.textfield-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjust the gap as needed */
+}
+
+.check-email-button,
+.verify-button {
+    width: calc(66.66% - 10px); /* Approximately 2/3 width minus the gap */
+    flex: 1;
+}
+
+.check-email-button {
+    margin-right: 10px; /* Space between email check and verify buttons */
+}
+
+.verify-button {
+    margin-left: 10px; /* Space between verify button and email check button */
+}
+
+/* New styles for placeholder font size */
+input::placeholder,
+textarea::placeholder {
+    font-size: 12px; /* Set placeholder font size to 12px */
+}

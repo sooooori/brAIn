@@ -1,22 +1,23 @@
 package com.ssafy.brAIn.conferenceroom.entity;
 
+import com.ssafy.brAIn.auth.jwt.JwtUtil;
+import com.ssafy.brAIn.history.entity.MemberHistory;
 import com.ssafy.brAIn.util.CommonUtils;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import com.ssafy.brAIn.util.MeetingUrlGenerator;
+import jakarta.persistence.*;
 
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Entity // 엔티티로 지정
 @Getter
@@ -37,9 +38,6 @@ public class ConferenceRoom {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "timer")
     private Date timer;
-
-    @Column(name = "max_participate")
-    private Integer maxParticipate;
 
     @Column(name = "is_end")
     private Boolean isEnd;
@@ -64,23 +62,69 @@ public class ConferenceRoom {
     @Column(name = "assistant_id")
     private String assistantId;
 
-    @Column(name = "time")
-    private Integer time;
+    @Column(name = "secure_id")
+    private String secureId;
+
+    @Column(name = "participate_url")
+    private String participateUrl;
+
+
+    // 히스토리와 양방향 관계 설정
+    @OneToMany(mappedBy = "conferenceRoom", fetch = FetchType.LAZY)
+    private List<MemberHistory> memberHistories;
+    
+    @Column(name = "round")
+    private Integer round;
 
     @Builder
-    public ConferenceRoom(String subject, int maxParticipate, int time){
+    public ConferenceRoom(String subject){
         this.subject = subject;
-        this.maxParticipate = maxParticipate;
-        this.time = time;
-        this.step = Step.STEP_0;
+        this.step = Step.WAIT;
         this.isEnd = false;
         this.startTime = new Date();
         this.inviteCode = CommonUtils.generateRandomMixStr(6,true);
+        this.secureId = MeetingUrlGenerator.generateMeetingUrl();
+        this.participateUrl = String.format("https://bardisue.store/v1/conferences/%s", this.secureId);
+        this.round = 0;
     }
 
-    public ConferenceRoom update() {
-        //setter가 없기에 update마다 함수를 만들 예정.
+    public void updateConferenceRoom(String subject, Date startTime) {
+        this.subject = subject;
+        this.startTime = startTime;
+    }
+
+    public ConferenceRoom updateStep(Step step) {
+        this.step = step;
         return this;
+    }
+
+    public ConferenceRoom updateAi(String AssistantId, String ThreadId) {
+        this.assistantId = AssistantId;
+        this.threadId = ThreadId;
+        return this;
+    }
+
+    // 타이머 설정
+    public void setTimer(int minutes) {
+        long timerInMillis = minutes * 60 * 1000;
+        this.timer = new Date(System.currentTimeMillis() + timerInMillis);
+    }
+
+
+    // 타이머 종료 확인
+    public boolean isTimerExpired() {
+        return timer != null && new Date().after(timer);
+    }
+
+
+    //회의 정보 업데이트 -> 회의록의 내용과 종료 시간
+    public void updateConferenceDetails(String conclusion, Date endTime) {
+        this.conclusion = conclusion;
+        this.endTime = endTime;
+    }
+
+    public void endConference() {
+        this.isEnd = true;
     }
 }
 

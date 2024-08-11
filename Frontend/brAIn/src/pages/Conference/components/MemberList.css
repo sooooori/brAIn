@@ -1,0 +1,121 @@
+.carousel-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 100px;
+  width: 100%;
+  margin-top: 50px;
+  border-bottom: 2px solid #ddd; /* Add a light gray bottom border */
+  padding-bottom: 10px; /* Optional: Add padding to ensure space below the content */
+}
+
+.scroll-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 24px;
+  padding: 10px;
+  z-index: 10;
+  transition: background-color 0.3s;
+}
+
+.scroll-button.left {
+  width: 30px;
+  left: 10px; /* Position the left button on the left side */
+}
+
+.scroll-button.right {
+  width: 30px;
+  right: 10px; /* Position the right button on the right side */
+}
+
+.scroll-button:hover {
+  background-color: #f0f0f0;
+}
+
+.carousel {
+  flex: 1; /* Allow the carousel to grow and shrink as needed */
+  overflow: hidden; /* Hide the scrollbar */
+  position: relative;
+  padding: 10px;
+  margin: 0 40px; /* Ensure space for buttons */
+}
+
+.profile-container {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  padding: 10px;
+  white-space: nowrap; /* Prevent wrapping */
+  scroll-behavior: smooth; /* Smooth scrolling */
+}
+
+.profile {
+  flex: 0 0 auto; /* Prevent shrinking and ensure items stay in row */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+  padding: 10px;
+  height: 80px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  width: 160px; /* Narrow width */
+  min-width: 10px; /* Maintain width */
+  position: relative;
+}
+
+.profile img {
+  width: 60px; /* Adjust image size */
+  height: 60px; /* Adjust image size */
+  border-radius: 50%;
+  margin-bottom: 5px;
+}
+
+/* 프로필 텍스트 스타일 */
+.profile p {
+  margin: 0;
+  font-size: 14px; /* 조정된 폰트 크기 */
+  text-align: center;
+  display: flex; /* 플렉스 레이아웃으로 인라인 요소 배치 */
+  align-items: center; /* 수직 중앙 정렬 */
+  font-weight: bold;
+}
+
+.me-label {
+  margin-left: 5px; /* 닉네임과 (Me) 사이의 여백 */
+  font-size: 14px; /* 폰트 크기 조정 */
+  color: #007bff; /* 색상 조정 */
+  font-weight: bold;
+}
+
+.profile.highlighted {
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.pass-indicator {
+  position: absolute; /* 부모 요소에 상대적 */
+  top: -5px; /* 프로필의 오른쪽 위에 배치 */
+  right: -5px;
+  background-color: red; /* 배경색 빨강 */
+  color: white; /* 글자색 흰색 */
+  font-size: 10px; /* 글자 크기 */
+  font-weight: bold; /* 글자 굵게 */
+  padding: 2px 5px; /* 패딩 */
+  border-radius: 50%; /* 둥근 모양 */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* 그림자 효과 */
+  text-align: center; /* 중앙 정렬 */
+  display: inline-block;
+  width: 35px; /* 너비 */
+  height: 35px; /* 높이 */
+  line-height: 35px; /* 텍스트 수직 정렬 */
+  z-index: 10;
+}
