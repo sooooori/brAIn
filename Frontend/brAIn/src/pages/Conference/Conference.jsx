@@ -26,7 +26,7 @@ import Timer from './components/Timer';
 import './Conference.css';
 
 
-import { addUser, removeUser, setUsers, setUserNick, setCuruser, updatePassStatus, resetPassStatus, } from '../../actions/userActions';
+import { addUser, removeUser, setUsers, setUserNick, setCuruser, updatePassStatus, resetPassStatus, updateReadyStatus, resetReadyStatus } from '../../actions/userActions';
 import { setCurStep, upRound, setRound, setRoom } from '../../actions/conferenceActions';
 import { sendToBoard } from '../../actions/roundRobinBoardAction';
 import VoteResultsModal from './components/VoteResultsModal';
@@ -69,6 +69,8 @@ const Conference = () => {
   //투표결과 모달관련
   const [voteResults, setVoteResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [userList, setUserList] = useState([]);
 
 
 
@@ -114,7 +116,7 @@ const Conference = () => {
             Authorization: 'Bearer ' + localStorage.getItem('roomToken')
           },
           debug: (str) => {
-            console.log(str);
+            // console.log(str);
           },
           reconnectDelay: 5000,
           heartbeatIncoming: 4000,
@@ -242,6 +244,7 @@ const Conference = () => {
           time -= 1000;
           console.log(time)
           if (time <= 0) {
+
             clearInterval(timerId); // Stop the timer
             resolve();
             return 0; // Set timer to 0 after it ends
@@ -262,9 +265,11 @@ const Conference = () => {
       roundRobinBoardUpdate(receivedMessage);
     } else if (receivedMessage.messageType === 'START_CONFERENCE') {
       startMeeting();
+
+      // 사용자 목록 상태 업데이트
       const updatedUsers = dispatch(setUsers(receivedMessage.users));
       dispatch(setCuruser(updatedUsers[0].nickname));
-      dispatch(setCurStep('STEP_0'));
+      dispatch(setCurStep('STEP_0'));s
     } else if (receivedMessage.messageType === 'ENTER_CONFERENCES') {
       dispatch(setUserNick(receivedMessage.nickname));
 
@@ -285,12 +290,22 @@ const Conference = () => {
       console.log('User who passed:', receivedMessage.curUser);
       dispatch(updatePassStatus(receivedMessage.curUser));
       dispatch(setCuruser(receivedMessage.nextUser));
-      dispatch(updatePassStatus(receivedMessage.userNickname));
+      if (round !== receivedMessage.nextRound) {
+        dispatch(setRound(receivedMessage.nextRound));
+      }
     } else if(receivedMessage.messageType=='PASS_AND_END'){
       console.log('투표시작')
       dispatch(setCurStep('STEP_2'));
       dispatch(step1EndAlarm());
+
     } 
+
+    else if (receivedMessage.messageType === 'READY') {
+      console.log('next :' + receivedMessage.nextUser)
+      console.log('User who re:', receivedMessage.curUser);
+      dispatch(updateReadyStatus(receivedMessage.curUser));
+      dispatch(setCuruser(receivedMessage.nextUser));
+    }
   };
 
   const handleMessageForIndividual= async(receivedMessage)=>{
@@ -363,7 +378,18 @@ const Conference = () => {
   };
 
   const handleReadyButtonClick = () => {
-
+    if (client) {
+      // 사용자 레디 정보 전송
+      client.publish({
+        destination: `/app/state.user.ready.${roomId}`,
+        headers: {
+          Authorization: localStorage.getItem('roomToken'),
+        },
+        body: JSON.stringify({
+          userNickname: curUser, // 레디한 사용자의 닉네임
+        }),
+      });
+    }
   };
 
   const handleNextStepClick = () => {
@@ -384,17 +410,6 @@ const Conference = () => {
 
   const handlePassButtonClick = () => {
     if (client) {
-      const currentIndex = users.findIndex((user) => user.nickname === curUser);
-  
-      // 현재 사용자 닉네임 가져오기
-      const currentUserNickname = users[currentIndex]?.nickname;
-  
-      // 유효성 검사: 닉네임이 정의되지 않은 경우 로그 출력
-      if (!currentUserNickname) {
-        console.error('Current user nickname is undefined. Check users array:', users);
-        return;
-      }
-  
       // 사용자 패스 정보 전송
       client.publish({
         destination: `/app/state.user.pass.${roomId}`,
@@ -403,17 +418,9 @@ const Conference = () => {
         },
         body: JSON.stringify({
           curRound: round,
-          userNickname: currentUserNickname, // 패스한 사용자의 닉네임
+          userNickname: curUser, // 패스한 사용자의 닉네임
         }),
       });
-  
-      // 패스 상태 업데이트
-      dispatch(updatePassStatus(currentUserNickname));
-  
-      // 다음 사용자로 이동
-      const nextUserIndex = (currentIndex + 1) % users.length;
-      const nextUser = users[nextUserIndex].nickname;
-      dispatch(setCuruser(nextUser));
     }
   };
 
@@ -606,7 +613,7 @@ const Conference = () => {
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
-                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
+                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready" disabled={curUser !== nickname}>
                       <img src={ReadyIcon} alt="Ready" className="action-icon" />
                     </Button>
                     <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
@@ -623,7 +630,7 @@ const Conference = () => {
                 )}
                 {role !== 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
-                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
+                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready" disabled={curUser !== nickname}>
                       <img src={ReadyIcon} alt="Ready" className="action-icon" />
                     </Button>
                     <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>

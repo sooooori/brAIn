@@ -119,3 +119,22 @@
   line-height: 35px; /* 텍스트 수직 정렬 */
   z-index: 10;
 }
+
+.ready-indicator {
+  position: absolute; /* 부모 요소에 상대적 */
+  top: -5px; /* 프로필의 오른쪽 위에 배치 */
+  right: -5px;
+  background-color: blue; /* 배경색 빨강 */
+  color: white; /* 글자색 흰색 */
+  font-size: 10px; /* 글자 크기 */
+  font-weight: bold; /* 글자 굵게 */
+  padding: 2px 5px; /* 패딩 */
+  border-radius: 50%; /* 둥근 모양 */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* 그림자 효과 */
+  text-align: center; /* 중앙 정렬 */
+  display: inline-block;
+  width: 35px; /* 너비 */
+  height: 35px; /* 높이 */
+  line-height: 35px; /* 텍스트 수직 정렬 */
+  z-index: 10;
+}

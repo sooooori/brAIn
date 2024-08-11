@@ -216,15 +216,17 @@ public class MessageController {
     }
 
     //유저 준비 완료
-    @MessageMapping("state.user.{roomId}")
+    @MessageMapping("state.user.ready.{roomId}")
     public void readyState(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
 
+        messageService.updateUserState(Integer.parseInt(roomId), nickname, UserState.READY);
 
+        // 다음 사용자 결정
+        String nextUser = messageService.NextOrder(Integer.parseInt(roomId), nickname);
 
-        messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.READY);
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY,nickname));
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY, nickname, nextUser));
 
     }
 
@@ -249,9 +251,12 @@ public class MessageController {
                 return;
             }
             messageService.initUserState(Integer.parseInt(roomId));
+            messageService.updateCurOrder(Integer.parseInt(roomId),nextMember);
+            rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember, pass.getCurRound()+1));
+            return;
         }
         messageService.updateCurOrder(Integer.parseInt(roomId),nextMember);
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember));
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember, pass.getCurRound()));
 
         //다음 사람이 ai가 아니라면 종료
         if(!messageService.isAi(Integer.parseInt(roomId),nextMember))return;

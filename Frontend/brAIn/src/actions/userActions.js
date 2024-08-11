@@ -8,6 +8,8 @@ export const UPDATE_TIMER = 'UPDATE_TIMER';
 export const RESET_STATE = 'RESET_STATE';
 export const UPDATE_PASS_STATUS = 'UPDATE_PASS_STATUS';
 export const RESET_PASS_STATUS = 'RESET_PASS_STATUS';
+export const UPDATE_READY_STATUS = 'UPDATE_READY_STATUS';
+export const RESET_READY_STATUS = 'RESET_READY_STATUS';
 
 export const addUser = (user) => ({
     type: ADD_USER,
@@ -62,4 +64,13 @@ export const updatePassStatus = (nickname) => ({
   
 export const resetPassStatus = () => ({
     type: RESET_PASS_STATUS,
+});
+
+export const updateReadyStatus = (nickname) => ({
+    type: UPDATE_READY_STATUS,
+    payload: nickname,
+});
+
+export const resetReadyStatus = () => ({
+    type: RESET_READY_STATUS,
 });
