@@ -100,7 +100,7 @@ const Conference = () => {
           setSubject(response.data.subject);
         }
 
-        const time_response = await axios.get(`http://localhost/api/v1/conferences/time`, {
+        const time_response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/conferences/time`, {
           params: {
             secureId: routeSecureId,
           },
@@ -114,7 +114,7 @@ const Conference = () => {
           setTime(time_response.data.time);
         }
 
-        const countMemberInWaitingroom=await axios.get(`http://localhost/api/v1/conferences/countUser/${roomId}`);
+        const countMemberInWaitingroom=await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/countUser/${roomId}`);
         console.log("인원",countMemberInWaitingroom.data);
         setParticipantCount(countMemberInWaitingroom.data+1);
 

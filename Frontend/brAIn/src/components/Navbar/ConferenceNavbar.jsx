@@ -7,10 +7,11 @@ import settingsIcon from '../../assets/svgs/setting.svg'; // SVG 경로 수정
 import Button from '../Button/Button';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
-const ConferenceNavbar = ({ secureId }) => {
+const ConferenceNavbar = () => {
   const navigate = useNavigate();
-
+  const { secureId } = useParams();
   const [conferenceCode, setConferenceCode] = useState(null);
   const [conferenceSubject, setConferenceSubject] = useState(null);
   const [isSharing, setIsSharing] = useState(false);
