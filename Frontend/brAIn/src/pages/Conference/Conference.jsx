@@ -30,6 +30,7 @@ import { addUser, removeUser, setUsers, setUserNick, setCuruser, updatePassStatu
 import { setCurStep, upRound, setRound, setRoom } from '../../actions/conferenceActions';
 import { sendToBoard } from '../../actions/roundRobinBoardAction';
 import VoteResultsModal from './components/VoteResultsModal';
+import { initVote } from '../../actions/commentsAction';
 
 const Conference = () => {
   const dispatch = useDispatch();
@@ -62,6 +63,7 @@ const Conference = () => {
   const MINUTES_IN_MS = 2*60* 1000;
   const [time, setTime] = useState(null);
   const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
+  const [voteTime,setVoteTime]=useState(10*1000);
   const [timerActive, setTimerActive] = useState(false);
 
   //투표결과 모달관련
@@ -268,7 +270,7 @@ const Conference = () => {
 
     } else if (receivedMessage.messageType == 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep))
-      if(curStep=='STEP_3'){
+      if(step=='STEP_3'){
         step3start();
       }
     }else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
@@ -288,15 +290,14 @@ const Conference = () => {
       console.log('투표시작')
       dispatch(setCurStep('STEP_2'));
       dispatch(step1EndAlarm());
-    } else if (receivedMessage.messageType === 'NEXT_STEP') {
-      dispatch(setCurStep(receivedMessage.curStep));
-    }
+    } 
   };
 
   const handleMessageForIndividual= async(receivedMessage)=>{
     if(receivedMessage.messageType=='STEP3_FOR_USER'){
       console.log('step3 start');
       console.log(receivedMessage.step3ForUser);
+      dispatch(initVote(receivedMessage.step3ForUser));
     }
   }
 
@@ -426,18 +427,13 @@ const Conference = () => {
       });
   
       // 타이머 시작
-      await timer();
+      await timer(voteTime);
   
-      console.log(timeLeft);
-      if (timeLeft <= 0) {
-        console.log("타이머 종료");
-      }
   
       // 상태 업데이트 후 후속 작업을 수행하기 위해 상태를 확인
       const state = getState();
       const votedItems = state.votedItem.items;
       const step=state.conferenceInfo.curStep;
-      console.log(votedItems);  // 상태가 업데이트된 후 출력
   
       const itemsObject = votedItems.reduce((map, item, index) => {
         const key = item.content;

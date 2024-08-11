@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,11 +29,16 @@ public class CommentController {
     @PostMapping("/create")
     public ResponseEntity<?> createComment(@RequestHeader("AuthorizationRoom") String token,
                                            @RequestBody CommentCreateRequest commentCreateRequest) {
-        String accessToken = token.replace("Bearer ", "");
-        Integer roundPostItId = commentCreateRequest.getRoundPostItId();
-        String content = commentCreateRequest.getContent();
+        String roomToken = token.replace("Bearer ", "");
+        String target = commentCreateRequest.getTarget();
+        String content = commentCreateRequest.getComment();
+        System.out.println(target);
+        Integer roundPostItId = roundPostItService.findByContentAndRoom(target,jwtUtilForRoom.getRoomId(roomToken)).get().getId();
+        System.out.println("roundPostItId: " + roundPostItId);
 
-        Comment comment = commentService.createComment(accessToken, roundPostItId, content);
+
+        System.out.println("comment달기:"+content);
+        Comment comment = commentService.createComment(roomToken, roundPostItId, content);
         return ResponseEntity.ok(Map.of("Comment", comment, "message", "Comment created successfully"));
     }
 
@@ -40,11 +46,13 @@ public class CommentController {
     @PutMapping("/update")
     public ResponseEntity<?> updateComment(@RequestHeader("AuthorizationRoom") String token,
                                            @RequestBody CommentCreateRequest commentCreateRequest) {
-        String accessToken = token.replace("Bearer ", "");
-        Integer roundPostItId = commentCreateRequest.getRoundPostItId();
-        String updateContent = commentCreateRequest.getContent();
+        String roomToken = token.replace("Bearer ", "");
+        String content = commentCreateRequest.getComment();
 
-        Comment comment = commentService.updateComment(accessToken, roundPostItId, updateContent);
+        Integer roundPostItId = roundPostItService.findByContentAndRoom(content,jwtUtilForRoom.getRoomId(roomToken)).get().getId();
+        String updateContent = commentCreateRequest.getComment();
+
+        Comment comment = commentService.updateComment(roomToken, roundPostItId, updateContent);
         return ResponseEntity.ok(Map.of("UpdatedComment", comment, "message", "Comment created successfully"));
     }
 

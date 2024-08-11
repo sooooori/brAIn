@@ -15,6 +15,9 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
   const token = localStorage.getItem('accessToken'); // 인증 토큰 가져오기
   const step = useSelector((state) => state.conferenceInfo.curStep); // Redux에서 currentStep 가져오기
   const [inputValue, setInputValue] = useState('');
+  const votes=useSelector((state)=>state.commentBoard.vote);
+  const curIndex=useSelector(state=>state.commentBoard.curIndex);
+
   const dispatch=useDispatch();
 
   const handleInputChange = (event) => {
@@ -28,7 +31,8 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
     if (newIdea) {
       try {
         const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/comment/create`, {
-          content: newIdea,
+          target:votes[curIndex],
+          comment:newIdea,
         }, {
           headers: {
             'Content-Type': 'application/json',

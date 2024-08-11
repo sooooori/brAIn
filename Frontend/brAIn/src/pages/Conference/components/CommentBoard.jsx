@@ -5,8 +5,8 @@ import axios from 'axios';
 
 const CommentBoard = () => {
   const commentBoard = useSelector((state) => state.commentBoard.comments || []);
-  const votes=useSelector((state)=>state.commentBoard.votes || []);
-  const curIndex=useSelector((state)=>state.commentBoard.curIndex || []);
+  const votes=useSelector((state)=>state.commentBoard.vote || []);
+  const curIndex=useSelector((state)=>state.commentBoard.curIndex);
   const dispatch = useDispatch();
 
   useEffect(() => {
