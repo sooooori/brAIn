@@ -194,7 +194,7 @@ async function createToken(sessionId) {
 
     return (
         <div className="container">
-            {!session ? (
+            {/* {!session ? (
                 <div id="join">
                     <div id="img-div">
                         <img src="resources/images/openvidu_grey_bg_transp_cropped.png" alt="OpenVidu logo" />
@@ -208,15 +208,10 @@ async function createToken(sessionId) {
                         </form>
                     </div>
                 </div>
-            ) : null}
+            ) : null} */}
 
             {session ? (
                 <div id="session">
-                    <div id="session-header">
-                        <h1 id="session-title">{mySessionId}</h1>
-                        <button className="btn btn-large btn-danger" onClick={leaveSession}>Leave session</button>
-                    </div>
-
                     {mainStreamManager ? (
                         <div id="main-video" className="col-md-6">
                             <UserVideoComponent streamManager={mainStreamManager} />

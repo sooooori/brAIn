@@ -274,7 +274,7 @@ const Conference = () => {
 
     } else if (receivedMessage.messageType == 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep))
-      if(curStep=='STEP_3'){
+      if(step=='STEP_3'){
         step3start();
       }
     }else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
