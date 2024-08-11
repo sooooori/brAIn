@@ -51,24 +51,13 @@ public class RoundPostIt {
     private List<Vote> votes;
 
     @Builder
-    public RoundPostIt(ConferenceRoom conferenceRoom, Member member, String content) {
+    public RoundPostIt(ConferenceRoom conferenceRoom, String content) {
         this.conferenceRoom = conferenceRoom;
-        this.member = member;
+
         this.content = content;
     }
 
-    @Builder
-    public RoundPostIt(ConferenceRoom conferenceRoom,String content) {
-        this.conferenceRoom = conferenceRoom;
-        this.content = content;
-    }
 
-    @Builder
-    public RoundPostIt(ConferenceRoom conferenceRoom, boolean isAI, String content) {
-        this.conferenceRoom = conferenceRoom;
-        this.isAI = isAI;
-        this.content = content;
-    }
 
     public void selectedNine() {
         last9 = true;
