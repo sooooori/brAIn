@@ -209,7 +209,7 @@ async function createToken(sessionId) {
                     </div>
                 </div>
             ) : null} */}
-            {/* ddd */}
+            {/* ddd/safasfasf */}
             {session ? (
                 <div id="session">
                     {mainStreamManager ? (
