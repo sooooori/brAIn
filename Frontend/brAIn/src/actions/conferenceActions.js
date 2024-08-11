@@ -10,6 +10,8 @@ export const setCurStep = (step) => ({
     payload: step,
 });
 
+
+
 export const upRound = () => ({
     type: UP_ROUND,
 });
