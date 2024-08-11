@@ -5,6 +5,7 @@ import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.conferenceroom.dto.*;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
+import com.ssafy.brAIn.conferenceroom.service.PdfService;
 import com.ssafy.brAIn.history.model.Role;
 import com.ssafy.brAIn.history.model.Status;
 import com.ssafy.brAIn.history.service.MemberHistoryService;
@@ -13,6 +14,7 @@ import com.ssafy.brAIn.member.service.MemberService;
 import com.ssafy.brAIn.util.RandomNicknameGenerator;
 import com.ssafy.brAIn.util.RedisUtils;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,9 @@ public class ConferenceRoomController {
     @Autowired
     private RedisUtils redisUtils;
 
+    @Autowired
+    private PdfService pdfService;
+
     @GetMapping("/{roomId}")
     public ResponseEntity<?> getConferenceRoom(@PathVariable String roomId) {
         return ResponseEntity.status(200).body(roomId);
@@ -48,7 +53,7 @@ public class ConferenceRoomController {
         ConferenceRoom saveCr = conferenceRoomService.save(cr);
 
         // redis에 time 저장
-        redisUtils.save(saveCr.getId()+":time:init",conferenceRoomRequest.getTime()+"");
+        redisUtils.save(saveCr.getId() + ":time:init", conferenceRoomRequest.getTime() + "");
 
         token = token.split(" ")[1];
         System.out.println(token);
@@ -58,7 +63,7 @@ public class ConferenceRoomController {
 
         String randomNick = RandomNicknameGenerator.generateNickname();
 
-        String jwtTokenForRoom = jwtUtilForRoom.createJwt("access", email, "CHIEF", randomNick, saveCr.getId()+"", 100000000L);
+        String jwtTokenForRoom = jwtUtilForRoom.createJwt("access", email, "CHIEF", randomNick, saveCr.getId() + "", 100000000L);
 //        Member member = memberService.findByEmail(email).orElse(null);
 //        memberHistoryService.createRoom(saveCr, member);
         System.out.println(jwtTokenForRoom);
@@ -71,7 +76,7 @@ public class ConferenceRoomController {
     public ResponseEntity<?> getConferenceRoom(@RequestBody ConferenceRoomJoinRequest conferenceRoomJoinRequest) {
         ConferenceRoom findConference = conferenceRoomService.findByInviteCode(conferenceRoomJoinRequest.getInviteCode());
 
-        ConferenceRoomResponse crr = new ConferenceRoomResponse(findConference, "" , "");
+        ConferenceRoomResponse crr = new ConferenceRoomResponse(findConference, "", "");
         return ResponseEntity.status(200).body(crr);
     }
 
@@ -92,7 +97,7 @@ public class ConferenceRoomController {
         System.out.println("방은 들어감");
         String randomNick = RandomNicknameGenerator.generateNickname();
 
-        String jwtTokenForRoom = jwtUtilForRoom.createJwt("access", email, "MEMBER", randomNick, findConference.getId()+"", 100000000L);
+        String jwtTokenForRoom = jwtUtilForRoom.createJwt("access", email, "MEMBER", randomNick, findConference.getId() + "", 100000000L);
 
         ConferenceRoomResponse crr = new ConferenceRoomResponse(findConference, jwtTokenForRoom, randomNick);
         return ResponseEntity.status(200).body(crr);
@@ -138,9 +143,9 @@ public class ConferenceRoomController {
 
             Integer roomId = conferenceRoom.getId();
 
-            String time = redisUtils.getData(roomId+":time:init");
+            String time = redisUtils.getData(roomId + ":time:init");
 
-            return ResponseEntity.ok(Map.of("time", Integer.parseInt(time)*60*1000));
+            return ResponseEntity.ok(Map.of("time", Integer.parseInt(time) * 60 * 1000));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No time");
         }
@@ -153,5 +158,38 @@ public class ConferenceRoomController {
                 .toList().size();
 
         return ResponseEntity.ok(come);
+    }
+
+    // 회의 최종 결과물 보여주기
+    @GetMapping("/products/{roomId}")
+    public ResponseEntity<String> generateMeetingReport(@PathVariable Integer roomId) {
+        try {
+            String report = conferenceRoomService.generateMeetingReport(roomId);
+            return ResponseEntity.ok(report);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid room ID: " + roomId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to generate report: " + e.getMessage());
+        }
+    }
+
+    // PDF 파일 다운로드
+    @GetMapping("/download/{roomId}")
+    public void downloadPdf(@PathVariable Integer roomId, HttpServletResponse response) {
+        try {
+            String report = conferenceRoomService.generateMeetingReport(roomId);
+            byte[] pdfBytes = pdfService.generatePdf(report);
+
+            // PDF 파일 응답 설정
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "attachment; filename=meeting_report_" + roomId + ".pdf");
+            response.getOutputStream().write(pdfBytes);
+            response.flushBuffer();
+
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
     }
 }

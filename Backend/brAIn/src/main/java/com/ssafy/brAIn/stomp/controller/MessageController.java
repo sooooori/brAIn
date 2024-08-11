@@ -335,4 +335,6 @@ public class MessageController {
         // 결과를 RabbitMQ로 전송(Subscribe)
         rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, voteResults);
     }
+
+    // 최종 결과물 반환 (임시)
 }
