@@ -70,9 +70,13 @@ const Conference = () => {
   const [voteResults, setVoteResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+<<<<<<< HEAD
   const [userList, setUserList] = useState([]);
 
 
+=======
+  const [newTime, setnewTime] = useState(null);
+>>>>>>> c408129c58675a2d0b3b7ffff8f9e9712d0675bb
 
   useEffect(() => {
     let isMounted = true;
@@ -103,12 +107,10 @@ const Conference = () => {
           setSubject(response.data.subject);
         }
 
-
         const countMemberInWaitingroom=await axios.get(`http://localhost/api/v1/conferences/countUser/${roomId}`);
         console.log("인원",countMemberInWaitingroom.data);
         setParticipantCount(countMemberInWaitingroom.data+1);
-
-
+        
 
         const newClient = new Client({
           brokerURL: `${import.meta.env.VITE_WSS_BASE_URL}`,
@@ -159,9 +161,8 @@ const Conference = () => {
       }
     };  
 
-
-
     fetchDataAndConnect();
+    
 
     return () => {
       isMounted = false;
@@ -170,8 +171,7 @@ const Conference = () => {
       }
     };
 
-
-  }, [routeSecureId, roomId, time]);
+  }, [routeSecureId, roomId, time, timeLeft ]);
 
   // 라운드 변경 시 패스 상태 초기화
   useEffect(() => {
@@ -179,14 +179,25 @@ const Conference = () => {
   }, [round, dispatch]);
 
 
-
   useEffect(() => {
-    if (step === 'STEP_0' && !timerActive) {
+    if (step === 'STEP_0') {
       // Start the timer if it's step0 and no other timer is running
-      setTimerActive(true);
-      startTimer();
+      // setTimerActive(true);
+      startTimer(time);
+    }else{
+      stepTimeset(step)
     }
-  }, [step]);
+    console.log("curUser",curUser);
+    
+  }, [step, newTime]);
+
+  // const getPerson=async()=>{
+    
+  // }
+
+  // getPerson();
+
+
 
   const getTime=async()=>{
     const time_response = await axios.get(`http://localhost/api/v1/conferences/time`, {
@@ -201,17 +212,12 @@ const Conference = () => {
   
     if (time === null) {
       setTime(time_response.data.time);
-      console.log(time_response.data.time.type)
       console.log(time)
     }
   }
 
   getTime();
-  
-  
 
-
-  
   const startTimer = async () => {
     try {
       await Swal.fire({
@@ -269,12 +275,22 @@ const Conference = () => {
       // 사용자 목록 상태 업데이트
       const updatedUsers = dispatch(setUsers(receivedMessage.users));
       dispatch(setCuruser(updatedUsers[0].nickname));
+<<<<<<< HEAD
       dispatch(setCurStep('STEP_0'));s
+=======
+      dispatch(setCurStep('STEP_0'));
+      console.log('+++++++++++++++++++++++',step)
+>>>>>>> c408129c58675a2d0b3b7ffff8f9e9712d0675bb
     } else if (receivedMessage.messageType === 'ENTER_CONFERENCES') {
       dispatch(setUserNick(receivedMessage.nickname));
 
     } else if (receivedMessage.messageType == 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep))
+<<<<<<< HEAD
+=======
+      console.log('받은 스텝',receivedMessage.curStep);
+      console.log('========',step)
+>>>>>>> c408129c58675a2d0b3b7ffff8f9e9712d0675bb
       if(step=='STEP_3'){
         step3start();
       }
@@ -392,6 +408,52 @@ const Conference = () => {
     }
   };
 
+  const stepTimer = async (newTime) => {
+    return new Promise(resolve => {
+      let timerId;
+
+      const tick = () => {
+        
+        newTime -= 1000;
+          console.log(newTime)
+          if (newTime <= 0) {
+            clearInterval(timerId); // Stop the timer
+            resolve();
+
+            Swal.fire({
+              icon: "warning",
+              title: '시간이 다 되었습니다.',
+              text: '다음 단계로 진행하세요.',
+            });
+
+            return 0; // Set timer to 0 after it ends
+          } else {
+            return newTime;
+          }
+        
+      };
+
+      timerId = setInterval(tick, 1000); // Call tick every second
+    });
+  };
+
+
+  const stepTimeset = (step) =>{
+    const timeSetting = {
+      'STEP_1' : 2 * 60 * 1000,
+      'STEP_2' : 1 * 60 * 1000,
+      'STEP_3' : 2 * 60 * 1000,
+    };
+    
+    console.log(timeSetting[step])
+    const newTime = timeSetting[step];
+    console.log('step : ', step)
+    console.log('new Time : ', newTime)
+    setnewTime(newTime);
+    stepTimer(newTime);
+  };
+  
+
   const handleNextStepClick = () => {
     if (client){
       client.publish({
@@ -404,7 +466,6 @@ const Conference = () => {
         })
       });
     }
-
     console.log('Next Step Btn Clicked')
   };  
 
@@ -609,7 +670,7 @@ const Conference = () => {
                   
                 </div>
                 <div className="conf-timer-container">
-                  <Timer time={time}/>
+                  <Timer time={step === 'STEP_0' ? time : newTime} />
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
