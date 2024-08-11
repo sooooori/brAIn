@@ -5,7 +5,7 @@ import TimerIcon from '../../../assets/svgs/timer.svg'; // 타이머 아이콘
 import './Timer.css'; // 스타일을 위한 CSS 파일
 
 const Timer = ({ time, onTimerEnd }) => {
-  const initialTime = parseInt(time, 10) * 60 || 0; // 초 단위로 변환
+  const initialTime = parseInt(time, 10) / 1000 || 0; // 초 단위로 변환
   const [currentTime, setCurrentTime] = useState(initialTime); // 타이머의 시간 상태
   const curstep = useSelector(state => state.conferenceInfo.curStep);
   const role = useSelector((state) => state.conference.role);

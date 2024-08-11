@@ -216,15 +216,17 @@ public class MessageController {
     }
 
     //유저 준비 완료
-    @MessageMapping("state.user.{roomId}")
+    @MessageMapping("state.user.ready.{roomId}")
     public void readyState(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
 
+        messageService.updateUserState(Integer.parseInt(roomId), nickname, UserState.READY);
 
+        // 다음 사용자 결정
+        String nextUser = messageService.NextOrder(Integer.parseInt(roomId), nickname);
 
-        messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.READY);
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY,nickname));
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY, nickname, nextUser));
 
     }
 
