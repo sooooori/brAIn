@@ -1,7 +1,10 @@
 package com.ssafy.brAIn.vote.controller;
 
+import com.ssafy.brAIn.ai.service.AIService;
 import com.ssafy.brAIn.auth.jwt.JWTUtilForRoom;
+import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
+import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.service.MemberService;
 import com.ssafy.brAIn.util.RedisUtils;
@@ -31,6 +34,8 @@ public class VoteController {
     private final JWTUtilForRoom jwtUtilForRoom;
     private final MemberService memberService;
     private final RedisUtils redisUtils;
+    private final AIService aiService;
+    private final ConferenceRoomService conferenceRoomService;
 
     // 투표 결정(진행)
     @PostMapping
@@ -68,19 +73,20 @@ public class VoteController {
         for(VoteResponse voteResponse: results) {
             System.out.println(voteResponse);
         }
+        ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId+"");
 
         VoteResultRequest voteResultRequest = new VoteResultRequest(roomId, step);
-        voteService.saveTop9RoundResults(results, voteResultRequest);
+        voteService.saveTop9RoundResults(results, voteResultRequest, roomId);
         return ResponseEntity.ok().body(results);
     }
 
     // 투표 결과 db 저장
-    @PostMapping("/saveResults")
-    public ResponseEntity<String> saveVoteResults(@RequestBody VoteResultRequest voteResultRequest) {
-        List<VoteResponse> results = voteService.getVoteResults(voteResultRequest.getConferenceId(), voteResultRequest.getStep());
-        voteService.saveTop9RoundResults(results, voteResultRequest);
-        return new ResponseEntity<>("Vote results saved successfully", HttpStatus.OK);
-    }
+//    @PostMapping("/saveResults")
+//    public ResponseEntity<String> saveVoteResults(@RequestBody VoteResultRequest voteResultRequest) {
+//        List<VoteResponse> results = voteService.getVoteResults(voteResultRequest.getConferenceId(), voteResultRequest.getStep());
+//        voteService.saveTop9RoundResults(results, voteResultRequest);
+//        return new ResponseEntity<>("Vote results saved successfully", HttpStatus.OK);
+//    }
 
     // Step 3
 
