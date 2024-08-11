@@ -100,7 +100,7 @@ const Conference = () => {
           setSubject(response.data.subject);
         }
 
-        const time_response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/conferences/time`, {
+        const time_response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/time`, {
           params: {
             secureId: routeSecureId,
           },
