@@ -59,7 +59,7 @@ const Conference = () => {
   const votedItems = useSelector(state => state.votedItem.items || []);
   
   
-  const MINUTES_IN_MS = 6 * 1000;
+  const MINUTES_IN_MS = 2*60* 1000;
   const [time, setTime] = useState(null);
   const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
   const [timerActive, setTimerActive] = useState(false);
@@ -99,26 +99,6 @@ const Conference = () => {
           setSubject(response.data.subject);
         }
 
-        const time_response = await axios.get(`http://localhost/api/v1/conferences/time`, {
-          params: {
-            secureId: routeSecureId,
-          },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
-          },
-        });
-
-        if (time === null) {
-          setTime(time_response.data.time);
-          console.log(time_response.data.time.type)
-          console.log(time)
-        }
-
-        if (timeLeft === null) {
-          const timeLeft = time // time을 숫자로 변환하고 밀리초로 변환
-          setTimeLeft(timeLeft);
-        }
 
         const countMemberInWaitingroom=await axios.get(`http://localhost/api/v1/conferences/countUser/${roomId}`);
         console.log("인원",countMemberInWaitingroom.data);
@@ -204,6 +184,28 @@ const Conference = () => {
     }
   }, [step]);
 
+  const getTime=async()=>{
+    const time_response = await axios.get(`http://localhost/api/v1/conferences/time`, {
+      params: {
+        secureId: routeSecureId,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+      },
+    });
+  
+    if (time === null) {
+      setTime(time_response.data.time);
+      console.log(time_response.data.time.type)
+      console.log(time)
+    }
+  }
+
+  getTime();
+  
+  
+
 
   
   const startTimer = async () => {
@@ -215,9 +217,8 @@ const Conference = () => {
         timer: 3000
       });
 
-      await timer();
+      await timer(time);
       
-      console.log("알람 전 timeleft",timeLeft)
      
         await Swal.fire({
           icon: "warning",
@@ -230,24 +231,23 @@ const Conference = () => {
     }
   };
 
-  const timer = async () => {
+  const timer = async (time) => {
     return new Promise(resolve => {
       let timerId;
 
       const tick = () => {
-        setTimeLeft(prevTimeLeft => {
-          const newTimeLeft = prevTimeLeft - 1000;
-          console.log(newTimeLeft)
-          if (newTimeLeft <= 0) {
+        
+          time -= 1000;
+          console.log(time)
+          if (time <= 0) {
             clearInterval(timerId); // Stop the timer
             resolve();
             return 0; // Set timer to 0 after it ends
           } else {
-            return newTimeLeft;
+            return time;
           }
-        });
+        
       };
-      console.log("leftTime:",timeLeft);
 
       timerId = setInterval(tick, 1000); // Call tick every second
     });
