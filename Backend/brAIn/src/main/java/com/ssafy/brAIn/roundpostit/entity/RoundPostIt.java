@@ -6,10 +6,7 @@ import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.roundboard.entity.RoundBoard;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -37,6 +34,10 @@ public class RoundPostIt {
     @Column(name = "content")
     private String content;
 
+    @Setter
+    @Column(name = "persona")
+    private String persona;
+
     // 댓글 리스트
     @OneToMany(mappedBy = "roundPostIt", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments;
@@ -61,6 +62,13 @@ public class RoundPostIt {
     public RoundPostIt(ConferenceRoom conferenceRoom,String content) {
         this.conferenceRoom = conferenceRoom;
         this.content = content;
+    }
+
+    @Builder
+    public RoundPostIt(ConferenceRoom conferenceRoom,String content, String persona) {
+        this.conferenceRoom = conferenceRoom;
+        this.content = content;
+        this.persona = persona;
     }
 
     @Builder

@@ -1,8 +1,10 @@
 package com.ssafy.brAIn.vote.service;
 
+import com.ssafy.brAIn.ai.service.AIService;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
+import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
 import com.ssafy.brAIn.roundpostit.repository.RoundPostItRepository;
@@ -33,7 +35,11 @@ public class VoteService {
     private final RoundPostItRepository roundPostItRepository;
     private final ConferenceRoomRepository conferenceRoomRepository;
 
+
     private final RedisUtils redisUtils;
+
+    private final ConferenceRoomService conferenceRoomService;
+    private final AIService aiService;
 
 
     // 투표 진행 - 임시 저장
@@ -135,9 +141,10 @@ public class VoteService {
 
     // 투표 결과를 DB에 저장
     @Transactional
-    public void saveTop9RoundResults(List<VoteResponse> votes, VoteResultRequest voteResultRequest) throws ServerErrorException {
+    public void saveTop9RoundResults(List<VoteResponse> votes, VoteResultRequest voteResultRequest, Integer roomId) throws ServerErrorException {
         ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(voteResultRequest.getConferenceId())
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 회의실 ID"));
+
 
         for (VoteResponse voteResponse : votes) {
             RoundPostIt roundPostIt = roundPostItRepository.findByContentAndConferenceRoom_Id(voteResponse.getPostIt(), voteResultRequest.getConferenceId())
@@ -145,13 +152,17 @@ public class VoteService {
                         log.info("Creating new RoundPostIt for content: {}", voteResponse.getPostIt());
                         return roundPostItRepository.save(
                                 RoundPostIt.builder()
-                                        .content(voteResponse.getPostIt())
                                         .conferenceRoom(conferenceRoom)
+                                        .content(voteResponse.getPostIt())
                                         .build()
                         );
                     });
 
             roundPostIt.selectedNine();
+            ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId+"");
+            String persona = aiService.personaMake(voteResponse.getPostIt(), cr.getThreadId(), cr.getAssistantId());
+            roundPostIt.setPersona(persona);
+
             roundPostItRepository.save(roundPostIt);
 
             Optional<Vote> existingVote = voteRepository.findByRoundPostItAndConferenceRoom(roundPostIt, conferenceRoom);
