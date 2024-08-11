@@ -68,6 +68,8 @@ const Conference = () => {
   const [voteResults, setVoteResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [userList, setUserList] = useState([]);
+
 
 
   useEffect(() => {
@@ -260,9 +262,11 @@ const Conference = () => {
       roundRobinBoardUpdate(receivedMessage);
     } else if (receivedMessage.messageType === 'START_CONFERENCE') {
       startMeeting();
+
+      // 사용자 목록 상태 업데이트
       const updatedUsers = dispatch(setUsers(receivedMessage.users));
       dispatch(setCuruser(updatedUsers[0].nickname));
-      dispatch(setCurStep('STEP_0'));
+      dispatch(setCurStep('STEP_0'));s
     } else if (receivedMessage.messageType === 'ENTER_CONFERENCES') {
       dispatch(setUserNick(receivedMessage.nickname));
 
@@ -283,6 +287,9 @@ const Conference = () => {
       console.log('User who passed:', receivedMessage.curUser);
       dispatch(updatePassStatus(receivedMessage.curUser));
       dispatch(setCuruser(receivedMessage.nextUser));
+      if (round !== receivedMessage.nextRound) {
+        dispatch(setRound(receivedMessage.nextRound));
+      }
     } else if(receivedMessage.messageType=='PASS_AND_END'){
       console.log('투표시작')
       dispatch(setCurStep('STEP_2'));

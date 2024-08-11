@@ -251,9 +251,12 @@ public class MessageController {
                 return;
             }
             messageService.initUserState(Integer.parseInt(roomId));
+            messageService.updateCurOrder(Integer.parseInt(roomId),nextMember);
+            rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember, pass.getCurRound()+1));
+            return;
         }
         messageService.updateCurOrder(Integer.parseInt(roomId),nextMember);
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember));
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember, pass.getCurRound()));
 
         //다음 사람이 ai가 아니라면 종료
         if(!messageService.isAi(Integer.parseInt(roomId),nextMember))return;
