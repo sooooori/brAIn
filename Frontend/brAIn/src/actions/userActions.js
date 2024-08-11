@@ -5,7 +5,9 @@ export const SET_USERNICK = 'SET_USERNICK';
 export const SET_CURUSER = 'SET_CURUSER';
 export const SET_NEXTUSER = 'SET_NEXTUSER';
 export const UPDATE_TIMER = 'UPDATE_TIMER';
-export const RESET_STATE = 'RESET_STATE'
+export const RESET_STATE = 'RESET_STATE';
+export const UPDATE_PASS_STATUS = 'UPDATE_PASS_STATUS';
+export const RESET_PASS_STATUS = 'RESET_PASS_STATUS';
 
 export const addUser = (user) => ({
     type: ADD_USER,
@@ -22,7 +24,9 @@ export const setUsers = (users) => (dispatch, getState) => {
         type: SET_USERS,
         payload: users
     });
-    return getState().user.users;
+
+    const updatedUsers = getState().user.users;
+    return updatedUsers
 };
 
 export const setUserNick = (nickname) => ({
@@ -30,7 +34,6 @@ export const setUserNick = (nickname) => ({
     payload: nickname,
 });
 
-// 답변 패스
 export const setCuruser = (curUser) => ({
     type: SET_CURUSER,
     payload: curUser,
@@ -48,7 +51,15 @@ export const updateTimer = (time) => ({
     payload: time,
 });
 
-
-export const resetUser = ()=>({
+export const resetUser = () => ({
     type: RESET_STATE
-})
+});
+
+export const updatePassStatus = (nickname) => ({
+    type: UPDATE_PASS_STATUS,
+    payload: nickname,
+});
+  
+export const resetPassStatus = () => ({
+    type: RESET_PASS_STATUS,
+});

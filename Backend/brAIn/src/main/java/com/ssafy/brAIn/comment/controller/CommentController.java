@@ -2,12 +2,16 @@ package com.ssafy.brAIn.comment.controller;
 
 import com.ssafy.brAIn.comment.dto.CommentCreateRequest;
 import com.ssafy.brAIn.comment.dto.CommentRequest;
+import com.ssafy.brAIn.comment.dto.RoundPostItContent;
 import com.ssafy.brAIn.comment.entity.Comment;
 import com.ssafy.brAIn.comment.service.CommentService;
+import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
+import com.ssafy.brAIn.roundpostit.service.RoundPostItService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -16,6 +20,7 @@ import java.util.Map;
 public class CommentController {
 
     private final CommentService commentService;
+    private final RoundPostItService roundPostItService;
 
     // 코멘트 생성
     @PostMapping("/create")
@@ -68,5 +73,15 @@ public class CommentController {
         } else {
             return ResponseEntity.ok(Map.of("message", message));
         }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> getComment(@RequestBody RoundPostItContent roundPostItContent, @RequestHeader("Authorization") String token) {
+        String accessToken = token.replace("Bearer ", "");
+        RoundPostIt roundPostIt=roundPostItService.findByContent(roundPostItContent.getContent()).get();
+
+        List<Comment> comments=commentService.findByPostItId(roundPostIt);
+
+        return ResponseEntity.ok(Map.of("comments",comments));
     }
 }

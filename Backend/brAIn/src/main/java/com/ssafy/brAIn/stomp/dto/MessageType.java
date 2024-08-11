@@ -17,5 +17,6 @@ public enum MessageType {
     FINISH_FINAL_VOTE, // 중간 투표 종료 : 상위 3개 선정
     START_VOTE,
     END_CONFERENCE,
-    READY,PASS,SUBMIT,NONE;;
+    READY,PASS,SUBMIT,NONE,
+    STEP3_FOR_USER;
 }

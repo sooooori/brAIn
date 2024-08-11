@@ -76,26 +76,37 @@
   font-weight: bold;
 }
 
-.waiting-modal-code {
+/* 회의 코드를 더 크게, 중앙에 배치하고 강조 */
+.conference-code-container {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
+  
+  gap: 10px; /* 코드와 버튼 사이의 간격 */
 }
 
-.waiting-modal-code pre {
-  background: #f9f9f9;
-  padding: 10px;
-  border-radius: 8px;
-  margin: 0;
-  font-size: 14px;
-  word-break: break-word;
-  overflow-x: auto;
-  color: #333;
+.conference-code {
+  flex: 3; /* 코드 부분이 3/5를 차지하도록 설정 */
+  font-size: 1.25rem; /* 글씨 크기 */
+  font-weight: bold; /* 글씨 굵기 */
+  color: #333; /* 글자 색상 */
+  padding: 12px 20px; /* 더 큰 패딩 */
+  background-color: #f0f0f0; /* 배경 색상 */
+  border-radius: 5px; /* 모서리 둥글게 */
 }
 
 .waiting-modal-code-button {
-  margin-left: 10px;
+  flex: 1; /* 버튼 부분이 1/5를 차지하도록 설정 */
+  font-size: 0.875em; /* 버튼 글씨 크기 */
+  padding: 6px 10px; /* 버튼 크기 줄이기 */
+  margin-left: 10px; /* 버튼과 코드 사이의 간격 */
+}
+
+.waiting-modal-code {
+  display: flex;
+  flex-direction: row; /* 코드와 버튼을 수평으로 배치 */
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .waiting-modal-button {

@@ -68,6 +68,9 @@ public class VoteController {
         for(VoteResponse voteResponse: results) {
             System.out.println(voteResponse);
         }
+
+        VoteResultRequest voteResultRequest = new VoteResultRequest(roomId, step);
+        voteService.saveTop9RoundResults(results, voteResultRequest);
         return ResponseEntity.ok().body(results);
     }
 

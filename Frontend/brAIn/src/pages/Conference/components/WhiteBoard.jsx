@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import PostIt from './PostIt';
-import './WhiteBoard.css';
 import { useSelector } from 'react-redux';
 import PostItTest from './PostItTest';
-import Timer from './Timer'; // 타이머 컴포넌트 임포트
+import './WhiteBoard.css';
 import passImg from '../../../assets/svgs/pass.svg';
 import nextImg from '../../../assets/svgs/next.svg';
 import skipImg from '../../../assets/svgs/skip.svg';
@@ -12,7 +10,7 @@ import skipImg from '../../../assets/svgs/skip.svg';
 const WhiteBoard = ({ subject, onSubmitClick }) => {
   const [ideas, setIdeas] = useState([]);
   const token = localStorage.getItem('authToken'); // 인증 토큰 가져오기
-  const currentStep = useSelector((state) => state.conference.currentStep); // Redux에서 currentStep 가져오기
+  const step = useSelector((state) => state.conferenceInfo.curStep); // Redux에서 currentStep 가져오기
   const [inputValue, setInputValue] = useState('');
 
   const handleInputChange = (event) => {
@@ -79,7 +77,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
   };
 
   const getInstructionText = () => {
-    switch (currentStep) {
+    switch (step) {
       case 'initial':
         return '아이디어를 추가해 주세요.';
       case 'discussion':
@@ -95,31 +93,37 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
     onSubmitClick(inputValue);
   };
 
+  // 조건부 렌더링을 위해 step === 'STEP_0'에 대한 boolean 값
+  const isStepZero = step === 'STEP_0';
+
   return (
     <div className="WhiteBoard">
       <div className="WhiteBoard-header">
-        <h2>주제 : </h2>
+        <h2>주제 : {subject} </h2>
       </div>
-      <div className="WhiteBoard-body">
-        <div className="idea-board">
-          <div>
-            <PostItTest />  
+      {/* step이 'STEP_0'일 때 WhiteBoard-body와 WhiteBoard-footer를 숨김 */}
+      {!isStepZero && (
+        <div className="WhiteBoard-body">
+          <div className="idea-board">
+            <PostItTest />
           </div>
         </div>
-      </div>
-      <div className="WhiteBoard-footer">
-        <form className="idea-form" onSubmit={handleAddIdea}>
-          <input
-            type="text"
-            name="idea"
-            value={inputValue}
-            onChange={handleInputChange}
-            placeholder="아이디어를 입력하세요..."
-            className="idea-input"
-          />
-          <button type="button" className="idea-submit-button" onClick={handleClick}>제출</button>
-        </form>
-      </div>
+      )}
+      {!isStepZero && (
+        <div className="WhiteBoard-footer">
+          <form className="idea-form" onSubmit={handleAddIdea}>
+            <input
+              type="text"
+              name="idea"
+              value={inputValue}
+              onChange={handleInputChange}
+              placeholder="아이디어를 입력하세요..."
+              className="idea-input"
+            />
+            <button type="button" className="idea-submit-button" onClick={handleClick}>제출</button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };

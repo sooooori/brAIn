@@ -29,6 +29,12 @@
   z-index: 11000;
 }
 
+/* 사이드바의 가로 크기 확장 */
+.postit-sidebar.expanded {
+  width: 500px;
+}
+
+
 /* 사이드바 헤더 스타일 */
 .sidebar-header {
   display: flex;
