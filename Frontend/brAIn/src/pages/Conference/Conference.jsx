@@ -124,7 +124,7 @@ const Conference = () => {
         const countMemberInWaitingroom=await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/countUser/${roomId}`,{},{
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+            'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
           }
         });
         console.log("인원",countMemberInWaitingroom.data);
@@ -135,7 +135,7 @@ const Conference = () => {
         const newClient = new Client({
           brokerURL: `${import.meta.env.VITE_WSS_BASE_URL}`,
           connectHeaders: {
-            Authorization: 'Bearer ' + localStorage.getItem('roomToken')
+            'Authorization': 'Bearer ' + localStorage.getItem('roomToken')
           },
           debug: (str) => {
             // console.log(str);
