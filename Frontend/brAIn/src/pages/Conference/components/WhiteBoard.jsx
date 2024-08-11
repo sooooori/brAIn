@@ -9,7 +9,7 @@ import skipImg from '../../../assets/svgs/skip.svg';
 
 const WhiteBoard = ({ subject, onSubmitClick }) => {
   const [ideas, setIdeas] = useState([]);
-  const token = localStorage.getItem('authToken'); // 인증 토큰 가져오기
+  const token = localStorage.getItem('accessToken'); // 인증 토큰 가져오기
   const step = useSelector((state) => state.conferenceInfo.curStep); // Redux에서 currentStep 가져오기
   const [inputValue, setInputValue] = useState('');
 
