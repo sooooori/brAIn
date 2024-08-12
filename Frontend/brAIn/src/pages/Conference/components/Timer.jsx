@@ -4,6 +4,8 @@ import Swal from 'sweetalert2';
 import TimerIcon from '../../../assets/svgs/timer.svg'; // 타이머 아이콘
 import './Timer.css'; // 스타일을 위한 CSS 파일
 
+
+
 const Timer = ({ time, voteSent }) => {
   const initialTime = parseInt(time, 10) / 1000 || 0;
   const [currentTime, setCurrentTime] = useState(initialTime); // 타이머의 시간 상태
@@ -66,7 +68,7 @@ const Timer = ({ time, voteSent }) => {
     // 이 부분이 컴포넌트가 unmount되거나, 의존성 배열의 값이 변경될 때 실행됨
     return () => clearInterval(timer);
 
-}, [currentTime,time,curstep,curUser,initialTime,voteSent]);
+}, [currentTime,curstep,curUser,initialTime]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
