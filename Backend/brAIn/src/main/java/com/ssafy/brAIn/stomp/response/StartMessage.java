@@ -14,9 +14,11 @@ public class StartMessage {
 
     private MessageType messageType;
     private List<String> users;
+    private String aiNickname;
 
-    public StartMessage(MessageType messageType, List<String> users) {
+    public StartMessage(MessageType messageType, List<String> users, String aiNickname) {
         this.messageType = messageType;
         this.users = users;
+        this.aiNickname = aiNickname;
     }
 }

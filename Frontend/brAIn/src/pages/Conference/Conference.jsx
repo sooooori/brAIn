@@ -54,6 +54,7 @@ const Conference = () => {
   const curUser = useSelector(state => state.user.currentUser);
   const nextUser = useSelector(state => state.user.nextUser);
   const roundRobinBoard = useSelector(state => state.roundRobinBoard.roundRobinBoard);
+  const readyStatuses = useSelector((state) => state.user.readyStatuses);
   //const roomId=useSelector(state=>state.conferenceInfo.roomId);
   const { secureId: routeSecureId } = useParams();
   const [data,setData]=useState(null);
@@ -70,6 +71,12 @@ const Conference = () => {
 
   const [userList, setUserList] = useState([]);
   const [newTime, setnewTime] = useState(null);
+
+  // READY 카운트 상태 추가
+  const [readyCount, setReadyCount] = useState(0);
+
+  // AI 닉네임 저장을 위한 상태
+  const [aiName, setAiName] = useState(''); // useState를 사용하여 상태로 관리
 
 
   useEffect(() => {
@@ -173,11 +180,20 @@ const Conference = () => {
 
   }, [routeSecureId, roomId, time]);
 
-  // 라운드 변경 시 패스 상태 초기화
+  // 라운드 및 단계 변경 시 패스 상태 초기화
   useEffect(() => {
     dispatch(resetPassStatus());
-  }, [round, dispatch]);
+  }, [round, step, dispatch]);
 
+  // 단계 변경 시 준비 상태 초기화
+  useEffect(() => {
+    dispatch(resetReadyStatus());
+  }, [step, dispatch])
+
+  // 단계가 변경될 때마다 readyCount를 0으로 초기화
+  useEffect(() => {
+    setReadyCount(0);
+  }, [step]);
 
   useEffect(()=>{
 
@@ -224,6 +240,8 @@ const Conference = () => {
       roundRobinBoardUpdate(receivedMessage);
     } else if (receivedMessage.messageType === 'START_CONFERENCE') {
       console.log("회의시작")
+      // AI 닉네임 저장
+      setAiName(receivedMessage.aiNickname);
       startMeeting();
 
       // 사용자 목록 상태 업데이트
@@ -252,14 +270,17 @@ const Conference = () => {
     } else if(receivedMessage.messageType==='FINISH_MIDDLE_VOTE'){
       console.log(receivedMessage);
       console.log(receivedMessage.votes.postit);
+
     } else if(receivedMessage.messageType=='PASS'){
       console.log('pass to '+receivedMessage.nextUser);
       console.log('User who passed:', receivedMessage.curUser);
       dispatch(updatePassStatus(receivedMessage.curUser));
       dispatch(setCuruser(receivedMessage.nextUser));
       if (round !== receivedMessage.nextRound) {
+        dispatch(updatePassStatus(receivedMessage.curUser));
         dispatch(setRound(receivedMessage.nextRound));
       }
+
     } else if(receivedMessage.messageType=='PASS_AND_END'){
       console.log('투표시작')
       dispatch(setCurStep('STEP_2'));
@@ -269,10 +290,20 @@ const Conference = () => {
     } 
 
     else if (receivedMessage.messageType === 'READY') {
-      console.log('next :' + receivedMessage.nextUser)
-      console.log('User who re:', receivedMessage.curUser);
+      console.log('준비누른 사람 누구 ? : ', receivedMessage.curUser);
       dispatch(updateReadyStatus(receivedMessage.curUser));
-      dispatch(setCuruser(receivedMessage.nextUser));
+
+      // READY 한 사람 수 증가
+      setReadyCount((prevCount) => prevCount + 1);
+
+      // AI 준비 상태 설정을 3초 지연
+      setTimeout(() => {
+        if (readyCount + 1 === participantCount) {
+          console.log('모든 참여자가 준비됨. AI 준비 시도. 비상!!');
+          console.log('AI 닉네임임 : ' + receivedMessage.aiNickname)
+          dispatch(updateReadyStatus(receivedMessage.aiNickname));
+        }
+      }, 5000); // 5초 후 실행
     }
   };
 
@@ -282,7 +313,7 @@ const Conference = () => {
       console.log(receivedMessage.step3ForUser);
       dispatch(initVote(receivedMessage.step3ForUser));
     }
-  }
+  };
 
   const countUpMember = () => {
       setParticipantCount((prevCount) => {
@@ -594,7 +625,7 @@ const Conference = () => {
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
-                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready" disabled={curUser !== nickname}>
+                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
                       <img src={ReadyIcon} alt="Ready" className="action-icon" />
                     </Button>
                     <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
@@ -611,7 +642,7 @@ const Conference = () => {
                 )}
                 {role !== 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
-                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready" disabled={curUser !== nickname}>
+                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
                       <img src={ReadyIcon} alt="Ready" className="action-icon" />
                     </Button>
                     <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>

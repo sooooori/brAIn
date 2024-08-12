@@ -203,7 +203,11 @@ public class RedisUtils {
             //System.out.println("Sorted Set is empty or key does not exist.");
             throw new RuntimeException("Sorted Set is empty or key does not exist.");
         }
+    }
 
+    public String getAINickname(String roomId) {
+        String key = roomId + ":ai:nickname";
+        return getData(key);
     }
 
     public void incr(String key) {
