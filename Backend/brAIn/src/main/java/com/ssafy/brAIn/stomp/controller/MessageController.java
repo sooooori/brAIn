@@ -13,6 +13,7 @@ import com.ssafy.brAIn.stomp.request.RequestPass;
 import com.ssafy.brAIn.stomp.request.RequestStep;
 import com.ssafy.brAIn.stomp.response.*;
 import com.ssafy.brAIn.stomp.service.MessageService;
+import com.ssafy.brAIn.util.RedisUtils;
 import com.ssafy.brAIn.vote.dto.VoteResponse;
 import com.sun.jdi.request.StepRequest;
 import org.springframework.amqp.core.MessagePostProcessor;
@@ -42,16 +43,18 @@ public class MessageController {
     private final JWTUtilForRoom jwtUtilForRoom;
     private final AIService aiService;
     private final ConferenceRoomService conferenceRoomService;
+    private final RedisUtils redisUtils;
 
     public MessageController(RabbitTemplate rabbitTemplate,
                              MessageService messageService,
                              JWTUtilForRoom jwtUtilForRoom,
-                             AIService aiService, ConferenceRoomService conferenceRoomService) {
+                             AIService aiService, ConferenceRoomService conferenceRoomService, RedisUtils redisUtils) {
         this.rabbitTemplate = rabbitTemplate;
         this.messageService = messageService;
         this.jwtUtilForRoom = jwtUtilForRoom;
         this.aiService = aiService;
         this.conferenceRoomService = conferenceRoomService;
+        this.redisUtils = redisUtils;
     }
 
 
@@ -197,7 +200,14 @@ public class MessageController {
 //            return message;
 //        };
 
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users));
+        // Redis에서 AI 닉네임 가져오기
+        String aiNickname = redisUtils.getAINickname(roomId);
+
+        // AI 닉네임을 로그로 확인하거나, 필요시 다른 로직에 사용
+        System.out.println("AI Nickname: " + aiNickname);
+
+
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users,aiNickname));
 
     }
 
@@ -226,11 +236,10 @@ public class MessageController {
 
         messageService.updateUserState(Integer.parseInt(roomId), nickname, UserState.READY);
 
-        // 다음 사용자 결정
-        String nextUser = messageService.NextOrder(Integer.parseInt(roomId), nickname);
+        // Redis에서 AI 닉네임 가져오기
+        String aiNickname = redisUtils.getAINickname(roomId);
 
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY, nickname, nextUser));
-
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY, nickname, aiNickname));
     }
 
     //유저 답변 패스(테스트 완)
