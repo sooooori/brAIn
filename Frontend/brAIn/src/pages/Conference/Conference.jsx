@@ -102,16 +102,13 @@ const Conference = () => {
           //dispatch(setRoom(response.data.roomId));
           setRoomId(response.data.roomId);
           const countMemberInWaitingroom=await axios.get(`http://localhost/api/v1/conferences/countUser/${response.data.roomId}`);
-        console.log("인원",countMemberInWaitingroom.data);
-        setParticipantCount(countMemberInWaitingroom.data+1);
+          console.log("인원",countMemberInWaitingroom.data);
+          setParticipantCount(countMemberInWaitingroom.data+1);
         }
 
         if (subject === ''){
           setSubject(response.data.subject);
         }
-
-        
-        
 
         const newClient = new Client({
           brokerURL: `${import.meta.env.VITE_WSS_BASE_URL}`,
