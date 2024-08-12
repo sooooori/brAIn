@@ -173,7 +173,6 @@ public class MessageController {
     @MessageMapping("start.conferences.{roomId}")
     public void startConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
         String authorization = accessor.getFirstNativeHeader("Authorization");
-        System.out.println(authorization);
         String role=jwtUtilForRoom.getRole(authorization);
         System.out.println(role);
         if (!role.equals("CHIEF")) {
