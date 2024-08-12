@@ -397,6 +397,10 @@ const Conference = () => {
     }
   };
 
+  const handleVoteSent = () => {
+    dispatch(step1EndAlarm());
+  };
+
   const step1EndAlarm = () => async (dispatch, getState) => {
     try {
      
@@ -573,7 +577,7 @@ const Conference = () => {
                   
                 </div>
                 <div className="conf-timer-container">
-                  <Timer time={time} voteSent={step1EndAlarm}/>
+                  <Timer time={time} voteSent={handleVoteSent}/>
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
