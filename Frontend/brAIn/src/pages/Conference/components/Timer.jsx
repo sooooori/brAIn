@@ -71,7 +71,8 @@ const Timer = ({ time, voteSent, passSent }) => {
     }
 
     else if (currentTime<=0 && curstep=='STEP_1'){
-      passSent()
+      passSent();
+      clearInterval(timer);
     }
 
     else if(currentTime<=0 && curstep=='STEP_2'){
