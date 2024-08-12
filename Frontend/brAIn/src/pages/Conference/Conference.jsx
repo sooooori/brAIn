@@ -360,9 +360,6 @@ const Conference = () => {
     }
   };
 
-
-  
-
   const handleNextStepClick = () => {
     if (client){
       client.publish({
@@ -373,9 +370,25 @@ const Conference = () => {
         body: JSON.stringify({
           step: step
         })
-      });
+      });    
     }
     console.log('Next Step Btn Clicked')
+
+    if (step == 'STEP_2'){
+      console.log('step_3 시작')
+      if(client){
+        console.log('middleResult publish 보냄')
+        client.publish({
+          destination: `/app/vote.middleResults.${roomId}.${step}`,
+          headers: {
+            'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
+          },
+        })
+      }
+
+      handleMessageForIndividual()
+    }
+    
   };  
 
   const handlePassButtonClick = () => {
@@ -465,6 +478,7 @@ const Conference = () => {
           // voteResults.forEach(vote => {
           //   console.log(`PostIt: ${vote.postIt}, Score: ${vote.score}`);
           // });
+          console.log(voteResults)
           setVoteResults(voteResults);
           setIsModalOpen(true); // 모달 열기
         } else {
@@ -492,6 +506,7 @@ const Conference = () => {
           AuthorizationRoom: localStorage.getItem('roomToken')
         }
       });
+      console.log(response.data)
       return response.data;  // 데이터 반환
     } catch (error) {
       console.error("Error fetching vote results:", error);
@@ -570,7 +585,7 @@ const Conference = () => {
                   
                 </div>
                 <div className="conf-timer-container">
-                  <Timer time={time} step1EndAlarm={step1EndAlarm}/>
+                  <Timer time={time} voteSent={step1EndAlarm}/>
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
