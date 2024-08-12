@@ -7,8 +7,8 @@ from openai import AssistantEventHandler
 import time
 import unicodedata
 
-ASSITANT_ID = 'asst_0I7SoatXnsvE47YRSKMJnc22'
-client = OpenAI(api_key='sk-proj-8JiLVZK2dojt4n6785OAT3BlbkFJ0hSiaAEqWjms3ACsQuTT')
+ASSITANT_ID = 'asst_Yn2CqHG87aRY7V7JSsRwneUJ'
+client = OpenAI(api_key='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')
 
 class EventHandler(AssistantEventHandler):
     def __init__(self):
@@ -56,7 +56,7 @@ def make_assitant(subject):
     assistant = client.beta.assistants.create(
         name="회의 참가자",
         instructions= f"우리가 브레인 스토밍중인 주제는 {subject}입니다. 우리는 라운드로빈 방식으로 돌아가며 아이디어를 내고 있습니다",
-        model="gpt-3.5-turbo-16k",
+        model="gpt-4o-mini",
     )
     # 생성된 챗봇의 정보를 JSON 형태로 출력합니다.
     show_json(assistant)
@@ -136,12 +136,14 @@ def round_robin_make_idea():
     message = client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
-        content= "너는 브레인 스토밍 회의에 참가한 사람입니다.\
-            주제에 관련한 아이디어를 하나만 추가로 내주세요.\
-            당신 또한 자신의 아이디어를 한두문장으로만 나타내야합니다.\
-            다른 사람의 아이디어에 코멘트를 달 필요는 없습니다.\
-            다른 user의 아이디어와 겹치지 않게 부탁합니다.\
-            최대한 평범하게 사람이 대화하는것 처럼 답해주세요"
+        content= "너는 브레인 스토밍 회의에 참가한 사람이야.\
+            주제에 관련한 아이디어를 하나만 추가로 내줘.\
+            당신 또한 자신의 아이디어를 한 두문장으로만 나타내야해.\
+            다른 사람의 아이디어에 코멘트를 달 필요는 없어.\
+            다른 user의 아이디어와 겹치지 않게 부탁해.\
+            답변은 다른 user의 답변 맥락에 맞게 대답해줘.\
+            답변은 핵심만 담아 한 문장으로 표현해줘.\
+            최대한 평범하게 사람이 대화하는것 처럼 대답해줘."
     )
 
     with client.beta.threads.runs.stream(

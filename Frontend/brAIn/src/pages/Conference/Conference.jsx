@@ -52,6 +52,7 @@ const Conference = () => {
   const step = useSelector(state => state.conferenceInfo.curStep);
   const round = useSelector(state => state.conferenceInfo.round);
   const curUser = useSelector(state => state.user.currentUser);
+  const nextUser = useSelector(state => state.user.nextUser);
   const roundRobinBoard = useSelector(state => state.roundRobinBoard.roundRobinBoard);
   //const roomId=useSelector(state=>state.conferenceInfo.roomId);
   const { secureId: routeSecureId } = useParams();
@@ -230,7 +231,7 @@ const Conference = () => {
     } else if (receivedMessage.messageType == 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep))
       if(receivedMessage.curStep=='STEP_1'){
-        setTime(2*60*1000);
+        setTime(2*6*1000);
       }else if(receivedMessage.curStep=='STEP_2'){
         setTime(1*60*1000);
       }
@@ -405,7 +406,11 @@ const Conference = () => {
   };
 
   const handlepassSent = () => {
+    console.log('pass curUser : ',curUser)
+    dispatch(updatePassStatus(curUser));
     handlePassButtonClick()
+    console.log('pass nextUser: ', nextUser)
+    dispatch(setCuruser(nextUser));
   }
 
   const handleVoteSent = () => {
