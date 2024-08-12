@@ -1,4 +1,4 @@
-import { ADD_ITEM, REORDER_ITEMS } from "../actions/votedItemAction";
+import { ADD_ITEM, REMOVE_ITEM, REORDER_ITEMS } from "../actions/votedItemAction";
 
 
 const initialState={
@@ -25,6 +25,12 @@ const votedItemReducer=(state=initialState,action)=>{
 
             return { ...state, items: newItems };
             
+        }
+
+        case REMOVE_ITEM:{
+            const {index} = action.payload;
+            const newItems = state.items.filter((_, i) => i !== index);
+            return { ...state, items: newItems };
         }
 
         case REORDER_ITEMS:{

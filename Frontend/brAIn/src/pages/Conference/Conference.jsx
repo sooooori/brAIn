@@ -67,11 +67,7 @@ const Conference = () => {
   const [voteResults, setVoteResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
   const [userList, setUserList] = useState([]);
-
-
-
   const [newTime, setnewTime] = useState(null);
 
 
@@ -225,7 +221,7 @@ const Conference = () => {
       // 사용자 목록 상태 업데이트
       const updatedUsers = dispatch(setUsers(receivedMessage.users));
       dispatch(setCuruser(updatedUsers[0].nickname));
-
+      
       dispatch(setCurStep('STEP_0'));
 
     } else if (receivedMessage.messageType === 'ENTER_CONFERENCES') {
@@ -374,6 +370,7 @@ const Conference = () => {
     }
     console.log('Next Step Btn Clicked')
 
+    console.log('step 확인용 : ', step)
     if (step == 'STEP_2'){
       console.log('step_3 시작')
       if(client){
@@ -406,6 +403,10 @@ const Conference = () => {
       });
     }
   };
+
+  const handlepassSent = () => {
+    handlePassButtonClick()
+  }
 
   const handleVoteSent = () => {
     dispatch(step1EndAlarm());
@@ -589,7 +590,7 @@ const Conference = () => {
                   
                 </div>
                 <div className="conf-timer-container">
-                  <Timer time={time} voteSent={handleVoteSent}/>
+                  <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent}/>
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
