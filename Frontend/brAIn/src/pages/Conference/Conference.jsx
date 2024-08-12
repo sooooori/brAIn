@@ -70,10 +70,20 @@ const Conference = () => {
   const [voteResults, setVoteResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+<<<<<<< HEAD
   const [userList, setUserList] = useState([]);
 
 
   const [newTime, setnewTime] = useState(null);
+=======
+
+  const [userList, setUserList] = useState([]);
+
+
+
+  const [newTime, setnewTime] = useState(null);
+
+>>>>>>> aaf4ae04de74060d0e11f45b42ef81e09246a89e
 
   useEffect(() => {
     let isMounted = true;
@@ -98,9 +108,15 @@ const Conference = () => {
         if(roomId == null){
           //dispatch(setRoom(response.data.roomId));
           setRoomId(response.data.roomId);
+<<<<<<< HEAD
           const countMemberInWaitingroom=await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/countUser/${roomId}`);
           console.log("인원",countMemberInWaitingroom.data);
           setParticipantCount(countMemberInWaitingroom.data+1);
+=======
+          const countMemberInWaitingroom=await axios.get(`http://localhost/api/v1/conferences/countUser/${response.data.roomId}`);
+        console.log("인원",countMemberInWaitingroom.data);
+        setParticipantCount(countMemberInWaitingroom.data+1);
+>>>>>>> aaf4ae04de74060d0e11f45b42ef81e09246a89e
         }
 
         if (subject === ''){
@@ -273,8 +289,14 @@ const Conference = () => {
       // 사용자 목록 상태 업데이트
       const updatedUsers = dispatch(setUsers(receivedMessage.users));
       dispatch(setCuruser(updatedUsers[0].nickname));
+<<<<<<< HEAD
       dispatch(setCurStep('STEP_0'));
       
+=======
+
+      dispatch(setCurStep('STEP_0'));
+
+>>>>>>> aaf4ae04de74060d0e11f45b42ef81e09246a89e
     } else if (receivedMessage.messageType === 'ENTER_CONFERENCES') {
       dispatch(setUserNick(receivedMessage.nickname));
 
