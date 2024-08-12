@@ -60,11 +60,8 @@ const Conference = () => {
   const votedItems = useSelector(state => state.votedItem.items || []);
   
   
-  const MINUTES_IN_MS = 2*60* 1000;
   const [time, setTime] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
-  const [voteTime,setVoteTime]=useState(10*1000);
-  const [timerActive, setTimerActive] = useState(false);
+
 
   //투표결과 모달관련
   const [voteResults, setVoteResults] = useState([]);
@@ -149,8 +146,10 @@ const Conference = () => {
         newClient.onStompError = (frame) => {
           console.error('STOMP error:', frame);
         };
-
-        if (isMounted) {
+        
+        // 그냥 isMount 원래 true였는데 안되서 ! 붙임
+        if (!isMounted) {
+          
           setClient(newClient);
           currentClient = newClient;
           newClient.activate();
@@ -172,7 +171,7 @@ const Conference = () => {
       }
     };
 
-  }, [routeSecureId, roomId, time, timeLeft ]);
+  }, [routeSecureId, roomId, time]);
 
   // 라운드 변경 시 패스 상태 초기화
   useEffect(() => {
@@ -180,17 +179,30 @@ const Conference = () => {
   }, [round, dispatch]);
 
 
-  useEffect(() => {
-    if (step === 'STEP_0') {
-      // Start the timer if it's step0 and no other timer is running
-      // setTimerActive(true);
-      startTimer(time);
-    }else{
-      stepTimeset(step)
-    }
-    console.log("curUser",curUser);
+  useEffect(()=>{
+
+    const getTime=async()=>{
+      const time_response = await axios.get(`http://localhost/api/v1/conferences/time`, {
+        params: {
+          secureId: routeSecureId,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+        },
+      });
     
-  }, [step, newTime]);
+      if (time === null) {
+        setTime(time_response.data.time);
+        console.log(time)
+      }
+    }
+    if(step=='STEP_0'){
+      getTime();
+    }
+    
+
+  },[time,step,curUser])
 
   // const getPerson=async()=>{
     
@@ -200,70 +212,9 @@ const Conference = () => {
 
 
 
-  const getTime=async()=>{
-    const time_response = await axios.get(`http://localhost/api/v1/conferences/time`, {
-      params: {
-        secureId: routeSecureId,
-      },
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
-      },
-    });
   
-    if (time === null) {
-      setTime(time_response.data.time);
-      console.log(time)
-    }
-  }
 
-  getTime();
-
-  const startTimer = async () => {
-    try {
-      await Swal.fire({
-        icon: "info",
-        title: '준비 시간이 시작되었습니다.',
-        text: '준비를 마치세요.',
-        timer: 3000
-      });
-
-      await timer(time);
-      
-     
-        await Swal.fire({
-          icon: "warning",
-          title: '준비 시간이 끝났습니다.',
-          text: '다음 단계로 진행하세요.',
-        });
-      
-    } catch (error) {
-      console.error("Error during timer:", error);
-    }
-  };
-
-  const timer = async (time) => {
-    return new Promise(resolve => {
-      let timerId;
-
-      const tick = () => {
-        
-          time -= 1000;
-          console.log(time)
-          if (time <= 0) {
-
-            clearInterval(timerId); // Stop the timer
-            resolve();
-            return 0; // Set timer to 0 after it ends
-          } else {
-            return time;
-          }
-        
-      };
-
-      timerId = setInterval(tick, 1000); // Call tick every second
-    });
-  };
+  
 
   const handleMessage = async (receivedMessage) => {
     if (receivedMessage.messageType == 'ENTER_WAITING_ROOM') {
@@ -271,6 +222,7 @@ const Conference = () => {
     } else if (receivedMessage.messageType == 'SUBMIT_POST_IT') {
       roundRobinBoardUpdate(receivedMessage);
     } else if (receivedMessage.messageType === 'START_CONFERENCE') {
+      console.log("회의시작")
       startMeeting();
 
       // 사용자 목록 상태 업데이트
@@ -284,13 +236,19 @@ const Conference = () => {
 
     } else if (receivedMessage.messageType == 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep))
-      if(step=='STEP_3'){
+      if(step=='STEP_1'){
+        setTime(2*60*1000);
+      }else if(step=='STEP_2'){
+        setTime(1*60*1000);
+      }
+      else if(step=='STEP_3'){
+        setTime(2*60*1000);
         step3start();
       }
     }else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
       await roundRobinBoardUpdate(receivedMessage);
       dispatch(setCurStep('STEP_2'));
-      dispatch(step1EndAlarm());
+      setTime(1*60*1000);
     } else if(receivedMessage.messageType==='FINISH_MIDDLE_VOTE'){
       console.log(receivedMessage);
       console.log(receivedMessage.votes.postit);
@@ -305,7 +263,8 @@ const Conference = () => {
     } else if(receivedMessage.messageType=='PASS_AND_END'){
       console.log('투표시작')
       dispatch(setCurStep('STEP_2'));
-      dispatch(step1EndAlarm());
+      setTime(1*60*1000);
+
 
     } 
 
@@ -345,6 +304,9 @@ const Conference = () => {
   };
 
   const handleStartMeeting = () => {
+    console.log('스타트미팅')
+    console.log(roomId);
+    console.log(client)
     if (client) {
       client.publish({
         destination: `/app/start.conferences.${roomId}`,
@@ -401,50 +363,7 @@ const Conference = () => {
     }
   };
 
-  const stepTimer = async (newTime) => {
-    return new Promise(resolve => {
-      let timerId;
 
-      const tick = () => {
-        
-        newTime -= 1000;
-          console.log(newTime)
-          if (newTime <= 0) {
-            clearInterval(timerId); // Stop the timer
-            resolve();
-
-            Swal.fire({
-              icon: "warning",
-              title: '시간이 다 되었습니다.',
-              text: '다음 단계로 진행하세요.',
-            });
-
-            return 0; // Set timer to 0 after it ends
-          } else {
-            return newTime;
-          }
-        
-      };
-
-      timerId = setInterval(tick, 1000); // Call tick every second
-    });
-  };
-
-
-  const stepTimeset = (step) =>{
-    const timeSetting = {
-      'STEP_1' : 2 * 60 * 1000,
-      'STEP_2' : 1 * 60 * 1000,
-      'STEP_3' : 2 * 60 * 1000,
-    };
-    
-    console.log(timeSetting[step])
-    const newTime = timeSetting[step];
-    console.log('step : ', step)
-    console.log('new Time : ', newTime)
-    setnewTime(newTime);
-    stepTimer(newTime);
-  };
   
 
   const handleNextStepClick = () => {
@@ -480,17 +399,8 @@ const Conference = () => {
 
   const step1EndAlarm = () => async (dispatch, getState) => {
     try {
-      await Swal.fire({
-        icon: "success",
-        title: '브레인 스토밍이 끝났습니다.',
-        text: '1분 동안 맘에 드는 3개의 아이디어를 골라주세요',
-        timer: 3000
-      });
-  
-      // 타이머 시작
-      await timer(voteTime);
-  
-  
+     
+      console.log('투표진행')
       // 상태 업데이트 후 후속 작업을 수행하기 위해 상태를 확인
       const state = getState();
       const votedItems = state.votedItem.items;
@@ -663,7 +573,7 @@ const Conference = () => {
                   
                 </div>
                 <div className="conf-timer-container">
-                  <Timer time={step === 'STEP_0' ? time : newTime} />
+                  <Timer time={time} voteSent={step1EndAlarm}/>
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
