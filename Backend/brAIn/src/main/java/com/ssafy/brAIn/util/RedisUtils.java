@@ -205,4 +205,9 @@ public class RedisUtils {
         }
 
     }
+
+    public void incr(String key) {
+        redisTemplate.opsForValue().increment(key);
+    }
+
 }

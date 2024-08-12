@@ -315,13 +315,19 @@ public class MessageController {
         }
 
         List<String> usersInRoom = messageService.getUsersInRoom(Integer.parseInt(roomId));
+        String ai=messageService.getAI(Integer.parseInt(roomId));
         for(int i=0;i<usersInRoom.size();i++){
+            if(usersInRoom.get(i).equals(ai))continue;
             List<String> step3ForUser=new ArrayList<>();
             for(int j=0;j<votes.size();j++){
                 step3ForUser.add(votes.get((i+j)%votes.size()).getPostIt());
             }
             Step3ForUser step3ForUserResponse=new Step3ForUser(MessageType.STEP3_FOR_USER,step3ForUser);
             System.out.println(usersInRoom.get(i));
+            for(int j=0;j<step3ForUser.size();j++){
+                System.out.print(step3ForUser.get(j)+" ");
+            }
+            System.out.println();
             rabbitTemplate.convertAndSend("room."+roomId+"."+usersInRoom.get(i),step3ForUserResponse);
         }
 

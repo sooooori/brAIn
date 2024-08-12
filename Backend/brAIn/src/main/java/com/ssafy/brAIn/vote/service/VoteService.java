@@ -98,13 +98,8 @@ public class VoteService {
                 //redisUtils.deleteKey(tempVoteKey);
 
 
+        redisUtils.incr(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total");
 
-        if(redisUtils.isKeyExists(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total")){
-            redisUtils.save(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total",
-                    (Integer.parseInt(redisUtils.getData(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total"))+1)+"");
-        }else{
-            redisUtils.save(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total",1+"");
-        }
 
         log.info("Vote Finished");
     }
@@ -261,4 +256,6 @@ public class VoteService {
     public boolean existsMiddleVoteInDB(Integer conferenceId) {
         return voteRepository.existsByConferenceRoomId(conferenceId);
     }
+
+
 }

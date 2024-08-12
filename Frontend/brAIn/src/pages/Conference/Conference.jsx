@@ -137,7 +137,13 @@ const Conference = () => {
             handleMessage(receivedMessage);
           });
 
-          newClient.subscribe(`/queue/room.${response.data.roomId}.${nickname}`,(message)=>{
+          let nick=null;
+          if(nickname==""){
+            nick=response.data.nickname;
+          }else{
+            nick=nickname;
+          }
+          newClient.subscribe(`/queue/room.${response.data.roomId}.${nick}`,(message)=>{
             const receivedMessage=JSON.parse(message.body);
             handleMessageForIndividual(receivedMessage);
           })
@@ -197,6 +203,7 @@ const Conference = () => {
         console.log(time)
       }
     }
+    console.log('useEffect내부',step)
     if(step=='STEP_0'){
       getTime();
     }
@@ -236,19 +243,18 @@ const Conference = () => {
 
     } else if (receivedMessage.messageType == 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep))
-      if(step=='STEP_1'){
+      if(receivedMessage.curStep=='STEP_1'){
         setTime(2*60*1000);
-      }else if(step=='STEP_2'){
-        setTime(1*60*1000);
+      }else if(receivedMessage.curStep=='STEP_2'){
+        setTime(1*6*1000);
       }
-      else if(step=='STEP_3'){
+      else if(receivedMessage.curStep=='STEP_3'){
         setTime(2*60*1000);
-        step3start();
       }
     }else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
       await roundRobinBoardUpdate(receivedMessage);
       dispatch(setCurStep('STEP_2'));
-      setTime(1*60*1000);
+      setTime(1*6*1000);
     } else if(receivedMessage.messageType==='FINISH_MIDDLE_VOTE'){
       console.log(receivedMessage);
       console.log(receivedMessage.votes.postit);
@@ -263,7 +269,7 @@ const Conference = () => {
     } else if(receivedMessage.messageType=='PASS_AND_END'){
       console.log('투표시작')
       dispatch(setCurStep('STEP_2'));
-      setTime(1*60*1000);
+      setTime(1*6*1000);
 
 
     } 
@@ -377,8 +383,14 @@ const Conference = () => {
           step: step
         })
       });
+
+      if(step=='STEP_2'){
+        step3start();
+      }
     }
     console.log('Next Step Btn Clicked')
+    
+    
   };  
 
   const handlePassButtonClick = () => {

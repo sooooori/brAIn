@@ -9,6 +9,7 @@ import com.ssafy.brAIn.comment.service.CommentService;
 import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
 import com.ssafy.brAIn.roundpostit.service.RoundPostItService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/comment")
@@ -89,6 +91,8 @@ public class CommentController {
     public ResponseEntity<?> getComment(@RequestBody RoundPostItContent roundPostItContent, @RequestHeader("AuthorizationRoom") String token) {
         String roomToken = token.replace("Bearer ", "");
         String roomId=jwtUtilForRoom.getRoomId(roomToken);
+        log.info("roundpostitContent: {}",roundPostItContent.getContent());
+        log.info("roomId:{}",roomId);
         RoundPostIt roundPostIt=roundPostItService.findByContentAndRoom(roundPostItContent.getContent(),roomId).get();
 
         List<Comment> comments=commentService.findByPostItId(roundPostIt);
