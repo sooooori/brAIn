@@ -221,27 +221,36 @@ def swot_make():
     thread_id = params['threadId']
     assistant_id = params['assistantId']
     idea = params['idea']
-    details = params['details']
+    details = params.get('details', [])
+    
     prompt = f"우리는 지금까지 나온 아이디어중에 {idea}라는 내용이 있습니다. 세부 내용으로는"
     for item in details:
-        prompt += f", {item['detail']}"
+        if isinstance(item, dict) and 'detail' in item:
+            prompt += f", {item['detail']}"
+        else:
+            prompt += ", [Invalid detail]"
+    
     prompt += "들이 나왔습니다. 이러한 아이디어에 SWOT분석을 만들어주시겠습니까?\
         세부 내용에 대해 대답하는 것이 아닌 아이디어에 대한 세부내용까지 고려하여 SWOT분석을 만들어주세요\
         SWOT분석만 만들면 됩니다. 다른 산출물을 만들 필요는 없습니다.\
         형식에 맞춰서 너가 전부 작성해주세요"
+    
     event_handler = EventHandler()
     message = client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
-        content= prompt
+        content=prompt
     )
+    
     with client.beta.threads.runs.stream(
         thread_id=thread_id,
         assistant_id=assistant_id,
         event_handler=event_handler,
     ) as stream:
         stream.until_done()
+    
     return event_handler.get_generated_text()
+
 
 @app.route('/user')
 def user():
