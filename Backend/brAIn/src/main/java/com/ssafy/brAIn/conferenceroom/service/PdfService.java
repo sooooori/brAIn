@@ -1,15 +1,12 @@
 package com.ssafy.brAIn.conferenceroom.service;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 @Service
 public class PdfService {
@@ -22,9 +19,12 @@ public class PdfService {
             PdfWriter.getInstance(document, byteArrayOutputStream);
             document.open();
 
+            // 한글 폰트 설정
+            BaseFont baseFont = BaseFont.createFont("src/main/resources/fonts/NanumGothic-Regular.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            Font contentFont = new Font(baseFont, 12, Font.NORMAL);
+
             // PDF에 제목 추가
-            Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
-            Paragraph title = new Paragraph("Meeting Report", titleFont);
+            Paragraph title = new Paragraph("Meeting Report", new Font(baseFont, 18, Font.BOLD));
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
 
@@ -32,12 +32,11 @@ public class PdfService {
             document.add(new Paragraph(" "));
 
             // 보고서 내용 추가
-            Font contentFont = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
             Paragraph content = new Paragraph(reportContent, contentFont);
             document.add(content);
 
             document.close();
-        } catch (DocumentException e) {
+        } catch (DocumentException | IOException e) {
             e.printStackTrace();
             throw new RuntimeException("Error generating PDF", e);
         }

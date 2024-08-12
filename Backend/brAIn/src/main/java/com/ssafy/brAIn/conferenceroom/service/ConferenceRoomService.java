@@ -48,7 +48,7 @@ public class ConferenceRoomService {
     }
 
     public ConferenceRoom findByInviteCode(String inviteCode) {
-       return conferenceRoomRepository.findByInviteCode(inviteCode).orElse(null);
+        return conferenceRoomRepository.findByInviteCode(inviteCode).orElse(null);
     }
 
     public ConferenceRoom findBySecureId(String secureId) {
@@ -111,13 +111,12 @@ public class ConferenceRoomService {
 
     // 회의 결과 요약 정보
     public String generateMeetingReport(Integer roomId) {
+        // Step 1: 특정 회의실 정보와 투표 결과 가져오기
         ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + roomId));
         List<Vote> voteResults = voteRepository.findByConferenceRoom_Id(roomId);
 
-        log.info("Assistance_id ={}", conferenceRoom.getAssistantId());
-        log.info("Thread_id={}", conferenceRoom.getThreadId());
-
+        // Step 2: 투표 결과를 점수 기준으로 상위 3개의 아이디어와 나머지 아이디어로 분리
         List<Vote> topThreeIdeas = voteResults.stream()
                 .sorted((v1, v2) -> v2.getScore() - v1.getScore())
                 .limit(3)
@@ -129,9 +128,11 @@ public class ConferenceRoomService {
                 .limit(9)
                 .toList();
 
+        // 모든 아이디어를 하나의 리스트로 결합
         List<Vote> allIdeas = new ArrayList<>(topThreeIdeas);
         allIdeas.addAll(remainingIdeas);
 
+        // Step 3: 전체 아이디어 내용 수집
         String allIdeasContent = allIdeas.stream()
                 .map(vote -> vote.getRoundPostIt().getContent())
                 .collect(Collectors.joining("\n"));
@@ -140,72 +141,55 @@ public class ConferenceRoomService {
                 .flatMap(vote -> commentRepository.findByRoundPostIt_Id(vote.getRoundPostIt().getId()).stream().map(Comment::getContent))
                 .collect(Collectors.toList());
 
-        String summary = aiService.makeSummary(conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
+        log.info("Thread Id: {}", conferenceRoom.getThreadId());
+        log.info("Assistant Id: {}", conferenceRoom.getAssistantId());
 
+        // Step 4: 페르소나 및 SWOT 분석 추가 (필요한 경우)
         String personaResult = aiService.personaMake(allIdeasContent, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
         String swotResult = aiService.swotMake(allIdeasContent, allDetails, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
 
-        log.info("Generated summary: {}", summary);
-        log.info("Generated persona: {}", personaResult);
-        log.info("Generated SWOT: {}", swotResult);
-
+        // Step 5: 최종 보고서 구성
         StringBuilder reportBuilder = new StringBuilder();
-        reportBuilder.append("Meeting Report\n\n");
-        reportBuilder.append("Subject: ").append(conferenceRoom.getSubject()).append("\n\n");
-        reportBuilder.append("Summary:\n").append(summary).append("\n\n");
+        reportBuilder.append("Subject: ").append(conferenceRoom.getSubject()).append("\n\n");  // 회의 주제 추가
 
+        // Step 6: 각 아이디어와 그에 따른 코멘트 추가
         reportBuilder.append("Top 3 Ideas:\n\n");
-
         for (Vote vote : topThreeIdeas) {
             RoundPostIt postIt = vote.getRoundPostIt();
-            String ideaContent = filterNumericContent(postIt.getContent());
+            String ideaContent = postIt.getContent();
             List<Comment> participantComments = commentRepository.findByRoundPostIt_Id(postIt.getId());
 
             reportBuilder.append("Idea: ").append(ideaContent).append("\n");
             reportBuilder.append("Participant Comments:\n");
             for (Comment comment : participantComments) {
-                String filteredComment = filterNumericContent(comment.getContent());
-                reportBuilder.append(" - ").append(filteredComment).append("\n");
+                reportBuilder.append(" - ").append(comment.getContent()).append("\n");
             }
-            reportBuilder.append("\n\n");
+            reportBuilder.append("\n"); // 다음 아이디어와의 구분을 위해 빈 줄 추가
         }
 
         reportBuilder.append("Other Ideas:\n\n");
         for (Vote vote : remainingIdeas) {
             RoundPostIt postIt = vote.getRoundPostIt();
-            String ideaContent = filterNumericContent(postIt.getContent());
+            String ideaContent = postIt.getContent();
             List<Comment> participantComments = commentRepository.findByRoundPostIt_Id(postIt.getId());
 
-            reportBuilder.append("Idea: ").append(ideaContent).append("\n\n");
+            reportBuilder.append("Idea: ").append(ideaContent).append("\n");
             reportBuilder.append("Participant Comments:\n");
             for (Comment comment : participantComments) {
-                String filteredComment = filterNumericContent(comment.getContent());
-                reportBuilder.append(" - ").append(filteredComment).append("\n");
+                reportBuilder.append(" - ").append(comment.getContent()).append("\n");
             }
-            reportBuilder.append("\n\n");
+            reportBuilder.append("\n"); // 다음 아이디어와의 구분을 위해 빈 줄 추가
         }
 
+        // Step 7: AI를 이용한 전체 요약본 생성 및 추가
+        String summary = aiService.makeSummary(conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
+        reportBuilder.append("Summary:").append(summary).append("\n\n");  // AI 요약본 추가
+
+        // Step 8: 페르소나 및 SWOT 분석 결과 추가
         reportBuilder.append("Persona Analysis:\n").append(personaResult).append("\n\n");
         reportBuilder.append("SWOT Analysis:\n").append(swotResult).append("\n");
 
+        // Step 9: 최종 보고서 반환
         return reportBuilder.toString();
     }
-
-    // 코맨트 내부 숫자 및 공백 제거
-    private String filterNumericContent(String content) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < content.length(); i++) {
-            char currentChar = content.charAt(i);
-
-            // 첫 글자가 숫자이거나, 마지막 글자가 숫자인 경우, 또는 숫자 좌우에 공백이 있는 경우
-            if (Character.isDigit(currentChar) && (i == 0 || i == content.length() - 1 || Character.isWhitespace(content.charAt(i - 1)) || i < content.length() - 1 && Character.isWhitespace(content.charAt(i + 1)))) {
-                continue;
-            }
-
-            builder.append(currentChar);
-        }
-        // 결과에서 양쪽 끝에 남아 있는 불필요한 공백을 제거
-        return builder.toString().trim().replaceAll("\\s+", " ");
-    }
-
 }

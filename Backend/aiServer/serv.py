@@ -7,8 +7,8 @@ from openai import AssistantEventHandler
 import time
 import unicodedata
 
-ASSITANT_ID = 'asst_0I7SoatXnsvE47YRSKMJnc22'
-client = OpenAI(api_key='sk-proj-8JiLVZK2dojt4n6785OAT3BlbkFJ0hSiaAEqWjms3ACsQuTT')
+ASSITANT_ID = 'asst_Yn2CqHG87aRY7V7JSsRwneUJ'
+client = OpenAI(api_key='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')
 
 class EventHandler(AssistantEventHandler):
     def __init__(self):
@@ -56,7 +56,7 @@ def make_assitant(subject):
     assistant = client.beta.assistants.create(
         name="회의 참가자",
         instructions= f"우리가 브레인 스토밍중인 주제는 {subject}입니다. 우리는 라운드로빈 방식으로 돌아가며 아이디어를 내고 있습니다",
-        model="gpt-3.5-turbo-16k",
+        model="gpt-4o-mini",
     )
     # 생성된 챗봇의 정보를 JSON 형태로 출력합니다.
     show_json(assistant)
@@ -167,7 +167,9 @@ def summary_ideas():
         나왔던 의견들을 회의록 형식으로 정리하여야 합니다.\
         '패스'라고 말한 의견은 제외해주세요.\
         너가 낸 의견도 넣어서 정리해주세요. 반드시요. 꼭.\
-        주제, 아이디어, 의견 정리, 향후 조치에 대해 정리해야 합니다.",
+        진행한 회의 중에 나온 아이디어와 관련된 의견 정리, 향후 조치에 대해 정리해야 합니다.\
+        그외 회의록 작성자, 날짜 등의 부가내용은 필요하지 않습니다.\
+        단 요약이라는 점을 명심하고 길이를 조절하세요.",
     )
     with client.beta.threads.runs.stream(
         thread_id=thread_id,
@@ -224,12 +226,17 @@ def swot_make():
     details = params.get('details', [])
     
     prompt = f"우리는 지금까지 나온 아이디어중에 {idea}라는 내용이 있습니다. 세부 내용으로는"
-    for item in details:
-        if isinstance(item, dict) and 'detail' in item:
-            prompt += f", {item['detail']}"
-        else:
-            prompt += ", [Invalid detail]"
     
+    # 세부 내용 추가
+    if details:
+        for item in details:
+            if isinstance(item, dict) and 'detail' in item:
+                prompt += f", {item['detail']}"
+            else:
+                prompt += ", [Invalid detail]"
+    else:
+        prompt += " [No details provided]"
+
     prompt += "들이 나왔습니다. 이러한 아이디어에 SWOT분석을 만들어주시겠습니까?\
         세부 내용에 대해 대답하는 것이 아닌 아이디어에 대한 세부내용까지 고려하여 SWOT분석을 만들어주세요\
         SWOT분석만 만들면 됩니다. 다른 산출물을 만들 필요는 없습니다.\

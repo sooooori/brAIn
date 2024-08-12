@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -177,7 +178,10 @@ public class ConferenceRoomController {
     @GetMapping("/download/{roomId}")
     public void downloadPdf(@PathVariable Integer roomId, HttpServletResponse response) {
         try {
+            // 회의 보고서 생성
             String report = conferenceRoomService.generateMeetingReport(roomId);
+
+            // PDF 생성
             byte[] pdfBytes = pdfService.generatePdf(report);
 
             // PDF 파일 응답 설정
@@ -192,4 +196,5 @@ public class ConferenceRoomController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
+
 }
