@@ -11,4 +11,6 @@ import java.util.Optional;
 @Repository
 public interface VoteRepository extends JpaRepository<Vote, Integer> {
     Optional<Vote> findByRoundPostItAndConferenceRoom(RoundPostIt roundPostIt, ConferenceRoom conferenceRoom);
+
+    boolean existsByConferenceRoomId(Integer conferenceRoomId);
 }
