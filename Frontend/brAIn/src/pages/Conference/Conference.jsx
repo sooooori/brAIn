@@ -233,12 +233,12 @@ const Conference = () => {
 
     } else if (receivedMessage.messageType == 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep))
-      if(step=='STEP_1'){
+      if(receivedMessage.curStep=='STEP_1'){
         setTime(2*60*1000);
-      }else if(step=='STEP_2'){
+      }else if(receivedMessage.curStep=='STEP_2'){
         setTime(1*60*1000);
       }
-      else if(step=='STEP_3'){
+      else if(receivedMessage.curStep=='STEP_3'){
         setTime(2*60*1000);
         step3start();
       }
