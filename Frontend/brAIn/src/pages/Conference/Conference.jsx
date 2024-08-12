@@ -67,11 +67,7 @@ const Conference = () => {
   const [voteResults, setVoteResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
   const [userList, setUserList] = useState([]);
-
-
-
   const [newTime, setnewTime] = useState(null);
 
 
@@ -99,16 +95,13 @@ const Conference = () => {
           //dispatch(setRoom(response.data.roomId));
           setRoomId(response.data.roomId);
           const countMemberInWaitingroom=await axios.get(`http://localhost/api/v1/conferences/countUser/${response.data.roomId}`);
-        console.log("인원",countMemberInWaitingroom.data);
-        setParticipantCount(countMemberInWaitingroom.data+1);
+          console.log("인원",countMemberInWaitingroom.data);
+          setParticipantCount(countMemberInWaitingroom.data+1);
         }
 
         if (subject === ''){
           setSubject(response.data.subject);
         }
-
-        
-        
 
         const newClient = new Client({
           brokerURL: `${import.meta.env.VITE_WSS_BASE_URL}`,
@@ -235,7 +228,7 @@ const Conference = () => {
       // 사용자 목록 상태 업데이트
       const updatedUsers = dispatch(setUsers(receivedMessage.users));
       dispatch(setCuruser(updatedUsers[0].nickname));
-
+      
       dispatch(setCurStep('STEP_0'));
 
     } else if (receivedMessage.messageType === 'ENTER_CONFERENCES') {
@@ -369,9 +362,6 @@ const Conference = () => {
     }
   };
 
-
-  
-
   const handleNextStepClick = () => {
     if (client){
       client.publish({
@@ -408,6 +398,10 @@ const Conference = () => {
       });
     }
   };
+
+  const handlepassSent = () => {
+    handlePassButtonClick()
+  }
 
   const handleVoteSent = () => {
     dispatch(step1EndAlarm());
@@ -484,6 +478,7 @@ const Conference = () => {
           // voteResults.forEach(vote => {
           //   console.log(`PostIt: ${vote.postIt}, Score: ${vote.score}`);
           // });
+          console.log(voteResults)
           setVoteResults(voteResults);
           setIsModalOpen(true); // 모달 열기
         } else {
@@ -511,6 +506,7 @@ const Conference = () => {
           AuthorizationRoom: localStorage.getItem('roomToken')
         }
       });
+      console.log(response.data)
       return response.data;  // 데이터 반환
     } catch (error) {
       console.error("Error fetching vote results:", error);
@@ -589,7 +585,7 @@ const Conference = () => {
                   
                 </div>
                 <div className="conf-timer-container">
-                  <Timer time={time} voteSent={handleVoteSent}/>
+                  <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent}/>
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">

@@ -204,7 +204,7 @@ const Home = () => {
           <div className="home-conference-list">
             {currentItems.map(conference => (
               <div 
-                key={conference.conferenceId} 
+                key={conference.roomId} 
                 className="home-conference-card" 
                 onClick={() => handleOpenModal(conference.roomId)}>
                 <h3>회의 주제 : {conference.subject}</h3>
