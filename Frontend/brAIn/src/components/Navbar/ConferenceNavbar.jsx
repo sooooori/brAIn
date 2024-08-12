@@ -24,7 +24,7 @@ const ConferenceNavbar = ({ secureId }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
+      try {0
         const token = localStorage.getItem('accessToken');
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences`, {
           params: { secureId:secureId },
