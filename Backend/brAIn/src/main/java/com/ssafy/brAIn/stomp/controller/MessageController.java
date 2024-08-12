@@ -184,6 +184,10 @@ public class MessageController {
                 .map(Object::toString)
                 .toList();
 
+        for(String user:users){
+            System.out.println(user);
+        }
+
         //초기화
         messageService.initUserState(Integer.parseInt(roomId));
 

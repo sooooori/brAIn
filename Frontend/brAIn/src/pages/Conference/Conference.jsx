@@ -70,13 +70,13 @@ const Conference = () => {
   const [voteResults, setVoteResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-<<<<<<< HEAD
+
   const [userList, setUserList] = useState([]);
 
 
-=======
+
   const [newTime, setnewTime] = useState(null);
->>>>>>> c408129c58675a2d0b3b7ffff8f9e9712d0675bb
+
 
   useEffect(() => {
     let isMounted = true;
@@ -101,15 +101,16 @@ const Conference = () => {
         if(roomId == null){
           //dispatch(setRoom(response.data.roomId));
           setRoomId(response.data.roomId);
+          const countMemberInWaitingroom=await axios.get(`http://localhost/api/v1/conferences/countUser/${response.data.roomId}`);
+        console.log("인원",countMemberInWaitingroom.data);
+        setParticipantCount(countMemberInWaitingroom.data+1);
         }
 
         if (subject === ''){
           setSubject(response.data.subject);
         }
 
-        const countMemberInWaitingroom=await axios.get(`http://localhost/api/v1/conferences/countUser/${roomId}`);
-        console.log("인원",countMemberInWaitingroom.data);
-        setParticipantCount(countMemberInWaitingroom.data+1);
+        
         
 
         const newClient = new Client({
@@ -275,22 +276,14 @@ const Conference = () => {
       // 사용자 목록 상태 업데이트
       const updatedUsers = dispatch(setUsers(receivedMessage.users));
       dispatch(setCuruser(updatedUsers[0].nickname));
-<<<<<<< HEAD
-      dispatch(setCurStep('STEP_0'));s
-=======
+
       dispatch(setCurStep('STEP_0'));
-      console.log('+++++++++++++++++++++++',step)
->>>>>>> c408129c58675a2d0b3b7ffff8f9e9712d0675bb
+
     } else if (receivedMessage.messageType === 'ENTER_CONFERENCES') {
       dispatch(setUserNick(receivedMessage.nickname));
 
     } else if (receivedMessage.messageType == 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep))
-<<<<<<< HEAD
-=======
-      console.log('받은 스텝',receivedMessage.curStep);
-      console.log('========',step)
->>>>>>> c408129c58675a2d0b3b7ffff8f9e9712d0675bb
       if(step=='STEP_3'){
         step3start();
       }
