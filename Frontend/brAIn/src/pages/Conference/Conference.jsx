@@ -147,7 +147,8 @@ const Conference = () => {
           console.error('STOMP error:', frame);
         };
 
-        if (isMounted) {
+        console.log('isMounted',isMounted)
+        if (!isMounted) {
           setClient(newClient);
           currentClient = newClient;
           newClient.activate();
