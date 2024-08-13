@@ -26,7 +26,7 @@ import Timer from './components/Timer';
 import './Conference.css';
 
 
-import { addUser, removeUser, setUsers, setUserNick, setCuruser, updatePassStatus, resetPassStatus, updateReadyStatus, resetReadyStatus } from '../../actions/userActions';
+import { addUser, removeUser, setUsers, setUserNick, setCuruser, updatePassStatus, resetPassStatus, updateReadyStatus, resetReadyStatus, exitUser } from '../../actions/userActions';
 import { setCurStep, upRound, setRound, setRoom } from '../../actions/conferenceActions';
 import { sendToBoard } from '../../actions/roundRobinBoardAction';
 import VoteResultsModal from './components/VoteResultsModal';
@@ -245,9 +245,10 @@ const Conference = () => {
     if (receivedMessage.messageType == 'ENTER_WAITING_ROOM') {
       countUpMember();
     }else if(receivedMessage.messageType=='EXIT_WAITING_ROOM'){
-      console.log('유저나감1');
       countDownMember();
-    } 
+    } else if(receivedMessage.messageType=='EXIT_CONFERENCES'){
+      dispatch(exitUser(receivedMessage.nickname));
+    }
     else if (receivedMessage.messageType == 'SUBMIT_POST_IT') {
       roundRobinBoardUpdate(receivedMessage);
     } else if (receivedMessage.messageType === 'START_CONFERENCE') {

@@ -205,10 +205,7 @@ public class MessageController {
 
         //0단계 부터  시작.
         ConferenceRoom conferenceRoom = conferenceRoomService.findByRoomId(roomId).updateStep(Step.STEP_0);
-//        MessagePostProcessor messagePostProcessor = message -> {
-//            message.getMessageProperties().setHeader("Authorization", "회의 토큰");
-//            return message;
-//        };
+        conferenceRoomService.save(conferenceRoom);
 
         // Redis에서 AI 닉네임 가져오기
         String aiNickname = redisUtils.getAINickname(roomId);

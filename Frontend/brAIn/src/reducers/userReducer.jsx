@@ -1,4 +1,4 @@
-import { ADD_USER, REMOVE_USER, SET_USERS, SET_USERNICK, SET_CURUSER, SET_NEXTUSER, UPDATE_TIMER, RESET_STATE, UPDATE_PASS_STATUS, RESET_PASS_STATUS, UPDATE_READY_STATUS, RESET_READY_STATUS, } from '../actions/userActions';
+import { ADD_USER, REMOVE_USER, SET_USERS, SET_USERNICK, SET_CURUSER, SET_NEXTUSER, UPDATE_TIMER, RESET_STATE, UPDATE_PASS_STATUS, RESET_PASS_STATUS, UPDATE_READY_STATUS, RESET_READY_STATUS, EXIT_USER, } from '../actions/userActions';
 
 const initialState = {
     users: [],
@@ -82,6 +82,20 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 readyStatus: {},
             };
+        
+        case EXIT_USER:{
+            const exitUser=action.payload;
+            console.log("나간유저",exitUser);
+            
+            const updatedUsers = state.users.filter(user => user.nickname !== exitUser);
+            console.log(updatedUsers.length);
+            return {
+                ...state,
+                users: updatedUsers,
+            };
+
+        }
+            
 
 
         default:
