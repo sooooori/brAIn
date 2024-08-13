@@ -18,6 +18,18 @@
     position: relative; 
 }*/
 
+.container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 100px;
+    width: 100%;
+    margin-top: 50px;
+    border-bottom: 2px solid #ddd; /* Add a light gray bottom border */
+    padding-bottom: 10px; /* Optional: Add padding to ensure space below the content */
+}
+  
+
 .stream-container {
     display: inline-block !important;
     flex: 0 0 auto !important;
