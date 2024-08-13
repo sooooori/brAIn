@@ -35,7 +35,7 @@ public class RoundPostIt {
     private String content;
 
     @Setter
-    @Column(name = "persona")
+    @Column(name = "persona", columnDefinition = "TEXT")
     private String persona;
 
     // 댓글 리스트
