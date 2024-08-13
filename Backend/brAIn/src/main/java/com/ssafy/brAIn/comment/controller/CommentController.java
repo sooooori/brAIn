@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -95,7 +96,12 @@ public class CommentController {
         log.info("roomId:{}",roomId);
         RoundPostIt roundPostIt=roundPostItService.findByContentAndRoom(roundPostItContent.getContent(),roomId).get();
 
-        List<Comment> comments=commentService.findByPostItId(roundPostIt);
+        List<Comment> commentList=commentService.findByPostItId(roundPostIt);
+        List<String> comments=new ArrayList<>();
+        for(Comment comment:commentList){
+            comments.add(comment.getContent());
+        }
+
 
         return ResponseEntity.ok(Map.of("comments",comments));
     }

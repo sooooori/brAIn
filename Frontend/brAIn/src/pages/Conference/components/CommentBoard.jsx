@@ -8,13 +8,12 @@ const CommentBoard = () => {
   const commentBoard = useSelector((state) => state.commentBoard.comments || []);
   const votes = useSelector((state) => state.commentBoard.vote || []);
   const curIndex = useSelector((state) => state.commentBoard.curIndex);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
     const postComment = async () => {
       try {
-        if (votes[curIndex]) {
+        if (votes[curIndex] && curIndex < votes.length) {
           const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/comment`, {
             content: votes[curIndex]
           }, {
@@ -23,8 +22,8 @@ const CommentBoard = () => {
             },
           });
 
-          console.log('Comment posted successfully:', response.data);
-          dispatch(initComment(response.data));
+          console.log('Comment posted successfully:', response.data.comments);
+          dispatch(initComment(response.data.comments));
         } else {
           console.warn('Invalid vote or curIndex');
         }
@@ -34,33 +33,27 @@ const CommentBoard = () => {
     };
 
     postComment();
-  }, [votes, curIndex]);
+  }, [votes, curIndex, dispatch]);
 
   // 파스텔 톤 색상 배열
   const colors = [
-    '#F8CFCF', // 분홍색
-    '#FFFFC2', // 노란색
-    '#C9E4C5', // 녹색
-    '#D6C0EB', // 보라색
-    '#E0FFFF', // 라이트 시안색
-    '#F7B7A3', // 연한 오렌지색
-    '#D0E6F8'  // 파스텔 블루
+    '#F8CFCF', '#FFFFC2', '#C9E4C5',
+    '#D6C0EB', '#E0FFFF', '#F7B7A3', '#D0E6F8'
   ];
 
   const [postItColors, setPostItColors] = useState({});
 
-  const getColorForIdea = useCallback((roundIndex, ideaIndex) => {
-    const uniqueKey = `${roundIndex}-${ideaIndex}`;
-    if (!(uniqueKey in postItColors)) {
+  const getColorForIdea = useCallback((ideaIndex) => {
+    if (!(ideaIndex in postItColors)) {
       const remainingColors = colors.filter(color => !Object.values(postItColors).includes(color));
       const selectedColor = remainingColors.length > 0
         ? remainingColors[Math.floor(Math.random() * remainingColors.length)]
         : colors[Math.floor(Math.random() * colors.length)];
 
-      setPostItColors(prevColors => ({ ...prevColors, [uniqueKey]: selectedColor }));
+      setPostItColors(prevColors => ({ ...prevColors, [ideaIndex]: selectedColor }));
       return selectedColor;
     }
-    return postItColors[uniqueKey];
+    return postItColors[ideaIndex];
   }, [colors, postItColors]);
 
   return (
@@ -68,25 +61,17 @@ const CommentBoard = () => {
       {commentBoard.length === 0 ? (
         <p>보드에 코멘트가 없습니다.</p>
       ) : (
-        commentBoard.map((comment, roundIndex) => (
-          <div key={roundIndex} className="round-container">
-            <div className="post-it-container">
-              {Array.isArray(comment) && comment.length > 0 ? (
-                comment.map((idea, ideaIndex) => (
-                  <div
-                    key={ideaIndex}
-                    className="post-it-card"
-                    style={{ backgroundColor: getColorForIdea(roundIndex, ideaIndex) }}
-                  >
-                    {idea}
-                  </div>
-                ))
-              ) : (
-                <p>아이디어가 없습니다.</p>
-              )}
+        <div className="post-it-container">
+          {commentBoard.map((idea, ideaIndex) => (
+            <div
+              key={ideaIndex}
+              className="post-it-card"
+              style={{ backgroundColor: getColorForIdea(ideaIndex) }}
+            >
+              {idea}
             </div>
-          </div>
-        ))
+          ))}
+        </div>
       )}
     </div>
   );

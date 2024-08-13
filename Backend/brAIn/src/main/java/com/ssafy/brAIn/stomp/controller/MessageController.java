@@ -360,4 +360,11 @@ public class MessageController {
     }
 
     // 최종 결과물 반환 (임시)
+
+
+    @MessageMapping("next.idea.{roomId}")
+    public void nextIdea(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
+        String token = accessor.getFirstNativeHeader("Authorization");
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new NextIdea(MessageType.NEXT_IDEA));
+    }
 }

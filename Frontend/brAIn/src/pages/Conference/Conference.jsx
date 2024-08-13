@@ -30,7 +30,7 @@ import { addUser, removeUser, setUsers, setUserNick, setCuruser, updatePassStatu
 import { setCurStep, upRound, setRound, setRoom } from '../../actions/conferenceActions';
 import { sendToBoard } from '../../actions/roundRobinBoardAction';
 import VoteResultsModal from './components/VoteResultsModal';
-import { initVote } from '../../actions/commentsAction';
+import { initVote, nextItem } from '../../actions/commentsAction';
 
 const Conference = () => {
   const dispatch = useDispatch();
@@ -60,7 +60,7 @@ const Conference = () => {
   const [data,setData]=useState(null);
   
   const votedItems = useSelector(state => state.votedItem.items || []);
-  
+  const curIndex=useSelector(state=>state.commentBoard.curIndex);
   
   const [time, setTime] = useState(null);
 
@@ -309,6 +309,9 @@ const Conference = () => {
           dispatch(updateReadyStatus(receivedMessage.aiNickname));
         }
       }, 5000); // 5초 후 실행
+    }
+    else if(receivedMessage.messageType=='NEXT_IDEA'){
+      dispatch(nextItem());
     }
   };
 
@@ -567,6 +570,18 @@ const Conference = () => {
     console.log('Step3 button click');
   }
 
+  const handleNextIdeaClick=()=>{
+    if (client) {
+      client.publish({
+        destination: `/app/next.idea.${roomId}`,
+        headers: {
+          'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
+        },
+        
+      });
+    }
+  }
+
   
 
 
@@ -640,7 +655,7 @@ const Conference = () => {
                     <Button onClick={handleNextStepClick} ariaLabel="Next">
                       <img src={NextIcon} alt="Next" className="action-icon" />
                     </Button>
-                    <Button onClick={step3start} ariaLabel="Next">
+                    <Button onClick={handleNextIdeaClick} ariaLabel="Next">
                       <img src={NextIcon} alt="투표정보 가져오기" className="action-icon" />
                     </Button>
                   </div>
