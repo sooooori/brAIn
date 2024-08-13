@@ -1,12 +1,11 @@
 #video-container {
     display: flex;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
     width: 100%;
-    height: auto;
-    white-space: nowrap;
+    padding: 10px 0;
 }
 /*
 .stream-container {
@@ -19,12 +18,11 @@
 }*/
 
 .stream-container {
-    display: inline-block !important;
-    flex: 0 0 auto !important;
+    flex: 0 0 auto;
+    margin-right: 10px;
     width: 160px;
     height: 120px;
-    margin-right: 10px;
-    vertical-align: top;
+    display: inline-block;
 }
 
 .stream-container video {
