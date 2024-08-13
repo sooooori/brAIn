@@ -162,38 +162,38 @@ const VideoConference = () => {
         return await createToken(sessionId);
     }
 
-async function createSession(sessionId) {
-    try {
-        console.log(headers)
-        const response = await customAxios.post(
-            `${APPLICATION_SERVER_URL}/sessions`,
-            { customSessionId: sessionId },
-            { headers }
-        );
-        return response.data.sessionId;
-    } catch (error) {
-        console.error('Error creating session:', error);
-        return sessionId;
+    async function createSession(sessionId) {
+        try {
+            console.log(headers)
+            const response = await customAxios.post(
+                `${APPLICATION_SERVER_URL}/sessions`,
+                { customSessionId: sessionId },
+                { headers }
+            );
+            return response.data.sessionId;
+        } catch (error) {
+            console.error('Error creating session:', error);
+            return sessionId;
+        }
     }
-}
 
-// Example function to create a token
-async function createToken(sessionId) {
-    try {
-        console.log(headers)
-        const response = await customAxios.post(
-            `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connection`,
-            {},
-            { headers }
-        );
-        return response.data.token;
-    } catch (error) {
-        console.error('Error creating token:', error);
+    // Example function to create a token
+    async function createToken(sessionId) {
+        try {
+            console.log(headers)
+            const response = await customAxios.post(
+                `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connection`,
+                {},
+                { headers }
+            );
+            return response.data.token;
+        } catch (error) {
+            console.error('Error creating token:', error);
+        }
     }
-}
 
     return (
-        <div className="container">
+        <div className="container" style={{ width: '100%', overflowX: 'auto' }}>
             {/* {!session ? (
                 <div id="join">
                     <div id="img-div">
@@ -211,16 +211,16 @@ async function createToken(sessionId) {
             ) : null} */}
             {/* ddd/safasfasf */}
             {session ? (
-                <div id="session">
+                <div id="session" style={{ width: '100%', overflowX: 'auto' }}>
                     {mainStreamManager ? (
                         <div id="main-video" className="col-md-6">
                             <UserVideoComponent streamManager={mainStreamManager} />
                         </div>
                     ) : null}
 
-                    <div id="video-container" className="col-md-12">
+                    <div id="video-container" className="col-md-12" style={{ display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
                         {subscribers.map((sub, i) => (
-                            <div key={i} className="stream-container" onClick={() => handleMainVideoStream(sub)}>
+                            <div key={i} className="stream-container" onClick={() => handleMainVideoStream(sub)} style={{ display: 'inline-block' }}>
                                 <UserVideoComponent streamManager={sub} />
                             </div>
                         ))}
