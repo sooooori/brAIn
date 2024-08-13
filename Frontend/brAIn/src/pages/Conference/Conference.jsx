@@ -429,14 +429,13 @@ const Conference = () => {
     }
   };
 
-  const handlepassSent = () => {
-    console.log('pass curUser : ', curUser)
-    // dispatch(updatePassStatus(stepPassUser));
-    // handlePassButtonClick()
-    // console.log('pass nextUser: ', nextUser)
-    // dispatch(setCuruser(nextUser));
+  const handlepassSent = (stepPassUser) => {
+    if (!stepPassUser) {
+      console.error('stepPassUser is undefined or null');
+      return;
+    }
+    console.log('pass curUser : ', stepPassUser);
     if (client) {
-      // 사용자 패스 정보 전송
       client.publish({
         destination: `/app/state.user.pass.${roomId}`,
         headers: {
@@ -444,11 +443,11 @@ const Conference = () => {
         },
         body: JSON.stringify({
           curRound: round,
-          userNickname: curUser, // 패스한 사용자의 닉네임
+          userNickname: stepPassUser,
         }),
       });
     }
-  }
+  };
 
   const handleVoteSent = () => {
     dispatch(step1EndAlarm());

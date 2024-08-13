@@ -18,11 +18,14 @@ const Timer = ({ time, voteSent, passSent }) => {
 
   useEffect(() => {
     setCurrentTime(initialTime);
-  }, [time, curstep, curUser]);
+  }, [time, curstep, curUser, initialTime]);
 
   useEffect(() => {
     console.log(curstep);
     let time = currentTime;
+
+    console.log('타이머에 들어오는 시간 IT:', initialTime);
+    console.log('타이머에 들어오는 시간 CT:', currentTime);
 
     if(curstep=='STEP_0' && currentTime==initialTime){
         Swal.fire({
@@ -70,9 +73,10 @@ const Timer = ({ time, voteSent, passSent }) => {
         
     }
 
-    else if (currentTime<=0 && curstep=='STEP_1'){
+    else if (!time && currentTime<=0 && curstep=='STEP_1'){
       console.log('pass User : ',curUser)
-      passSent();
+      passSent(curUser);
+      clearInterval(timer)
     }
 
     else if(currentTime<=0 && curstep=='STEP_2'){
@@ -85,7 +89,7 @@ const Timer = ({ time, voteSent, passSent }) => {
     // 이 부분이 컴포넌트가 unmount되거나, 의존성 배열의 값이 변경될 때 실행됨
     return () => clearInterval(timer);
 
-}, [currentTime, curstep, curUser, initialTime]);
+}, [currentTime, curstep, curUser ]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
