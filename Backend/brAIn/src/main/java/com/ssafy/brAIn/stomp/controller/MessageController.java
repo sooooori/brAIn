@@ -13,6 +13,7 @@ import com.ssafy.brAIn.stomp.request.RequestPass;
 import com.ssafy.brAIn.stomp.request.RequestStep;
 import com.ssafy.brAIn.stomp.response.*;
 import com.ssafy.brAIn.stomp.service.MessageService;
+import com.ssafy.brAIn.util.RedisUtils;
 import com.ssafy.brAIn.vote.dto.VoteResponse;
 import com.sun.jdi.request.StepRequest;
 import org.springframework.amqp.core.MessagePostProcessor;
@@ -42,16 +43,18 @@ public class MessageController {
     private final JWTUtilForRoom jwtUtilForRoom;
     private final AIService aiService;
     private final ConferenceRoomService conferenceRoomService;
+    private final RedisUtils redisUtils;
 
     public MessageController(RabbitTemplate rabbitTemplate,
                              MessageService messageService,
                              JWTUtilForRoom jwtUtilForRoom,
-                             AIService aiService, ConferenceRoomService conferenceRoomService) {
+                             AIService aiService, ConferenceRoomService conferenceRoomService, RedisUtils redisUtils) {
         this.rabbitTemplate = rabbitTemplate;
         this.messageService = messageService;
         this.jwtUtilForRoom = jwtUtilForRoom;
         this.aiService = aiService;
         this.conferenceRoomService = conferenceRoomService;
+        this.redisUtils = redisUtils;
     }
 
 
@@ -173,7 +176,6 @@ public class MessageController {
     @MessageMapping("start.conferences.{roomId}")
     public void startConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
         String authorization = accessor.getFirstNativeHeader("Authorization");
-        System.out.println(authorization);
         String role=jwtUtilForRoom.getRole(authorization);
         System.out.println(role);
         if (!role.equals("CHIEF")) {
@@ -183,6 +185,10 @@ public class MessageController {
         List<String> users=messageService.startConferences(Integer.parseInt(roomId)).stream()
                 .map(Object::toString)
                 .toList();
+
+        for(String user:users){
+            System.out.println(user);
+        }
 
         //초기화
         messageService.initUserState(Integer.parseInt(roomId));
@@ -194,7 +200,14 @@ public class MessageController {
 //            return message;
 //        };
 
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users));
+        // Redis에서 AI 닉네임 가져오기
+        String aiNickname = redisUtils.getAINickname(roomId);
+
+        // AI 닉네임을 로그로 확인하거나, 필요시 다른 로직에 사용
+        System.out.println("AI Nickname: " + aiNickname);
+
+
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users,aiNickname));
 
     }
 
@@ -223,11 +236,10 @@ public class MessageController {
 
         messageService.updateUserState(Integer.parseInt(roomId), nickname, UserState.READY);
 
-        // 다음 사용자 결정
-        String nextUser = messageService.NextOrder(Integer.parseInt(roomId), nickname);
+        // Redis에서 AI 닉네임 가져오기
+        String aiNickname = redisUtils.getAINickname(roomId);
 
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY, nickname, nextUser));
-
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY, nickname, aiNickname));
     }
 
     //유저 답변 패스(테스트 완)
@@ -251,9 +263,12 @@ public class MessageController {
                 return;
             }
             messageService.initUserState(Integer.parseInt(roomId));
+            messageService.updateCurOrder(Integer.parseInt(roomId),nextMember);
+            rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember, pass.getCurRound()+1));
+            return;
         }
         messageService.updateCurOrder(Integer.parseInt(roomId),nextMember);
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember));
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember, pass.getCurRound()));
 
         //다음 사람이 ai가 아니라면 종료
         if(!messageService.isAi(Integer.parseInt(roomId),nextMember))return;
@@ -309,13 +324,19 @@ public class MessageController {
         }
 
         List<String> usersInRoom = messageService.getUsersInRoom(Integer.parseInt(roomId));
+        String ai=messageService.getAI(Integer.parseInt(roomId));
         for(int i=0;i<usersInRoom.size();i++){
+            if(usersInRoom.get(i).equals(ai))continue;
             List<String> step3ForUser=new ArrayList<>();
             for(int j=0;j<votes.size();j++){
                 step3ForUser.add(votes.get((i+j)%votes.size()).getPostIt());
             }
             Step3ForUser step3ForUserResponse=new Step3ForUser(MessageType.STEP3_FOR_USER,step3ForUser);
             System.out.println(usersInRoom.get(i));
+            for(int j=0;j<step3ForUser.size();j++){
+                System.out.print(step3ForUser.get(j)+" ");
+            }
+            System.out.println();
             rabbitTemplate.convertAndSend("room."+roomId+"."+usersInRoom.get(i),step3ForUserResponse);
         }
 
@@ -337,4 +358,6 @@ public class MessageController {
         // 결과를 RabbitMQ로 전송(Subscribe)
         rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, voteResults);
     }
+
+    // 최종 결과물 반환 (임시)
 }

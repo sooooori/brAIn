@@ -52,17 +52,12 @@ public class RoundPostIt {
     private List<Vote> votes;
 
     @Builder
-    public RoundPostIt(ConferenceRoom conferenceRoom, Member member, String content) {
+    public RoundPostIt(ConferenceRoom conferenceRoom, String content) {
         this.conferenceRoom = conferenceRoom;
-        this.member = member;
+
         this.content = content;
     }
 
-    @Builder
-    public RoundPostIt(ConferenceRoom conferenceRoom,String content) {
-        this.conferenceRoom = conferenceRoom;
-        this.content = content;
-    }
 
     @Builder
     public RoundPostIt(ConferenceRoom conferenceRoom,String content, String persona) {

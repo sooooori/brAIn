@@ -66,6 +66,9 @@ dependencies {
 
 	// AWS S3
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
+
+	// PDF
+	implementation 'com.itextpdf:itextpdf:5.5.13.4'
 }
 
 tasks.named('test') {

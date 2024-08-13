@@ -87,28 +87,25 @@ public class VoteService {
 
     // 타이머에 의해 투표 종료
     @Transactional
-    public void endVoteByTimer(VoteResultRequest voteResultRequest) {
-        String tempVotePattern = voteResultRequest.getConferenceId() + ":tempVotes:" + voteResultRequest.getStep() + ":*";
+    public void endVoteByTimer(VoteResultRequest voteResultRequest,Integer memberId) {
+        String tempVoteKey = voteResultRequest.getConferenceId() + ":tempVotes:" + voteResultRequest.getStep() + ":"+memberId;
         String voteKey = voteResultRequest.getConferenceId() + ":votes:" + voteResultRequest.getStep();
 
-        Set<String> tempVoteKeys = redisUtils.keys(tempVotePattern);
 
         // 모든 사용자별 임시 데이터를 실제 키로 이동
-        for (String tempVoteKey : tempVoteKeys) {
-            List<VoteResponse> tempResults = redisUtils.getSortedSetWithScores(tempVoteKey);
-            for (VoteResponse result : tempResults) {
-                redisUtils.incrementSortedSetScore(voteKey, result.getScore(), result.getPostIt());
-            }
 
-            // 임시 데이터 삭제
-            //redisUtils.deleteKey(tempVoteKey);
+        List<VoteResponse> tempResults = redisUtils.getSortedSetWithScores(tempVoteKey);
+        for (VoteResponse result : tempResults) {
+//                    System.out.println(result.getScore()+","+result.getPostIt());
+            redisUtils.incrementSortedSetScore(voteKey, result.getScore(), result.getPostIt());
         }
-        if(redisUtils.isKeyExists(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total")){
-            redisUtils.save(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total",
-                    (Integer.parseInt(redisUtils.getData(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total"))+1)+"");
-        }else{
-            redisUtils.save(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total",1+"");
-        }
+
+                // 임시 데이터 삭제
+                //redisUtils.deleteKey(tempVoteKey);
+
+
+        redisUtils.incr(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total");
+
 
         log.info("Vote Finished");
     }
@@ -266,4 +263,10 @@ public class VoteService {
             }
         }
     }
+
+    public boolean existsMiddleVoteInDB(Integer conferenceId) {
+        return voteRepository.existsByConferenceRoomId(conferenceId);
+    }
+
+
 }

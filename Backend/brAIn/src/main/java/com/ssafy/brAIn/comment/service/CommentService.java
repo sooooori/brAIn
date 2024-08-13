@@ -1,5 +1,6 @@
 package com.ssafy.brAIn.comment.service;
 
+import com.ssafy.brAIn.auth.jwt.JWTUtilForRoom;
 import com.ssafy.brAIn.auth.jwt.JwtUtil;
 import com.ssafy.brAIn.comment.entity.Comment;
 import com.ssafy.brAIn.comment.repository.CommentRepository;
@@ -26,11 +27,12 @@ public class CommentService {
     private final RoundPostItRepository roundPostItRepository;
     private final CommentRepository commentRepository;
     private final RoundPostItService roundPostItService;
+    private final JWTUtilForRoom jwtUtilForRoom;
 
     // 코멘트 생성
     @Transactional
     public Comment createComment(String token, Integer roundPostItId, String content) {
-        String email = JwtUtil.getEmail(token);
+        String email = jwtUtilForRoom.getUsername(token);
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("User not found"));
 

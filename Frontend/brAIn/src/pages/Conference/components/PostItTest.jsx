@@ -35,6 +35,7 @@ const PostItTest = () => {
   // 랜덤 색상 선택 함수
   const getColorForIdea = useCallback((roundIndex, ideaIndex) => {
     const uniqueKey = `${roundIndex}-${ideaIndex}`;
+    console.log(uniqueKey)
     if (!(uniqueKey in postItColors)) {
       const remainingColors = colors.filter(color => !Object.values(postItColors).includes(color));
       const selectedColor = remainingColors.length > 0
@@ -42,6 +43,8 @@ const PostItTest = () => {
         : colors[Math.floor(Math.random() * colors.length)];
 
       setPostItColors(prevColors => ({ ...prevColors, [uniqueKey]: selectedColor }));
+      console.log(remainingColors)
+      console.log(postItColors)
       return selectedColor;
     }
     return postItColors[uniqueKey];
@@ -63,7 +66,7 @@ const PostItTest = () => {
             onClick={() => handlePageChange(index)}
             className={index === currentPage ? 'active' : 'non'}
           >
-            <h3>Rnd.{index + 1}</h3>
+            <h3>Rnd.{index}</h3>
           </button>
         ))}
       </div>

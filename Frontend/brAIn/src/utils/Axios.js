@@ -6,8 +6,12 @@ axios.defaults.withCredentials = true;
 axios.interceptors.request.use(
     config => {
         const token = localStorage.getItem('accessToken');
+        const room =localStorage.getItem('roomToken');
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        if(room){
+            config.headers['AuthorizationRoom']=`Bearer ${room}`;
         }
         return config;
     },
