@@ -573,10 +573,12 @@ const Conference = () => {
       )}
       <div className="conference-content">
         <div className="member-list-container">
-          <MemberList />
+          {step !== 'STEP_0' ? (
+            <VideoConference />
+          ) : (
+            <MemberList />
+          )}
         </div>
-
-
         {isMeetingStarted && (
           <div className="conference-section">
             <div className={`sidebar-container ${isPostItSidebarVisible ? 'visible' : ''}`}>
@@ -639,13 +641,7 @@ const Conference = () => {
                 )}
 
               </div>
-              <div>
-                {step !== 'STEP_0' ? (
-                  <VideoConference />
-                ) : (
-                  <WhiteBoard subject={subject} />
-                )}
-              </div>
+              <WhiteBoard subject={subject} />
             </div>
           </div>
         )}
