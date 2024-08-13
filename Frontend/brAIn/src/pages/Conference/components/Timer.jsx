@@ -17,6 +17,7 @@ const Timer = ({ time, voteSent, passSent, nextIdea }) => {
   const role = useSelector((state) => state.conference.role);
   const dispatch = useDispatch();
   const curIndex=useSelector(state=>state.commentBoard.curIndex);
+  const ideaList=useSelector(state=>state.commentBoard.vote);
 
   useEffect(() => {
     setCurrentTime(initialTime);
@@ -91,7 +92,18 @@ const Timer = ({ time, voteSent, passSent, nextIdea }) => {
     }
 
     else if(currentTime<=0 && curstep=='STEP_3'){
-      nextIdea();
+      if(curIndex<ideaList.length-1){
+        nextIdea();
+      }else{
+        Swal.fire({
+          icon: "info",
+          title: '구체화 단계가 마무리 되었습니다.',
+          text: '다음 단계로 이동하세요',
+          showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+          confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
+          confirmButtonText: '승인', // confirm 버튼 텍스트 지정
+        })
+      }
       clearInterval(timer);
     }
     
