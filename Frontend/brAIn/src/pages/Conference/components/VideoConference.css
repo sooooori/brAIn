@@ -1,8 +1,11 @@
 #video-container {
     display: flex;
-    flex-wrap: nowrap; /* 줄 바꿈을 허용하지 않음 */
-    overflow-x: auto; /* 가로 스크롤 가능하게 설정 */
-    justify-content: flex-start; /* 좌측 정렬 */
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    padding: 10px 0;
 }
 /*
 .stream-container {
@@ -15,15 +18,12 @@
 }*/
 
 .stream-container {
-    flex: 0 0 auto; /* 각 스트림을 가로로 정렬 */
-    margin-right: 10px; /* 스트림 간 간격 */
-    width: 160px; /* 스트림 너비 */
-    height: 120px; /* 스트림 높이 */
-    background-color: #f0f0f0; /* 배경색 추가 */
-    border-radius: 8px; /* 둥근 테두리 */
-    overflow: hidden; /* 내용물 잘림 방지 */
+    flex: 0 0 auto;
+    margin-right: 10px;
+    width: 160px;
+    height: 120px;
+    display: inline-block;
 }
-
 
 .stream-container video {
     width: 100%; /* 비디오가 컨테이너에 맞도록 */
