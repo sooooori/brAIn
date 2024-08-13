@@ -65,7 +65,11 @@ public class MessageController {
 
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
-        System.out.println(nickname+"님이 포스트잇을 제출했습니다.");
+
+        String curUser=messageService.getCurUser(Integer.parseInt(roomId));
+        if(!curUser.equals(nickname)) {
+            throw new AuthenticationCredentialsNotFoundException("자신의 차례에만 제출할 수 있습니다.");
+        }
         ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId);
         aiService.addPostIt(groupPost.getContent(), cr.getThreadId());
 

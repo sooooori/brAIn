@@ -16,10 +16,11 @@ const Timer = ({ time, voteSent, passSent }) => {
   const [alertShown, setAlertShown] = useState(false);
   const role = useSelector((state) => state.conference.role);
   const dispatch = useDispatch();
+  const curIndex=useSelector(state=>state.commentBoard.curIndex);
 
   useEffect(() => {
     setCurrentTime(initialTime);
-  }, [ time, curstep, curUser ]);
+  }, [ time, curstep, curUser,curIndex ]);
 
   useEffect(() => {
     
