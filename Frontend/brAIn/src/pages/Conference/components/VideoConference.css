@@ -1,9 +1,8 @@
 #video-container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* 항목 간 간격 */
+    flex-wrap: nowrap; /* 줄 바꿈을 허용하지 않음 */
+    overflow-x: auto; /* 가로 스크롤 가능하게 설정 */
 }
-
 /*
 .stream-container {
     width: 100px; 
