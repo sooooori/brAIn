@@ -11,6 +11,7 @@ const Timer = ({ time, voteSent, passSent }) => {
   const [currentTime, setCurrentTime] = useState(initialTime); // 타이머의 시간 상태
   const curstep = useSelector(state => state.conferenceInfo.curStep);
   const curUser = useSelector(state => state.user.currentUser);
+  const nickname = useSelector(state => state.user.nickname)
   const nextUser = useSelector(state => state.user.nextUser)
   const [alertShown, setAlertShown] = useState(false);
   const role = useSelector((state) => state.conference.role);
@@ -18,10 +19,11 @@ const Timer = ({ time, voteSent, passSent }) => {
 
   useEffect(() => {
     setCurrentTime(initialTime);
-  }, [time, curstep,curUser, nextUser]);
+  }, [ time, curstep, curUser ]);
 
   useEffect(() => {
-    console.log(curstep);
+    
+    
     let time = currentTime;
 
     if(curstep=='STEP_0' && currentTime==initialTime){
@@ -39,6 +41,8 @@ const Timer = ({ time, voteSent, passSent }) => {
         text: '준비한 아이디어를 자신의 차례에 제출하세요.',
         timer: 3000
       });
+      console.log('커렌트 : ' + currentTime)
+      console.log('이니셜 : ' + initialTime)
       setAlertShown(true);
     }
     else if(curstep=='STEP_2' && currentTime==initialTime){
@@ -71,12 +75,13 @@ const Timer = ({ time, voteSent, passSent }) => {
     }
 
     else if (currentTime<=0 && curstep=='STEP_1'){
-      passSent();
+      if (curUser === nickname) {
+        passSent();
+      }
       clearInterval(timer);
     }
 
     else if(currentTime<=0 && curstep=='STEP_2'){
-      console.log('투표시작')
       voteSent();
       clearInterval(timer);
     }
@@ -85,13 +90,16 @@ const Timer = ({ time, voteSent, passSent }) => {
     // 이 부분이 컴포넌트가 unmount되거나, 의존성 배열의 값이 변경될 때 실행됨
     return () => clearInterval(timer);
 
-}, [currentTime, curstep, curUser, initialTime, nextUser]);
+}, [ currentTime ]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
+
+  console.log("curUser:",curUser)
+  console.log("nickname:", nickname)
 
   return (
     <div className="timer-container">
