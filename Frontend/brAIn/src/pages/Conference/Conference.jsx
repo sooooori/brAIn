@@ -61,7 +61,7 @@ const Conference = () => {
   
   const votedItems = useSelector(state => state.votedItem.items || []);
   const curIndex=useSelector(state=>state.commentBoard.curIndex);
-  const votes=useSelector(state=>state.commentBoard.vote);
+  const ideaLIst=useSelector(state=>state.commentBoard.vote);
   const [time, setTime] = useState(null);
 
 
@@ -311,20 +311,9 @@ const Conference = () => {
       }, 5000); // 5초 후 실행
     }
     else if(receivedMessage.messageType=='NEXT_IDEA'){
-      console.log("curindex:",curIndex)
-      console.log("voteslength:",votes.length)
-      if(curIndex<votes.length){
+      
         dispatch(nextItem());
-      }else{
-        Swal.fire({
-          icon: "info",
-          title: '구체화 단계가 마무리 되었습니다.',
-          text: '다음 단계로 이동하세요',
-          showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
-          confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
-          confirmButtonText: '승인', // confirm 버튼 텍스트 지정
-        })
-      }
+      
     }
   };
 
@@ -579,7 +568,10 @@ const Conference = () => {
 
   const handleNextIdeaClick=()=>{
 
-    
+      console.log(ideaLIst);
+      console.log(curIndex);
+      
+    if(curIndex<ideaLIst.length){
       if (client) {
         client.publish({
           destination: `/app/next.idea.${roomId}`,
@@ -589,6 +581,17 @@ const Conference = () => {
           
         });
       }
+    }else{
+      Swal.fire({
+        icon: "info",
+        title: '구체화 단계가 마무리 되었습니다.',
+        text: '다음 단계로 이동하세요',
+        showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+        confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
+        confirmButtonText: '승인', // confirm 버튼 텍스트 지정
+      })
+    }
+      
     
     
   }
