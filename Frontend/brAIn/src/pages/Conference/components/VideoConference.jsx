@@ -212,21 +212,44 @@ const VideoConference = () => {
             {/* ddd/safasfasf */}
             {session ? (
                 <div id="session" style={{ width: '100%', overflowX: 'auto' }}>
-                    {mainStreamManager ? (
-                        <div id="main-video" className="col-md-6">
-                            <UserVideoComponent streamManager={mainStreamManager} />
-                        </div>
-                    ) : null}
-
-                    <div id="video-container" className="col-md-12" style={{ display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
-                        {subscribers.map((sub, i) => (
-                            <div key={i} className="stream-container" onClick={() => handleMainVideoStream(sub)} style={{ display: 'inline-block' }}>
-                                <UserVideoComponent streamManager={sub} />
+                    <div id="videos-wrapper" style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        overflowX: 'auto',
+                        width: '100%'
+                    }}>
+                        {mainStreamManager && (
+                            <div id="main-video" style={{
+                                flexShrink: 0,
+                                width: '320px',
+                                height: '240px',
+                                marginRight: '10px'
+                            }}>
+                                <UserVideoComponent streamManager={mainStreamManager} />
                             </div>
-                        ))}
+                        )}
+
+                        <div id="video-container" style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            flexGrow: 1,
+                            overflowX: 'auto'
+                        }}>
+                            {subscribers.map((sub, i) => (
+                                <div key={i}
+                                    className="stream-container"
+                                    onClick={() => handleMainVideoStream(sub)}
+                                    style={{
+                                        flexShrink: 0,
+                                        width: '160px',
+                                        height: '120px',
+                                        marginRight: '10px'
+                                    }}>
+                                    <UserVideoComponent streamManager={sub} />
+                                </div>
+                            ))}
+                        </div>
                     </div>
-
-
                 </div>
             ) : null}
         </div>
