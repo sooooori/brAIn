@@ -178,7 +178,7 @@ const Conference = () => {
       }
     };
 
-  }, [routeSecureId, roomId, time]);
+  }, [routeSecureId, roomId]);
 
   // 라운드 및 단계 변경 시 패스 상태 초기화
   useEffect(() => {
@@ -188,12 +188,15 @@ const Conference = () => {
   // 단계 변경 시 준비 상태 초기화
   useEffect(() => {
     dispatch(resetReadyStatus());
+    setReadyCount(0);
   }, [step, dispatch])
 
-  // 단계가 변경될 때마다 readyCount를 0으로 초기화
-  useEffect(() => {
-    setReadyCount(0);
-  }, [step]);
+  // // 단계가 변경될 때마다 readyCount를 0으로 초기화
+  // useEffect(() => {
+  //   setReadyCount(0);
+  // }, [step]);
+
+  
 
   useEffect(()=>{
 
@@ -210,16 +213,16 @@ const Conference = () => {
     
       if (time === null) {
         setTime(time_response.data.time);
-        console.log(time)
+        console.log()
       }
     }
     console.log('useEffect내부',step)
     if(step=='STEP_0'){
       getTime();
     }
-    
+    console.log("회의창에서 재 랜더링 될때, 현재유저",curUser);
 
-  },[time,step,curUser])
+  },[time,curUser])
 
   // const getPerson=async()=>{
     
@@ -233,7 +236,7 @@ const Conference = () => {
 
   
 
-  const handleMessage = async (receivedMessage) => {
+  const handleMessage = (receivedMessage) => {
     if (receivedMessage.messageType == 'ENTER_WAITING_ROOM') {
       countUpMember();
     } else if (receivedMessage.messageType == 'SUBMIT_POST_IT') {
@@ -264,7 +267,7 @@ const Conference = () => {
         setTime(2*60*1000);
       }
     }else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
-      await roundRobinBoardUpdate(receivedMessage);
+      roundRobinBoardUpdate(receivedMessage);
       dispatch(setCurStep('STEP_2'));
       setTime(1*6*1000);
     } else if(receivedMessage.messageType==='FINISH_MIDDLE_VOTE'){
@@ -275,9 +278,11 @@ const Conference = () => {
       console.log('pass to '+receivedMessage.nextUser);
       console.log('User who passed:', receivedMessage.curUser);
       dispatch(updatePassStatus(receivedMessage.curUser));
+      
+      console.log("제 랜더링 전에 시간",time);
       dispatch(setCuruser(receivedMessage.nextUser));
       if (round !== receivedMessage.nextRound) {
-        dispatch(updatePassStatus(receivedMessage.curUser));
+        //dispatch(updatePassStatus(receivedMessage.curUser));
         dispatch(setRound(receivedMessage.nextRound));
       }
 
@@ -413,9 +418,11 @@ const Conference = () => {
     console.log('Next Step Btn Clicked')
   };  
 
-  const handlePassButtonClick = () => {
+  const handlePassButtonClick = () =>  {
     if (client) {
       // 사용자 패스 정보 전송
+      
+      console.log("직접적으로 패스를 누르는 사용자",curUser);
       client.publish({
         destination: `/app/state.user.pass.${roomId}`,
         headers: {
@@ -429,25 +436,11 @@ const Conference = () => {
     }
   };
 
-  const handlepassSent = (stepPassUser) => {
-    if (!stepPassUser) {
-      console.error('stepPassUser is undefined or null');
-      return;
-    }
-    console.log('pass curUser : ', stepPassUser);
-    if (client) {
-      client.publish({
-        destination: `/app/state.user.pass.${roomId}`,
-        headers: {
-          Authorization: localStorage.getItem('roomToken'),
-        },
-        body: JSON.stringify({
-          curRound: round,
-          userNickname: stepPassUser,
-        }),
-      });
-    }
-  };
+  const handlepassSent = () => {
+    
+    handlePassButtonClick();
+    
+  }
 
   const handleVoteSent = () => {
     dispatch(step1EndAlarm());
