@@ -11,6 +11,10 @@ const CommentBoard = () => {
 
   const dispatch = useDispatch();
 
+  useEffect(()=> {
+    console.log(commentBoard)
+  },[commentBoard])
+
   useEffect(() => {
     const postComment = async () => {
       try {
@@ -23,7 +27,6 @@ const CommentBoard = () => {
             },
           });
 
-          console.log('Comment posted successfully:', response.data);
           dispatch(initComment(response.data));
         } else {
           console.warn('Invalid vote or curIndex');
@@ -34,7 +37,7 @@ const CommentBoard = () => {
     };
 
     postComment();
-  }, [votes, curIndex]);
+  }, [votes, curIndex, dispatch]);
 
   // 파스텔 톤 색상 배열
   const colors = [
@@ -71,8 +74,8 @@ const CommentBoard = () => {
         commentBoard.map((comment, roundIndex) => (
           <div key={roundIndex} className="round-container">
             <div className="post-it-container">
-              {Array.isArray(comment) && comment.length > 0 ? (
-                comment.map((idea, ideaIndex) => (
+              {Array.isArray(comment.comments) && comment.comments.length > 0 ? (
+                comment.comments.map((idea, ideaIndex) => (
                   <div
                     key={ideaIndex}
                     className="post-it-card"
