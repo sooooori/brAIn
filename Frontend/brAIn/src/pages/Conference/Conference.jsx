@@ -640,7 +640,7 @@ const Conference = () => {
 
               </div>
               <div>
-                {step >= 1 ? (
+                {step !== 'STEP_0' ? (
                   <VideoConference />
                 ) : (
                   <WhiteBoard subject={subject} />
