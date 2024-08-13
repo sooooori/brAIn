@@ -4,13 +4,23 @@
     gap: 10px; /* 항목 간 간격 */
 }
 
+/*
 .stream-container {
-    width: 100px; /* 강제로 작은 너비 설정 */
-    height: 75px; /* 강제로 작은 높이 설정 */
-    overflow: hidden; /* 넘치는 부분 숨기기 */
+    width: 100px; 
+    height: 75px;
+    overflow: hidden; 
     box-sizing: border-box;
-    margin-bottom: 10px; /* 아래 여백 추가 */
-    position: relative; /* 비디오를 감싸는 컨테이너 위치 설정 */
+    margin-bottom: 10px; 
+    position: relative; 
+}*/
+
+.stream-container {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    padding: 10px;
+    white-space: nowrap; /* Prevent wrapping */
+    scroll-behavior: smooth; /* Smooth scrolling */
 }
 
 .stream-container video {
