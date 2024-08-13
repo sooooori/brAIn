@@ -15,14 +15,18 @@
 }*/
 
 .stream-container {
-    flex: 0 0 auto; /* 가로 방향으로 정렬하고, 요소가 줄어들거나 늘어나지 않게 설정 */
-    width: 160px; /* 요소 너비 설정 */
-    margin-right: 10px; /* 요소 간 간격 설정 */
+    flex: 0 0 auto; /* 각 스트림을 가로로 정렬 */
+    margin-right: 10px; /* 스트림 간 간격 */
+    width: 160px; /* 스트림 너비 */
+    height: 120px; /* 스트림 높이 */
+    background-color: #f0f0f0; /* 배경색 추가 */
+    border-radius: 8px; /* 둥근 테두리 */
+    overflow: hidden; /* 내용물 잘림 방지 */
 }
 
+
 .stream-container video {
-    width: 100%; /* 비디오가 컨테이너에 맞게 설정되도록 변경 */
-    height: auto; /* 비디오 높이는 자동 조정 */
-    object-fit: cover; /* 비디오가 잘리지 않고 컨테이너에 맞게 설정 */
-    border-radius: 8px; /* 비디오에 둥근 테두리 추가 */
+    width: 100%; /* 비디오가 컨테이너에 맞도록 */
+    height: 100%; /* 비디오가 컨테이너에 맞도록 */
+    object-fit: cover; /* 비율 유지하며 자름 */
 }
