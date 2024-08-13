@@ -142,7 +142,6 @@ public class VoteService {
         ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(voteResultRequest.getConferenceId())
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 회의실 ID"));
 
-
         for (VoteResponse voteResponse : votes) {
             RoundPostIt roundPostIt = roundPostItRepository.findByContentAndConferenceRoom_Id(voteResponse.getPostIt(), voteResultRequest.getConferenceId())
                     .orElseGet(() -> {
