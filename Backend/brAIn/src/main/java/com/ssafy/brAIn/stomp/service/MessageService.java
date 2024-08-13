@@ -328,4 +328,8 @@ public class MessageService {
                 .toList();
     }
 
+    public String getAI(Integer roomId) {
+        return redisUtils.getData(roomId + ":ai:nickname");
+    }
+
 }

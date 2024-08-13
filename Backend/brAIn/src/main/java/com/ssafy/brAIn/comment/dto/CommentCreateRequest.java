@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class CommentCreateRequest {
 
-    private Integer roundPostItId;
-    private String content;
+    private String target;
+    private String comment;
 
 }

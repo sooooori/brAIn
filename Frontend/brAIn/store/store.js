@@ -7,6 +7,7 @@ import conferenceReducer from '../src/reducers/conferenceReducer';
 import roundRobinBoardReducer from '../src/reducers/roundRobinBoardReducer';
 import votedItemReducer from '../src/reducers/votedItemReducer';
 import noteSlice from '../src/features/note/noteSlice';
+import commentReducer from '../src/reducers/commentReducer';
 
 
 const store = configureStore({
@@ -18,6 +19,7 @@ const store = configureStore({
     roundRobinBoard: roundRobinBoardReducer,
     votedItem: votedItemReducer,
     note: noteSlice,
+    commentBoard:commentReducer,
   },
 });
 

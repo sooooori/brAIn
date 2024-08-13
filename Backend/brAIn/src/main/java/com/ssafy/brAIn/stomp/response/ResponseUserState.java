@@ -12,11 +12,11 @@ public class ResponseUserState {
 
     private UserState messageType;
     private String curUser;
-    private String nextUser;
+    private String aiNickname;
 
-    public ResponseUserState(UserState type, String curUser, String nextUser) {
+    public ResponseUserState(UserState type, String curUser, String aiNickname) {
         this.messageType = type;
         this.curUser = curUser;
-        this.nextUser = nextUser;
+        this.aiNickname = aiNickname;
     }
 }

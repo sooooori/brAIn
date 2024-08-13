@@ -7,7 +7,7 @@
     width: 100%;
     height: auto;
     white-space: nowrap;
-    margin-top: 60px !important; /* 강제 적용 */
+    margin-top: 40px !important; /* 강제 적용 */
 }
 /*
 .stream-container {
