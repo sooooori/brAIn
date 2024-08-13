@@ -18,7 +18,7 @@ const Timer = ({ time, voteSent, passSent }) => {
 
   useEffect(() => {
     setCurrentTime(initialTime);
-  }, [time, curstep,curUser, nextUser]);
+  }, [time, curstep, curUser]);
 
   useEffect(() => {
     console.log(curstep);
@@ -71,8 +71,8 @@ const Timer = ({ time, voteSent, passSent }) => {
     }
 
     else if (currentTime<=0 && curstep=='STEP_1'){
+      console.log('pass User : ',curUser)
       passSent();
-      clearInterval(timer);
     }
 
     else if(currentTime<=0 && curstep=='STEP_2'){
@@ -85,7 +85,7 @@ const Timer = ({ time, voteSent, passSent }) => {
     // 이 부분이 컴포넌트가 unmount되거나, 의존성 배열의 값이 변경될 때 실행됨
     return () => clearInterval(timer);
 
-}, [currentTime, curstep, curUser, initialTime, nextUser]);
+}, [currentTime, curstep, curUser, initialTime]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);

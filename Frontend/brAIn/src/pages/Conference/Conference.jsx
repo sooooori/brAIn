@@ -370,7 +370,6 @@ const Conference = () => {
       });    
     }
     console.log('Next Step Btn Clicked')
-
     console.log('step 확인용 : ', step)
     if (step == 'STEP_2'){
       console.log('step_3 시작')
@@ -386,7 +385,6 @@ const Conference = () => {
 
       handleMessageForIndividual()
     }
-    
   };  
 
   const handlePassButtonClick = () => {
@@ -406,11 +404,24 @@ const Conference = () => {
   };
 
   const handlepassSent = () => {
-    console.log('pass curUser : ',curUser)
-    dispatch(updatePassStatus(curUser));
-    handlePassButtonClick()
-    console.log('pass nextUser: ', nextUser)
-    dispatch(setCuruser(nextUser));
+    console.log('pass curUser : ', curUser)
+    // dispatch(updatePassStatus(stepPassUser));
+    // handlePassButtonClick()
+    // console.log('pass nextUser: ', nextUser)
+    // dispatch(setCuruser(nextUser));
+    if (client) {
+      // 사용자 패스 정보 전송
+      client.publish({
+        destination: `/app/state.user.pass.${roomId}`,
+        headers: {
+          Authorization: localStorage.getItem('roomToken'),
+        },
+        body: JSON.stringify({
+          curRound: round,
+          userNickname: curUser, // 패스한 사용자의 닉네임
+        }),
+      });
+    }
   }
 
   const handleVoteSent = () => {
@@ -419,7 +430,6 @@ const Conference = () => {
 
   const step1EndAlarm = () => async (dispatch, getState) => {
     try {
-     
       console.log('투표진행')
       // 상태 업데이트 후 후속 작업을 수행하기 위해 상태를 확인
       const state = getState();
@@ -455,7 +465,6 @@ const Conference = () => {
     }
   };
 
-
   const endVote = async (step) => {
   try {
     const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/vote/endByTimer`, {
@@ -468,7 +477,6 @@ const Conference = () => {
       }
     });
     
-
     Swal.fire({
       icon: "success",
       title: '투표가 종료되었습니다.',
@@ -502,7 +510,6 @@ const Conference = () => {
   };
 
   const getVoteResult = async (step) => {
-    
     try {
       console.log("getVoteREsult",step)
       console.log(roomId);
@@ -535,9 +542,6 @@ const Conference = () => {
     }
     console.log('Step3 button click');
   }
-
-  
-
 
   return (
     
