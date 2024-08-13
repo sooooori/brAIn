@@ -61,7 +61,7 @@ const Conference = () => {
   
   const votedItems = useSelector(state => state.votedItem.items || []);
   const curIndex=useSelector(state=>state.commentBoard.curIndex);
-  
+  const votes=useSelector(state=>state.commentBoard.vote);
   const [time, setTime] = useState(null);
 
 
@@ -264,7 +264,7 @@ const Conference = () => {
         setTime(1*6*1000);
       }
       else if(receivedMessage.curStep=='STEP_3'){
-        setTime(2*60*1000);
+        setTime(3*6*1000);
       }
     }else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
       roundRobinBoardUpdate(receivedMessage);
@@ -311,7 +311,20 @@ const Conference = () => {
       }, 5000); // 5초 후 실행
     }
     else if(receivedMessage.messageType=='NEXT_IDEA'){
-      dispatch(nextItem());
+      console.log("curindex:",curIndex)
+      console.log("voteslength:",votes.length)
+      if(curIndex<votes.length){
+        dispatch(nextItem());
+      }else{
+        Swal.fire({
+          icon: "info",
+          title: '구체화 단계가 마무리 되었습니다.',
+          text: '다음 단계로 이동하세요',
+          showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+          confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
+          confirmButtonText: '승인', // confirm 버튼 텍스트 지정
+        })
+      }
     }
   };
 
@@ -565,15 +578,19 @@ const Conference = () => {
   }
 
   const handleNextIdeaClick=()=>{
-    if (client) {
-      client.publish({
-        destination: `/app/next.idea.${roomId}`,
-        headers: {
-          'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
-        },
-        
-      });
-    }
+
+    
+      if (client) {
+        client.publish({
+          destination: `/app/next.idea.${roomId}`,
+          headers: {
+            'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
+          },
+          
+        });
+      }
+    
+    
   }
 
   
@@ -633,7 +650,7 @@ const Conference = () => {
                   
                 </div>
                 <div className="conf-timer-container">
-                  <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent}/>
+                  <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent} nextIdea={handleNextIdeaClick}/>
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">

@@ -85,7 +85,7 @@ public class MessageController {
 
         //만약 다음 사람이 ai라면 추가적인 로직 필요
         String nextUser=messageService.NextOrder(Integer.parseInt(roomId),nickname);
-        messageService.updateCurOrder(Integer.parseInt(roomId),nextUser);
+        //messageService.updateCurOrder(Integer.parseInt(roomId),nextUser);
 
         boolean curUserIsLast=messageService.isLastOrder(Integer.parseInt(roomId),nickname);
 
@@ -102,6 +102,7 @@ public class MessageController {
         }
 
         messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,nextUser);
+
         //messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
         ResponseGroupPost aiResponseGroupPost=makeResponseGroupPost(aiGroupPost,Integer.parseInt(roomId),nextUser);
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, aiResponseGroupPost);
@@ -110,7 +111,7 @@ public class MessageController {
 
     private ResponseGroupPost makeResponseGroupPost(RequestGroupPost groupPost,Integer roomId,String nickname) {
         String nextUser=messageService.NextOrder(roomId,nickname);
-
+        messageService.updateCurOrder(roomId,nextUser);
         if (messageService.isLastOrder(roomId, nickname)) {
             System.out.println("마지막 사람만 이곳에 와야한다.");
 

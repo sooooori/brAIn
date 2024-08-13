@@ -6,7 +6,7 @@ import './Timer.css'; // 스타일을 위한 CSS 파일
 import {setCuruser, updatePassStatus} from '../../../actions/userActions';
 import {useDispatch} from 'react-redux'
 
-const Timer = ({ time, voteSent, passSent }) => {
+const Timer = ({ time, voteSent, passSent, nextIdea }) => {
   const initialTime = parseInt(time, 10) / 1000 || 0;
   const [currentTime, setCurrentTime] = useState(initialTime); // 타이머의 시간 상태
   const curstep = useSelector(state => state.conferenceInfo.curStep);
@@ -87,6 +87,11 @@ const Timer = ({ time, voteSent, passSent }) => {
 
     else if(currentTime<=0 && curstep=='STEP_2'){
       voteSent();
+      clearInterval(timer);
+    }
+
+    else if(currentTime<=0 && curstep=='STEP_3'){
+      nextIdea();
       clearInterval(timer);
     }
     
