@@ -182,11 +182,11 @@ public class ConferenceRoomService {
         }
 
         // Step 7: AI를 이용한 전체 요약본 생성 및 추가
-        String summary = aiService.makeSummary(conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
-        reportBuilder.append("Summary:").append(summary).append("\n\n");  // AI 요약본 추가
+        String summary = aiService.makeSummary(allIdeasContent, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
+        reportBuilder.append("Summary:\n").append(summary).append("\n\n\n");  // AI 요약본 추가
 
         // Step 8: 페르소나 및 SWOT 분석 결과 추가
-        reportBuilder.append("Persona Analysis:\n").append(personaResult).append("\n\n");
+        reportBuilder.append("Persona Analysis:\n").append(personaResult).append("\n\n\n");
         reportBuilder.append("SWOT Analysis:\n").append(swotResult).append("\n");
 
         // Step 9: 최종 보고서 반환

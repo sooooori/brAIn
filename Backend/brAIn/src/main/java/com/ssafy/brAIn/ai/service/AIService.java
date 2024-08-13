@@ -76,9 +76,10 @@ public class AIService {
     }
 
 
-    public String makeSummary(String threadId, String assistantId) {
-        String url="/summary/make";
+    public String makeSummary(String idea, String threadId, String assistantId) {
+        String url = "/summary/make";
         Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("idea", idea);
         requestBody.put("assistantId", assistantId);
         requestBody.put("threadId", threadId);
 
