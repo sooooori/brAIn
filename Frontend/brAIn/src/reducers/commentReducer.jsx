@@ -1,4 +1,4 @@
-import { ADD_COMMENTS, INIT_VOTE, NEXT_ITEM } from "../actions/commentsAction";
+import { ADD_COMMENTS, INIT_COMMENT, INIT_VOTE, NEXT_ITEM } from "../actions/commentsAction";
 
 const initialState = {
     vote:[],
@@ -29,7 +29,16 @@ const commentReducer = (state = initialState, action) => {
             
             return{
                 ...state,
-                curIndex:curIndex++
+                curIndex:state.curIndex+1
+            }
+        }
+        case INIT_COMMENT: {
+
+            const initComment = Array.isArray(action.payload) ? action.payload : [action.payload];
+
+            return{
+                ...state,
+                comments:initComment
             }
         }
         default:
