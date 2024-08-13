@@ -162,35 +162,35 @@ const VideoConference = () => {
         return await createToken(sessionId);
     }
 
-async function createSession(sessionId) {
-    try {
-        console.log(headers)
-        const response = await customAxios.post(
-            `${APPLICATION_SERVER_URL}/sessions`,
-            { customSessionId: sessionId },
-            { headers }
-        );
-        return response.data.sessionId;
-    } catch (error) {
-        console.error('Error creating session:', error);
-        return sessionId;
+    async function createSession(sessionId) {
+        try {
+            console.log(headers)
+            const response = await customAxios.post(
+                `${APPLICATION_SERVER_URL}/sessions`,
+                { customSessionId: sessionId },
+                { headers }
+            );
+            return response.data.sessionId;
+        } catch (error) {
+            console.error('Error creating session:', error);
+            return sessionId;
+        }
     }
-}
 
-// Example function to create a token
-async function createToken(sessionId) {
-    try {
-        console.log(headers)
-        const response = await customAxios.post(
-            `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connection`,
-            {},
-            { headers }
-        );
-        return response.data.token;
-    } catch (error) {
-        console.error('Error creating token:', error);
+    // Example function to create a token
+    async function createToken(sessionId) {
+        try {
+            console.log(headers)
+            const response = await customAxios.post(
+                `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connection`,
+                {},
+                { headers }
+            );
+            return response.data.token;
+        } catch (error) {
+            console.error('Error creating token:', error);
+        }
     }
-}
 
     return (
         <div className="container">
@@ -219,11 +219,13 @@ async function createToken(sessionId) {
                     ) : null}
 
                     <div id="video-container" className="col-md-12">
-                        {subscribers.map((sub, i) => (
-                            <div key={i} className="stream-container" onClick={() => handleMainVideoStream(sub)}>
-                                <UserVideoComponent streamManager={sub} />
-                            </div>
-                        ))}
+                        <div style={{ display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
+                            {subscribers.map((sub, i) => (
+                                <div key={i} className="stream-container" onClick={() => handleMainVideoStream(sub)}>
+                                    <UserVideoComponent streamManager={sub} />
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
 
