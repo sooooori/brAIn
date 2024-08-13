@@ -574,10 +574,10 @@ const Conference = () => {
       <div className="conference-content">
         <div className="member-list-container">
           <div>
-            {step !== 'STEP_0' ? (
-              <VideoConference />
-            ) : (
+            {step === 'STEP_0' || step === 'WAIT' ? (
               <MemberList />
+            ) : (
+              <VideoConference />
             )}
           </div>
         </div>
