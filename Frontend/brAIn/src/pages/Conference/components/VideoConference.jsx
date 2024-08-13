@@ -217,14 +217,14 @@ const VideoConference = () => {
                             <UserVideoComponent streamManager={mainStreamManager} />
                         </div>
                     ) : null}
-{/* 
+
                     <div id="video-container" className="col-md-12" style={{ display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
                         {subscribers.map((sub, i) => (
                             <div key={i} className="stream-container" onClick={() => handleMainVideoStream(sub)} style={{ display: 'inline-block' }}>
                                 <UserVideoComponent streamManager={sub} />
                             </div>
                         ))}
-                    </div> */}
+                    </div>
 
 
                 </div>
