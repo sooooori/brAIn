@@ -32,24 +32,25 @@
 
 /* 비디오 스타일 */
 .streamcomponent video {
-    width: 100%; /* 컨테이너에 맞게 너비 설정 */
-    height: auto; /* 비율 유지 */
-    object-fit: cover; /* 비율에 맞춰 잘림 */
+    width: 60px; /* Adjust image size */
+    height: 60px; /* Adjust image size */
+    border-radius: 50%;
+    margin-bottom: 5px;
 }
 
-/* 닉네임 태그 스타일 */
+/* 닉네임 태그 
 .streamcomponent div {
-    position: absolute; /* 비디오 위에 겹치도록 설정 */
-    bottom: 0; /* 하단에 배치 */
+    position: absolute; 
+    bottom: 0; 
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.5); /* 반투명 배경색 */
-    color: #fff; /* 텍스트 색상 */
-    padding: 2px 5px; /* 패딩 설정 */
-    text-align: center; /* 가운데 정렬 */
-    font-weight: bold; /* 글씨 두껍게 설정 */
-    border-bottom-right-radius: 4px; /* 모서리 둥글게 설정 */
-}
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    padding: 2px 5px; 
+    text-align: center; 
+    font-weight: bold; 
+    border-bottom-right-radius: 4px; 
+}*/
 
 /* 닉네임 태그의 p 태그 스타일 */
 .streamcomponent p {
