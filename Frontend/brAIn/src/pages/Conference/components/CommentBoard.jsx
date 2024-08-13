@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import './PostItTest.css';
 import axios from 'axios';
 import { initComment } from '../../../actions/commentsAction';
+import { resetReadyStatus } from '../../../actions/userActions';
 
 const CommentBoard = () => {
   const commentBoard = useSelector((state) => state.commentBoard.comments || []);
@@ -13,6 +14,11 @@ const CommentBoard = () => {
   useEffect(()=> {
     console.log(commentBoard)
   },[commentBoard])
+
+  // 단계 변경 시 준비 상태 초기화
+  useEffect(() => {
+    dispatch(resetReadyStatus());
+  }, [curIndex, dispatch])
 
   useEffect(() => {
     const postComment = async () => {
