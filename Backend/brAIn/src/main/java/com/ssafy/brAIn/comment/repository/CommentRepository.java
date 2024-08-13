@@ -13,4 +13,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findByRoundPostItAndMember(RoundPostIt roundPostIt, Member member);
     List<Comment> findByRoundPostIt(RoundPostIt roundPostIt);
 
+    // 특정 RoundPostIt ID에 해당하는 모든 코멘트 조회
+    List<Comment> findByRoundPostIt_Id(Integer postItId);
+
 }
