@@ -306,6 +306,8 @@ const Conference = () => {
     }
     else if(receivedMessage.messageType=='NEXT_IDEA'){
         dispatch(nextItem());
+
+        // 마지막 아이디어 일 때 알림창
     }
   };
 
@@ -559,20 +561,20 @@ const Conference = () => {
   }
 
   const handleNextIdeaClick=()=>{
-    console.log(ideaLIst);
-    console.log(curIndex);
+    console.log('click idea : ',ideaLIst.length);
+    console.log('click index : ',curIndex);
       
-    if(curIndex<ideaLIst.length){
+    if(curIndex<ideaLIst.length -1){
       if (client) {
         client.publish({
           destination: `/app/next.idea.${roomId}`,
           headers: {
             'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
           },
-          
         });
       }
-    }else{
+    } 
+    else{
       Swal.fire({
         icon: "info",
         title: '구체화 단계가 마무리 되었습니다.',

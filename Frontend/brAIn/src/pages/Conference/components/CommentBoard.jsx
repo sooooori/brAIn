@@ -4,6 +4,7 @@ import './PostItTest.css';
 import axios from 'axios';
 import { initComment } from '../../../actions/commentsAction';
 import { resetReadyStatus } from '../../../actions/userActions';
+import Swal from 'sweetalert2';
 
 const CommentBoard = () => {
   const commentBoard = useSelector((state) => state.commentBoard.comments || []);
