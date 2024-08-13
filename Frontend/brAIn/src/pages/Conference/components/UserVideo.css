@@ -13,21 +13,29 @@
 }*/
 
 .streamcomponent {
-    width: 160px;
-    height: 120px;
+    flex: 0 0 auto; /* Prevent shrinking and ensure items stay in row */
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-}
+    margin: 10px;
+    padding: 10px;
+    height: 80px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    width: 160px; /* Narrow width */
+    min-width: 10px; /* Maintain width */
+    position: relative;
+  }
   
 
 
 /* 비디오 스타일 */
 .streamcomponent video {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
+    width: 120px; /* Adjust image size */
+    height: 60px; /* Adjust image size */
+    border-radius: 50%;
+    margin-bottom: 5px;
 }
 
 /* 닉네임 태그 
