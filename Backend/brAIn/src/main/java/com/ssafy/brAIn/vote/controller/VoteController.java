@@ -80,6 +80,7 @@ public class VoteController {
         }
         ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId+"");
         //주석
+        //주주석
         VoteResultRequest voteResultRequest = new VoteResultRequest(roomId, step);
         if(!voteService.existsMiddleVoteInDB(roomId)){
             voteService.saveTop9RoundResults(results, voteResultRequest, roomId);
