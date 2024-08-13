@@ -49,4 +49,8 @@ public class RoundPostItService {
     public Optional<RoundPostIt> findByContentAndRoom(String content, String room) {
         return roundPostItRepository.findByContentAndConferenceRoom_Id(content,Integer.parseInt(room));
     }
+
+    public List<RoundPostIt> findByRoomId(Integer roomId) {
+        return roundPostItRepository.findByConferenceRoom_Id(roomId);
+    }
 }

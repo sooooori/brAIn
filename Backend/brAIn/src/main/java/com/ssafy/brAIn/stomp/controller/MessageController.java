@@ -7,7 +7,9 @@ import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
+import com.ssafy.brAIn.roundpostit.service.RoundPostItService;
 import com.ssafy.brAIn.stomp.dto.*;
+import com.ssafy.brAIn.stomp.request.CurIndex;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
 import com.ssafy.brAIn.stomp.request.RequestPass;
 import com.ssafy.brAIn.stomp.request.RequestStep;
@@ -29,6 +31,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,17 +47,19 @@ public class MessageController {
     private final AIService aiService;
     private final ConferenceRoomService conferenceRoomService;
     private final RedisUtils redisUtils;
+    private final RoundPostItService roundPostItService;
 
     public MessageController(RabbitTemplate rabbitTemplate,
                              MessageService messageService,
                              JWTUtilForRoom jwtUtilForRoom,
-                             AIService aiService, ConferenceRoomService conferenceRoomService, RedisUtils redisUtils) {
+                             AIService aiService, ConferenceRoomService conferenceRoomService, RedisUtils redisUtils, RoundPostItService roundPostItService) {
         this.rabbitTemplate = rabbitTemplate;
         this.messageService = messageService;
         this.jwtUtilForRoom = jwtUtilForRoom;
         this.aiService = aiService;
         this.conferenceRoomService = conferenceRoomService;
         this.redisUtils = redisUtils;
+        this.roundPostItService = roundPostItService;
     }
 
 
@@ -368,8 +373,17 @@ public class MessageController {
 
 
     @MessageMapping("next.idea.{roomId}")
-    public void nextIdea(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
+    public void nextIdea(@DestinationVariable String roomId, StompHeaderAccessor accessor, @RequestBody CurIndex curIndex) {
         String token = accessor.getFirstNativeHeader("Authorization");
+
+        List<RoundPostIt> roundPostIts=roundPostItService.findByRoomId(Integer.parseInt(roomId)).stream()
+                        .filter(RoundPostIt::isLast9).toList();
+
+        if(roundPostIts.size()-1==curIndex.getCurIndex()){
+            rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new NextIdea(MessageType.END_IDEA));
+            return;
+        }
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new NextIdea(MessageType.NEXT_IDEA));
+
     }
 }

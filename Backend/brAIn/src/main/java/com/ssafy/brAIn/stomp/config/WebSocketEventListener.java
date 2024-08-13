@@ -21,6 +21,7 @@ import com.ssafy.brAIn.stomp.response.EndMessage;
 import com.ssafy.brAIn.stomp.response.EndMessage;
 import com.ssafy.brAIn.stomp.service.MessageService;
 import com.ssafy.brAIn.util.RedisUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +37,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class WebSocketEventListener {
 
@@ -89,7 +91,6 @@ public class WebSocketEventListener {
                 return;
             }
             MemberHistoryId memberHistoryId = new MemberHistoryId(memberId, roomId);
-
 
             MemberHistory memberHistory = MemberHistory.builder().id(memberHistoryId)
                     .role(role)
@@ -175,6 +176,7 @@ public class WebSocketEventListener {
             // 사용자 닉네임 가져오기
             String exitUserNickname = getNickName(memberId, roomId);
 
+            log.info("user disconnected: {}" , exitUserNickname);
             //방장이 나가면 방 종료.
             if(getRole(memberId,roomId).equals(Role.CHIEF)){
                 rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new EndMessage(MessageType.END_CONFERENCE));
@@ -183,9 +185,11 @@ public class WebSocketEventListener {
                 return;
             }
 
+            log.info("방장아님");
             if(redisUtils.isValueInSortedSet(roomId+"order:cur", exitUserNickname)){
                 redisUtils.removeValueFromSortedSet(roomId+"order:cur", exitUserNickname);
             }
+
 
             // 대기방 상태 확인 및 메시지 발송
             if (conferenceRoom.getStep().equals(Step.WAIT)) {

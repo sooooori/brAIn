@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './ConferenceNavbar.css';
 import { Avatar, Popover, Box, CircularProgress } from '@mui/material';
 import exitIcon from '../../assets/svgs/exit_conference.svg'; // SVG 경로 수정
@@ -8,7 +8,7 @@ import Button from '../Button/Button';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 
-const ConferenceNavbar = ({ secureId }) => {
+const ConferenceNavbar = () => {
   const navigate = useNavigate();
 
   const [conferenceCode, setConferenceCode] = useState(null);
@@ -18,7 +18,7 @@ const ConferenceNavbar = ({ secureId }) => {
   const [logoLoaded, setLogoLoaded] = useState(false);
   const open = Boolean(anchorEl);
   const id = open ? 'profile-popover' : undefined;
-
+  const { secureId: routeSecureId } = useParams();
   const role = useSelector((state) => state.conference.role);
   const user = useSelector((state) => state.auth.user);
 
@@ -27,7 +27,7 @@ const ConferenceNavbar = ({ secureId }) => {
       try {
         const token = localStorage.getItem('accessToken');
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences`, {
-          params: { secureId:secureId },
+          params: { secureId:routeSecureId },
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -40,7 +40,7 @@ const ConferenceNavbar = ({ secureId }) => {
     };
 
     fetchData();
-  }, [secureId]);
+  }, [routeSecureId]);
 
   const handleShareCode = () => {
     navigator.clipboard.writeText(conferenceCode);

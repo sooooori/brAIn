@@ -19,5 +19,6 @@ public enum MessageType {
     END_CONFERENCE,
     READY,PASS,SUBMIT,NONE,
     STEP3_FOR_USER,
-    NEXT_IDEA;
+    NEXT_IDEA,
+    END_IDEA;
 }

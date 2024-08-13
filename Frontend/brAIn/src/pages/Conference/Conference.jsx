@@ -63,7 +63,7 @@ const Conference = () => {
   const curIndex=useSelector(state=>state.commentBoard.curIndex);
   const ideaLIst=useSelector(state=>state.commentBoard.vote);
   const [time, setTime] = useState(null);
-
+  const [timerForStep3,setTimerForStep3]=useState(false);
 
   //투표결과 모달관련
   const [voteResults, setVoteResults] = useState([]);
@@ -117,7 +117,7 @@ const Conference = () => {
             Authorization: 'Bearer ' + localStorage.getItem('roomToken')
           },
           debug: (str) => {
-            // console.log(str);
+            console.log(str);
           },
           reconnectDelay: 5000,
           heartbeatIncoming: 4000,
@@ -167,6 +167,8 @@ const Conference = () => {
         setIsConnecting(false);
       }
     };  
+
+    
 
     fetchDataAndConnect();
     
@@ -224,6 +226,8 @@ const Conference = () => {
 
   },[time,curUser])
 
+
+
   // const getPerson=async()=>{
     
   // }
@@ -233,7 +237,11 @@ const Conference = () => {
   const handleMessage = (receivedMessage) => {
     if (receivedMessage.messageType == 'ENTER_WAITING_ROOM') {
       countUpMember();
-    } else if (receivedMessage.messageType == 'SUBMIT_POST_IT') {
+    }else if(receivedMessage.messageType=='EXIT_WAITING_ROOM'){
+      console.log('유저나감1');
+      countDownMember();
+    } 
+    else if (receivedMessage.messageType == 'SUBMIT_POST_IT') {
       roundRobinBoardUpdate(receivedMessage);
     } else if (receivedMessage.messageType === 'START_CONFERENCE') {
       console.log("회의시작")
@@ -306,8 +314,18 @@ const Conference = () => {
     }
     else if(receivedMessage.messageType=='NEXT_IDEA'){
         dispatch(nextItem());
-
-        // 마지막 아이디어 일 때 알림창
+      
+    }else if(receivedMessage.messageType=='END_IDEA'){
+      setTimerForStep3(true);
+      setTime(0);
+      Swal.fire({
+        icon: "info",
+        title: '구체화 단계가 마무리 되었습니다.',
+        text: '다음 단계로 이동하세요',
+        showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+        confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
+        confirmButtonText: '승인', // confirm 버튼 텍스트 지정
+      })
     }
   };
 
@@ -328,6 +346,7 @@ const Conference = () => {
   };
 
   const countDownMember = () => {
+    console.log('유저나감')
     setParticipantCount((prevCount) => Math.max(prevCount - 1, 1));
     setIsModalVisible(true);
   };
@@ -561,29 +580,16 @@ const Conference = () => {
   }
 
   const handleNextIdeaClick=()=>{
-    console.log('click idea : ',ideaLIst.length);
-    console.log('click index : ',curIndex);
-      
-    if(curIndex<ideaLIst.length -1){
       if (client) {
         client.publish({
           destination: `/app/next.idea.${roomId}`,
           headers: {
             'Authorization': localStorage.getItem('roomToken')  // 예: 인증 토큰
           },
+          body:JSON.stringify({'curIndex':curIndex})
+          
         });
       }
-    } 
-    else{
-      Swal.fire({
-        icon: "info",
-        title: '구체화 단계가 마무리 되었습니다.',
-        text: '다음 단계로 이동하세요',
-        showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
-        confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
-        confirmButtonText: '승인', // confirm 버튼 텍스트 지정
-      })
-    }
   }
 
   
@@ -643,7 +649,7 @@ const Conference = () => {
                   
                 </div>
                 <div className="conf-timer-container">
-                  <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent} nextIdea={handleNextIdeaClick}/>
+                  <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent} nextIdea={handleNextIdeaClick} timerStop={timerForStep3}/>
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
