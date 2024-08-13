@@ -9,8 +9,8 @@ const initialState = {
 const commentReducer = (state = initialState, action) => {
     switch(action.type) {
         case ADD_COMMENTS: { // 액션 타입은 문자열로 적어야 합니다.
-            const content = Array.isArray(action.payload) ? action.payload : [action.payload]; // 'pqyload' 오타 수정
-            const updatedComments = [...state.comments, ...content]; // 기존 상태를 수정하지 않고 새로운 배열 생성
+            const content = action.payload; 
+            const updatedComments = [...state.comments, content]; // 기존 상태를 수정하지 않고 새로운 배열 생성
 
             return {
                 ...state, // 기존 상태를 복사
@@ -34,7 +34,7 @@ const commentReducer = (state = initialState, action) => {
         }
         case INIT_COMMENT: {
 
-            const initComment = Array.isArray(action.payload) ? action.payload : [action.payload];
+            const initComment = action.payload;
 
             return{
                 ...state,
