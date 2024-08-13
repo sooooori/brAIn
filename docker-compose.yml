@@ -66,6 +66,7 @@ services:
       - "8080:8080"    # 스프링부트 포트 (필요에 따라 수정)
     networks:
       - brain-net
+    restart: always
 
 networks:
   brain-net:
