@@ -3,7 +3,6 @@ package com.ssafy.brAIn.ai.service;
 import com.ssafy.brAIn.ai.response.AIAssistant;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
@@ -77,9 +76,10 @@ public class AIService {
     }
 
 
-    public String makeSummary(String threadId, String assistantId) {
-        String url="/summary/make";
+    public String makeSummary(String idea, String threadId, String assistantId) {
+        String url = "/summary/make";
         Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("idea", idea);
         requestBody.put("assistantId", assistantId);
         requestBody.put("threadId", threadId);
 
@@ -108,7 +108,7 @@ public class AIService {
     }
 
     public String swotMake(String idea, List<String> details, String threadId, String assistantId) {
-        String url="/persona/make";
+        String url="/swot/make";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("idea", idea);
         requestBody.put("assistantId", assistantId);

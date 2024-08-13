@@ -84,6 +84,12 @@ def show_json(obj):
 def convert_json(obj):
     return json.loads(obj.model_dump_json())
 
+def clean_summary_text(text):
+    # Remove any instances of '의회의록' or similar unwanted phrases
+    cleaned_text = text.replace("의회의록", "").strip()
+    # Additional cleaning logic can be added here if needed
+    return cleaned_text
+
 app = Flask(__name__)
 
 @app.route('/thread/start', methods=['POST'])
@@ -164,12 +170,15 @@ def summary_ideas():
     message = client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
-        content= f"지금까지 우리와 네가 낸 의견들을 정리하여 회의록으로 정리해주세요.\
+        content= f"지금까지 우리와 네가 낸 의견들을 정리하여 회의록으로 보여주세요.\
         주제를 잊어선 안됩니다. 일부 의견만 언급해서는 안됩니다.\
         나왔던 의견들을 회의록 형식으로 정리하여야 합니다.\
         '패스'라고 말한 의견은 제외해주세요.\
-        너가 낸 의견도 넣어서 정리해주세요. 반드시요. 꼭.\
-        주제, 아이디어, 의견 정리, 향후 조치에 대해 정리해야 합니다.",
+        각 아이디어에 대한의견 정리와 향후 조치에 대한 내용만을 필요로 합니다.\
+        그외 회의록 작성자, 날짜 등의 부가내용은 필요하지 않습니다.\
+        단 요약이라는 점을 명심하고 길이를 조절하세요.\
+        요약에 해당하는 내용만 보여주고 이외 내용은 포함하지 말아주세요.\
+        향후 조치에 대한 내용이 끝나면 더 이상의 불필요한 내용은 포함시키지 않아야 합니다.",
     )
     with client.beta.threads.runs.stream(
         thread_id=thread_id,
@@ -177,7 +186,11 @@ def summary_ideas():
         event_handler=event_handler,
     ) as stream:
         stream.until_done()
-    return event_handler.get_generated_text()
+
+
+    summary_text = event_handler.get_generated_text()
+    cleaned_summary = clean_summary_text(summary_text)
+    return cleaned_summary
 
 @app.route('/persona/make', methods=['POST'])
 def persona_make():
@@ -201,7 +214,8 @@ def persona_make():
         페르소나만 만들면 됩니다. 다른 산출물을 만들 필요는 없습니다.\
         나이, 직업, 관심사, 특징 및 행동을 정리하고\
         이로 인해 나올 수 있는 제품 및 방향성을 제공해주세요.\
-        페르소나의 형식에 맞춰서 너가 전부 작성해주세요"
+        페르소나의 형식에 맞춰서 너가 전부 작성해주세요\
+        페르소나에 해당하는 내용만 보여주고 이외 내용은 포함하지 말아주세요."
     event_handler = EventHandler()
     message = client.beta.threads.messages.create(
         thread_id=thread_id,
@@ -223,27 +237,42 @@ def swot_make():
     thread_id = params['threadId']
     assistant_id = params['assistantId']
     idea = params['idea']
-    details = params['details']
+    details = params.get('details', [])
+    
     prompt = f"우리는 지금까지 나온 아이디어중에 {idea}라는 내용이 있습니다. 세부 내용으로는"
-    for item in details:
-        prompt += f", {item['detail']}"
+    
+    # 세부 내용 추가
+    if details:
+        for item in details:
+            if isinstance(item, dict) and 'detail' in item:
+                prompt += f", {item['detail']}"
+            else:
+                prompt += ", [Invalid detail]"
+    else:
+        prompt += " [No details provided]"
+
     prompt += "들이 나왔습니다. 이러한 아이디어에 SWOT분석을 만들어주시겠습니까?\
         세부 내용에 대해 대답하는 것이 아닌 아이디어에 대한 세부내용까지 고려하여 SWOT분석을 만들어주세요\
         SWOT분석만 만들면 됩니다. 다른 산출물을 만들 필요는 없습니다.\
-        형식에 맞춰서 너가 전부 작성해주세요"
+        형식에 맞춰서 너가 전부 작성해주세요\
+        SWOT 분석한 내용만 보여주고 이외 내용은 포함하지 말아주세요."
+    
     event_handler = EventHandler()
     message = client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
-        content= prompt
+        content=prompt
     )
+    
     with client.beta.threads.runs.stream(
         thread_id=thread_id,
         assistant_id=assistant_id,
         event_handler=event_handler,
     ) as stream:
         stream.until_done()
+    
     return event_handler.get_generated_text()
+
 
 @app.route('/user')
 def user():
@@ -251,5 +280,3 @@ def user():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
