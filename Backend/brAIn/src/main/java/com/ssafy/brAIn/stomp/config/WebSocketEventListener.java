@@ -77,6 +77,8 @@ public class WebSocketEventListener {
 
             String email = jwtUtilForRoom.getUsername(token);
             Integer roomId = Integer.parseInt(jwtUtilForRoom.getRoomId(token));
+            String nickname=jwtUtilForRoom.getNickname(token);
+            System.out.println(nickname);
             Integer memberId = getMemberId(email);
             Role role = Role.valueOf(jwtUtilForRoom.getRole(token));
             Optional<Member> member = memberRepository.findByEmail(email);

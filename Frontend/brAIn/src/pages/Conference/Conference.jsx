@@ -31,6 +31,7 @@ import { setCurStep, upRound, setRound, setRoom } from '../../actions/conference
 import { sendToBoard } from '../../actions/roundRobinBoardAction';
 import VoteResultsModal from './components/VoteResultsModal';
 import VideoConference from './components/VideoConference';
+import { initVote } from '../../actions/commentsAction';
 
 const Conference = () => {
   const dispatch = useDispatch();
@@ -52,23 +53,31 @@ const Conference = () => {
   const step = useSelector(state => state.conferenceInfo.curStep);
   const round = useSelector(state => state.conferenceInfo.round);
   const curUser = useSelector(state => state.user.currentUser);
+  const nextUser = useSelector(state => state.user.nextUser);
   const roundRobinBoard = useSelector(state => state.roundRobinBoard.roundRobinBoard);
+  const readyStatuses = useSelector((state) => state.user.readyStatuses);
   //const roomId=useSelector(state=>state.conferenceInfo.roomId);
   const { secureId: routeSecureId } = useParams();
   const [data, setData] = useState(null);
 
   const votedItems = useSelector(state => state.votedItem.items || []);
-
-
-  // const MINUTES_IN_MS = 6 * 1000;
+  
+  
   const [time, setTime] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(null);
-  const [timerActive, setTimerActive] = useState(false);
+
 
   //투표결과 모달관련
   const [voteResults, setVoteResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [userList, setUserList] = useState([]);
+  const [newTime, setnewTime] = useState(null);
+
+  // READY 카운트 상태 추가
+  const [readyCount, setReadyCount] = useState(0);
+
+  // AI 닉네임 저장을 위한 상태
+  const [aiName, setAiName] = useState(''); // useState를 사용하여 상태로 관리
 
 
   useEffect(() => {
@@ -94,43 +103,14 @@ const Conference = () => {
         if (roomId == null) {
           //dispatch(setRoom(response.data.roomId));
           setRoomId(response.data.roomId);
+          const countMemberInWaitingroom=await axios.get(`http://localhost/api/v1/conferences/countUser/${response.data.roomId}`);
+          console.log("인원",countMemberInWaitingroom.data);
+          setParticipantCount(countMemberInWaitingroom.data+1);
         }
 
         if (subject === '') {
           setSubject(response.data.subject);
         }
-
-        const time_response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/time`, {
-          params: {
-            secureId: routeSecureId,
-          },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
-          },
-        });
-
-        if (time === null) {
-          setTime(time_response.data.time);
-          console.log(time_response.data.time.type)
-          console.log(time)
-        }
-
-        if (timeLeft === null) {
-          const timeLeft = time // time을 숫자로 변환하고 밀리초로 변환
-          setTimeLeft(timeLeft);
-        }
-
-        const countMemberInWaitingroom = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/countUser/${roomId}`, {}, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
-          }
-        });
-        console.log("인원", countMemberInWaitingroom.data);
-        setParticipantCount(countMemberInWaitingroom.data + 1);
-
-
 
         const newClient = new Client({
           brokerURL: `${import.meta.env.VITE_WSS_BASE_URL}`,
@@ -159,8 +139,14 @@ const Conference = () => {
             handleMessage(receivedMessage);
           });
 
-          newClient.subscribe(`/queue/room.${response.data.roomId}.${nickname}`, (message) => {
-            const receivedMessage = JSON.parse(message.body);
+          let nick=null;
+          if(nickname==""){
+            nick=response.data.nickname;
+          }else{
+            nick=nickname;
+          }
+          newClient.subscribe(`/queue/room.${response.data.roomId}.${nick}`,(message)=>{
+            const receivedMessage=JSON.parse(message.body);
             handleMessageForIndividual(receivedMessage);
           })
         };
@@ -168,8 +154,10 @@ const Conference = () => {
         newClient.onStompError = (frame) => {
           console.error('STOMP error:', frame);
         };
-
-        if (isMounted) {
+        
+        // 그냥 isMount 원래 true였는데 안되서 ! 붙임
+        if (!isMounted) {
+          
           setClient(newClient);
           currentClient = newClient;
           newClient.activate();
@@ -181,9 +169,8 @@ const Conference = () => {
       }
     };
 
-
-
     fetchDataAndConnect();
+    
 
     return () => {
       isMounted = false;
@@ -192,114 +179,137 @@ const Conference = () => {
       }
     };
 
+  }, [routeSecureId, roomId]);
 
-  }, [routeSecureId, roomId, time]);
-
-  // 라운드 변경 시 패스 상태 초기화
+  // 라운드 및 단계 변경 시 패스 상태 초기화
   useEffect(() => {
     dispatch(resetPassStatus());
-  }, [round, dispatch]);
+  }, [round, step, dispatch]);
 
-
-
+  // 단계 변경 시 준비 상태 초기화
   useEffect(() => {
-    if (step === 'STEP_0' && !timerActive) {
-      // Start the timer if it's step0 and no other timer is running
-      setTimerActive(true);
-      startTimer();
-    }
-  }, [step]);
+    dispatch(resetReadyStatus());
+    setReadyCount(0);
+  }, [step, dispatch])
 
+  // // 단계가 변경될 때마다 readyCount를 0으로 초기화
+  // useEffect(() => {
+  //   setReadyCount(0);
+  // }, [step]);
 
+  
 
-  const startTimer = async () => {
-    try {
-      await Swal.fire({
-        icon: "info",
-        title: '준비 시간이 시작되었습니다.',
-        text: '준비를 마치세요.',
-        timer: 3000
+  useEffect(()=>{
+
+    const getTime=async()=>{
+      const time_response = await axios.get(`http://localhost/api/v1/conferences/time`, {
+        params: {
+          secureId: routeSecureId,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+        },
       });
-
-      await timer();
-
-      console.log("알람 전 timeleft", timeLeft)
-
-      await Swal.fire({
-        icon: "warning",
-        title: '준비 시간이 끝났습니다.',
-        text: '다음 단계로 진행하세요.',
-      });
-
-    } catch (error) {
-      console.error("Error during timer:", error);
+    
+      if (time === null) {
+        setTime(time_response.data.time);
+        console.log()
+      }
     }
-  };
+    console.log('useEffect내부',step)
+    if(step=='STEP_0'){
+      getTime();
+    }
+    console.log("회의창에서 재 랜더링 될때, 현재유저",curUser);
 
-  const timer = async () => {
-    return new Promise(resolve => {
-      let timerId;
+  },[time,curUser])
 
-      const tick = () => {
-        setTimeLeft(prevTimeLeft => {
-          const newTimeLeft = prevTimeLeft - 1000;
-          // console.log(newTimeLeft)
-          if (newTimeLeft <= 0) {
-            clearInterval(timerId); // Stop the timer
-            resolve();
-            return 0; // Set timer to 0 after it ends
-          } else {
-            return newTimeLeft;
-          }
-        });
-      };
-      console.log("leftTime:", timeLeft);
+  // const getPerson=async()=>{
+    
+  // }
 
-      timerId = setInterval(tick, 1000); // Call tick every second
-    });
-  };
+  // getPerson();
 
-  const handleMessage = async (receivedMessage) => {
+
+
+  
+
+  
+
+  const handleMessage = (receivedMessage) => {
     if (receivedMessage.messageType == 'ENTER_WAITING_ROOM') {
       countUpMember();
     } else if (receivedMessage.messageType == 'SUBMIT_POST_IT') {
       roundRobinBoardUpdate(receivedMessage);
     } else if (receivedMessage.messageType === 'START_CONFERENCE') {
+      console.log("회의시작")
+      // AI 닉네임 저장
+      setAiName(receivedMessage.aiNickname);
       startMeeting();
+
+      // 사용자 목록 상태 업데이트
       const updatedUsers = dispatch(setUsers(receivedMessage.users));
       dispatch(setCuruser(updatedUsers[0].nickname));
+      
       dispatch(setCurStep('STEP_0'));
+
     } else if (receivedMessage.messageType === 'ENTER_CONFERENCES') {
       dispatch(setUserNick(receivedMessage.nickname));
 
     } else if (receivedMessage.messageType == 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep))
-      if (step == 'STEP_3') {
-        step3start();
+      if(receivedMessage.curStep=='STEP_1'){
+        setTime(2*6*1000);
+      }else if(receivedMessage.curStep=='STEP_2'){
+        setTime(1*6*1000);
       }
-    } else if (receivedMessage.messageType == 'SUBMIT_POST_IT_AND_END') {
-      await roundRobinBoardUpdate(receivedMessage);
+      else if(receivedMessage.curStep=='STEP_3'){
+        setTime(2*60*1000);
+      }
+    }else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
+      roundRobinBoardUpdate(receivedMessage);
       dispatch(setCurStep('STEP_2'));
-      dispatch(step1EndAlarm());
-    } else if (receivedMessage.messageType === 'FINISH_MIDDLE_VOTE') {
+      setTime(1*6*1000);
+    } else if(receivedMessage.messageType==='FINISH_MIDDLE_VOTE'){
       console.log(receivedMessage);
       console.log(receivedMessage.votes.postit);
-    } else if (receivedMessage.messageType == 'PASS') {
-      console.log('pass to ' + receivedMessage.nextUser);
+
+    } else if(receivedMessage.messageType=='PASS'){
+      console.log('pass to '+receivedMessage.nextUser);
       console.log('User who passed:', receivedMessage.curUser);
       dispatch(updatePassStatus(receivedMessage.curUser));
+      
+      console.log("제 랜더링 전에 시간",time);
       dispatch(setCuruser(receivedMessage.nextUser));
-    } else if (receivedMessage.messageType == 'PASS_AND_END') {
+      if (round !== receivedMessage.nextRound) {
+        //dispatch(updatePassStatus(receivedMessage.curUser));
+        dispatch(setRound(receivedMessage.nextRound));
+      }
+
+    } else if(receivedMessage.messageType=='PASS_AND_END'){
       console.log('투표시작')
       dispatch(setCurStep('STEP_2'));
-      dispatch(step1EndAlarm());
-    } else if (receivedMessage.messageType === 'NEXT_STEP') {
-      dispatch(setCurStep(receivedMessage.curStep));
-    } else if (receivedMessage.messageType === 'READY') {
-      console.log('next :' + receivedMessage.nextUser)
-      console.log('User who re:', receivedMessage.curUser);
+      setTime(1*6*1000);
+
+
+    } 
+
+    else if (receivedMessage.messageType === 'READY') {
+      console.log('준비누른 사람 누구 ? : ', receivedMessage.curUser);
       dispatch(updateReadyStatus(receivedMessage.curUser));
-      dispatch(setCuruser(receivedMessage.nextUser));
+
+      // READY 한 사람 수 증가
+      setReadyCount((prevCount) => prevCount + 1);
+
+      // AI 준비 상태 설정을 3초 지연
+      setTimeout(() => {
+        if (readyCount + 1 === participantCount) {
+          console.log('모든 참여자가 준비됨. AI 준비 시도. 비상!!');
+          console.log('AI 닉네임임 : ' + receivedMessage.aiNickname)
+          dispatch(updateReadyStatus(receivedMessage.aiNickname));
+        }
+      }, 5000); // 5초 후 실행
     }
   };
 
@@ -307,8 +317,9 @@ const Conference = () => {
     if (receivedMessage.messageType == 'STEP3_FOR_USER') {
       console.log('step3 start');
       console.log(receivedMessage.step3ForUser);
+      dispatch(initVote(receivedMessage.step3ForUser));
     }
-  }
+  };
 
   const countUpMember = () => {
     setParticipantCount((prevCount) => {
@@ -330,6 +341,9 @@ const Conference = () => {
   };
 
   const handleStartMeeting = () => {
+    console.log('스타트미팅')
+    console.log(roomId);
+    console.log(client)
     if (client) {
       client.publish({
         destination: `/app/start.conferences.${roomId}`,
@@ -397,14 +411,21 @@ const Conference = () => {
           step: step
         })
       });
+
+      if(step=='STEP_2'){
+        step3start();
+      }
     }
-
     console.log('Next Step Btn Clicked')
-  };
+    
+    
+  };  
 
-  const handlePassButtonClick = () => {
+  const handlePassButtonClick = () =>  {
     if (client) {
       // 사용자 패스 정보 전송
+      
+      console.log("직접적으로 패스를 누르는 사용자",curUser);
       client.publish({
         destination: `/app/state.user.pass.${roomId}`,
         headers: {
@@ -418,29 +439,25 @@ const Conference = () => {
     }
   };
 
+  const handlepassSent = () => {
+    
+    handlePassButtonClick();
+    
+  }
+
+  const handleVoteSent = () => {
+    dispatch(step1EndAlarm());
+  };
+
   const step1EndAlarm = () => async (dispatch, getState) => {
     try {
-      await Swal.fire({
-        icon: "success",
-        title: '브레인 스토밍이 끝났습니다.',
-        text: '1분 동안 맘에 드는 3개의 아이디어를 골라주세요',
-        timer: 3000
-      });
-
-      // 타이머 시작
-      await timer();
-
-      console.log(timeLeft);
-      if (timeLeft <= 0) {
-        console.log("타이머 종료");
-      }
-
+     
+      console.log('투표진행')
       // 상태 업데이트 후 후속 작업을 수행하기 위해 상태를 확인
       const state = getState();
       const votedItems = state.votedItem.items;
-      const step = state.conferenceInfo.curStep;
-      console.log(votedItems);  // 상태가 업데이트된 후 출력
-
+      const step=state.conferenceInfo.curStep;
+  
       const itemsObject = votedItems.reduce((map, item, index) => {
         const key = item.content;
         const value = 5 - index * 2;
@@ -472,14 +489,42 @@ const Conference = () => {
 
 
   const endVote = async (step) => {
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/vote/endByTimer`, {
-        conferenceId: roomId,
-        step: step
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          AuthorizationRoom: localStorage.getItem('roomToken')
+  try {
+    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/vote/endByTimer`, {
+      conferenceId: roomId,
+      step: step
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        AuthorizationRoom: localStorage.getItem('roomToken')
+      }
+    });
+    
+
+    Swal.fire({
+      icon: "success",
+      title: '투표가 종료되었습니다.',
+      text: '결과를 확인하세요',
+      showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+      confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
+      cancelButtonColor: '#d33', // cancel 버튼 색깔 지정
+      confirmButtonText: '승인', // confirm 버튼 텍스트 지정
+      cancelButtonText: '취소', // cancel 버튼 텍스트 지정
+    }).then(async(result) => {
+      if (result.isConfirmed) {
+        const voteResults = await getVoteResult(step);
+        // console.log("투표결과");
+        // console.log(voteResults);
+
+        if (voteResults && voteResults.length > 0) {
+          // voteResults.forEach(vote => {
+          //   console.log(`PostIt: ${vote.postIt}, Score: ${vote.score}`);
+          // });
+          console.log(voteResults)
+          setVoteResults(voteResults);
+          setIsModalOpen(true); // 모달 열기
+        } else {
+          console.log("No vote results found.");
         }
       });
 
@@ -530,6 +575,7 @@ const Conference = () => {
           AuthorizationRoom: localStorage.getItem('roomToken')
         }
       });
+      console.log(response.data)
       return response.data;  // 데이터 반환
     } catch (error) {
       console.error("Error fetching vote results:", error);
@@ -614,11 +660,11 @@ const Conference = () => {
 
                 </div>
                 <div className="conf-timer-container">
-                  <Timer time={time} />
+                  <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent}/>
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
-                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready" disabled={curUser !== nickname}>
+                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
                       <img src={ReadyIcon} alt="Ready" className="action-icon" />
                     </Button>
                     <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
@@ -635,7 +681,7 @@ const Conference = () => {
                 )}
                 {role !== 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
-                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready" disabled={curUser !== nickname}>
+                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
                       <img src={ReadyIcon} alt="Ready" className="action-icon" />
                     </Button>
                     <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>

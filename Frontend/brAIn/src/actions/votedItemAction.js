@@ -2,6 +2,7 @@ import axios from 'axios';
 
 export const ADD_ITEM='ADD_ITEM'
 export const REORDER_ITEMS='REORDER_ITEMS'
+export const REMOVE_ITEM='REMOVE_ITEM'
 
 // export const addItem=(round,index,content)=>({
 //     type:ADD_ITEM,
@@ -41,6 +42,15 @@ export const addItem = (round,index,content) => async (dispatch, getState) => {
     }
   };
   
+  // 아이템 삭제 액션 생성자
+  export const removeItem = (index) => {
+    return {
+      type: REMOVE_ITEM,
+      payload: { index }
+    };
+  };
+
+
   // 아이템 순서 재정렬 액션 생성자
   export const reorderItems = (items) => {
     return {

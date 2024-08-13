@@ -60,8 +60,13 @@ public class VoteController {
 
     // 타이머에 의해 투표 종료
     @PostMapping("/endByTimer")
-    public ResponseEntity<?> endVoteByTimer(@RequestBody VoteResultRequest voteResultRequest) {
-        voteService.endVoteByTimer(voteResultRequest);
+    public ResponseEntity<?> endVoteByTimer(@RequestBody VoteResultRequest voteResultRequest,@RequestHeader HttpHeaders headers) {
+        String token = headers.getFirst("AuthorizationRoom");
+        if(token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        Optional<Member> member = memberService.findByEmail(jwtUtilForRoom.getUsername(token));
+        voteService.endVoteByTimer(voteResultRequest,member.get().getId());
         return new ResponseEntity<>("Vote Finished", HttpStatus.OK);
     }
 
@@ -76,7 +81,9 @@ public class VoteController {
         ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId+"");
 
         VoteResultRequest voteResultRequest = new VoteResultRequest(roomId, step);
-        voteService.saveTop9RoundResults(results, voteResultRequest, roomId);
+        if(!voteService.existsMiddleVoteInDB(roomId)){
+            voteService.saveTop9RoundResults(results, voteResultRequest, roomId);
+        }
         return ResponseEntity.ok().body(results);
     }
 

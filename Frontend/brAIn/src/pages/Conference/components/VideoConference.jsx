@@ -212,7 +212,7 @@ const VideoConference = () => {
             {/* ddd/safasfasf */}
             {session ? (
                 <div id="session" style={{ width: '100%', overflowX: 'auto' }}>
-                    <div id="video-container" className="col-md-12" style={{ display: 'flex', flexDirection: 'row', overflowX: 'auto', marginTop: '60px' }}>
+                    <div id="video-container" className="col-md-12" style={{ display: 'flex', flexDirection: 'row', overflowX: 'auto', marginTop: '40px' }}>
                         {mainStreamManager ? (
                             <div id="main-video" className="stream-container">
                                 <UserVideoComponent streamManager={mainStreamManager} />
