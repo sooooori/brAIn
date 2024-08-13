@@ -42,6 +42,8 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
         if(response.status===200){
           
           dispatch(addComments(newIdea));
+          // 입력칸 초기화
+          setInputValue('')
         }
       } catch (error) {
         console.error('Error saving post-it:', error);

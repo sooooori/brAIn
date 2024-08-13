@@ -8,6 +8,7 @@ const MemberList = () => {
     const nickname = useSelector((state) => state.user.nickname);
     const passStatus = useSelector((state) => state.user.passStatus);
     const readyStatus = useSelector((state) => state.user.readyStatus);
+    const step = useSelector(state => state.conferenceInfo.curStep);
 
     const [currentPage, setCurrentPage] = useState(0);
     const usersPerPage = 6;
@@ -65,7 +66,7 @@ const MemberList = () => {
                         <div
                             key={user.id || user.nickname}
                             className={`profile ${
-                                user.nickname === curUser ? 'highlighted' : ''}`}
+                                (user.nickname === curUser) && (step === 'STEP_1' || step === 'STEP_2') ? 'highlighted' : ''}`}
                         >
                             {passStatus[user.nickname] ? (
                                 <span className="pass-indicator">PASS</span>

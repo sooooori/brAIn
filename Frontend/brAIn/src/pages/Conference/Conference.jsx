@@ -419,8 +419,6 @@ const Conference = () => {
       }
     }
     console.log('Next Step Btn Clicked')
-    
-    
   };  
 
   const handlePassButtonClick = () =>  {
@@ -453,7 +451,6 @@ const Conference = () => {
 
   const step1EndAlarm = () => async (dispatch, getState) => {
     try {
-     
       console.log('투표진행')
       // 상태 업데이트 후 후속 작업을 수행하기 위해 상태를 확인
       const state = getState();
@@ -489,7 +486,6 @@ const Conference = () => {
     }
   };
 
-
   const endVote = async (step) => {
   try {
     const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/vote/endByTimer`, {
@@ -502,7 +498,6 @@ const Conference = () => {
       }
     });
     
-
     Swal.fire({
       icon: "success",
       title: '투표가 종료되었습니다.',
@@ -536,7 +531,6 @@ const Conference = () => {
   };
 
   const getVoteResult = async (step) => {
-    
     try {
       console.log("getVoteREsult",step)
       console.log(roomId);
@@ -583,8 +577,6 @@ const Conference = () => {
   }
 
   
-
-
   return (
     
     <div className="conference">

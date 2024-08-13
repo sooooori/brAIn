@@ -27,6 +27,9 @@ const Timer = ({ time, voteSent, passSent }) => {
     
     let time = currentTime;
 
+    console.log('타이머에 들어오는 시간 IT:', initialTime);
+    console.log('타이머에 들어오는 시간 CT:', currentTime);
+
     if(curstep=='STEP_0' && currentTime==initialTime){
         Swal.fire({
         icon: "info",
