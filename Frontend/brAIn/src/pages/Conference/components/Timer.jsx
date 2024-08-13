@@ -6,7 +6,7 @@ import './Timer.css'; // 스타일을 위한 CSS 파일
 import {setCuruser, updatePassStatus} from '../../../actions/userActions';
 import {useDispatch} from 'react-redux'
 
-const Timer = ({ time, voteSent, passSent, nextIdea }) => {
+const Timer = ({ time, voteSent, passSent, nextIdea,timerStop }) => {
   const initialTime = parseInt(time, 10) / 1000 || 0;
   const [currentTime, setCurrentTime] = useState(initialTime); // 타이머의 시간 상태
   const curstep = useSelector(state => state.conferenceInfo.curStep);
@@ -21,15 +21,12 @@ const Timer = ({ time, voteSent, passSent, nextIdea }) => {
 
   useEffect(() => {
     setCurrentTime(initialTime);
-  }, [ time, curstep, curUser,curIndex ]);
+  }, [ time, curstep, curUser,curIndex]);
 
   useEffect(() => {
     
     
     let time = currentTime;
-
-    console.log('타이머에 들어오는 시간 IT:', initialTime);
-    console.log('타이머에 들어오는 시간 CT:', currentTime);
 
     if(curstep=='STEP_0' && currentTime==initialTime){
         Swal.fire({
@@ -46,8 +43,7 @@ const Timer = ({ time, voteSent, passSent, nextIdea }) => {
         text: '준비한 아이디어를 자신의 차례에 제출하세요.',
         timer: 3000
       });
-      console.log('커렌트 : ' + currentTime)
-      console.log('이니셜 : ' + initialTime)
+
       setAlertShown(true);
     }
     else if(curstep=='STEP_2' && currentTime==initialTime){
@@ -92,19 +88,12 @@ const Timer = ({ time, voteSent, passSent, nextIdea }) => {
     }
 
     else if(currentTime<=0 && curstep=='STEP_3'){
-      if(curIndex<ideaList.length-1){
+      
+      if(!timerStop){
         nextIdea();
-      }else{
-        Swal.fire({
-          icon: "info",
-          title: '구체화 단계가 마무리 되었습니다.',
-          text: '다음 단계로 이동하세요',
-          showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
-          confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
-          confirmButtonText: '승인', // confirm 버튼 텍스트 지정
-        })
       }
       clearInterval(timer);
+
     }
     
 
@@ -119,8 +108,6 @@ const Timer = ({ time, voteSent, passSent, nextIdea }) => {
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  console.log("curUser:",curUser)
-  console.log("nickname:", nickname)
 
   return (
     <div className="timer-container">
