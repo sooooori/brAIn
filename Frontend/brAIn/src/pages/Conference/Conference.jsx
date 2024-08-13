@@ -61,8 +61,8 @@ const Conference = () => {
   const [data, setData] = useState(null);
 
   const votedItems = useSelector(state => state.votedItem.items || []);
-  
-  
+
+
   const [time, setTime] = useState(null);
 
 
@@ -103,9 +103,9 @@ const Conference = () => {
         if (roomId == null) {
           //dispatch(setRoom(response.data.roomId));
           setRoomId(response.data.roomId);
-          const countMemberInWaitingroom=await axios.get(`http://localhost/api/v1/conferences/countUser/${response.data.roomId}`);
-          console.log("인원",countMemberInWaitingroom.data);
-          setParticipantCount(countMemberInWaitingroom.data+1);
+          const countMemberInWaitingroom = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/countUser/${response.data.roomId}`);
+          console.log("인원", countMemberInWaitingroom.data);
+          setParticipantCount(countMemberInWaitingroom.data + 1);
         }
 
         if (subject === '') {
@@ -139,14 +139,14 @@ const Conference = () => {
             handleMessage(receivedMessage);
           });
 
-          let nick=null;
-          if(nickname==""){
-            nick=response.data.nickname;
-          }else{
-            nick=nickname;
+          let nick = null;
+          if (nickname == "") {
+            nick = response.data.nickname;
+          } else {
+            nick = nickname;
           }
-          newClient.subscribe(`/queue/room.${response.data.roomId}.${nick}`,(message)=>{
-            const receivedMessage=JSON.parse(message.body);
+          newClient.subscribe(`/queue/room.${response.data.roomId}.${nick}`, (message) => {
+            const receivedMessage = JSON.parse(message.body);
             handleMessageForIndividual(receivedMessage);
           })
         };
@@ -154,10 +154,10 @@ const Conference = () => {
         newClient.onStompError = (frame) => {
           console.error('STOMP error:', frame);
         };
-        
+
         // 그냥 isMount 원래 true였는데 안되서 ! 붙임
         if (!isMounted) {
-          
+
           setClient(newClient);
           currentClient = newClient;
           newClient.activate();
@@ -170,7 +170,7 @@ const Conference = () => {
     };
 
     fetchDataAndConnect();
-    
+
 
     return () => {
       isMounted = false;
@@ -197,12 +197,12 @@ const Conference = () => {
   //   setReadyCount(0);
   // }, [step]);
 
-  
 
-  useEffect(()=>{
 
-    const getTime=async()=>{
-      const time_response = await axios.get(`http://localhost/api/v1/conferences/time`, {
+  useEffect(() => {
+
+    const getTime = async () => {
+      const time_response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/time`, {
         params: {
           secureId: routeSecureId,
         },
@@ -211,31 +211,31 @@ const Conference = () => {
           Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
         },
       });
-    
+
       if (time === null) {
         setTime(time_response.data.time);
         console.log()
       }
     }
-    console.log('useEffect내부',step)
-    if(step=='STEP_0'){
+    console.log('useEffect내부', step)
+    if (step == 'STEP_0') {
       getTime();
     }
-    console.log("회의창에서 재 랜더링 될때, 현재유저",curUser);
+    console.log("회의창에서 재 랜더링 될때, 현재유저", curUser);
 
-  },[time,curUser])
+  }, [time, curUser])
 
   // const getPerson=async()=>{
-    
+
   // }
 
   // getPerson();
 
 
 
-  
 
-  
+
+
 
   const handleMessage = (receivedMessage) => {
     if (receivedMessage.messageType == 'ENTER_WAITING_ROOM') {
@@ -251,7 +251,7 @@ const Conference = () => {
       // 사용자 목록 상태 업데이트
       const updatedUsers = dispatch(setUsers(receivedMessage.users));
       dispatch(setCuruser(updatedUsers[0].nickname));
-      
+
       dispatch(setCurStep('STEP_0'));
 
     } else if (receivedMessage.messageType === 'ENTER_CONFERENCES') {
@@ -259,41 +259,41 @@ const Conference = () => {
 
     } else if (receivedMessage.messageType == 'NEXT_STEP') {
       dispatch(setCurStep(receivedMessage.curStep))
-      if(receivedMessage.curStep=='STEP_1'){
-        setTime(2*6*1000);
-      }else if(receivedMessage.curStep=='STEP_2'){
-        setTime(1*6*1000);
+      if (receivedMessage.curStep == 'STEP_1') {
+        setTime(2 * 6 * 1000);
+      } else if (receivedMessage.curStep == 'STEP_2') {
+        setTime(1 * 6 * 1000);
       }
-      else if(receivedMessage.curStep=='STEP_3'){
-        setTime(2*60*1000);
+      else if (receivedMessage.curStep == 'STEP_3') {
+        setTime(2 * 60 * 1000);
       }
-    }else if(receivedMessage.messageType=='SUBMIT_POST_IT_AND_END'){
+    } else if (receivedMessage.messageType == 'SUBMIT_POST_IT_AND_END') {
       roundRobinBoardUpdate(receivedMessage);
       dispatch(setCurStep('STEP_2'));
-      setTime(1*6*1000);
-    } else if(receivedMessage.messageType==='FINISH_MIDDLE_VOTE'){
+      setTime(1 * 6 * 1000);
+    } else if (receivedMessage.messageType === 'FINISH_MIDDLE_VOTE') {
       console.log(receivedMessage);
       console.log(receivedMessage.votes.postit);
 
-    } else if(receivedMessage.messageType=='PASS'){
-      console.log('pass to '+receivedMessage.nextUser);
+    } else if (receivedMessage.messageType == 'PASS') {
+      console.log('pass to ' + receivedMessage.nextUser);
       console.log('User who passed:', receivedMessage.curUser);
       dispatch(updatePassStatus(receivedMessage.curUser));
-      
-      console.log("제 랜더링 전에 시간",time);
+
+      console.log("제 랜더링 전에 시간", time);
       dispatch(setCuruser(receivedMessage.nextUser));
       if (round !== receivedMessage.nextRound) {
         //dispatch(updatePassStatus(receivedMessage.curUser));
         dispatch(setRound(receivedMessage.nextRound));
       }
 
-    } else if(receivedMessage.messageType=='PASS_AND_END'){
+    } else if (receivedMessage.messageType == 'PASS_AND_END') {
       console.log('투표시작')
       dispatch(setCurStep('STEP_2'));
-      setTime(1*6*1000);
+      setTime(1 * 6 * 1000);
 
 
-    } 
+    }
 
     else if (receivedMessage.messageType === 'READY') {
       console.log('준비누른 사람 누구 ? : ', receivedMessage.curUser);
@@ -412,20 +412,20 @@ const Conference = () => {
         })
       });
 
-      if(step=='STEP_2'){
+      if (step == 'STEP_2') {
         step3start();
       }
     }
     console.log('Next Step Btn Clicked')
-    
-    
-  };  
 
-  const handlePassButtonClick = () =>  {
+
+  };
+
+  const handlePassButtonClick = () => {
     if (client) {
       // 사용자 패스 정보 전송
-      
-      console.log("직접적으로 패스를 누르는 사용자",curUser);
+
+      console.log("직접적으로 패스를 누르는 사용자", curUser);
       client.publish({
         destination: `/app/state.user.pass.${roomId}`,
         headers: {
@@ -440,9 +440,9 @@ const Conference = () => {
   };
 
   const handlepassSent = () => {
-    
+
     handlePassButtonClick();
-    
+
   }
 
   const handleVoteSent = () => {
@@ -451,13 +451,13 @@ const Conference = () => {
 
   const step1EndAlarm = () => async (dispatch, getState) => {
     try {
-     
+
       console.log('투표진행')
       // 상태 업데이트 후 후속 작업을 수행하기 위해 상태를 확인
       const state = getState();
       const votedItems = state.votedItem.items;
-      const step=state.conferenceInfo.curStep;
-  
+      const step = state.conferenceInfo.curStep;
+
       const itemsObject = votedItems.reduce((map, item, index) => {
         const key = item.content;
         const value = 5 - index * 2;
@@ -489,42 +489,14 @@ const Conference = () => {
 
 
   const endVote = async (step) => {
-  try {
-    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/vote/endByTimer`, {
-      conferenceId: roomId,
-      step: step
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        AuthorizationRoom: localStorage.getItem('roomToken')
-      }
-    });
-    
-
-    Swal.fire({
-      icon: "success",
-      title: '투표가 종료되었습니다.',
-      text: '결과를 확인하세요',
-      showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
-      confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
-      cancelButtonColor: '#d33', // cancel 버튼 색깔 지정
-      confirmButtonText: '승인', // confirm 버튼 텍스트 지정
-      cancelButtonText: '취소', // cancel 버튼 텍스트 지정
-    }).then(async(result) => {
-      if (result.isConfirmed) {
-        const voteResults = await getVoteResult(step);
-        // console.log("투표결과");
-        // console.log(voteResults);
-
-        if (voteResults && voteResults.length > 0) {
-          // voteResults.forEach(vote => {
-          //   console.log(`PostIt: ${vote.postIt}, Score: ${vote.score}`);
-          // });
-          console.log(voteResults)
-          setVoteResults(voteResults);
-          setIsModalOpen(true); // 모달 열기
-        } else {
-          console.log("No vote results found.");
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/vote/endByTimer`, {
+        conferenceId: roomId,
+        step: step
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          AuthorizationRoom: localStorage.getItem('roomToken')
         }
       });
 
@@ -548,6 +520,7 @@ const Conference = () => {
             // voteResults.forEach(vote => {
             //   console.log(`PostIt: ${vote.postIt}, Score: ${vote.score}`);
             // });
+            console.log(voteResults)
             setVoteResults(voteResults);
             setIsModalOpen(true); // 모달 열기
           } else {
@@ -559,6 +532,8 @@ const Conference = () => {
       console.error("Error ending vote:", error);
     }
   };
+
+
 
   const getVoteResult = async (step) => {
 
@@ -660,7 +635,7 @@ const Conference = () => {
 
                 </div>
                 <div className="conf-timer-container">
-                  <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent}/>
+                  <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent} />
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
