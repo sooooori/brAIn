@@ -193,7 +193,7 @@ const VideoConference = () => {
     }
 
     return (
-        <div className="container" style={{ width: '100%', overflowX: 'auto' }}>
+        <div className="container">
             {/* {!session ? (
                 <div id="join">
                     <div id="img-div">
