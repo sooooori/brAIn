@@ -14,31 +14,34 @@ class EventHandler(AssistantEventHandler):
         super().__init__()
         self.generated_text = ""
         self.buffer = ""
-    
+
     @override
     def on_text_created(self, text) -> None:
-        self.buffer += text.value
-        self._process_buffer()
-    
+        new_text = text.value
+        if not self.generated_text.endswith(new_text):
+            self.buffer += new_text
+            self._process_buffer()
+
     @override
     def on_text_delta(self, delta, snapshot):
-        self.buffer += delta.value
-        self._process_buffer()
+        new_text = delta.value
+        if not self.generated_text.endswith(new_text):
+            self.buffer += new_text
+            self._process_buffer()
 
     def _process_buffer(self):
         while self.buffer:
             char, rest = self._split_first_char(self.buffer)
-            if char:
+            if char and (not self.generated_text or char != self.generated_text[-1]):
                 self.generated_text += char
-                self.buffer = rest
-            else:
-                break
+            self.buffer = rest
 
     def _split_first_char(self, text):
-        for i in range(1, len(text) + 1):
-            if unicodedata.category(text[i-1])[0] != 'M':  # M는 결합 문자를 의미
+        char = text[0]
+        for i in range(1, len(text)):
+            if unicodedata.category(text[i])[0] != 'M':
                 return text[:i], text[i:]
-        return '', text
+        return text, ''
 
     def on_tool_call_created(self, tool_call):
         pass
@@ -47,7 +50,7 @@ class EventHandler(AssistantEventHandler):
         pass
 
     def get_generated_text(self):
-        return self.generated_text[1:]
+        return self.generated_text
 
 def make_assitant(subject):
     assistant = client.beta.assistants.create(
