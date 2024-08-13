@@ -14,7 +14,7 @@ services:
       - brain-net
 
   aiserver:
-    image: brAIn:/aiserver
+    image: brAIn/aiserver
     build: ./Backend/aiServer
     ports:
       - "5000:5000"
