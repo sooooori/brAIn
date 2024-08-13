@@ -212,19 +212,19 @@ const VideoConference = () => {
             {/* ddd/safasfasf */}
             {session ? (
                 <div id="session" style={{ width: '100%', overflowX: 'auto' }}>
-                    {/* {mainStreamManager ? (
+                    {mainStreamManager ? (
                         <div id="main-video" className="col-md-6">
                             <UserVideoComponent streamManager={mainStreamManager} />
                         </div>
-                    ) : null} */}
-
+                    ) : null}
+{/* 
                     <div id="video-container" className="col-md-12" style={{ display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
                         {subscribers.map((sub, i) => (
                             <div key={i} className="stream-container" onClick={() => handleMainVideoStream(sub)} style={{ display: 'inline-block' }}>
                                 <UserVideoComponent streamManager={sub} />
                             </div>
                         ))}
-                    </div>
+                    </div> */}
 
 
                 </div>
