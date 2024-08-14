@@ -112,7 +112,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
       </div>)}
       {(isStepThree)&&(
       <div className="WhiteBoard-header">
-        <h2>아이디어 : {votes[curIndex]} </h2>
+        <h2>No.{curIndex+1} 아이디어 : {votes[curIndex]} </h2>
       </div>)}
       {/* step이 'STEP_0'일 때 WhiteBoard-body와 WhiteBoard-footer를 숨김 */}
       {(isStepOne||isStepTwo) && (
@@ -129,7 +129,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
           </div>
         </div>
       )}
-      {!isStepZero && (
+      {isStepThree && (
         <div className="WhiteBoard-footer">
           <form className="idea-form" onSubmit={handleAddIdea}>
             <input

@@ -114,7 +114,6 @@ const Timer = ({ time, voteSent, passSent, nextIdea,timerStop,aiName,getAiPostit
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-
   return (
     <div className="timer-container">
       <img src={TimerIcon} alt="Timer Icon" className="timer-icon" />

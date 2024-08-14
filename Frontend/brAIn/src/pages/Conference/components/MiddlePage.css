@@ -1,0 +1,124 @@
+/* MiddlePage.css */
+.middle-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1000; /* 모달이 다른 모든 요소 위에 표시되도록 설정 */
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* 모달 뒤 어두운 배경 */
+    transform: translate(-50%, -50%); /* 중앙으로 이동 */
+}
+
+.middle-page img {
+    position: absolute;
+    top: 10px; /* 카드 위로 조금 올라가도록 조정 */
+    left: 50%; /* 좌우 중앙 정렬 */
+    transform: translateX(-50%); /* 수평 중앙 정렬 */
+    width: 200px; /* 이미지 너비 조정 */
+    height: auto; /* 이미지 높이는 비율에 맞게 */
+    z-index: 1;
+}
+
+.modaldal-content {
+    display:flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px; /* 기존 12px에서 8px로 수정 */
+    width: 100%;
+    height: 350px;
+    max-width: 500px; /* 기존 800px에서 500px로 수정 */
+    overflow-y: auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    text-align: center;
+}
+
+.write{
+    margin-top: 140px;
+}
+
+.exit-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.product-content {
+    margin-top: 30px;
+    overflow-y: auto;
+    max-height: 400px; /* 컨텐츠가 많을 때 모달의 최대 높이 */
+    white-space: normal;
+    word-wrap: break-word;
+    font-size: 16px; /* 텍스트 크기 줄임 */
+    line-height: 1.5;
+    text-align: left;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 1px solid #ddd; /* 내용 주변에 보더라인 추가 */
+    border-radius: 8px; /* 보더라인의 모서리를 둥글게 */
+}
+
+.button-layer {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px; /* 버튼들이 너무 아래에 위치하지 않도록 수정 */
+}
+
+.move, .exit {
+    background-color: #007bff; /* 버튼 색상 통일 */
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    text-align: center;
+    font-size: 16px;
+    width: 100%; /* 버튼 전체 폭 */
+}
+
+.move:hover, .exit:hover {
+    background-color: #0056b3;
+}
+
+.spinner-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-text {
+    font-size: 16px;
+    color: #555;
+    margin-top: 10px;
+    text-align: center;
+}
