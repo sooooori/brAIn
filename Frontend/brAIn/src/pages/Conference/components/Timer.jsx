@@ -98,9 +98,6 @@ const Timer = ({ time, voteSent, passSent }) => {
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  console.log("curUser:",curUser)
-  console.log("nickname:", nickname)
-
   return (
     <div className="timer-container">
       <img src={TimerIcon} alt="Timer Icon" className="timer-icon" />
