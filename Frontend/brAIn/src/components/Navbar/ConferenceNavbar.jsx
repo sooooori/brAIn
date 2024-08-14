@@ -81,7 +81,7 @@ const ConferenceNavbar = ({client}) => {
         {!logoLoaded && <CircularProgress size={24} className="logo-spinner" />}
         <img
           className={`logo-img ${logoLoaded ? 'loaded' : ''}`}
-          src="images/brAIn_2.png"
+          src="/images/brAIn_2.png"
           alt="brAIn"
           onLoad={() => setLogoLoaded(true)}
         />

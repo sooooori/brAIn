@@ -22,10 +22,20 @@
     border-radius: 5px;
     padding: 10px;
     box-sizing: border-box;
-    color: #000; /* 글자 색상 */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+.post-it-content{
+    width: 100%; /* 고정된 너비 */
+    height: 90%; /* 고정된 높이 */
+    color: #000; /* 글자 색상 */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5; /* 표시할 최대 줄 수 */
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .pagination {

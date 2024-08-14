@@ -32,6 +32,10 @@ const noteSlice = createSlice({
         note.content = content;
       }
     },
+    resetNotes: (state) => {
+      state.notes = [];
+      state.ideas = [];
+    },
   },
 });
 

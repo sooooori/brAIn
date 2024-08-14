@@ -130,8 +130,8 @@
 
 /* 액션 버튼 아이콘 스타일 */
 .action-buttons-container .action-icon {
-  width: 24px; /* 아이콘 너비 */
-  height: 24px; /* 아이콘 높이 */
+  width: 48px; /* 아이콘 너비 */
+  height: 48px; /* 아이콘 높이 */
 }
 
 /* 화이트보드 섹션 스타일 */
