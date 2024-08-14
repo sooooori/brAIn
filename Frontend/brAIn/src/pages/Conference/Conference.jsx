@@ -97,7 +97,7 @@ const Conference = () => {
         if (isConnecting) return;
         setIsConnecting(true);
 
-        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/conferences/${routeSecureId}`, {}, {
+        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/${routeSecureId}`, {}, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
@@ -222,7 +222,7 @@ const Conference = () => {
   useEffect(()=>{
 
     const getTime=async()=>{
-      const time_response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/conferences/time`, {
+      const time_response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/time`, {
         params: {
           secureId: routeSecureId,
         },
