@@ -669,44 +669,72 @@ const Conference = () => {
                 <div className="conf-timer-container">
                   <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent} nextIdea={handleNextIdeaClick} timerStop={timerForStep3}/>
                 </div>
-                {role === 'host' && ( // 호스트일 때만 버튼 표시
-                  <div className="action-buttons-container">
-                    <div className="action-button-wrapper">
-                      <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
-                        <img src={ReadyIcon} alt="Ready" className="action-icon" />
-                      </Button>
-                      <p>Ready</p>
+                {role === 'host' && (
+                <>
+                  {/* STEP_3이 아닐 때 */}
+                  {step !== 'STEP_3' && (
+                    <div className="action-buttons-container three-buttons">
+                      <div className="action-button-wrapper">
+                        <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
+                          {/* <img src={ReadyIcon} alt="Ready" className="action-icon" /> */}
+                          <p>Ready</p>
+                        </Button>
+                      </div>
+                      <div className="action-button-wrapper">
+                        <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
+                          {/* <img src={SkipIcon} alt="Skip" className="action-icon" /> */}
+                          <p>Pass</p>
+                        </Button>
+                      </div>
+                      <div className="action-button-wrapper">
+                        <Button onClick={handleNextStepClick} ariaLabel="Next">
+                          {/* <img src={NextIcon} alt="Next" className="action-icon" /> */}
+                          <p>Next Step</p>
+                        </Button>
+                      </div>
                     </div>
-                    <div className="action-button-wrapper">
-                      <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
-                        <img src={SkipIcon} alt="Skip" className="action-icon" />
-                      </Button>
-                      <p>Skip</p>
-                    </div>
-                    <div className="action-button-wrapper">
-                      <Button onClick={handleNextStepClick} ariaLabel="Next">
-                        <img src={NextIcon} alt="Next" className="action-icon" />
-                      </Button>
-                      <p>Next Step</p>
-                    </div>
-
-                    {step=='STEP_3' && (
+                  )}
+                  
+                  {/* STEP_3일 때 */}
+                  {step === 'STEP_3' && (
+                    <div className="action-buttons-container two-per-line">
+                      <div className="action-button-wrapper">
+                        <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
+                          {/* <img src={ReadyIcon} alt="Ready" className="action-icon" /> */}
+                          <p>Ready</p>
+                        </Button>
+                      </div>
+                      <div className="action-button-wrapper">
+                        <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
+                          {/* <img src={SkipIcon} alt="Skip" className="action-icon" /> */}
+                          <p>Pass</p>
+                        </Button>
+                      </div>
+                      <div className="action-button-wrapper">
+                        <Button onClick={handleNextStepClick} ariaLabel="Next">
+                          {/* <img src={NextIcon} alt="Next" className="action-icon" /> */}
+                          <p>Next Step</p>
+                        </Button>
+                      </div>
                       <div className="action-button-wrapper">
                         <Button onClick={handleNextIdeaClick} ariaLabel="Next">
-                          <img src={IdeaIcon} alt="투표정보 가져오기" className="action-icon" />
+                          {/* <img src={IdeaIcon} alt="투표정보 가져오기" className="action-icon" /> */}
+                          <p>Next Idea</p>
                         </Button>
-                        <p>Next Idea</p>
                       </div>
-                    )}
-                  </div>
-                )}
+                    </div>
+                  )}
+                </>
+              )}
                 {role !== 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
                     <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
-                      <img src={ReadyIcon} alt="Ready" className="action-icon" />
+                      {/* <img src={ReadyIcon} alt="Ready" className="action-icon" /> */}
+                      <p>Ready</p>
                     </Button>
                     <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
-                      <img src={SkipIcon} alt="Skip" className="action-icon" />
+                      {/* <img src={SkipIcon} alt="Skip" className="action-icon" /> */}
+                      <p>Pass</p>
                     </Button>
                   </div>
                 )}
