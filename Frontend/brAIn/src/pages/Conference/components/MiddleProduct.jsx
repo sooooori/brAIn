@@ -5,7 +5,7 @@ import Button from '../../../components/Button/Button';
 import './MiddleProduct.css';
 import { useState } from "react";
 
-const MiddleProduct = ({ closeModal, roomId }) => { // closeModal을 prop으로 받아옴
+const MiddleProduct = ({ closeModal, roomIdMiddlePage }) => { // closeModal을 prop으로 받아옴
     const [ product, setProduct ] = useState([]);
     const [ loading, setLoading ] = useState(true);
 
@@ -17,12 +17,12 @@ const MiddleProduct = ({ closeModal, roomId }) => { // closeModal을 prop으로 
         navigate('/');
     }
 
+    const historyRoomId = roomIdMiddlePage;
     useEffect(()=>{
         const ProductScript = async () => {
             try {
                 setLoading(true);
-                console.log('roomId: ', roomId);
-                const historyRoomId = roomId;
+                console.log('roomId: ', roomIdMiddlePage);
                 console.log('historyroomId: ', historyRoomId);
                 const response = await axios.get(`http://localhost/api/v1/conferences/products/${historyRoomId}`);
                 
@@ -42,14 +42,14 @@ const MiddleProduct = ({ closeModal, roomId }) => { // closeModal을 prop으로 
     const ProductFile = async () => {
         try {
           console.log('다운로드 요청 보냈삼~');
-          const response = await axios.get(`http://localhost/api/v1/conferences/download/${roomId}`, {
+          const response = await axios.get(`http://localhost/api/v1/conferences/download/${historyRoomId}`, {
             responseType: 'blob',
           });
     
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
           link.href = url;
-          link.setAttribute('download', `회의록_${roomId}.pdf`);
+          link.setAttribute('download', `회의록_${historyRoomId}.pdf`);
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
