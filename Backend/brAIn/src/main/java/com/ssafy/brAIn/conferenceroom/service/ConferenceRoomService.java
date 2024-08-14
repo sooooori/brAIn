@@ -37,11 +37,12 @@ public class ConferenceRoomService {
     @Autowired
     private final CommentRepository commentRepository;
 
+    // 메모리에 회의 요약 결과를 저장할 변수
+    private Map<Integer, String> meetingReportCache = new HashMap<>();
+
     @Transactional
     public ConferenceRoom save(ConferenceRoom conferenceRoom) {
-        //Map<String, Object> res = OpenAiService.sendPostRequest(conferenceRoom.getSubject());
-        AIAssistant assistant= aiService.makeAIAssistant(conferenceRoom.getSubject());
-
+        AIAssistant assistant = aiService.makeAIAssistant(conferenceRoom.getSubject());
 
         conferenceRoom.updateAi(assistant.getAssistantId(), assistant.getThreadId());
         return conferenceRoomRepository.save(conferenceRoom);
@@ -58,7 +59,6 @@ public class ConferenceRoomService {
     public ConferenceRoom findByRoomId(String roomId) {
         return conferenceRoomRepository.findById(Integer.parseInt(roomId)).orElse(null);
     }
-
 
     @Transactional
     public ConferenceMemberRequest saveConferenceHistory(ConferenceMemberRequest conferenceSaveRequest) {
@@ -111,6 +111,11 @@ public class ConferenceRoomService {
 
     // 회의 결과 요약 정보
     public String generateMeetingReport(Integer roomId) {
+        // 이미 캐시에 존재하는 경우 캐시된 데이터를 반환
+        if (meetingReportCache.containsKey(roomId)) {
+            return meetingReportCache.get(roomId);
+        }
+
         // Step 1: 특정 회의실 정보와 투표 결과 가져오기
         ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + roomId));
@@ -189,7 +194,16 @@ public class ConferenceRoomService {
         reportBuilder.append("Persona Analysis:\n").append(personaResult).append("\n\n\n");
         reportBuilder.append("SWOT Analysis:\n").append(swotResult).append("\n");
 
+        // 최종 보고서 생성 및 캐시에 저장
+        String reportContent = reportBuilder.toString();
+        meetingReportCache.put(roomId, reportContent);
+
         // Step 9: 최종 보고서 반환
-        return reportBuilder.toString();
+        return reportContent;
+    }
+
+    // 특정 회의실의 캐시 삭제
+    public void clearCacheForRoom(Integer roomId) {
+        meetingReportCache.remove(roomId);
     }
 }

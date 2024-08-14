@@ -178,11 +178,8 @@ public class ConferenceRoomController {
     @GetMapping("/download/{roomId}")
     public void downloadPdf(@PathVariable Integer roomId, HttpServletResponse response) {
         try {
-            // 회의 보고서 생성
-            String report = conferenceRoomService.generateMeetingReport(roomId);
-
             // PDF 생성
-            byte[] pdfBytes = pdfService.generatePdf(report);
+            byte[] pdfBytes = pdfService.generatePdf(roomId);
 
             // PDF 파일 응답 설정
             response.setContentType("application/pdf");
