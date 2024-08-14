@@ -4,11 +4,11 @@ import './MiddlePage.css';
 import MiddleProduct from './MiddleProduct';
 import axios from 'axios';
 
-const MiddlePage = () => {
+const MiddlePage = (roomId) => {
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
     const [isMiddlePageModalOpen, setIsMiddlePageModalOpen] = useState(true); // MiddlePage 모달 상태 추가
 
-    const roomId = 46;
+    const roomId = roomId;
 
     const closeMiddlePageModal = () => {
         setIsMiddlePageModalOpen(false);
@@ -56,7 +56,9 @@ const MiddlePage = () => {
 
             {/* MiddleProduct 모달창 */}
             {isProductModalOpen && (
-                <MiddleProduct closeModal={closeProductModal} />
+                <MiddleProduct closeModal={closeProductModal} 
+                roomId={roomId}
+                />
             )}
         </>
     );
