@@ -5,11 +5,11 @@ import Button from '../../../components/Button/Button';
 import './MiddleProduct.css';
 import { useState } from "react";
 
-const MiddleProduct = ({ closeModal }) => { // closeModal을 prop으로 받아옴
+const MiddleProduct = ({ closeModal, roomId }) => { // closeModal을 prop으로 받아옴
     const [ product, setProduct ] = useState([]);
     const [ loading, setLoading ] = useState(true);
 
-    const roomId = 46;
+
 
     const navigate = useNavigate();
 
@@ -21,8 +21,10 @@ const MiddleProduct = ({ closeModal }) => { // closeModal을 prop으로 받아�
         const ProductScript = async () => {
             try {
                 setLoading(true);
-    
-                const response = await axios.get(`http://localhost/api/v1/conferences/products/${roomId}`);
+                console.log('roomId: ', roomId);
+                const historyRoomId = roomId;
+                console.log('historyroomId: ', historyRoomId);
+                const response = await axios.get(`http://localhost/api/v1/conferences/products/${historyRoomId}`);
                 
                 setProduct(response.data);
                 console.log('스크립트 요청 보냈삼~');
