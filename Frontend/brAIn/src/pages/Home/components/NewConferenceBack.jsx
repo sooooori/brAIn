@@ -9,6 +9,9 @@ import { setRole } from '../../../features/conference/conferenceSlice'; // Adjus
 import './NewConferenceBack.css'; // 스타일을 정의한 CSS 파일을 임포트
 import { setUserNick } from '../../../actions/userActions';
 import CloseIcon from '../../../assets/svgs/close.svg';
+import { resetNotes } from '../../../features/note/noteSlice';
+import { resetItems } from '../../../actions/votedItemAction';
+import { resetRoundBoard } from '../../../actions/roundRobinBoardAction';
 
 const NewConferenceBack = ({ 
   handleNewConferenceFalse,

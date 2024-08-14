@@ -10,6 +10,7 @@ import { setRole } from '../../../features/conference/conferenceSlice'; // Adjus
 import './JoinConferenceBack.css';
 import { resetNotes } from '../../../features/note/noteSlice';
 import { resetItems } from '../../../actions/votedItemAction';
+import { resetRoundBoard } from '../../../actions/roundRobinBoardAction';
 
 const JoinConferenceBack = ({
   handleJoinConferenceFalse,
@@ -48,6 +49,7 @@ const JoinConferenceBack = ({
       dispatch(setRole('participant')); // Set the role to participant
       dispatch(resetNotes());
       dispatch(resetItems());
+      dispatch(resetRoundBoard());
       navigate(`/conferences/${roomUrl}`);
     }
   };
