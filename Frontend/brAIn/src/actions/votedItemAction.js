@@ -3,6 +3,7 @@ import axios from 'axios';
 export const ADD_ITEM='ADD_ITEM'
 export const REORDER_ITEMS='REORDER_ITEMS'
 export const REMOVE_ITEM='REMOVE_ITEM'
+export const RESET_ITEMS='RESET_ITEMS'
 
 // export const addItem=(round,index,content)=>({
 //     type:ADD_ITEM,
@@ -58,3 +59,9 @@ export const addItem = (round,index,content) => async (dispatch, getState) => {
       payload: { items }
     };
   };
+
+  export const resetItems=()=>{
+    return {
+      type: RESET_ITEMS,
+    }
+  }

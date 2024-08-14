@@ -42,6 +42,9 @@ const NewConferenceBack = ({
           localStorage.setItem('roomToken', result.data.jwtForRoom);
           setRoomUrl(result.data.secureId);
           dispatch(setRole('host')); // Set the role to host
+          dispatch(resetNotes());
+          dispatch(resetItems());
+          dispatch(resetRoundBoard());
           // dispatch(setConferenceTitleAction(title))
           // dispatch(setPreparationTimeAction(preparationTime))
           navigate(`/conferences/${result.data.secureId}`);

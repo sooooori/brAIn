@@ -35,6 +35,7 @@ import {resetNotes} from '../../features/note/noteSlice'
 
 
 import MiddlePage from './components/MiddlePage';
+import { resetItems } from '../../actions/votedItemAction';
 
 const Conference = () => {
   const dispatch = useDispatch();
@@ -390,6 +391,7 @@ const Conference = () => {
     }).then((result) => {
       if(result.isConfirmed){
         dispatch(resetNotes());
+        dispatch(resetItems());
         navigate('/'); 
       }
       

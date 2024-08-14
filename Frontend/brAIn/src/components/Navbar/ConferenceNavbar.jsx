@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import {resetNotes} from '../../features/note/noteSlice'
+import { resetItems } from '../../actions/votedItemAction';
 
 const ConferenceNavbar = ({client}) => {
   const navigate = useNavigate();
@@ -62,6 +63,7 @@ const ConferenceNavbar = ({client}) => {
   const handleLeaveConference = () => {
 
     dispatch(resetNotes());
+    dispatch(resetItems());
     navigate('/'); // Redirect to Home page
 
     
