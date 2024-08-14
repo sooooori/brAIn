@@ -110,7 +110,7 @@ class SwotRequest(BaseModel):
     threadId: str
     assistantId: str
     idea: str
-    details: list = []
+    details: str
 
 @app.post('/thread/start')
 async def make_thread(request: SubjectRequest):
@@ -203,16 +203,7 @@ async def persona_make(request: PersonaRequest):
 
 @app.post('/swot/make')
 async def swot_make(request: SwotRequest):
-    prompt = f"우리는 지금까지 나온 아이디어중에 {request.idea}라는 내용이 있습니다. 세부 내용으로는"
-    
-    if request.details:
-        for item in request.details:
-            if isinstance(item, dict) and 'detail' in item:
-                prompt += f", {item['detail']}"
-            else:
-                prompt += ", [Invalid detail]"
-    else:
-        prompt += " [No details provided]"
+    prompt = f"우리는 지금까지 나온 아이디어중에 {request.idea}라는 내용이 있습니다. 세부 내용으로는 {request.details}"
 
     prompt += "들이 나왔습니다. 이러한 아이디어에 SWOT분석을 만들어주시겠습니까? 세부 내용에 대해 대답하는 것이 아닌 아이디어에 대한 세부내용까지 고려하여 SWOT분석을 만들어주세요. SWOT분석만 만들면 됩니다. 다른 산출물을 만들 필요는 없습니다. 형식에 맞춰서 너가 전부 작성해주세요. SWOT 분석한 내용만 보여주고 이외 내용은 포함하지 말아주세요."
     
