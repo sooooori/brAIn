@@ -145,7 +145,7 @@ public class ConferenceRoomService {
         log.info("Assistant Id: {}", conferenceRoom.getAssistantId());
 
         // Step 4: 페르소나 및 SWOT 분석 추가 (필요한 경우)
-        String personaResult = aiService.personaMake(allIdeasContent, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId()).block();
+        String personaResult = aiService.personaMake(allIdeasContent, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
         String swotResult = aiService.swotMake(allIdeasContent, allDetails, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
 
         // Step 5: 최종 보고서 구성
