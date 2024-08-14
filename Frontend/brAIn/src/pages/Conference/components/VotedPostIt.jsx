@@ -3,10 +3,13 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeItem, reorderItems } from '../../../actions/votedItemAction';
 import './VotedPostIt.css';
+import Modal from './Modal';
 
 const VotedPostIt = React.memo(() => {
   const dispatch = useDispatch();
   const votedItems = useSelector(state => state.votedItem.items || []);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState('');
   console.log('votedItems:', votedItems);
 
   const onDragEnd = ({ source, destination }) => {
@@ -36,6 +39,15 @@ const VotedPostIt = React.memo(() => {
 
   const containerHeight = votedItems.length * 158; 
 
+  const postItBig = (content) => {
+    setModalContent(content);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
   const handleDeleteVotedPostIt = (index) => {
     dispatch(removeItem(index));
   }
@@ -61,7 +73,7 @@ const VotedPostIt = React.memo(() => {
                       {...provided.dragHandleProps}
                       className="draggable-item"
                     >
-                      <div className="item-content">
+                      <div className="item-content" onClick={() => postItBig(item.content)}>
                         {item.content}
                       </div>
                       <button
@@ -75,6 +87,7 @@ const VotedPostIt = React.memo(() => {
                 </Draggable>
               ))}
               {provided.placeholder}
+              {isModalOpen && <Modal content={modalContent} onClose={closeModal} />}
             </div>
           )}
         </Droppable>

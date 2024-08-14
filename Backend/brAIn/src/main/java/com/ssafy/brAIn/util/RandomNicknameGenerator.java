@@ -53,7 +53,7 @@ public class RandomNicknameGenerator {
     };
 
     private static final String[] ANIMALS = {
-            "기린", "돌고래", "사자", "시바견", "원숭이", "코끼리", "호랑이"
+            "기린", "돌고래", "사자", "시바견", "원숭이", "코끼리", "호랑이", "늑대", "카멜레온", "펭귄", "다람쥐", "달팽이"
     };
 
     private static final Random RANDOM = new Random();

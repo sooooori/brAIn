@@ -2,12 +2,24 @@ import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../../../actions/votedItemAction';
 import './PostItTest.css';
+import Modal from './Modal';
 
 const PostItTest = () => {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState('');
   const roundRobinBoard = useSelector((state) => state.roundRobinBoard?.roundRobinBoard || []);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 1; // 한 페이지에 보여줄 라운드 수
   const dispatch = useDispatch();
+
+  const postItBig = (content) => {
+    setModalContent(content);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
 
   // 페이지 버튼 클릭 핸들러
   const handlePageChange = (pageNumber) => {
@@ -83,7 +95,7 @@ const PostItTest = () => {
                     className="post-it-card"
                     style={{ backgroundColor: getColorForIdea(roundIndex, ideaIndex) }} // 아이디어별 랜덤 색상 적용
                   >
-                    {idea}
+                    <div className='post-it-content' onClick={() => postItBig(idea)}>{idea}</div>
                     <button onClick={() => handleVote(currentPage + 1, ideaIndex, idea)}>Vote</button>
                   </div>
                 ))
@@ -94,6 +106,7 @@ const PostItTest = () => {
           </div>
         ))
       )}
+      {isModalOpen && <Modal content={modalContent} onClose={closeModal} />}
     </div>
   );
 };
