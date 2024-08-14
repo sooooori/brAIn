@@ -6,10 +6,7 @@ import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.roundboard.entity.RoundBoard;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -37,6 +34,14 @@ public class RoundPostIt {
     @Column(name = "content")
     private String content;
 
+    @Setter
+    @Column(name = "persona", columnDefinition = "TEXT")
+    private String persona;
+
+    @Setter
+    @Column(name = "swot", columnDefinition = "TEXT")
+    private String swot;
+
     // 댓글 리스트
     @OneToMany(mappedBy = "roundPostIt", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments;
@@ -57,6 +62,10 @@ public class RoundPostIt {
         this.content = content;
     }
 
+    @Builder
+    public RoundPostIt(String persona) {
+        this.persona = persona;
+    }
 
 
     public void selectedNine() {
