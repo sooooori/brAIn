@@ -9,6 +9,9 @@ import { setRole } from '../../../features/conference/conferenceSlice'; // Adjus
 import './NewConferenceBack.css'; // 스타일을 정의한 CSS 파일을 임포트
 import { setUserNick } from '../../../actions/userActions';
 import CloseIcon from '../../../assets/svgs/close.svg';
+import { resetNotes } from '../../../features/note/noteSlice';
+import { resetItems } from '../../../actions/votedItemAction';
+import { resetRoundBoard } from '../../../actions/roundRobinBoardAction';
 
 const NewConferenceBack = ({ 
   handleNewConferenceFalse,
@@ -42,6 +45,9 @@ const NewConferenceBack = ({
           localStorage.setItem('roomToken', result.data.jwtForRoom);
           setRoomUrl(result.data.secureId);
           dispatch(setRole('host')); // Set the role to host
+          dispatch(resetNotes());
+          dispatch(resetItems());
+          dispatch(resetRoundBoard());
           // dispatch(setConferenceTitleAction(title))
           // dispatch(setPreparationTimeAction(preparationTime))
           navigate(`/conferences/${result.data.secureId}`);
