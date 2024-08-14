@@ -313,7 +313,6 @@ public class MessageService {
         String threadId = conferenceRoom.getThreadId();
         String assistantId=conferenceRoom.getAssistantId();
         return aiService.makePostIt(threadId,assistantId);
-
     }
 
     public boolean isAi(Integer roomId,String user) {

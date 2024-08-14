@@ -9,21 +9,29 @@ import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
 import com.ssafy.brAIn.history.dto.ConferenceToMemberResponse;
+import com.ssafy.brAIn.roundboard.repository.RoundBoardRepository;
 import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
+import com.ssafy.brAIn.roundpostit.repository.RoundPostItRepository;
 import com.ssafy.brAIn.vote.entity.Vote;
 import com.ssafy.brAIn.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor // final이 붙거나 @NotNull이 붙은 필드의 생성자 추가
 @Service // 해당 클래스를 빈으로 서블릿 컨테이너에 등록
+@EnableAsync
 public class ConferenceRoomService {
 
     private final ConferenceRoomRepository conferenceRoomRepository;
@@ -39,6 +47,10 @@ public class ConferenceRoomService {
 
     // 메모리에 회의 요약 결과를 저장할 변수
     private Map<Integer, String> meetingReportCache = new HashMap<>();
+    @Autowired
+    private RoundBoardRepository roundBoardRepository;
+    @Autowired
+    private RoundPostItRepository roundPostItRepository;
 
     @Transactional
     public ConferenceRoom save(ConferenceRoom conferenceRoom) {
@@ -109,8 +121,81 @@ public class ConferenceRoomService {
         conferenceRoomRepository.save(conferenceRoom);
     }
 
+    @Async
+    public CompletableFuture<Void> personaMake(List<Vote> remainingIdeas, String threadId, String assistantId) {
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+        for (int i = 0; i < remainingIdeas.size(); i++) {
+            int finalI = i;
+            CompletableFuture<Void> future = CompletableFuture.supplyAsync(() -> {
+                // 비동기적으로 persona 값을 가져옵니다.
+                return aiService.personaMake(remainingIdeas.get(finalI).getRoundPostIt().getContent(), threadId, assistantId)
+                        .toFuture(); // Mono/Flux를 CompletableFuture로 변환
+            }).thenCompose(personaStringFuture ->
+                    personaStringFuture.thenAccept(personaString -> {
+                        // personaString을 RoundPostIt에 설정합니다.
+                        RoundPostIt rp = remainingIdeas.get(finalI).getRoundPostIt();
+                        rp.setPersona(personaString); // String으로 persona 설정
+                        roundPostItRepository.save(rp);
+                    })
+            ).exceptionally(error -> {
+                System.err.println("Error while getting persona: " + error.getMessage());
+                return null;
+            });
+
+            futures.add(future);
+        }
+
+        // 모든 비동기 작업이 완료될 때까지 대기
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+    }
+
+    @Async
+    public CompletableFuture<Void> swotMake(List<Vote> remainingIdeas, String threadId, String assistantId) {
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+        for (int i = 0; i < remainingIdeas.size(); i++) {
+            int finalI = i;
+            CompletableFuture<Void> future = CompletableFuture.supplyAsync(() -> {
+                // 각 작업에 대한 코드 실행
+                List<Comment> comments = commentRepository.findByRoundPostIt_Id(remainingIdeas.get(finalI).getId());
+                List<String> commentContents = comments.stream()
+                        .map(Comment::getContent)  // Comment 객체의 content 속성 추출
+                        .toList();  // List<String>으로 수집
+
+                // Mono<String>을 CompletableFuture<String>로 변환
+                return aiService.swotMake(
+                        remainingIdeas.get(finalI).getRoundPostIt().getContent(),
+                        commentContents,
+                        threadId,
+                        assistantId
+                ).toFuture(); // Mono를 CompletableFuture로 변환
+            }).thenCompose(swotFuture ->
+                    swotFuture.thenAccept(swot -> {
+                        // CompletableFuture가 완료된 후의 작업
+                        RoundPostIt rp = remainingIdeas.get(finalI).getRoundPostIt();
+                        rp.setSwot(swot);
+                        roundPostItRepository.save(rp);
+                    })
+            ).exceptionally(error -> {
+                // 오류 처리
+                System.err.println("Error while getting swot: " + error.getMessage());
+                return null;
+            });
+
+            futures.add(future);
+        }
+
+        // 모든 비동기 작업이 완료될 때까지 대기
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+    }
+
+
+
+
+
     // 회의 결과 요약 정보
-    public String generateMeetingReport(Integer roomId) {
+    public String generateMeetingReport(Integer roomId) throws ExecutionException, InterruptedException {
         // 이미 캐시에 존재하는 경우 캐시된 데이터를 반환
         if (meetingReportCache.containsKey(roomId)) {
             return meetingReportCache.get(roomId);
@@ -122,55 +207,62 @@ public class ConferenceRoomService {
         List<Vote> voteResults = voteRepository.findByConferenceRoom_Id(roomId);
 
         // Step 2: 투표 결과를 점수 기준으로 상위 3개의 아이디어와 나머지 아이디어로 분리
-        List<Vote> topThreeIdeas = voteResults.stream()
-                .sorted((v1, v2) -> v2.getScore() - v1.getScore())
-                .limit(3)
-                .toList();
+//        List<Vote> topThreeIdeas = voteResults.stream()
+//                .sorted((v1, v2) -> v2.getScore() - v1.getScore())
+//                .limit(3)
+//                .toList();
 
         List<Vote> remainingIdeas = voteResults.stream()
                 .sorted((v1, v2) -> v2.getScore() - v1.getScore())
-                .skip(3)
                 .limit(9)
                 .toList();
 
         // 모든 아이디어를 하나의 리스트로 결합
-        List<Vote> allIdeas = new ArrayList<>(topThreeIdeas);
-        allIdeas.addAll(remainingIdeas);
+//        List<Vote> allIdeas = new ArrayList<>(topThreeIdeas);
+//        allIdeas.addAll(remainingIdeas);
 
         // Step 3: 전체 아이디어 내용 수집
-        String allIdeasContent = allIdeas.stream()
-                .map(vote -> vote.getRoundPostIt().getContent())
-                .collect(Collectors.joining("\n"));
-
-        List<String> allDetails = allIdeas.stream()
-                .flatMap(vote -> commentRepository.findByRoundPostIt_Id(vote.getRoundPostIt().getId()).stream().map(Comment::getContent))
-                .collect(Collectors.toList());
+//        String allIdeasContent = allIdeas.stream()
+//                .map(vote -> vote.getRoundPostIt().getContent())
+//                .collect(Collectors.joining("\n"));
+//
+//        List<String> allDetails = allIdeas.stream()
+//                .flatMap(vote -> commentRepository.findByRoundPostIt_Id(vote.getRoundPostIt().getId()).stream().map(Comment::getContent))
+//                .collect(Collectors.toList());
 
         log.info("Thread Id: {}", conferenceRoom.getThreadId());
         log.info("Assistant Id: {}", conferenceRoom.getAssistantId());
 
         // Step 4: 페르소나 및 SWOT 분석 추가 (필요한 경우)
-        String personaResult = aiService.personaMake(allIdeasContent, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
-        String swotResult = aiService.swotMake(allIdeasContent, allDetails, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
+//        personaMake(remainingIdeas, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
+//
+//        String personaResult = aiService.personaMake(allIdeasContent, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
+//        String swotResult = aiService.swotMake(allIdeasContent, allDetails, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
+
+        CompletableFuture<Void> future1 = personaMake(remainingIdeas,conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
+        CompletableFuture<Void> future2 = swotMake(remainingIdeas,conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
+
+        // 두 반복문이 모두 완료될 때까지 대기
+        CompletableFuture.allOf(future1, future2).get();
 
         // Step 5: 최종 보고서 구성
         StringBuilder reportBuilder = new StringBuilder();
         reportBuilder.append("Subject: ").append(conferenceRoom.getSubject()).append("\n\n");  // 회의 주제 추가
 
-        // Step 6: 각 아이디어와 그에 따른 코멘트 추가
-        reportBuilder.append("Top 3 Ideas:\n\n");
-        for (Vote vote : topThreeIdeas) {
-            RoundPostIt postIt = vote.getRoundPostIt();
-            String ideaContent = postIt.getContent();
-            List<Comment> participantComments = commentRepository.findByRoundPostIt_Id(postIt.getId());
-
-            reportBuilder.append("Idea: ").append(ideaContent).append("\n");
-            reportBuilder.append("Participant Comments:\n");
-            for (Comment comment : participantComments) {
-                reportBuilder.append(" - ").append(comment.getContent()).append("\n");
-            }
-            reportBuilder.append("\n"); // 다음 아이디어와의 구분을 위해 빈 줄 추가
-        }
+//        // Step 6: 각 아이디어와 그에 따른 코멘트 추가
+//        reportBuilder.append("Top 3 Ideas:\n\n");
+//        for (Vote vote : topThreeIdeas) {
+//            RoundPostIt postIt = vote.getRoundPostIt();
+//            String ideaContent = postIt.getContent();
+//            List<Comment> participantComments = commentRepository.findByRoundPostIt_Id(postIt.getId());
+//
+//            reportBuilder.append("Idea: ").append(ideaContent).append("\n");
+//            reportBuilder.append("Participant Comments:\n");
+//            for (Comment comment : participantComments) {
+//                reportBuilder.append(" - ").append(comment.getContent()).append("\n");
+//            }
+//            reportBuilder.append("\n"); // 다음 아이디어와의 구분을 위해 빈 줄 추가
+//        }
 
         reportBuilder.append("Other Ideas:\n\n");
         for (Vote vote : remainingIdeas) {
@@ -183,16 +275,14 @@ public class ConferenceRoomService {
             for (Comment comment : participantComments) {
                 reportBuilder.append(" - ").append(comment.getContent()).append("\n");
             }
+            reportBuilder.append(" - ").append(postIt.getPersona());
+            reportBuilder.append(" - ").append(postIt.getSwot());
             reportBuilder.append("\n"); // 다음 아이디어와의 구분을 위해 빈 줄 추가
         }
 
         // Step 7: AI를 이용한 전체 요약본 생성 및 추가
-        String summary = aiService.makeSummary(allIdeasContent, conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
+        String summary = aiService.makeSummary(conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
         reportBuilder.append("Summary:\n").append(summary).append("\n\n\n");  // AI 요약본 추가
-
-        // Step 8: 페르소나 및 SWOT 분석 결과 추가
-        reportBuilder.append("Persona Analysis:\n").append(personaResult).append("\n\n\n");
-        reportBuilder.append("SWOT Analysis:\n").append(swotResult).append("\n");
 
         // 최종 보고서 생성 및 캐시에 저장
         String reportContent = reportBuilder.toString();
