@@ -4,6 +4,7 @@ import com.ssafy.brAIn.ai.response.AIAssistant;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
@@ -79,10 +80,9 @@ public class AIService {
     }
 
 
-    public String makeSummary(String idea, String threadId, String assistantId) {
+    public String makeSummary(String threadId, String assistantId) {
         String url = "/summary/make";
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("idea", idea);
         requestBody.put("assistantId", assistantId);
         requestBody.put("threadId", threadId);
 
@@ -95,8 +95,8 @@ public class AIService {
     }
 
 
-    public String personaMake(String idea, String threadId, String assistantId) {
-        String url="/persona/make";
+    public Mono<String> personaMake(String idea, String threadId, String assistantId) {
+        String url = "/persona/make";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("idea", idea);
         requestBody.put("assistantId", assistantId);
@@ -106,11 +106,11 @@ public class AIService {
                 .post()
                 .uri(url)
                 .bodyValue(requestBody)
-                .retrieve().bodyToMono(String.class)
-                .block();
+                .retrieve()
+                .bodyToMono(String.class);
     }
 
-    public String swotMake(String idea, List<String> details, String threadId, String assistantId) {
+    public Mono<String> swotMake(String idea, List<String> details, String threadId, String assistantId) {
         String url="/swot/make";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("idea", idea);
@@ -122,7 +122,7 @@ public class AIService {
                 .post()
                 .uri(url)
                 .bodyValue(requestBody)
-                .retrieve().bodyToMono(String.class)
-                .block();
+                .retrieve()
+                .bodyToMono(String.class);
     }
 }

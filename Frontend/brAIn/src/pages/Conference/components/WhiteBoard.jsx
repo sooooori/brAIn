@@ -40,7 +40,10 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
         });
 
         if(response.status===200){
+          
           dispatch(addComments(newIdea));
+          // 입력칸 초기화
+          setInputValue('')
         }
       } catch (error) {
         console.error('Error saving post-it:', error);
@@ -103,9 +106,14 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
 
   return (
     <div className="WhiteBoard">
+      {(isStepZero|| isStepOne||isStepTwo)&&(
       <div className="WhiteBoard-header">
         <h2>주제 : {subject} </h2>
-      </div>
+      </div>)}
+      {(isStepThree)&&(
+      <div className="WhiteBoard-header">
+        <h2>No.{curIndex+1} 아이디어 : {votes[curIndex]} </h2>
+      </div>)}
       {/* step이 'STEP_0'일 때 WhiteBoard-body와 WhiteBoard-footer를 숨김 */}
       {(isStepOne||isStepTwo) && (
         <div className="WhiteBoard-body">
@@ -121,7 +129,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
           </div>
         </div>
       )}
-      {!isStepZero && (
+      {isStepThree && (
         <div className="WhiteBoard-footer">
           <form className="idea-form" onSubmit={handleAddIdea}>
             <input

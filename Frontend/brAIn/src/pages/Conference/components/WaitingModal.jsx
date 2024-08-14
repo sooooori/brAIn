@@ -51,8 +51,17 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
   };
 
   const handleClose = () => {
-    navigate('/'); // Redirect to Home page
-  };
+    if (client) {
+        console.log('연결끊기');
+        client.deactivate().then(() => {
+            console.log('disconnect');
+            navigate('/'); // Redirect to Home page
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+};
+
 
   if (!isVisible) return null;
 

@@ -14,6 +14,7 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
   const [editingIndex, setEditingIndex] = useState(null);
   const [notesVisible, setNotesVisible] = useState(true);
   const step = useSelector(state => state.conferenceInfo.curStep);
+  const curUser=useSelector(state=>state.user.currentUser)
 
   // 사이드바 외부 클릭 시 닫히도록 처리
   const handleClickOutside = (event) => {
@@ -106,7 +107,7 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
                     🗑️
                   </button>
                   {/* STEP_0일 때 제출 버튼 숨기기 */}
-                  {step !== 'STEP_0' && (
+                  {(step !== 'STEP_0' && curUser===nickname)&& (
                     <Button
                       variant="contained"
                       color="secondary"

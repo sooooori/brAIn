@@ -7,7 +7,9 @@ import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
+import com.ssafy.brAIn.roundpostit.service.RoundPostItService;
 import com.ssafy.brAIn.stomp.dto.*;
+import com.ssafy.brAIn.stomp.request.CurIndex;
 import com.ssafy.brAIn.stomp.request.RequestGroupPost;
 import com.ssafy.brAIn.stomp.request.RequestPass;
 import com.ssafy.brAIn.stomp.request.RequestStep;
@@ -29,6 +31,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,17 +47,19 @@ public class MessageController {
     private final AIService aiService;
     private final ConferenceRoomService conferenceRoomService;
     private final RedisUtils redisUtils;
+    private final RoundPostItService roundPostItService;
 
     public MessageController(RabbitTemplate rabbitTemplate,
                              MessageService messageService,
                              JWTUtilForRoom jwtUtilForRoom,
-                             AIService aiService, ConferenceRoomService conferenceRoomService, RedisUtils redisUtils) {
+                             AIService aiService, ConferenceRoomService conferenceRoomService, RedisUtils redisUtils, RoundPostItService roundPostItService) {
         this.rabbitTemplate = rabbitTemplate;
         this.messageService = messageService;
         this.jwtUtilForRoom = jwtUtilForRoom;
         this.aiService = aiService;
         this.conferenceRoomService = conferenceRoomService;
         this.redisUtils = redisUtils;
+        this.roundPostItService = roundPostItService;
     }
 
 
@@ -65,7 +70,11 @@ public class MessageController {
 
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
-        System.out.println(nickname+"님이 포스트잇을 제출했습니다.");
+
+        String curUser=messageService.getCurUser(Integer.parseInt(roomId));
+        if(!curUser.equals(nickname)) {
+            throw new AuthenticationCredentialsNotFoundException("자신의 차례에만 제출할 수 있습니다.");
+        }
         ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId);
         aiService.addPostIt(groupPost.getContent(), cr.getThreadId());
 
@@ -81,7 +90,7 @@ public class MessageController {
 
         //만약 다음 사람이 ai라면 추가적인 로직 필요
         String nextUser=messageService.NextOrder(Integer.parseInt(roomId),nickname);
-        messageService.updateCurOrder(Integer.parseInt(roomId),nextUser);
+        //messageService.updateCurOrder(Integer.parseInt(roomId),nextUser);
 
         boolean curUserIsLast=messageService.isLastOrder(Integer.parseInt(roomId),nickname);
 
@@ -98,6 +107,7 @@ public class MessageController {
         }
 
         messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,nextUser);
+
         //messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
         ResponseGroupPost aiResponseGroupPost=makeResponseGroupPost(aiGroupPost,Integer.parseInt(roomId),nextUser);
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, aiResponseGroupPost);
@@ -106,7 +116,7 @@ public class MessageController {
 
     private ResponseGroupPost makeResponseGroupPost(RequestGroupPost groupPost,Integer roomId,String nickname) {
         String nextUser=messageService.NextOrder(roomId,nickname);
-
+        messageService.updateCurOrder(roomId,nextUser);
         if (messageService.isLastOrder(roomId, nickname)) {
             System.out.println("마지막 사람만 이곳에 와야한다.");
 
@@ -360,4 +370,20 @@ public class MessageController {
     }
 
     // 최종 결과물 반환 (임시)
+
+
+    @MessageMapping("next.idea.{roomId}")
+    public void nextIdea(@DestinationVariable String roomId, StompHeaderAccessor accessor, @RequestBody CurIndex curIndex) {
+        String token = accessor.getFirstNativeHeader("Authorization");
+
+        List<RoundPostIt> roundPostIts=roundPostItService.findByRoomId(Integer.parseInt(roomId)).stream()
+                        .filter(RoundPostIt::isLast9).toList();
+
+        if(roundPostIts.size()-1==curIndex.getCurIndex()){
+            rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new NextIdea(MessageType.END_IDEA));
+            return;
+        }
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new NextIdea(MessageType.NEXT_IDEA));
+
+    }
 }

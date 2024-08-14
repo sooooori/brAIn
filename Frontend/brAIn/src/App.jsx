@@ -12,6 +12,9 @@ import AuthCallback from './pages/User/AuthCallback';
 import NavBar from './components/Navbar/NavBar';
 import ConferenceNavbar from './components/Navbar/ConferenceNavbar';
 
+import MiddlePage from './pages/Conference/components/MiddlePage';
+import MiddleProduct from './pages/Conference/components/MiddleProduct';
+
 function App() {
     const location = useLocation();
     const isConferenceRoute = location.pathname.startsWith('/conferences');
@@ -27,6 +30,8 @@ function App() {
                     <Route path="/conferences/:secureId" element={<Conference />} />
                     <Route path="/kakao-redirect" element={<AuthCallback />} />
                     <Route path="/google-redirect" element={<AuthCallback />} />
+                    <Route path="/middle" element={<MiddlePage />} />
+                    <Route path="/product" element={<MiddleProduct />} />
                 </Routes>
             </div>
         </div>

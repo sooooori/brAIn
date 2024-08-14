@@ -6,7 +6,7 @@ import './Timer.css'; // 스타일을 위한 CSS 파일
 import {setCuruser, updatePassStatus} from '../../../actions/userActions';
 import {useDispatch} from 'react-redux'
 
-const Timer = ({ time, voteSent, passSent }) => {
+const Timer = ({ time, voteSent, passSent, nextIdea,timerStop }) => {
   const initialTime = parseInt(time, 10) / 1000 || 0;
   const [currentTime, setCurrentTime] = useState(initialTime); // 타이머의 시간 상태
   const curstep = useSelector(state => state.conferenceInfo.curStep);
@@ -16,10 +16,12 @@ const Timer = ({ time, voteSent, passSent }) => {
   const [alertShown, setAlertShown] = useState(false);
   const role = useSelector((state) => state.conference.role);
   const dispatch = useDispatch();
+  const curIndex=useSelector(state=>state.commentBoard.curIndex);
+  const ideaList=useSelector(state=>state.commentBoard.vote);
 
   useEffect(() => {
     setCurrentTime(initialTime);
-  }, [ time, curstep, curUser ]);
+  }, [ time, curstep, curUser,curIndex]);
 
   useEffect(() => {
     
@@ -41,8 +43,7 @@ const Timer = ({ time, voteSent, passSent }) => {
         text: '준비한 아이디어를 자신의 차례에 제출하세요.',
         timer: 3000
       });
-      console.log('커렌트 : ' + currentTime)
-      console.log('이니셜 : ' + initialTime)
+
       setAlertShown(true);
     }
     else if(curstep=='STEP_2' && currentTime==initialTime){
@@ -85,6 +86,15 @@ const Timer = ({ time, voteSent, passSent }) => {
       voteSent();
       clearInterval(timer);
     }
+
+    else if(currentTime<=0 && curstep=='STEP_3'){
+      
+      if(!timerStop){
+        nextIdea();
+      }
+      clearInterval(timer);
+
+    }
     
 
     // 이 부분이 컴포넌트가 unmount되거나, 의존성 배열의 값이 변경될 때 실행됨
@@ -97,9 +107,6 @@ const Timer = ({ time, voteSent, passSent }) => {
     const secs = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-
-  console.log("curUser:",curUser)
-  console.log("nickname:", nickname)
 
   return (
     <div className="timer-container">

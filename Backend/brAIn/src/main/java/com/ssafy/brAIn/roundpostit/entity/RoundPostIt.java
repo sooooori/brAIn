@@ -38,6 +38,10 @@ public class RoundPostIt {
     @Column(name = "persona", columnDefinition = "TEXT")
     private String persona;
 
+    @Setter
+    @Column(name = "swot", columnDefinition = "TEXT")
+    private String swot;
+
     // 댓글 리스트
     @OneToMany(mappedBy = "roundPostIt", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments;
@@ -58,6 +62,10 @@ public class RoundPostIt {
         this.content = content;
     }
 
+    @Builder
+    public RoundPostIt(String persona) {
+        this.persona = persona;
+    }
 
     @Builder
     public RoundPostIt(ConferenceRoom conferenceRoom,String content, String persona) {
