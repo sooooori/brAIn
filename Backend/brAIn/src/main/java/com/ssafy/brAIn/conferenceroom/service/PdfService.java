@@ -3,6 +3,7 @@ package com.ssafy.brAIn.conferenceroom.service;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -11,7 +12,13 @@ import java.io.IOException;
 @Service
 public class PdfService {
 
-    public byte[] generatePdf(String reportContent) {
+    @Autowired
+    private ConferenceRoomService conferenceRoomService;
+
+    public byte[] generatePdf(Integer roomId) {
+        // 메모리에 저장된 회의 요약 결과를 가져옴
+        String reportContent = conferenceRoomService.generateMeetingReport(roomId);
+
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4);
 
