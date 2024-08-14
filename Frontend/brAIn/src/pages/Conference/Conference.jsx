@@ -525,7 +525,6 @@ const Conference = () => {
         }
       });
 
-
       Swal.fire({
         icon: "success",
         title: '투표가 종료되었습니다.',
@@ -547,7 +546,7 @@ const Conference = () => {
             // });
             console.log(voteResults)
             setVoteResults(voteResults);
-            setIsModalOpen(true); // 모달 열기
+            setIsVoteModalOpen(true); // 모달 열기
           } else {
             console.log("No vote results found.");
           }
@@ -557,7 +556,6 @@ const Conference = () => {
       console.error("Error ending vote:", error);
     }
   };
-
 
 
   const getVoteResult = async (step) => {
