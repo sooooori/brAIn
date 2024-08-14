@@ -5,6 +5,11 @@
     text-align: center;
     gap: 80px;
     bottom: 20px;
+    background-color: rgba(0, 0, 0, 0.5); /* 모달 뒤 어두운 배경 */
+    transform: translate(-50%, -50%); /* 중앙으로 이동 */
+    z-index: 1000; /* 모달이 다른 모든 요소 위에 표시되도록 설정 */
+    top: 50%;
+    left: 50%;
 }
 
 .product {

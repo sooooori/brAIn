@@ -13,7 +13,6 @@ import SkipIcon from '../../assets/svgs/skip.svg';
 import ReadyIcon from '../../assets/svgs/pass.svg';
 import NextIcon from '../../assets/svgs/next.svg';
 import MemberList from './components/MemberList';
-import MiddlePage from './components/MiddlePage';
 
 import './ConferenceEx.css';
 import Swal from "sweetalert2"; 
@@ -32,6 +31,8 @@ import { setCurStep, upRound, setRound, setRoom } from '../../actions/conference
 import { sendToBoard } from '../../actions/roundRobinBoardAction';
 import VoteResultsModal from './components/VoteResultsModal';
 import { initVote, nextItem } from '../../actions/commentsAction';
+
+import MiddlePage from './components/MiddlePage';
 
 const Conference = () => {
   const dispatch = useDispatch();
@@ -68,7 +69,7 @@ const Conference = () => {
 
   //투표결과 모달관련
   const [voteResults, setVoteResults] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVoteModalOpen, setIsVoteModalOpen] = useState(false);
 
   const [userList, setUserList] = useState([]);
   const [newTime, setnewTime] = useState(null);
@@ -78,6 +79,9 @@ const Conference = () => {
 
   // AI 닉네임 저장을 위한 상태
   const [aiName, setAiName] = useState(''); // useState를 사용하여 상태로 관리
+
+  // 구체화 이후
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
 
   useEffect(() => {
@@ -326,6 +330,12 @@ const Conference = () => {
         showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
         confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
         confirmButtonText: '승인', // confirm 버튼 텍스트 지정
+      }).then((res)=>{
+        if (res.isConfirmed){
+          // 구체화 끝나고 어떻게 할지
+          console.log('구체화 끝')
+          setIsHistoryModalOpen(true); // 모달 열기
+        }
       })
     }
   };
@@ -535,7 +545,7 @@ const Conference = () => {
           // });
           console.log(voteResults)
           setVoteResults(voteResults);
-          setIsModalOpen(true); // 모달 열기
+          setIsVoteModalOpen(true); // 모달 열기
         } else {
           console.log("No vote results found.");
         }
@@ -597,10 +607,15 @@ const Conference = () => {
   return (
     
     <div className="conference">
-      {isModalOpen && (
+      {isVoteModalOpen && (
         <VoteResultsModal 
           voteResults={voteResults} 
-          onClose={() => setIsModalOpen(false)} 
+          onClose={() => setIsVoteModalOpen(false)} 
+        />
+      )}
+      {isHistoryModalOpen && (
+        <MiddlePage
+          onClose={() => setIsHistoryModalOpen(false)} 
         />
       )}
       {!isMeetingStarted && (
