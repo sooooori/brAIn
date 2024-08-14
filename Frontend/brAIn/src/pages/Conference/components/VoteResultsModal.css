@@ -13,7 +13,7 @@
     transform: translate(-50%, -50%); /* 중앙으로 이동 */
   }
   
-  .modal-content {
+  .vote-modal-content {
     background-color: #fefefe;
     padding: 20px;
     border: 1px solid #888;
@@ -24,6 +24,12 @@
     position: relative;
   }
   
+  .vote-modal-content .h2{
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 0;
+  }
   
 
 .close-button {
@@ -36,14 +42,15 @@
     cursor: pointer;
 }
 
-h2 {
-    text-align: center;
-    margin-top: 0;
+.rank {
+    font-size: 1.2rem;
+    font-weight: bolder;
 }
 
 #results-container p {
-    font-size: 16px;
-    margin: 10px 0;
+    font-size: 1rem;
+    margin: 10 0;
+    font-weight: bold;
 }
 
 .badge {

@@ -43,8 +43,11 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
     fetchData();
   }, [isVisible, secureId,participantCount]);
 
+  // 수정
+  const shareUrl = `http://localhost/conferences/${secureId}`
+
   const handleShareCode = () => {
-    navigator.clipboard.writeText(conferenceCode);
+    navigator.clipboard.writeText(shareUrl);
     setIsSharing(true);
     setTimeout(() => setIsSharing(false), 2000); // Reset share status after 2 seconds
   };
@@ -74,7 +77,7 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
         ) : (
           <>
             <h2>회의 주제: {conferenceSubject}</h2>
-            <p>현재 참여 인원: {participantCount}</p>
+            <p>현재 참여 인원: <span className="waiting_member">{participantCount}</span></p>
             {error && <p className="error">{error}</p>}
             {conferenceCode && (
               <div className="waiting-modal-code">

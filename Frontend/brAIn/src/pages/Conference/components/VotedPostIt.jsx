@@ -12,6 +12,8 @@ const VotedPostIt = React.memo(() => {
   const [modalContent, setModalContent] = useState('');
   console.log('votedItems:', votedItems);
 
+  const step = useSelector(state => state.conferenceInfo.curStep);
+
   const onDragEnd = ({ source, destination }) => {
     if (!destination) return;
 
@@ -55,6 +57,7 @@ const VotedPostIt = React.memo(() => {
   return (
     <>
       <h3>아이디어 투표</h3>
+    {step === 'STEP_1' || step === 'STEP_2' ? (
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided) => (
@@ -92,8 +95,8 @@ const VotedPostIt = React.memo(() => {
           )}
         </Droppable>
       </DragDropContext>
+    ) : null}
     </>
-
   );
 });
 
