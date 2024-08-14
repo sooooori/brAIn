@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../../../actions/votedItemAction';
 import './PostItTest.css';
@@ -8,6 +8,13 @@ const PostItTest = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 1; // 한 페이지에 보여줄 라운드 수
   const dispatch = useDispatch();
+
+  // 현재 라운드로 자동 이동
+  useEffect(() => {
+    if (roundRobinBoard.length > 0) {
+      setCurrentPage(roundRobinBoard.length - 1); // 마지막 라운드로 이동
+    }
+  }, [roundRobinBoard]);
 
   // 페이지 버튼 클릭 핸들러
   const handlePageChange = (pageNumber) => {
@@ -29,26 +36,10 @@ const PostItTest = () => {
     '#D0E6F8'  // 파스텔 블루
   ];
 
-  // 아이디어별 색상을 매칭하기 위한 상태
-  const [postItColors, setPostItColors] = useState({});
-
-  // 랜덤 색상 선택 함수
-  const getColorForIdea = useCallback((roundIndex, ideaIndex) => {
-    const uniqueKey = `${roundIndex}-${ideaIndex}`;
-    console.log(uniqueKey)
-    if (!(uniqueKey in postItColors)) {
-      const remainingColors = colors.filter(color => !Object.values(postItColors).includes(color));
-      const selectedColor = remainingColors.length > 0
-        ? remainingColors[Math.floor(Math.random() * remainingColors.length)]
-        : colors[Math.floor(Math.random() * colors.length)];
-
-      setPostItColors(prevColors => ({ ...prevColors, [uniqueKey]: selectedColor }));
-      console.log(remainingColors)
-      console.log(postItColors)
-      return selectedColor;
-    }
-    return postItColors[uniqueKey];
-  }, [colors, postItColors]);
+  // 인덱스를 기반으로 색상 선택 함수
+  const getColorForIdea = (ideaIndex) => {
+    return colors[ideaIndex % colors.length];
+  };
 
   // 투표 핸들러
   const handleVote = (round, index, content) => {
@@ -66,7 +57,7 @@ const PostItTest = () => {
             onClick={() => handlePageChange(index)}
             className={index === currentPage ? 'active' : 'non'}
           >
-            <h3>Rnd.{index}</h3>
+            <h3>Rnd.{index + 1}</h3>
           </button>
         ))}
       </div>
@@ -81,7 +72,7 @@ const PostItTest = () => {
                   <div
                     key={ideaIndex}
                     className="post-it-card"
-                    style={{ backgroundColor: getColorForIdea(roundIndex, ideaIndex) }} // 아이디어별 랜덤 색상 적용
+                    style={{ backgroundColor: getColorForIdea(ideaIndex) }} // 아이디어별 순차 색상 적용
                   >
                     {idea}
                     <button onClick={() => handleVote(currentPage + 1, ideaIndex, idea)}>Vote</button>

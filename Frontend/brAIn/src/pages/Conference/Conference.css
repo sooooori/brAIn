@@ -86,6 +86,19 @@
   gap: 15px; /* 버튼 간격 */
 }
 
+.action-button-wrapper {
+  display: flex;
+  flex-direction: column; /* 세로로 정렬 */
+  align-items: center; /* 버튼과 텍스트를 중앙 정렬 */
+  /* color: black; */
+}
+
+.action-button-wrapper p {
+  margin-top: 3px; /* 버튼과 텍스트 사이 간격을 줄이기 */
+  font-size: large;
+  font-weight: bold;
+}
+
 /* 전체 버튼 스타일 */
 .action-buttons-container Button {
   width: 50px; /* 버튼 너비 조정 */
@@ -98,6 +111,7 @@
   border-radius: 8px; /* 둥근 모서리 */
   cursor: pointer; /* 커서 포인터로 변경 */
   margin: 5px; /* 버튼 간 여백 */
+  color: black;
 }
 
 /* 액션 버튼 아이콘 스타일 */

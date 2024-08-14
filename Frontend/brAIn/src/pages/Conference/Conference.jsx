@@ -13,6 +13,7 @@ import SkipIcon from '../../assets/svgs/skip.svg';
 import ReadyIcon from '../../assets/svgs/pass.svg';
 import NextIcon from '../../assets/svgs/next.svg';
 import MemberList from './components/MemberList';
+import IdeaIcon from '../../assets/svgs/Idea.svg'
 
 import './ConferenceEx.css';
 import Swal from "sweetalert2"; 
@@ -670,19 +671,33 @@ const Conference = () => {
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
-                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
-                      <img src={ReadyIcon} alt="Ready" className="action-icon" />
-                    </Button>
-                    <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
-                      <img src={SkipIcon} alt="Skip" className="action-icon" />
-                    </Button>
+                    <div className="action-button-wrapper">
+                      <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
+                        <img src={ReadyIcon} alt="Ready" className="action-icon" />
+                      </Button>
+                      <p>Ready</p>
+                    </div>
+                    <div className="action-button-wrapper">
+                      <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
+                        <img src={SkipIcon} alt="Skip" className="action-icon" />
+                      </Button>
+                      <p>Skip</p>
+                    </div>
+                    <div className="action-button-wrapper">
+                      <Button onClick={handleNextStepClick} ariaLabel="Next">
+                        <img src={NextIcon} alt="Next" className="action-icon" />
+                      </Button>
+                      <p>Next Step</p>
+                    </div>
 
-                    <Button onClick={handleNextStepClick} ariaLabel="Next">
-                      <img src={NextIcon} alt="Next" className="action-icon" />
-                    </Button>
-                    <Button onClick={handleNextIdeaClick} ariaLabel="Next">
-                      <img src={NextIcon} alt="투표정보 가져오기" className="action-icon" />
-                    </Button>
+                    {step=='STEP_3' && (
+                      <div className="action-button-wrapper">
+                        <Button onClick={handleNextIdeaClick} ariaLabel="Next">
+                          <img src={IdeaIcon} alt="투표정보 가져오기" className="action-icon" />
+                        </Button>
+                        <p>Next Idea</p>
+                      </div>
+                    )}
                   </div>
                 )}
                 {role !== 'host' && ( // 호스트일 때만 버튼 표시

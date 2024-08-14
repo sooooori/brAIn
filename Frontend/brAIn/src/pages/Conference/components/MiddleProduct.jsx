@@ -16,14 +16,15 @@ const MiddleProduct = ({ closeModal, roomIdMiddlePage }) => { // closeModal을 p
     const exitHandler = () => {
         navigate('/');
     }
-
+    
+    console.log('2번 props roomId: ', roomIdMiddlePage)
     const historyRoomId = roomIdMiddlePage;
+    console.log('2번 roomId: ', historyRoomId)
+
     useEffect(()=>{
         const ProductScript = async () => {
             try {
                 setLoading(true);
-                console.log('roomId: ', roomIdMiddlePage);
-                console.log('historyroomId: ', historyRoomId);
                 const response = await axios.get(`http://localhost/api/v1/conferences/products/${historyRoomId}`);
                 
                 setProduct(response.data);
