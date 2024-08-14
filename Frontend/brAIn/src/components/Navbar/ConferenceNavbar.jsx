@@ -7,7 +7,6 @@ import settingsIcon from '../../assets/svgs/setting.svg'; // SVG 경로 수정
 import Button from '../Button/Button';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 
 const ConferenceNavbar = () => {
   const navigate = useNavigate();
