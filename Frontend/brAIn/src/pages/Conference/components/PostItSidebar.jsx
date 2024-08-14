@@ -14,7 +14,7 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
   const [editingIndex, setEditingIndex] = useState(null);
   const [notesVisible, setNotesVisible] = useState(true);
   const step = useSelector(state => state.conferenceInfo.curStep);
-  const curUser=useSelector(state=>state.user.currentUser)
+  const curUser = useSelector(state => state.user.currentUser);
 
   // 사이드바 외부 클릭 시 닫히도록 처리
   const handleClickOutside = (event) => {
@@ -67,6 +67,22 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
     setEditingIndex(null);
   };
 
+  // 텍스트 필드에서 엔터 및 SHIFT + ENTER 키 이벤트 처리
+  const handleKeyDown = (index, event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // 기본 동작 방지
+      if (event.shiftKey) {
+        // SHIFT + ENTER: 줄바꿈
+        const updatedContent = notes[index].content + '\n';
+        handleEditNote(index, updatedContent);
+      } else {
+        // 단순 ENTER: 포커스를 텍스트 필드에서 제거
+        document.activeElement.blur();
+        setEditingIndex(null); // 편집 모드 종료
+      }
+    }
+  };
+
   // 사이드바 스타일 결정
   const sidebarClasses = `postit-sidebar ${isVisible ? 'visible' : ''} ${step === 'STEP_0' ? 'expanded' : ''}`;
 
@@ -85,6 +101,7 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
                 value={note.content}
                 onChange={(e) => handleEditNote(index, e.target.value)}
                 onBlur={handleBlur}
+                onKeyDown={(e) => handleKeyDown(index, e)}
                 autoFocus
                 multiline
                 fullWidth
@@ -107,7 +124,7 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
                     🗑️
                   </button>
                   {/* STEP_0일 때 제출 버튼 숨기기 */}
-                  {(step !== 'STEP_0' && curUser===nickname)&& (
+                  {(step !== 'STEP_0' && curUser === nickname) && (
                     <Button
                       variant="contained"
                       color="secondary"
