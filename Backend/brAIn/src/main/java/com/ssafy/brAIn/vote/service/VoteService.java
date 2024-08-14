@@ -156,8 +156,8 @@ public class VoteService {
 
             roundPostIt.selectedNine();
             ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId+"");
-//            String persona = aiService.personaMake(voteResponse.getPostIt(), cr.getThreadId(), cr.getAssistantId());
-//            roundPostIt.setPersona(persona);
+            String persona = aiService.personaMake(voteResponse.getPostIt(), cr.getThreadId(), cr.getAssistantId()).block();
+            roundPostIt.setPersona(persona);
 
             roundPostItRepository.save(roundPostIt);
 
