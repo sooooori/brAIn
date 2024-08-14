@@ -214,4 +214,24 @@ public class RedisUtils {
         redisTemplate.opsForValue().increment(key);
     }
 
+    public Double getFirstElementFromSortedSet(String key) {
+        ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
+        // 정렬된 집합의 첫 번째 요소를 가져오기 위해 rangeWithScores 사용
+        Set<ZSetOperations.TypedTuple<Object>> result = zSetOps.rangeWithScores(key, 0, 0);
+
+        if (result != null && !result.isEmpty()) {
+            ZSetOperations.TypedTuple<Object> firstElement = result.iterator().next();
+            Object value = firstElement.getValue();
+            Double score = firstElement.getScore();
+
+//        System.out.println("Value: " + value);
+//        System.out.println("Score: " + score);
+            return score;
+        } else {
+            // System.out.println("Sorted Set is empty or key does not exist.");
+            throw new RuntimeException("Sorted Set is empty or key does not exist.");
+        }
+    }
+
+
 }

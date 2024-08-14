@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
 import axios from '../../utils/Axios';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import WaitingModal from './components/WaitingModal';
 import PostItSidebar from './components/PostItSidebar';
 import WhiteBoard from './components/WhiteBoard';
@@ -26,7 +26,7 @@ import Timer from './components/Timer';
 import './Conference.css';
 
 
-import { addUser, removeUser, setUsers, setUserNick, setCuruser, updatePassStatus, resetPassStatus, updateReadyStatus, resetReadyStatus } from '../../actions/userActions';
+import { addUser, removeUser, setUsers, setUserNick, setCuruser, updatePassStatus, resetPassStatus, updateReadyStatus, resetReadyStatus, exitUser } from '../../actions/userActions';
 import { setCurStep, upRound, setRound, setRoom } from '../../actions/conferenceActions';
 import { sendToBoard } from '../../actions/roundRobinBoardAction';
 import VoteResultsModal from './components/VoteResultsModal';
@@ -37,6 +37,7 @@ import MiddlePage from './components/MiddlePage';
 
 const Conference = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const role = useSelector((state) => state.conference.role);
   const secureId = useSelector((state) => state.conference.secureId);
   const [client, setClient] = useState(null);
@@ -49,6 +50,7 @@ const Conference = () => {
   const [isPostItSidebarVisible, setIsPostItSidebarVisible] = useState(false);
   const [hideButtons, setHideButtons] = useState(false);
   const [subject, setSubject] = useState('');
+  
 
   const users = useSelector(state => state.user.users);
   const nickname = useSelector(state => state.user.nickname);
@@ -60,8 +62,8 @@ const Conference = () => {
   const readyStatuses = useSelector((state) => state.user.readyStatuses);
   //const roomId=useSelector(state=>state.conferenceInfo.roomId);
   const { secureId: routeSecureId } = useParams();
-  const [data, setData] = useState(null);
-
+  const [data,setData]=useState(0);
+  
   const votedItems = useSelector(state => state.votedItem.items || []);
   const curIndex = useSelector(state => state.commentBoard.curIndex);
   const ideaLIst = useSelector(state => state.commentBoard.vote);
@@ -89,6 +91,8 @@ const Conference = () => {
     let isMounted = true;
     let currentClient = null;
 
+
+
     const fetchDataAndConnect = async () => {
       try {
         if (isConnecting) return;
@@ -111,11 +115,14 @@ const Conference = () => {
           const countMemberInWaitingroom = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/countUser/${response.data.roomId}`);
           console.log("인원", countMemberInWaitingroom.data);
           setParticipantCount(countMemberInWaitingroom.data + 1);
+          
         }
 
         if (subject === '') {
           setSubject(response.data.subject);
+          
         }
+
 
         const newClient = new Client({
           brokerURL: `${import.meta.env.VITE_WSS_BASE_URL}`,
@@ -132,15 +139,15 @@ const Conference = () => {
 
         newClient.onmessage = function (event) {
           if (event.data === 'ping') {
-            newClient.publish({ destination: '/app/pong', body: 'pong' });
+            socket.send('pong');
           }
         };
 
         newClient.onConnect = (frame) => {
           setConnected(true);
+          console.log('Connected: ' + frame);
           newClient.subscribe(`/topic/room.${response.data.roomId}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
-            setData(receivedMessage);
             handleMessage(receivedMessage);
           });
 
@@ -153,20 +160,24 @@ const Conference = () => {
           newClient.subscribe(`/queue/room.${response.data.roomId}.${nick}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
             handleMessageForIndividual(receivedMessage);
+
           })
+
+
         };
 
         newClient.onStompError = (frame) => {
           console.error('STOMP error:', frame);
         };
 
-        // 그냥 isMount 원래 true였는데 안되서 ! 붙임
-        if (!isMounted) {
-
+        if (isMounted) {
+          newClient.activate()
           setClient(newClient);
           currentClient = newClient;
-          newClient.activate();
+          
+          
         }
+        
       } catch (error) {
         console.error('Failed to fetch data:', error);
       } finally {
@@ -174,19 +185,22 @@ const Conference = () => {
       }
     };
 
-
-
     fetchDataAndConnect();
 
+    
 
     return () => {
       isMounted = false;
       if (currentClient) {
         currentClient.deactivate();
       }
+      if (client) {
+        client.deactivate().then(() => console.log('WebSocket Disconnected'));
+      }
     };
 
-  }, [routeSecureId, roomId]);
+  }, [routeSecureId,subject]);
+
 
   // 라운드 및 단계 변경 시 패스 상태 초기화
   useEffect(() => {
@@ -233,19 +247,24 @@ const Conference = () => {
   }, [time, curUser])
 
 
-
-  // const getPerson=async()=>{
-
-  // }
-
-  // getPerson();
-
   const handleMessage = (receivedMessage) => {
     if (receivedMessage.messageType == 'ENTER_WAITING_ROOM') {
       countUpMember();
-    } else if (receivedMessage.messageType == 'EXIT_WAITING_ROOM') {
-      console.log('유저나감1');
+    }else if(receivedMessage.messageType=='EXIT_WAITING_ROOM'){
       countDownMember();
+    } else if(receivedMessage.messageType=='EXIT_CONFERENCES'){
+      
+      dispatch(exitUser(receivedMessage.nickname,receivedMessage.nextUser));
+      console.log("나간 후 다음유저",receivedMessage.nextUser)
+      console.log(receivedMessage.last)
+      if(receivedMessage.last==true){
+        
+        dispatch(upRound())
+      }       
+      
+      
+    } else if(receivedMessage.messageType=='END_CONFERENCE'){
+      roomEndAlarm();
     }
     else if (receivedMessage.messageType == 'SUBMIT_POST_IT') {
       roundRobinBoardUpdate(receivedMessage);
@@ -303,7 +322,6 @@ const Conference = () => {
     }
 
     else if (receivedMessage.messageType === 'READY') {
-      console.log('준비누른 사람 누구 ? : ', receivedMessage.curUser);
       dispatch(updateReadyStatus(receivedMessage.curUser));
 
       // READY 한 사람 수 증가
@@ -312,7 +330,6 @@ const Conference = () => {
       // AI 준비 상태 설정을 3초 지연
       setTimeout(() => {
         if (readyCount + 1 === participantCount) {
-          console.log('모든 참여자가 준비됨. AI 준비 시도. 비상!!');
           console.log('AI 닉네임임 : ' + receivedMessage.aiNickname)
           dispatch(updateReadyStatus(receivedMessage.aiNickname));
         }
@@ -358,10 +375,24 @@ const Conference = () => {
   };
 
   const countDownMember = () => {
-    console.log('유저나감')
     setParticipantCount((prevCount) => Math.max(prevCount - 1, 1));
     setIsModalVisible(true);
   };
+
+  const roomEndAlarm=()=>{
+    Swal.fire({
+      icon: "warning",
+      title: '회의가 종료되었습니다.',
+      text: '주최자가 퇴장했습니다',
+      confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
+      confirmButtonText: '승인', // confirm 버튼 텍스트 지정
+    }).then((result) => {
+      if(result.isConfirmed){
+        navigate('/'); 
+      }
+      
+    });
+  }
 
   const startMeeting = () => {
     setIsModalVisible(false);
@@ -409,6 +440,22 @@ const Conference = () => {
       });
     }
   };
+
+  const getAiPostit=()=>{
+    console.log("client:", client)
+    
+    if (client ) {
+      console.log('진짜보냄?')
+      const postit = {
+        round: round
+      };
+
+      client.publish({
+        destination: `/app/get.aiIdea.${roomId}`,
+        body: JSON.stringify(postit)
+      });
+    }
+  }
 
   const togglePostItSidebar = () => {
     setIsPostItSidebarVisible(prev => !prev);
@@ -673,7 +720,7 @@ const Conference = () => {
 
                 </div>
                 <div className="conf-timer-container">
-                  <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent} nextIdea={handleNextIdeaClick} timerStop={timerForStep3} />
+                  <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent} nextIdea={handleNextIdeaClick} timerStop={timerForStep3} aiName={aiName} getAiPostit={getAiPostit}/>
                 </div>
                 {role === 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
