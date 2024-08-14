@@ -9,10 +9,7 @@ import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
 import com.ssafy.brAIn.roundpostit.service.RoundPostItService;
 import com.ssafy.brAIn.stomp.dto.*;
-import com.ssafy.brAIn.stomp.request.CurIndex;
-import com.ssafy.brAIn.stomp.request.RequestGroupPost;
-import com.ssafy.brAIn.stomp.request.RequestPass;
-import com.ssafy.brAIn.stomp.request.RequestStep;
+import com.ssafy.brAIn.stomp.request.*;
 import com.ssafy.brAIn.stomp.response.*;
 import com.ssafy.brAIn.stomp.service.MessageService;
 import com.ssafy.brAIn.util.RedisUtils;
@@ -382,5 +379,24 @@ public class MessageController {
         }
         rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new NextIdea(MessageType.NEXT_IDEA));
 
+    }
+
+    @MessageMapping("get.aiIdea.{roomId}")
+    public void getAiIdea(@DestinationVariable String roomId, RequestAi requestAi) {
+
+        System.out.println("ai가 메시지 보냄?");
+        String aiPostIt=messageService.receiveAImessage(Integer.parseInt(roomId));
+        System.out.println("aiPostIt:"+aiPostIt);
+
+        String ai=messageService.getAI(Integer.parseInt(roomId));
+        RequestGroupPost aiGroupPost=null;
+        aiGroupPost=new RequestGroupPost(requestAi.getRound(),aiPostIt);
+
+
+        messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,ai);
+
+        //messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
+        ResponseGroupPost aiResponseGroupPost=makeResponseGroupPost(aiGroupPost,Integer.parseInt(roomId),ai);
+        rabbitTemplate.convertAndSend("amq.topic","room." + roomId, aiResponseGroupPost);
     }
 }

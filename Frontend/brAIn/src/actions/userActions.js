@@ -101,7 +101,7 @@ export const passStepUser = (stepPassUser) => async (dispatch, getState) => {
     }
 };
 
-export const exitUser=(user)=>({
+export const exitUser=(exitUser,nextUser)=>({
     type:EXIT_USER,
-    payload:user,
+    payload:{exitUser,nextUser}
 })

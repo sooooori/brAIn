@@ -10,9 +10,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class EndMessage {
 
-    private MessageType type;
+    private MessageType messageType;
 
     public EndMessage(MessageType type) {
-        this.type = type;
+        this.messageType = type;
     }
 }

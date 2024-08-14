@@ -14,11 +14,17 @@ public class ConferencesEnterExit {
 
     private MessageType messageType;
     private String nickname;
+    private String nextUser;
+    private boolean isAI;
+    private boolean isLast;
     private List<String> users;
 
-    public ConferencesEnterExit(MessageType type, String nickname, List<String> users) {
+    public ConferencesEnterExit(MessageType type, String nickname, String nextUser, boolean isAI, boolean isLast,List<String> users) {
         this.messageType = type;
         this.nickname = nickname;
+        this.nextUser = nextUser;
+        this.isAI = isAI;
+        this.isLast = isLast;
         this.users = users;
     }
 }

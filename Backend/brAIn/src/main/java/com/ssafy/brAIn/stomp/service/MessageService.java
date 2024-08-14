@@ -93,6 +93,23 @@ public class MessageService {
         return false;
     }
 
+    public boolean isFirstOrder(Integer roomId, String nickname) {
+        System.out.println("isFirstOrder:" + nickname);
+
+        // 현재 유저의 순서를 가져옴
+        int order = redisUtils.getScoreFromSortedSet(roomId + ":order:cur", nickname).intValue();
+
+        // 첫 번째 유저의 순서를 가져옴 (첫 번째 유저의 점수를 가져옴)
+        int firstOrder = redisUtils.getFirstElementFromSortedSet(roomId + ":order:cur").intValue();
+
+        // 현재 유저의 순서가 첫 번째 유저의 순서와 동일한지 확인
+        if (order == firstOrder) {
+            return true;
+        }
+        return false;
+    }
+
+
     //유저의 2/3가 패스하면 종료되야 함.
     public boolean isStep1EndCondition(Integer roomId) {
         AtomicInteger count= new AtomicInteger();

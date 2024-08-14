@@ -8,7 +8,7 @@ import Button from '../Button/Button';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 
-const ConferenceNavbar = () => {
+const ConferenceNavbar = ({client}) => {
   const navigate = useNavigate();
 
   const [conferenceCode, setConferenceCode] = useState(null);
@@ -57,7 +57,18 @@ const ConferenceNavbar = () => {
   };
 
   const handleLeaveConference = () => {
-    navigate('/');
+    // if (client) {
+    //   client.deactivate().then(() => {
+    //       console.log('disconnect');
+    //       navigate('/'); // Redirect to Home page
+    //   }).catch((error) => {
+    //       console.log(error);
+    //   });
+    // }
+
+    navigate('/'); // Redirect to Home page
+
+    
   };
 
   const handleSettings = () => {

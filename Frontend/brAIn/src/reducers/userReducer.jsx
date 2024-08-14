@@ -84,11 +84,27 @@ const userReducer = (state = initialState, action) => {
             };
         
         case EXIT_USER:{
-            const exitUser=action.payload;
+            const {exitUser,nextUser}=action.payload;
             console.log("나간유저",exitUser);
             
             const updatedUsers = state.users.filter(user => user.nickname !== exitUser);
-            console.log(updatedUsers.length);
+            console.log("현재유저",state.currentUser)
+            
+            if(state.currentUser==exitUser){
+                if(nextUser==state.users[0].nickname){
+                    return {
+                        ...state,
+                        users: updatedUsers,
+                        currentUser:nextUser,
+                        passStatus:{},
+                    };
+                }
+                return {
+                    ...state,
+                    users: updatedUsers,
+                    currentUser:nextUser,
+                };
+            }
             return {
                 ...state,
                 users: updatedUsers,
