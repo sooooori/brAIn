@@ -7,9 +7,12 @@ import settingsIcon from '../../assets/svgs/setting.svg'; // SVG 경로 수정
 import Button from '../Button/Button';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import {resetNotes} from '../../features/note/noteSlice'
 
 const ConferenceNavbar = ({client}) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [conferenceCode, setConferenceCode] = useState(null);
   const [conferenceSubject, setConferenceSubject] = useState(null);
@@ -57,15 +60,8 @@ const ConferenceNavbar = ({client}) => {
   };
 
   const handleLeaveConference = () => {
-    // if (client) {
-    //   client.deactivate().then(() => {
-    //       console.log('disconnect');
-    //       navigate('/'); // Redirect to Home page
-    //   }).catch((error) => {
-    //       console.log(error);
-    //   });
-    // }
 
+    dispatch(resetNotes());
     navigate('/'); // Redirect to Home page
 
     

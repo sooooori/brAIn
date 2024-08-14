@@ -31,6 +31,8 @@ import { setCurStep, upRound, setRound, setRoom } from '../../actions/conference
 import { sendToBoard } from '../../actions/roundRobinBoardAction';
 import VoteResultsModal from './components/VoteResultsModal';
 import { initVote, nextItem } from '../../actions/commentsAction';
+import {resetNotes} from '../../features/note/noteSlice'
+
 
 import MiddlePage from './components/MiddlePage';
 
@@ -387,6 +389,7 @@ const Conference = () => {
       confirmButtonText: '승인', // confirm 버튼 텍스트 지정
     }).then((result) => {
       if(result.isConfirmed){
+        dispatch(resetNotes());
         navigate('/'); 
       }
       
