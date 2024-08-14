@@ -13,6 +13,7 @@ import SkipIcon from '../../assets/svgs/skip.svg';
 import ReadyIcon from '../../assets/svgs/pass.svg';
 import NextIcon from '../../assets/svgs/next.svg';
 import MemberList from './components/MemberList';
+import MiddlePage from './components/MiddlePage';
 
 import './ConferenceEx.css';
 import Swal from "sweetalert2"; 
@@ -680,7 +681,7 @@ const Conference = () => {
                 )}
 
               </div>
-                <WhiteBoard subject={subject} /> 
+                <WhiteBoard subject={subject} />
             </div>
           </div>
         )}

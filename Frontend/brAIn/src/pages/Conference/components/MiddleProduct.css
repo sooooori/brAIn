@@ -1,0 +1,32 @@
+.download-card {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    gap: 80px;
+    bottom: 20px;
+}
+
+.product {
+    background-color: rgb(62, 62, 188);
+    color: white;
+    padding: 5px 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    text-align: center;
+    font-size: 25px;
+    width: 350px;
+}
+
+.real-exit {
+    background-color: rgb(173, 57, 57);
+    color: white;
+    padding: 5px 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    text-align: center;
+    font-size: 25px;
+    width: 350px;
+}
