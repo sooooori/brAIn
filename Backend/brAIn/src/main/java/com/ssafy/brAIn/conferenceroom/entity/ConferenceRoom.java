@@ -42,7 +42,7 @@ public class ConferenceRoom {
     @Column(name = "is_end")
     private Boolean isEnd;
 
-    @Column(name = "conclusion")
+    @Column(name = "conclusion", columnDefinition = "TEXT")
     private String conclusion;
 
     @Temporal(TemporalType.TIMESTAMP)
