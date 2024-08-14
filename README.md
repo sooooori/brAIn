@@ -121,7 +121,7 @@
 
 ### 아키텍처 다이어그램
 
-![image.png](./image.png)
+![arcitecture.png](./arcitecture.png)
 
 
 ### Server
