@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
 import axios from '../../utils/Axios';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import WaitingModal from './components/WaitingModal';
 import PostItSidebar from './components/PostItSidebar';
 import WhiteBoard from './components/WhiteBoard';
@@ -34,6 +34,7 @@ import { initVote, nextItem } from '../../actions/commentsAction';
 
 const Conference = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const role = useSelector((state) => state.conference.role);
   const secureId = useSelector((state) => state.conference.secureId);
   const [client, setClient] = useState(null);
@@ -257,7 +258,6 @@ const Conference = () => {
       
       
     } else if(receivedMessage.messageType=='END_CONFERENCE'){
-      console.log("방장나감")
       roomEndAlarm();
     }
     else if (receivedMessage.messageType == 'SUBMIT_POST_IT') {
@@ -377,8 +377,7 @@ const Conference = () => {
       confirmButtonText: '승인', // confirm 버튼 텍스트 지정
     }).then((result) => {
       if(result.isConfirmed){
-        navigate('/'); // Redirect to Home page
-
+        navigate('/'); 
       }
       
     });
