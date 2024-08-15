@@ -44,7 +44,7 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
   }, [isVisible, secureId,participantCount]);
 
   // 수정
-  const shareUrl = `http://localhost/conferences/${secureId}`
+  const shareUrl = `https://i11b203.p.ssafy.io/conferences/${secureId}`
 
   const handleShareCode = () => {
     navigator.clipboard.writeText(shareUrl);

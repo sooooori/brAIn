@@ -5,11 +5,9 @@ import { removeItem, reorderItems } from '../../../actions/votedItemAction';
 import './VotedPostIt.css';
 import Modal from './Modal';
 
-const VotedPostIt = React.memo(() => {
+const VotedPostIt = React.memo(({postItBig}) => {
   const dispatch = useDispatch();
   const votedItems = useSelector(state => state.votedItem.items || []);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState('');
   console.log('votedItems:', votedItems);
 
   const step = useSelector(state => state.conferenceInfo.curStep);
@@ -40,15 +38,6 @@ const VotedPostIt = React.memo(() => {
   }
 
   const containerHeight = votedItems.length * 158;
-
-  const postItBig = (content) => {
-    setModalContent(content);
-    setModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-  };
 
   const handleDeleteVotedPostIt = (index) => {
     dispatch(removeItem(index));
@@ -90,7 +79,6 @@ const VotedPostIt = React.memo(() => {
                   </Draggable>
                 ))}
                 {provided.placeholder}
-                {isModalOpen && <Modal content={modalContent} onClose={closeModal} />}
               </div>
             )}
           </Droppable>

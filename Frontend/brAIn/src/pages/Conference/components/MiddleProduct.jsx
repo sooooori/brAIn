@@ -25,7 +25,7 @@ const MiddleProduct = ({ closeModal, roomIdMiddlePage }) => { // closeModal을 p
         const ProductScript = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`http://localhost/api/v1/conferences/products/${historyRoomId}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/products/${historyRoomId}`);
                 
                 setProduct(response.data);
                 console.log('스크립트 요청 보냈삼~');
@@ -43,7 +43,7 @@ const MiddleProduct = ({ closeModal, roomIdMiddlePage }) => { // closeModal을 p
     const ProductFile = async () => {
         try {
           console.log('다운로드 요청 보냈삼~');
-          const response = await axios.get(`http://localhost/api/v1/conferences/download/${historyRoomId}`, {
+          const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/download/${historyRoomId}`, {
             responseType: 'blob',
           });
     

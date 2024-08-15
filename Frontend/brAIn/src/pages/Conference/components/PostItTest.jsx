@@ -4,9 +4,7 @@ import { addItem } from '../../../actions/votedItemAction';
 import './PostItTest.css';
 import Modal from './Modal';
 
-const PostItTest = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState('');
+const PostItTest = ({postItBig}) => {
   const roundRobinBoard = useSelector((state) => state.roundRobinBoard?.roundRobinBoard || []);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 1; // 한 페이지에 보여줄 라운드 수
@@ -18,15 +16,6 @@ const PostItTest = () => {
       setCurrentPage(roundRobinBoard.length - 1); // 마지막 라운드로 이동
     }
   }, [roundRobinBoard]);
-
-  const postItBig = (content) => {
-    setModalContent(content);
-    setModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-  };
 
   // 페이지 버튼 클릭 핸들러
   const handlePageChange = (pageNumber) => {
@@ -97,7 +86,6 @@ const PostItTest = () => {
           </div>
         ))
       )}
-      {isModalOpen && <Modal content={modalContent} onClose={closeModal} />}
     </div>
   );
 };

@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { addComments } from '../../../actions/commentsAction';
 import CommentBoard from './CommentBoard';
 
-const WhiteBoard = ({ subject, onSubmitClick }) => {
+const WhiteBoard = ({ subject, onSubmitClick, postItBig}) => {
   const [ideas, setIdeas] = useState([]);
   const token = localStorage.getItem('accessToken'); // 인증 토큰 가져오기
   const step = useSelector((state) => state.conferenceInfo.curStep); // Redux에서 currentStep 가져오기
@@ -115,7 +115,7 @@ const WhiteBoard = ({ subject, onSubmitClick }) => {
       {(isStepOne||isStepTwo) && (
         <div className="WhiteBoard-body">
           <div className="idea-board">
-            <PostItTest />
+            <PostItTest postItBig = {postItBig}/>
           </div>
         </div>
       )}
