@@ -1,7 +1,7 @@
 import { ADD_POSTIT, RESET_BOARD } from "../actions/roundRobinBoardAction";
 
 const initialState = {
-    roundRobinBoard: [[]],
+    roundRobinBoard: [],
 };
 
 const roundRobinBoardReducer = (state = initialState, action) => {
@@ -11,12 +11,12 @@ const roundRobinBoardReducer = (state = initialState, action) => {
 
             // Create a copy of the roundRobinBoard
             const newBoard = state.roundRobinBoard.map((roundContent, index) => 
-                index === round ? [...roundContent, content] : roundContent
+                index === round-1 ? [...roundContent, content] : roundContent
             );
 
             // If the round does not exist, initialize it with an array containing the content
-            if (!newBoard[round]) {
-                newBoard[round] = [content];
+            if (!newBoard[round-1]) {
+                newBoard[round-1] = [content];
             }
 
             return {
@@ -28,7 +28,7 @@ const roundRobinBoardReducer = (state = initialState, action) => {
         case RESET_BOARD:
             return {
                 ...state,
-                roundRobinBoard: [[]]
+                roundRobinBoard: []
             }
         
         default:

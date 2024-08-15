@@ -10,5 +10,8 @@ WORKDIR /app
 # JAR 파일을 컨테이너 내로 복사
 COPY ${JAR_FILE} app.jar
 
+EXPOSE 8080
+
 # 애플리케이션을 실행
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dfile.encoding=UTF-8", "-jar", "app.jar"]
+

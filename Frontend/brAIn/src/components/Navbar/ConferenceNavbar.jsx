@@ -14,7 +14,7 @@ import { resetItems } from '../../actions/votedItemAction';
 const ConferenceNavbar = ({client}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const { secureId } = useParams();
   const [conferenceCode, setConferenceCode] = useState(null);
   const [conferenceSubject, setConferenceSubject] = useState(null);
   const [isSharing, setIsSharing] = useState(false);

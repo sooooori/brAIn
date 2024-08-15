@@ -1,0 +1,37 @@
+#video-container {
+    display: flex;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    height: auto;
+    white-space: nowrap;
+    margin-top: 40px !important; /* 강제 적용 */
+}
+/*
+.stream-container {
+    width: 100px; 
+    height: 75px;
+    overflow: hidden; 
+    box-sizing: border-box;
+    margin-bottom: 10px; 
+    position: relative; 
+}*/
+
+  
+
+.stream-container {
+    display: inline-block !important;
+    flex: 0 0 auto !important;
+    width: 160px;
+    height: 120px;
+    margin-right: 10px;
+    vertical-align: top;
+}
+
+.stream-container video {
+    width: 100%; /* 비디오가 컨테이너에 맞도록 */
+    height: 100%; /* 비디오가 컨테이너에 맞도록 */
+    object-fit: cover; /* 비율 유지하며 자름 */
+}

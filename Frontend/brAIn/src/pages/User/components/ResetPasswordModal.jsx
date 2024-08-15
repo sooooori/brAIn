@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { Button, TextField, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from '../../../utils/Axios';
+// import axios from '../../../utils/Axios';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate if you're using react-router for navigation
 
 // Custom styles for the modal

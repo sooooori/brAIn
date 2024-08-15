@@ -6,37 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="e60a2d4d-1767-4dbb-9eb0-201d3f61c89d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-<<<<<<< HEAD
-<<<<<<< HEAD
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/controller/MessageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/controller/MessageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/dto/MessageType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/dto/MessageType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/dto/UserState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/dto/UserState.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/service/MessageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/stomp/service/MessageService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/util/RedisUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/util/RedisUtils.java" afterDir="false" />
-=======
->>>>>>> 4d4d3cba8db79411ddb65eed291f235b4e047863
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Conference/Conference.jsx" afterDir="false" />
-=======
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/controller/HistoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/controller/HistoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/service/MemberHistoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ssafy/brAIn/history/service/MemberHistoryService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/Home.css" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/Home.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/Home.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/ConferenceHistoryModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../Frontend/brAIn/src/pages/Home/components/ConferenceHistoryModal.jsx" afterDir="false" />
->>>>>>> b13a7f165468c9df580d5928f07af0fa05f689cf
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-<<<<<<< HEAD
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
       </list>
     </option>
-=======
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -58,11 +39,26 @@
         </projects_view>
       </state>
     </system>
->>>>>>> 4d4d3cba8db79411ddb65eed291f235b4e047863
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
+  <component name="GitLabMergeRequestFiltersHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPENED&quot;,
+    &quot;assignee&quot;: {
+      &quot;type&quot;: &quot;org.jetbrains.plugins.gitlab.mergerequest.ui.filters.GitLabMergeRequestsFiltersValue.MergeRequestsMemberFilterValue.MergeRequestsAssigneeFilterValue&quot;,
+      &quot;username&quot;: &quot;project_701728_bot_19ee4eb4bb096c7a3d0119ccefa28498&quot;,
+      &quot;fullname&quot;: &quot;OwnerToken&quot;
+    }
+  }
+}</component>
+  <component name="GitLabMergeRequestsSettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;first&quot;: &quot;https://lab.ssafy.com/s11-webmobile1-sub2/S11P12B203.git&quot;,
+    &quot;second&quot;: &quot;dcd23a6f-e932-4a22-ac80-4d18936c09e6&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 8
@@ -75,10 +71,8 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-<<<<<<< HEAD
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-<<<<<<< HEAD
     &quot;Gradle.Build brAIn.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.brAIn [:BrAInApplication.main()].executor&quot;: &quot;Run&quot;,
     &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
@@ -102,10 +96,15 @@
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <module name="brAIn.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.ssafy.brAIn.BrAInApplication" />
-=======
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Gradle.Build brAIn.executor": "Run",
     "Gradle.brAIn [:BrAInApplication.main()].executor": "Run",
+    "Gradle.brAIn [bootJar].executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "feature/conference/history",
     "kotlin-language-version-configured": "true",
@@ -116,7 +115,7 @@
     <configuration name="BrAInApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.ssafy.brAIn.BrAInApplication" />
       <module name="brAIn.main" />
->>>>>>> b13a7f165468c9df580d5928f07af0fa05f689cf
+
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="com.ssafy.brAIn.*" />
@@ -129,8 +128,10 @@
     </configuration>
     <recent_temporary>
       <list>
-<<<<<<< HEAD
+
         <item itemvalue="Spring Boot.BrAInApplication" />
+
+        <item itemvalue="Gradle.brAIn [bootJar]" />
       </list>
     </recent_temporary>
   </component>
@@ -142,20 +143,12 @@
       </set>
     </attachedChunks>
   </component>
-=======
-    &quot;Gradle.brAIn [:BrAInApplication.main()].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/ui&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
-  }
-}</component>
->>>>>>> 4d4d3cba8db79411ddb65eed291f235b4e047863
-=======
+
         <item itemvalue="애플리케이션.BrAInApplication" />
       </list>
     </recent_temporary>
   </component>
->>>>>>> b13a7f165468c9df580d5928f07af0fa05f689cf
+
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
@@ -169,6 +162,39 @@
       <workItem from="1723031046667" duration="7943000" />
       <workItem from="1723074553570" duration="17048000" />
     </task>
+    <task id="LOCAL-00001" summary="Feat: test commit">
+      <option name="closed" value="true" />
+      <created>1723012863353</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1723012863353</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fix: 파일 경로 변경">
+      <option name="closed" value="true" />
+      <created>1723018643959</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1723018643959</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Feat: compose 설정 추가">
+      <option name="closed" value="true" />
+      <created>1723018662409</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1723018662409</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Feat: Dockerfile 설정 추가">
+      <option name="closed" value="true" />
+      <created>1723047628114</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1723047628114</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

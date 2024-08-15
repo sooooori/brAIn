@@ -67,6 +67,19 @@ public class RoundPostIt {
         this.persona = persona;
     }
 
+    @Builder
+    public RoundPostIt(ConferenceRoom conferenceRoom,String content, String persona) {
+        this.conferenceRoom = conferenceRoom;
+        this.content = content;
+        this.persona = persona;
+    }
+
+    @Builder
+    public RoundPostIt(ConferenceRoom conferenceRoom, boolean isAI, String content) {
+        this.conferenceRoom = conferenceRoom;
+        this.isAI = isAI;
+        this.content = content;
+    }
 
     public void selectedNine() {
         last9 = true;

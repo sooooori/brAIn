@@ -32,6 +32,7 @@ import { addUser, removeUser, setUsers, setUserNick, setCuruser, updatePassStatu
 import { setCurStep, upRound, setRound, setRoom } from '../../actions/conferenceActions';
 import { sendToBoard } from '../../actions/roundRobinBoardAction';
 import VoteResultsModal from './components/VoteResultsModal';
+import VideoConference from './components/VideoConference';
 import { initVote, nextItem } from '../../actions/commentsAction';
 import { resetNotes } from '../../features/note/noteSlice'
 
@@ -143,7 +144,7 @@ const Conference = () => {
         const newClient = new Client({
           brokerURL: `${import.meta.env.VITE_WSS_BASE_URL}`,
           connectHeaders: {
-            Authorization: 'Bearer ' + localStorage.getItem('roomToken')
+            'Authorization': 'Bearer ' + localStorage.getItem('roomToken')
           },
           debug: (str) => {
             console.log(str);
@@ -622,6 +623,7 @@ const Conference = () => {
     }
   };
 
+
   const getVoteResult = async (step) => {
     try {
       console.log("getVoteREsult", step)
@@ -697,7 +699,13 @@ const Conference = () => {
       )}
       <div className="conference-content">
         <div className="member-list-container">
-          <MemberList />
+          <div>
+            {step === 'STEP_0' || step === 'WAIT' || step === 'STEP_1' || step === 'STEP_2' ? (
+              <MemberList />
+            ) : (
+              <VideoConference />
+            )}
+          </div>
         </div>
 
 
