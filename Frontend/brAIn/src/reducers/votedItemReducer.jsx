@@ -1,4 +1,4 @@
-import { ADD_ITEM, REMOVE_ITEM, REORDER_ITEMS } from "../actions/votedItemAction";
+import { ADD_ITEM, REMOVE_ITEM, REORDER_ITEMS, RESET_ITEMS } from "../actions/votedItemAction";
 
 
 const initialState={
@@ -35,6 +35,10 @@ const votedItemReducer=(state=initialState,action)=>{
 
         case REORDER_ITEMS:{
             return { ...state, items: action.payload.items };
+        }
+
+        case RESET_ITEMS: {
+            return {...state, items:[]}
         }
         
         default:

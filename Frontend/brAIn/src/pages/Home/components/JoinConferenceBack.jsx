@@ -9,6 +9,9 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setRole } from '../../../features/conference/conferenceSlice'; // Adjust the path as needed
 import './JoinConferenceBack.css';
+import { resetNotes } from '../../../features/note/noteSlice';
+import { resetItems } from '../../../actions/votedItemAction';
+import { resetRoundBoard } from '../../../actions/roundRobinBoardAction';
 
 const JoinConferenceBack = ({
   handleJoinConferenceFalse,
@@ -45,6 +48,9 @@ const JoinConferenceBack = ({
   const handleJoinButtonClicked = () => {
     if (conferenceFetched) {
       dispatch(setRole('participant')); // Set the role to participant
+      dispatch(resetNotes());
+      dispatch(resetItems());
+      dispatch(resetRoundBoard());
       navigate(`/conferences/${roomUrl}`);
     }
   };

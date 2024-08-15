@@ -7,9 +7,13 @@ import settingsIcon from '../../assets/svgs/setting.svg'; // SVG 경로 수정
 import Button from '../Button/Button';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import {resetNotes} from '../../features/note/noteSlice'
+import { resetItems } from '../../actions/votedItemAction';
 
 const ConferenceNavbar = ({client}) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { secureId } = useParams();
   const [conferenceCode, setConferenceCode] = useState(null);
   const [conferenceSubject, setConferenceSubject] = useState(null);
@@ -57,15 +61,9 @@ const ConferenceNavbar = ({client}) => {
   };
 
   const handleLeaveConference = () => {
-    // if (client) {
-    //   client.deactivate().then(() => {
-    //       console.log('disconnect');
-    //       navigate('/'); // Redirect to Home page
-    //   }).catch((error) => {
-    //       console.log(error);
-    //   });
-    // }
 
+    dispatch(resetNotes());
+    dispatch(resetItems());
     navigate('/'); // Redirect to Home page
 
     
@@ -81,7 +79,7 @@ const ConferenceNavbar = ({client}) => {
         {!logoLoaded && <CircularProgress size={24} className="logo-spinner" />}
         <img
           className={`logo-img ${logoLoaded ? 'loaded' : ''}`}
-          src="images/brAIn_2.png"
+          src="/images/brAIn_2.png"
           alt="brAIn"
           onLoad={() => setLogoLoaded(true)}
         />

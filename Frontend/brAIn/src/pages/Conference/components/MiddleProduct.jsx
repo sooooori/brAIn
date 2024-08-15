@@ -5,24 +5,27 @@ import Button from '../../../components/Button/Button';
 import './MiddleProduct.css';
 import { useState } from "react";
 
-const MiddleProduct = ({ closeModal }) => { // closeModal을 prop으로 받아옴
+const MiddleProduct = ({ closeModal, roomIdMiddlePage }) => { // closeModal을 prop으로 받아옴
     const [ product, setProduct ] = useState([]);
     const [ loading, setLoading ] = useState(true);
 
-    const roomId = 46;
+
 
     const navigate = useNavigate();
 
     const exitHandler = () => {
         navigate('/');
     }
+    
+    console.log('2번 props roomId: ', roomIdMiddlePage)
+    const historyRoomId = roomIdMiddlePage;
+    console.log('2번 roomId: ', historyRoomId)
 
     useEffect(()=>{
         const ProductScript = async () => {
             try {
                 setLoading(true);
-    
-                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/products/${roomId}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/products/${historyRoomId}`);
                 
                 setProduct(response.data);
                 console.log('스크립트 요청 보냈삼~');
@@ -40,14 +43,14 @@ const MiddleProduct = ({ closeModal }) => { // closeModal을 prop으로 받아�
     const ProductFile = async () => {
         try {
           console.log('다운로드 요청 보냈삼~');
-          const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/download/${roomId}`, {
+          const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/download/${historyRoomId}`, {
             responseType: 'blob',
           });
     
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
           link.href = url;
-          link.setAttribute('download', `회의록_${roomId}.pdf`);
+          link.setAttribute('download', `회의록_${historyRoomId}.pdf`);
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);

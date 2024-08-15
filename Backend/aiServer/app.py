@@ -5,6 +5,7 @@ import json
 from typing_extensions import override
 from openai import AssistantEventHandler
 import time
+import asyncio
 import unicodedata
 
 ASSISTANT_ID = 'asst_Yn2CqHG87aRY7V7JSsRwneUJ'
@@ -146,7 +147,6 @@ async def add_comment(request: CommentRequest):
 @app.post('/postIt/make')
 async def round_robin_make_idea(request: ThreadRequest):
     event_handler = EventHandler()
-
     message = client.beta.threads.messages.create(
         thread_id=request.threadId,
         role="user",
@@ -181,47 +181,60 @@ async def summary_ideas(request: ThreadRequest):
     cleaned_summary = clean_summary_text(summary_text)
     return cleaned_summary
 
-@app.post('/persona/make')
-async def persona_make(request: PersonaRequest):
+
+async def run_client_operations(request: PersonaRequest):
     prompt = f"우리는 지금까지 나온 아이디어중에 {request.idea}라는 내용이 있습니다. 이러한 아이디어에 대한 사용자 페르소나를 만들어주겠습니까? 페르소나만 만들면 됩니다. 다른 산출물을 만들 필요는 없습니다. 나이, 직업, 관심사, 특징 및 행동을 정리하고 이로 인해 나올 수 있는 제품 및 방향성을 제공해주세요. 페르소나의 형식에 맞춰서 너가 전부 작성해주세요. 페르소나에 해당하는 내용만 보여주고 이외 내용은 포함하지 말아주세요."
     
     event_handler = EventHandler()
-    message = client.beta.threads.messages.create(
-        thread_id=request.threadId,
-        role="user",
-        content=prompt
-    )
-    
-    with client.beta.threads.runs.stream(
-        thread_id=request.threadId,
-        assistant_id=request.assistantId,
-        event_handler=event_handler,
-    ) as stream:
-        stream.until_done()
-    
+    new_thread = client.beta.threads.create()
+    def sync_operations():
+        client.beta.threads.messages.create(
+            thread_id=new_thread.id,
+            role="user",
+            content=prompt
+        )
+        
+        with client.beta.threads.runs.stream(
+            thread_id=new_thread.id,
+            assistant_id=request.assistantId,
+            event_handler=event_handler,
+        ) as stream:
+            stream.until_done()
+
+    await asyncio.to_thread(sync_operations)
+    return event_handler.get_generated_text()
+
+@app.post('/persona/make')
+async def persona_make(request: PersonaRequest):
+    return await run_client_operations(request)
+
+
+async def run_swot_analysis(request: SwotRequest):
+    prompt = f"우리는 지금까지 나온 아이디어중에 {request.idea}라는 내용이 있습니다. 세부 내용으로는 {request.details}"
+    prompt += "들이 나왔습니다. 이러한 아이디어에 SWOT분석을 만들어주시겠습니까? 세부 내용에 대해 대답하는 것이 아닌 아이디어에 대한 세부내용까지 고려하여 SWOT분석을 만들어주세요. SWOT분석만 만들면 됩니다. 다른 산출물을 만들 필요는 없습니다. 형식에 맞춰서 너가 전부 작성해주세요. SWOT 분석한 내용만 보여주고 이외 내용은 포함하지 말아주세요."
+    new_thread = client.beta.threads.create()
+    event_handler = EventHandler()
+
+    def sync_operations():
+        client.beta.threads.messages.create(
+            thread_id=new_thread.id,
+            role="user",
+            content=prompt
+        )
+        
+        with client.beta.threads.runs.stream(
+            thread_id=new_thread.id,
+            assistant_id=request.assistantId,
+            event_handler=event_handler,
+        ) as stream:
+            stream.until_done()
+
+    await asyncio.to_thread(sync_operations)
     return event_handler.get_generated_text()
 
 @app.post('/swot/make')
 async def swot_make(request: SwotRequest):
-    prompt = f"우리는 지금까지 나온 아이디어중에 {request.idea}라는 내용이 있습니다. 세부 내용으로는 {request.details}"
-
-    prompt += "들이 나왔습니다. 이러한 아이디어에 SWOT분석을 만들어주시겠습니까? 세부 내용에 대해 대답하는 것이 아닌 아이디어에 대한 세부내용까지 고려하여 SWOT분석을 만들어주세요. SWOT분석만 만들면 됩니다. 다른 산출물을 만들 필요는 없습니다. 형식에 맞춰서 너가 전부 작성해주세요. SWOT 분석한 내용만 보여주고 이외 내용은 포함하지 말아주세요."
-    
-    event_handler = EventHandler()
-    message = client.beta.threads.messages.create(
-        thread_id=request.threadId,
-        role="user",
-        content=prompt
-    )
-    
-    with client.beta.threads.runs.stream(
-        thread_id=request.threadId,
-        assistant_id=request.assistantId,
-        event_handler=event_handler,
-    ) as stream:
-        stream.until_done()
-    
-    return event_handler.get_generated_text()
+    return await run_swot_analysis(request)
 
 @app.get('/user')
 async def user():

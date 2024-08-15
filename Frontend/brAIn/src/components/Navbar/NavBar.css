@@ -45,9 +45,10 @@
 
 /* Adjust logo image size */
 .logo-img {
-    width: 80px;
+    width: 60px;
     height: auto;
     margin-right: 0.5rem;
+    display: block;
 }
 
 /* Navbar links styling */
