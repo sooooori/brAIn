@@ -103,44 +103,50 @@ const WhiteBoard = ({ subject, onSubmitClick, postItBig }) => {
 
   return (
     <div className="WhiteBoard">
-      {(isStepZero || isStepOne || isStepTwo) && (
-        <div className="WhiteBoard-header">
-          <h2>주제 : {subject} </h2>
-        </div>)}
-      {(isStepThree) && (
-        <div className="WhiteBoard-header">
-          <h2>No.{curIndex + 1} 아이디어 : {votes[curIndex]} </h2>
-        </div>)}
-      {/* step이 'STEP_0'일 때 WhiteBoard-body와 WhiteBoard-footer를 숨김 */}
-      {(isStepOne || isStepTwo) && (
-        <div className="WhiteBoard-body">
-          <div className="idea-board">
-            <PostItTest postItBig={postItBig} />
+      <div className="top-title">
+        {(isStepZero || isStepOne || isStepTwo) && (
+          <div className="WhiteBoard-header">
+            <h2>주제 : {subject} </h2>
+          </div>)}
+        {(isStepThree) && (
+          <div className="WhiteBoard-header">
+            <h2>No.{curIndex + 1} 아이디어 : {votes[curIndex]} </h2>
+          </div>)}
+        {/* step이 'STEP_0'일 때 WhiteBoard-body와 WhiteBoard-footer를 숨김 */}
+      </div>
+      <div className='middle-content'>
+        {(isStepOne || isStepTwo) && (
+          <div className="WhiteBoard-body">
+            <div className="idea-board">
+              <PostItTest postItBig={postItBig} />
+            </div>
           </div>
-        </div>
-      )}
-      {isStepThree && (
-        <div className="WhiteBoard-body">
-          <div className="idea-board">
-            <CommentBoard />
+        )}
+        {isStepThree && (
+          <div className="WhiteBoard-body">
+            <div className="idea-board">
+              <CommentBoard />
+            </div>
           </div>
-        </div>
-      )}
-      {isStepThree && (
-        <div className="WhiteBoard-footer">
-          <form className="idea-form" onSubmit={handleAddIdea}>
-            <input
-              type="text"
-              name="idea"
-              value={inputValue}
-              onChange={handleInputChange}
-              placeholder="아이디어를 입력하세요..."
-              className="idea-input"
-            />
-            <button type="button" className="idea-submit-button" onClick={handleAddIdea}>제출</button>
-          </form>
-        </div>
-      )}
+        )}
+      </div>
+      <div className="foot-input">
+        {isStepThree && (
+          <div className="WhiteBoard-footer">
+            <form className="idea-form" onSubmit={handleAddIdea}>
+              <input
+                type="text"
+                name="idea"
+                value={inputValue}
+                onChange={handleInputChange}
+                placeholder="아이디어를 입력하세요..."
+                className="idea-input"
+              />
+              <button type="button" className="idea-submit-button" onClick={handleAddIdea}>제출</button>
+            </form>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
