@@ -32,10 +32,10 @@
 
 /* 비디오 스타일 */
 .streamcomponent video {
-    width: 120px; /* Adjust image size */
-    height: 60px; /* Adjust image size */
-    border-radius: 50%;
-    margin-bottom: 5px;
+    width: 150px; /* Adjust image size */
+    height: 75px; /* Adjust image size */
+    border-radius: 10%;
+    margin-bottom: 2px;
 }
 
 /* 닉네임 태그 
