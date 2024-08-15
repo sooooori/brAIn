@@ -19,7 +19,7 @@ const CommentBoard = () => {
   // 단계 변경 시 준비 상태 초기화
   useEffect(() => {
     dispatch(resetReadyStatus());
-  }, [curIndex, dispatch])
+  }, [curIndex])
 
   useEffect(() => {
     const postComment = async () => {

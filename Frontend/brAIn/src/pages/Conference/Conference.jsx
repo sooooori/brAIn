@@ -358,12 +358,10 @@ const Conference = () => {
       setReadyCount((readyc) => readyc + 1);
 
       // AI 준비 상태 설정을 3초 지연
-      setTimeout(() => {
-        if (readyCount + 1 === participantCount) {
+      if (readyCount + 1 === participantCount) {
           console.log('AI 닉네임임 : ' + receivedMessage.aiNickname)
           dispatch(updateReadyStatus(receivedMessage.aiNickname));
-        }
-      }, 5000); // 5초 후 실행
+      }
     }
     else if (receivedMessage.messageType == 'NEXT_IDEA') {
       dispatch(nextItem());
