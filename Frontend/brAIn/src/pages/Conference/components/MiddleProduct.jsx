@@ -5,7 +5,7 @@ import Button from '../../../components/Button/Button';
 import './MiddleProduct.css';
 import { useState } from "react";
 
-const MiddleProduct = ({ closeModal, roomIdMiddlePage }) => { // closeModal을 prop으로 받아옴
+const MiddleProduct = ({ closeMiddle, roomId }) => { // closeModal을 prop으로 받아옴
     const [ product, setProduct ] = useState([]);
     const [ loading, setLoading ] = useState(true);
 
@@ -17,8 +17,7 @@ const MiddleProduct = ({ closeModal, roomIdMiddlePage }) => { // closeModal을 p
         navigate('/');
     }
     
-    console.log('2번 props roomId: ', roomIdMiddlePage)
-    const historyRoomId = roomIdMiddlePage;
+    const historyRoomId = roomId;
     console.log('2번 roomId: ', historyRoomId)
 
     useEffect(()=>{
@@ -63,11 +62,11 @@ const MiddleProduct = ({ closeModal, roomIdMiddlePage }) => { // closeModal을 p
     return (
         <div className="download-card">
             <div className="modaldal-content">
-                <div className='exit-btn'>
+                {/* <div className='exit-btn'>
                         <button onClick={closeModal}>
                             X
                         </button>
-                </div>
+                </div> */}
 
                 <div className="product-content">
                     {loading ? (
@@ -89,10 +88,19 @@ const MiddleProduct = ({ closeModal, roomIdMiddlePage }) => { // closeModal을 p
 
                     <Button 
                         className='real-exit'
+                        onClick={ closeMiddle }
+                    >
+                        <p>화상회의 시작하기</p>
+                    </Button>
+
+                    <Button 
+                        className='real-exit'
                         onClick={ exitHandler }
                     >
                         <p>회의 나가기</p>
                     </Button>
+
+                    
                 </div>
             </div>
         </div>
