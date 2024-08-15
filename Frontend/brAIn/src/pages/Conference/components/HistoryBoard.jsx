@@ -12,7 +12,7 @@ const HistoryBoard = ({ roomIdHistory }) => {
     const fetchConclusion = async () => {
       try {
         // 주소 수정
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/product/${HistoryRoomId}`);
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/load/${HistoryRoomId}`);
         setConclusion(response.data); // 데이터를 상태에 저장
       } catch (err) {
         setError(err.message); // 에러 상태 설정
