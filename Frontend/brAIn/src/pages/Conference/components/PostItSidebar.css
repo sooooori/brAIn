@@ -31,7 +31,10 @@
 
 /* 사이드바의 가로 크기 확장 */
 .postit-sidebar.expanded {
-  width: 500px;
+  width: 800px;
+  position: absolute; /* 또는 fixed */
+  top: 20px; /* 페이지 상단에서 20px 위치 */
+  left: -1150px; /* 페이지 왼쪽에서 20px 위치 */
 }
 
 
