@@ -700,11 +700,7 @@ const Conference = () => {
       <div className="conference-content">
         <div className="member-list-container">
           <div>
-            {step === 'STEP_0' || step === 'WAIT' || step === 'STEP_1' || step === 'STEP_2' ? (
-              <MemberList />
-            ) : (
-              <VideoConference />
-            )}
+            <MemberList />
           </div>
         </div>
 
@@ -815,7 +811,7 @@ const Conference = () => {
                 )}
 
               </div>
-              <WhiteBoard subject={subject} postItBig={postItBig}/>
+              <WhiteBoard subject={subject} postItBig={postItBig} />
             </div>
           </div>
         )}
