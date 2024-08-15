@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useScrollDirection from '../../hooks/useScrollDirection';
 import './NavBar.css'; // CSS 파일을 사용하여 스타일링
-import { Avatar, Popover, Box } from '@mui/material';
+import { Avatar, Popover, Box, CircularProgress } from '@mui/material';
 import Button from '../Button/Button';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -32,6 +32,8 @@ const NavBar = () => {
     // Redux store에서 로그인 상태와 사용자 정보를 가져옵니다.
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const user = useSelector((state) => state.auth.user);
+
+    const [logoLoaded, setLogoLoaded] = useState(false);
 
     const handleStartClick = () => {
         navigate('/loginoption');
@@ -91,7 +93,13 @@ const NavBar = () => {
         <nav className={`navbar ${scrollingUp ? 'navbar-show' : 'navbar-hide'}`}>
             <div className="navbar-logo">
                 <Link to="/">
-                    <img className="logo-img" src="images/brAIn_2.png" alt="brAIn" />
+                {!logoLoaded && <CircularProgress size={24} className="logo-spinner" />}
+                    <img
+                    className={`logo-img ${logoLoaded ? 'loaded' : ''}`}
+                    src="/images/brAIn_1_removebg.png"
+                    alt="brAIn"
+                    onLoad={() => setLogoLoaded(true)}
+                    />
                     BrAIn
                 </Link>
             </div>
@@ -128,7 +136,7 @@ const NavBar = () => {
                                 horizontal: 'center',
                             }}
                         >
-                            <Box className="modal-content">
+                            <Box className="profile-modal-content">
                                 <div className="user-info">
                                     <Avatar src={user?.photo || ""} alt="Profile" className="user-img-large" />
                                     <div className="user-details">
