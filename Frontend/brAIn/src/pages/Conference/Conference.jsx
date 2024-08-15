@@ -668,7 +668,8 @@ const Conference = () => {
       )}
       {isHistoryModalOpen && (
         <MiddlePage
-          onClose={() => setIsHistoryModalOpen(false)} 
+          onClose={() => setIsHistoryModalOpen(false)}
+          roomId={roomId}
         />
       )}
       {!isMeetingStarted && (
