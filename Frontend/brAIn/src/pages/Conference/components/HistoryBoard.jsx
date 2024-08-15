@@ -31,7 +31,7 @@ const HistoryBoard = ({ roomIdHistory }) => {
   return (
     <div className="conclusion">
       <div>
-        <p>{conclusion.text}</p>
+        <p>{conclusion}</p>
       </div>
     </div>
   );
