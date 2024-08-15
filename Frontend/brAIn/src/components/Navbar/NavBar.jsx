@@ -96,7 +96,7 @@ const NavBar = () => {
                 {!logoLoaded && <CircularProgress size={24} className="logo-spinner" />}
                     <img
                     className={`logo-img ${logoLoaded ? 'loaded' : ''}`}
-                    src="/images/brAIn_1.png"
+                    src="/images/brAIn_1_removebg.png"
                     alt="brAIn"
                     onLoad={() => setLogoLoaded(true)}
                     />
