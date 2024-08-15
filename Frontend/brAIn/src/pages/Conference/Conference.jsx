@@ -702,7 +702,7 @@ const Conference = () => {
                         <MemberList />
                     </div>
                 </div>
-
+    
                 {isMeetingStarted && (
                     <div className="conference-section">
                         <div className={`sidebar-container ${isPostItSidebarVisible ? 'visible' : ''}`}>
@@ -753,11 +753,13 @@ const Conference = () => {
                                                         <p>Ready</p>
                                                     </Button>
                                                 </div>
+                                                {step !== 'STEP_0' && (
                                                 <div className="action-button-wrapper">
                                                     <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
                                                         <p>Pass</p>
                                                     </Button>
                                                 </div>
+                                                )}
                                                 <div className="action-button-wrapper">
                                                     <Button onClick={handleNextStepClick} ariaLabel="Next">
                                                         <p>Next Step</p>
@@ -765,18 +767,6 @@ const Conference = () => {
                                                 </div>
                                             </div>
                                         )}
-                                        {step !== 'STEP_0' && (
-                                            <div className="action-button-wrapper">
-                                                <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
-                                                    <p>Pass</p>
-                                                </Button>
-                                            </div>
-                                        )}
-                                        <div className="action-button-wrapper">
-                                            <Button onClick={handleNextStepClick} ariaLabel="Next">
-                                                <p>Next Step</p>
-                                            </Button>
-                                        </div>
                                         {step === 'STEP_3' && (
                                             <div className="action-buttons-container two-per-line">
                                                 <div className="action-button-wrapper">
@@ -828,7 +818,6 @@ const Conference = () => {
             {isModalOpen && <Modal content={modalContent} onClose={closeModal} />}
         </div>
     );
-
-};
+}
 
 export default Conference;
