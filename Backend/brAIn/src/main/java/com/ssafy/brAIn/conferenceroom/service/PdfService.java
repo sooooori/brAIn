@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -27,8 +28,14 @@ public class PdfService {
             PdfWriter.getInstance(document, byteArrayOutputStream);
             document.open();
 
-            // 한글 폰트 설정
-            BaseFont baseFont = BaseFont.createFont("src/main/resources/fonts/NanumGothic-Regular.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            // 폰트 파일을 클래스패스에서 로드
+            InputStream fontStream = getClass().getResourceAsStream("/fonts/NanumGothic-Regular.ttf");
+            if (fontStream == null) {
+                throw new IOException("Font file not found in classpath");
+            }
+
+            // 폰트를 메모리에서 읽어들여 BaseFont 생성
+            BaseFont baseFont = BaseFont.createFont("NanumGothic-Regular", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, fontStream.readAllBytes(), null);
             Font contentFont = new Font(baseFont, 12, Font.NORMAL);
 
             // PDF에 제목 추가
