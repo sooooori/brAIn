@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux'; // Redux의 useSelector 훅 가져오
 import Swal from 'sweetalert2';
 import TimerIcon from '../../../assets/svgs/timer.svg'; // 타이머 아이콘
 import './Timer.css'; // 스타일을 위한 CSS 파일
-import {setCuruser, updatePassStatus} from '../../../actions/userActions';
-import {useDispatch} from 'react-redux'
+import { setCuruser, updatePassStatus } from '../../../actions/userActions';
+import { useDispatch } from 'react-redux'
 
-const Timer = ({ time, voteSent, passSent, nextIdea,timerStop,aiName,getAiPostit }) => {
+const Timer = ({ time, voteSent, passSent, nextIdea, timerStop, aiName, getAiPostit }) => {
   const initialTime = parseInt(time, 10) / 1000 || 0;
   const [currentTime, setCurrentTime] = useState(initialTime); // 타이머의 시간 상태
   const curstep = useSelector(state => state.conferenceInfo.curStep);
@@ -16,20 +16,20 @@ const Timer = ({ time, voteSent, passSent, nextIdea,timerStop,aiName,getAiPostit
   const [alertShown, setAlertShown] = useState(false);
   const role = useSelector((state) => state.conference.role);
   const dispatch = useDispatch();
-  const curIndex=useSelector(state=>state.commentBoard.curIndex);
-  const ideaList=useSelector(state=>state.commentBoard.vote);
+  const curIndex = useSelector(state => state.commentBoard.curIndex);
+  const ideaList = useSelector(state => state.commentBoard.vote);
 
   useEffect(() => {
     setCurrentTime(initialTime);
-  }, [ time, curstep, curUser,curIndex]);
+  }, [time, curstep, curUser, curIndex]);
 
   useEffect(() => {
-    
-    
+
+
     let time = currentTime;
 
-    if(curstep=='STEP_0' && currentTime==initialTime){
-        Swal.fire({
+    if (curstep == 'STEP_0' && currentTime == initialTime) {
+      Swal.fire({
         icon: "info",
         title: '준비 시간이 시작되었습니다.',
         text: '준비를 마치세요.',
@@ -46,7 +46,7 @@ const Timer = ({ time, voteSent, passSent, nextIdea,timerStop,aiName,getAiPostit
 
       setAlertShown(true);
     }
-    else if(curstep=='STEP_2' && currentTime==initialTime){
+    else if (curstep == 'STEP_2' && currentTime == initialTime) {
       Swal.fire({
         icon: "success",
         title: '브레인 스토밍이 끝났습니다.',
@@ -56,57 +56,57 @@ const Timer = ({ time, voteSent, passSent, nextIdea,timerStop,aiName,getAiPostit
     }
 
     const timer = setInterval(() => {
-        setCurrentTime((prevtime)=>{
-          if(prevtime>0){
-            return prevtime-1;
-          }else{
-            return 0;
-          }
-        })
-    },1000);
+      setCurrentTime((prevtime) => {
+        if (prevtime > 0) {
+          return prevtime - 1;
+        } else {
+          return 0;
+        }
+      })
+    }, 1000);
 
-    if (currentTime <= 0 && curstep=='STEP_0') {
-        clearInterval(timer);
+    if (currentTime <= 0 && curstep == 'STEP_0') {
+      clearInterval(timer);
       Swal.fire({
-      icon: "warning",
-      title: '준비 시간이 끝났습니다.',
-      text: '다음 단계로 진행하세요.',
+        icon: "warning",
+        title: '준비 시간이 끝났습니다.',
+        text: '다음 단계로 진행하세요.',
       });
-        
+
     }
 
-    else if(currentTime==5 && curstep=='STEP_1'){
-      if(curUser==aiName){
+    else if (currentTime == 5 && curstep == 'STEP_1') {
+      if (curUser == aiName) {
         getAiPostit();
       }
     }
 
-    else if (currentTime<=0 && curstep=='STEP_1'){
+    else if (currentTime <= 0 && curstep == 'STEP_1') {
       if (curUser === nickname) {
         passSent();
       }
       clearInterval(timer);
     }
 
-    else if(currentTime<=0 && curstep=='STEP_2'){
+    else if (currentTime <= 0 && curstep == 'STEP_2') {
       voteSent();
       clearInterval(timer);
     }
 
-    else if(currentTime<=0 && curstep=='STEP_3'){
-      
-      if(!timerStop){
+    else if (currentTime <= 0 && curstep == 'STEP_3') {
+
+      if (!timerStop && role === 'host') {
         nextIdea();
       }
       clearInterval(timer);
 
     }
-    
+
 
     // 이 부분이 컴포넌트가 unmount되거나, 의존성 배열의 값이 변경될 때 실행됨
     return () => clearInterval(timer);
 
-}, [ currentTime ]);
+  }, [currentTime]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);

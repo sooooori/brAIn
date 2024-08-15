@@ -238,7 +238,7 @@ const Conference = () => {
   useEffect(() => {
     dispatch(resetReadyStatus());
     setReadyCount(0);
-  }, [step, dispatch])
+  }, [step])
 
   // // 단계가 변경될 때마다 readyCount를 0으로 초기화
   // useEffect(() => {
@@ -367,7 +367,6 @@ const Conference = () => {
     }
     else if (receivedMessage.messageType == 'NEXT_IDEA') {
       dispatch(nextItem());
-
     } else if (receivedMessage.messageType == 'END_IDEA') {
       setTimerForStep3(true);
       setTime(0);
@@ -693,7 +692,7 @@ const Conference = () => {
           onClose={() => setIsVoteModalOpen(false)}
         />
       )}
-      {isHistoryModalOpen && (
+      {isHistoryModalOpen && role === 'host' && (
         <MiddleProduct
           onClose={() => setIsHistoryModalOpen(false)}
           roomId={roomId}
