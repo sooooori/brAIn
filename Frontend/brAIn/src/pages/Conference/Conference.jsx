@@ -501,7 +501,7 @@ const Conference = () => {
           Authorization: localStorage.getItem('roomToken'),
         },
         body: JSON.stringify({
-          userNickname: curUser, // 레디한 사용자의 닉네임
+          userNickname: nickname, // 레디한 사용자의 닉네임
         }),
       });
     }
