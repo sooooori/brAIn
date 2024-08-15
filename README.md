@@ -187,6 +187,10 @@
 
 ![start.png](screenshot/start.png)
 
+### 마이페이지 화면 
+
+![mypage.png](screenshot/mypage.png)
+
 ### 회의 기록 화면
 
 ![history.png](screenshot/history.png)
@@ -199,15 +203,13 @@
 
 ![vote.png](screenshot/vote.png)
 
-### 아이디어 첨언 화면
+### 아이디어 코멘트 화면
 
 ![comment.png](screenshot/comment.png)
 
-### 최종 페이지 화면
+### 회의록 & 화상 회의  화면
 
 ![final.png](screenshot/final.png)
-
-+ 마이페이지 및 회의록 화면 추가 예정 
 
 ---
 
