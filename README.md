@@ -209,7 +209,7 @@
 
 ### 회의록 & 화상 회의  화면
 
-![final.png](screenshot/final.png)
+![history.png](screenshot/history.png)
 
 ---
 
