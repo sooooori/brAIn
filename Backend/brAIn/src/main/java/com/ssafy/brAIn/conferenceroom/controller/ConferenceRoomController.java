@@ -183,7 +183,9 @@ public class ConferenceRoomController {
 
             // PDF 파일 응답 설정
             response.setContentType("application/pdf");
-            response.setHeader("Content-Disposition", "attachment; filename=meeting_report_" + roomId + ".pdf");
+            response.setHeader("Content-Disposition", "att" +
+                    "" +
+                    "achment; filename=meeting_report_" + roomId + ".pdf");
             response.getOutputStream().write(pdfBytes);
             response.flushBuffer();
 
@@ -194,7 +196,7 @@ public class ConferenceRoomController {
         }
     }
 
-    @GetMapping("/products/{roomId}")
+    @GetMapping("/load/{roomId}")
     public ResponseEntity<String> loadProduct(@PathVariable Integer roomId, HttpServletResponse response) {
         try {
             // PDF 생성
