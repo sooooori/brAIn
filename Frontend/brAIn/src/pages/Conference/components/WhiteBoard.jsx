@@ -127,7 +127,8 @@ const WhiteBoard = ({ subject, onSubmitClick, postItBig, roomId }) => {
         {(isStepOne || isStepTwo) && (
           <div className="WhiteBoard-body">
             <div className="idea-board">
-              <PostItTest />
+              <PostItTest
+                postItBig={postItBig} />
             </div>
           </div>
         )}
