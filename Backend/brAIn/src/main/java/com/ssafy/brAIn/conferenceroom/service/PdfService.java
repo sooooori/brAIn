@@ -34,8 +34,11 @@ public class PdfService {
                 throw new IOException("Font file not found in classpath");
             }
 
-            // 폰트를 메모리에서 읽어들여 BaseFont 생성
-            BaseFont baseFont = BaseFont.createFont("NanumGothic-Regular", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, fontStream.readAllBytes(), null);
+// 폰트를 메모리에서 읽어들여 BaseFont 생성
+            byte[] fontBytes = fontStream.readAllBytes();
+            fontStream.close();
+
+            BaseFont baseFont = BaseFont.createFont("NanumGothic-Regular.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, fontBytes, null);
             Font contentFont = new Font(baseFont, 12, Font.NORMAL);
 
             // PDF에 제목 추가
