@@ -194,4 +194,18 @@ public class ConferenceRoomController {
         }
     }
 
+    @GetMapping("/products/{roomId}")
+    public ResponseEntity<String> loadProduct(@PathVariable Integer roomId, HttpServletResponse response) {
+        try {
+            // PDF 생성
+            String result = conferenceRoomService.generateMeetingReport(roomId);
+
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid room ID: " + roomId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to generate report: " + e.getMessage());
+        }
+    }
+
 }
