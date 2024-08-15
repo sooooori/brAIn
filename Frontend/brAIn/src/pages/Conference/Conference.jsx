@@ -801,7 +801,9 @@ const Conference = () => {
                 )}
 
               </div>
-                <WhiteBoard subject={subject} />
+                <WhiteBoard 
+                subject={subject} 
+                roomId={roomId}/>
             </div>
           </div>
         )}
