@@ -687,7 +687,6 @@ const Conference = () => {
           <MemberList />
         </div>
 
-
         {isMeetingStarted && (
           <div className="conference-section">
             <div className={`sidebar-container ${isPostItSidebarVisible ? 'visible' : ''}`}>
@@ -778,16 +777,20 @@ const Conference = () => {
                   )}
                 </>
               )}
-                {role !== 'host' && ( // 호스트일 때만 버튼 표시
-                  <div className="action-buttons-container">
-                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
-                      {/* <img src={ReadyIcon} alt="Ready" className="action-icon" /> */}
-                      <p>Ready</p>
-                    </Button>
-                    <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
-                      {/* <img src={SkipIcon} alt="Skip" className="action-icon" /> */}
-                      <p>Pass</p>
-                    </Button>
+                {role !== 'host' && ( // 호스트 아닐 때만 버튼 표시
+                  <div className="action-buttons-container two-per-line">
+                    <div className='action-button-wrapper'>
+                      <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
+                        {/* <img src={ReadyIcon} alt="Ready" className="action-icon" /> */}
+                        <p>Ready</p>
+                      </Button>
+                    </div>
+                    <div className='action-button-wrapper'>
+                      <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
+                        {/* <img src={SkipIcon} alt="Skip" className="action-icon" /> */}
+                        <p>Pass</p>
+                      </Button>
+                    </div>
                   </div>
                 )}
 

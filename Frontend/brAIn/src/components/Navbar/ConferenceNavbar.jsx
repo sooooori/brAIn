@@ -83,7 +83,7 @@ const ConferenceNavbar = ({client}) => {
           alt="brAIn"
           onLoad={() => setLogoLoaded(true)}
         />
-        <span>BrAIn</span>
+        <span className='service-name'>BrAIn</span>
       </div>
       <div className="conference-navbar-info">
         <h2 className="conference-navbar-subject">{conferenceSubject}</h2>
