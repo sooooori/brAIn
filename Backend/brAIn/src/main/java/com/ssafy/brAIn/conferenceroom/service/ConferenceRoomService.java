@@ -134,8 +134,9 @@ public class ConferenceRoomService {
             }).thenCompose(personaStringFuture ->
                     personaStringFuture.thenAccept(personaString -> {
                         // personaString을 RoundPostIt에 설정합니다.
+                        String textWithoutQuotes = personaString.substring(1, personaString.length() - 1);
                         RoundPostIt rp = remainingIdeas.get(finalI).getRoundPostIt();
-                        rp.setPersona(personaString); // String으로 persona 설정
+                        rp.setPersona(textWithoutQuotes); // String으로 persona 설정
                         roundPostItRepository.save(rp);
                     })
             ).exceptionally(error -> {
@@ -172,9 +173,10 @@ public class ConferenceRoomService {
                 ).toFuture(); // Mono를 CompletableFuture로 변환
             }).thenCompose(swotFuture ->
                     swotFuture.thenAccept(swot -> {
+                        String textWithoutQuotes = swot.substring(1, swot.length() - 1);
                         // CompletableFuture가 완료된 후의 작업
                         RoundPostIt rp = remainingIdeas.get(finalI).getRoundPostIt();
-                        rp.setSwot(swot);
+                        rp.setSwot(textWithoutQuotes);
                         roundPostItRepository.save(rp);
                     })
             ).exceptionally(error -> {
@@ -275,8 +277,10 @@ public class ConferenceRoomService {
             for (Comment comment : participantComments) {
                 reportBuilder.append(" - ").append(comment.getContent()).append("\n");
             }
-            reportBuilder.append(" - ").append(postIt.getPersona());
-            reportBuilder.append(" - ").append(postIt.getSwot());
+
+            reportBuilder.append("Persona: ").append(postIt.getPersona().replace("\\n", System.lineSeparator()));
+            reportBuilder.append("\n"); // 다음 아이디어와의 구분을 위해 빈 줄 추가
+            reportBuilder.append("SWOT: ").append(postIt.getSwot().replace("\\n", System.lineSeparator()));
             reportBuilder.append("\n"); // 다음 아이디어와의 구분을 위해 빈 줄 추가
         }
 

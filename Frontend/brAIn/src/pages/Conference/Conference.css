@@ -79,11 +79,38 @@
   margin-top: 20px; /* 타이머와 다른 요소 사이의 여백 */
 }
 
-/* 액션 버튼 컨테이너 스타일 */
+/* 액션 버튼 컨테이너 기본 스타일 */
 .action-buttons-container {
   display: flex;
-  align-items: center; /* 버튼들을 같은 가로 선상에 배치 */
-  gap: 15px; /* 버튼 간격 */
+  flex-wrap: wrap;
+  gap: 10px; /* 버튼 간격을 줄여서 공간을 확보 */
+  max-width: 90%; /* 전체 버튼 컨테이너의 최대 너비를 설정하여 공간을 조절 */
+  margin: 0 auto; /* 중앙 정렬 */
+}
+
+.action-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 30%; /* 버튼이 한 줄에 3개 배치되도록 설정, STEP_3일 때 */
+}
+
+.action-button-wrapper p {
+  margin-top: 3px;
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+  align-items: center;
+}
+
+/* STEP_3일 때: 버튼 2개씩 한 줄에 배치 */
+.action-buttons-container.two-per-line .action-button-wrapper {
+  flex: 1 1 45%; /* 버튼이 두 줄에 걸쳐 2개씩 배치되도록 설정 */
+}
+
+/* STEP_3이 아닐 때: 버튼 3개씩 한 줄에 배치 */
+.action-buttons-container.three-buttons .action-button-wrapper {
+  flex: 1 1 30%; /* 버튼이 한 줄에 3개 배치되도록 설정 */
 }
 
 /* 전체 버튼 스타일 */
@@ -98,12 +125,13 @@
   border-radius: 8px; /* 둥근 모서리 */
   cursor: pointer; /* 커서 포인터로 변경 */
   margin: 5px; /* 버튼 간 여백 */
+  color: black;
 }
 
 /* 액션 버튼 아이콘 스타일 */
 .action-buttons-container .action-icon {
-  width: 24px; /* 아이콘 너비 */
-  height: 24px; /* 아이콘 높이 */
+  width: 48px; /* 아이콘 너비 */
+  height: 48px; /* 아이콘 높이 */
 }
 
 /* 화이트보드 섹션 스타일 */

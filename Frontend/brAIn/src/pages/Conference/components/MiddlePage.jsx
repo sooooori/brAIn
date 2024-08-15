@@ -4,11 +4,13 @@ import './MiddlePage.css';
 import MiddleProduct from './MiddleProduct';
 import axios from 'axios';
 
-const MiddlePage = () => {
+const MiddlePage = ({roomId}) => {
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
     const [isMiddlePageModalOpen, setIsMiddlePageModalOpen] = useState(true); // MiddlePage 모달 상태 추가
 
-    const roomId = 46;
+    console.log('1번 props roomId: ', roomId);
+    const roomIdMiddlePage = roomId;
+    console.log('1번 roomId: ', roomIdMiddlePage);
 
     const closeMiddlePageModal = () => {
         setIsMiddlePageModalOpen(false);
@@ -39,6 +41,7 @@ const MiddlePage = () => {
                         <div className='button-layer'>
                             <Button
                                 className='move'
+                                // 화상 회의 연결
                                 // onClick={}
                             >
                                 <p>화상 회의 시작하기</p>
@@ -56,7 +59,9 @@ const MiddlePage = () => {
 
             {/* MiddleProduct 모달창 */}
             {isProductModalOpen && (
-                <MiddleProduct closeModal={closeProductModal} />
+                <MiddleProduct closeModal={closeProductModal} 
+                roomIdMiddlePage={roomIdMiddlePage}
+                />
             )}
         </>
     );

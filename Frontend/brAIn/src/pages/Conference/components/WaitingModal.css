@@ -44,12 +44,14 @@
 
 .waiting-modal-content h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
 .waiting-modal-content p {
+  font-size: 1rem;
   margin: 8px 0;
+  font-weight: bold;
 }
 
 .error {
@@ -80,8 +82,8 @@
 .conference-code-container {
   display: flex;
   align-items: center;
-  
   gap: 10px; /* 코드와 버튼 사이의 간격 */
+  flex-wrap: nowrap; /* 코드와 버튼이 한 줄에 있도록 설정 */
 }
 
 .conference-code {
@@ -96,9 +98,11 @@
 
 .waiting-modal-code-button {
   flex: 1; /* 버튼 부분이 1/5를 차지하도록 설정 */
-  font-size: 0.875em; /* 버튼 글씨 크기 */
+  font-size: 16px; /* 버튼 글씨 크기 */
   padding: 6px 10px; /* 버튼 크기 줄이기 */
   margin-left: 10px; /* 버튼과 코드 사이의 간격 */
+  min-width: 150px; /* 최소 너비를 설정하여 Copied! 메시지에도 크기 유지 */
+  height: 45px;
 }
 
 .waiting-modal-code {
@@ -107,6 +111,7 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 20px;
+  flex-wrap: nowrap; /* 코드와 버튼이 한 줄에 있도록 설정 */
 }
 
 .waiting-modal-button {
@@ -117,6 +122,11 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
+}
+
+.waiting_member {
+  color: #007bff;
+  font-weight: bold;
 }
 
 .waiting-modal-button-share {

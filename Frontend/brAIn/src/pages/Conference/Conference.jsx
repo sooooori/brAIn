@@ -13,6 +13,8 @@ import SkipIcon from '../../assets/svgs/skip.svg';
 import ReadyIcon from '../../assets/svgs/pass.svg';
 import NextIcon from '../../assets/svgs/next.svg';
 import MemberList from './components/MemberList';
+import IdeaIcon from '../../assets/svgs/Idea.svg'
+import Modal from './components/Modal';
 
 import './ConferenceEx.css';
 import Swal from "sweetalert2";
@@ -32,8 +34,11 @@ import { sendToBoard } from '../../actions/roundRobinBoardAction';
 import VoteResultsModal from './components/VoteResultsModal';
 import VideoConference from './components/VideoConference';
 import { initVote, nextItem } from '../../actions/commentsAction';
+import { resetNotes } from '../../features/note/noteSlice'
+
 
 import MiddlePage from './components/MiddlePage';
+import { resetItems } from '../../actions/votedItemAction';
 
 const Conference = () => {
   const dispatch = useDispatch();
@@ -50,7 +55,10 @@ const Conference = () => {
   const [isPostItSidebarVisible, setIsPostItSidebarVisible] = useState(false);
   const [hideButtons, setHideButtons] = useState(false);
   const [subject, setSubject] = useState('');
-  
+
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState('');
+
 
   const users = useSelector(state => state.user.users);
   const nickname = useSelector(state => state.user.nickname);
@@ -62,8 +70,8 @@ const Conference = () => {
   const readyStatuses = useSelector((state) => state.user.readyStatuses);
   //const roomId=useSelector(state=>state.conferenceInfo.roomId);
   const { secureId: routeSecureId } = useParams();
-  const [data,setData]=useState(0);
-  
+  const [data, setData] = useState(0);
+
   const votedItems = useSelector(state => state.votedItem.items || []);
   const curIndex = useSelector(state => state.commentBoard.curIndex);
   const ideaLIst = useSelector(state => state.commentBoard.vote);
@@ -85,6 +93,15 @@ const Conference = () => {
 
   // 구체화 이후
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+
+  const postItBig = (content) => {
+    setModalContent(content);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
 
 
   useEffect(() => {
@@ -115,12 +132,12 @@ const Conference = () => {
           const countMemberInWaitingroom = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences/countUser/${response.data.roomId}`);
           console.log("인원", countMemberInWaitingroom.data);
           setParticipantCount(countMemberInWaitingroom.data + 1);
-          
+
         }
 
         if (subject === '') {
           setSubject(response.data.subject);
-          
+
         }
 
 
@@ -174,10 +191,10 @@ const Conference = () => {
           newClient.activate()
           setClient(newClient);
           currentClient = newClient;
-          
-          
+
+
         }
-        
+
       } catch (error) {
         console.error('Failed to fetch data:', error);
       } finally {
@@ -187,7 +204,7 @@ const Conference = () => {
 
     fetchDataAndConnect();
 
-    
+
 
     return () => {
       isMounted = false;
@@ -199,7 +216,7 @@ const Conference = () => {
       }
     };
 
-  }, [routeSecureId,subject]);
+  }, [routeSecureId, subject]);
 
 
   // 라운드 및 단계 변경 시 패스 상태 초기화
@@ -250,20 +267,20 @@ const Conference = () => {
   const handleMessage = (receivedMessage) => {
     if (receivedMessage.messageType == 'ENTER_WAITING_ROOM') {
       countUpMember();
-    }else if(receivedMessage.messageType=='EXIT_WAITING_ROOM'){
+    } else if (receivedMessage.messageType == 'EXIT_WAITING_ROOM') {
       countDownMember();
-    } else if(receivedMessage.messageType=='EXIT_CONFERENCES'){
-      
-      dispatch(exitUser(receivedMessage.nickname,receivedMessage.nextUser));
-      console.log("나간 후 다음유저",receivedMessage.nextUser)
+    } else if (receivedMessage.messageType == 'EXIT_CONFERENCES') {
+
+      dispatch(exitUser(receivedMessage.nickname, receivedMessage.nextUser));
+      console.log("나간 후 다음유저", receivedMessage.nextUser)
       console.log(receivedMessage.last)
-      if(receivedMessage.last==true){
-        
+      if (receivedMessage.last == true) {
+
         dispatch(upRound())
-      }       
-      
-      
-    } else if(receivedMessage.messageType=='END_CONFERENCE'){
+      }
+
+
+    } else if (receivedMessage.messageType == 'END_CONFERENCE') {
       roomEndAlarm();
     }
     else if (receivedMessage.messageType == 'SUBMIT_POST_IT') {
@@ -379,7 +396,7 @@ const Conference = () => {
     setIsModalVisible(true);
   };
 
-  const roomEndAlarm=()=>{
+  const roomEndAlarm = () => {
     Swal.fire({
       icon: "warning",
       title: '회의가 종료되었습니다.',
@@ -387,10 +404,12 @@ const Conference = () => {
       confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
       confirmButtonText: '승인', // confirm 버튼 텍스트 지정
     }).then((result) => {
-      if(result.isConfirmed){
-        navigate('/'); 
+      if (result.isConfirmed) {
+        dispatch(resetNotes());
+        dispatch(resetItems());
+        navigate('/');
       }
-      
+
     });
   }
 
@@ -441,10 +460,10 @@ const Conference = () => {
     }
   };
 
-  const getAiPostit=()=>{
+  const getAiPostit = () => {
     console.log("client:", client)
-    
-    if (client ) {
+
+    if (client) {
       console.log('진짜보냄?')
       const postit = {
         round: round
@@ -665,6 +684,7 @@ const Conference = () => {
       {isHistoryModalOpen && (
         <MiddlePage
           onClose={() => setIsHistoryModalOpen(false)}
+          roomId={roomId}
         />
       )}
       {!isMeetingStarted && (
@@ -716,46 +736,91 @@ const Conference = () => {
               <div className={`action-panel`}>
                 <div className="voted-post-it-container">
 
-                  <VotedPostIt />
+                  <VotedPostIt
+                    postItBig={postItBig}
+                  />
 
                 </div>
                 <div className="conf-timer-container">
-                  <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent} nextIdea={handleNextIdeaClick} timerStop={timerForStep3} aiName={aiName} getAiPostit={getAiPostit}/>
+                  <Timer time={time} voteSent={handleVoteSent} passSent={handlepassSent} nextIdea={handleNextIdeaClick} timerStop={timerForStep3} aiName={aiName} getAiPostit={getAiPostit} />
                 </div>
-                {role === 'host' && ( // 호스트일 때만 버튼 표시
-                  <div className="action-buttons-container">
-                    <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
-                      <img src={ReadyIcon} alt="Ready" className="action-icon" />
-                    </Button>
-                    <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
-                      <img src={SkipIcon} alt="Skip" className="action-icon" />
-                    </Button>
+                {role === 'host' && (
+                  <>
+                    {/* STEP_3이 아닐 때 */}
+                    {step !== 'STEP_3' && (
+                      <div className="action-buttons-container three-buttons">
+                        <div className="action-button-wrapper">
+                          <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
+                            {/* <img src={ReadyIcon} alt="Ready" className="action-icon" /> */}
+                            <p>Ready</p>
+                          </Button>
+                        </div>
+                        <div className="action-button-wrapper">
+                          <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
+                            {/* <img src={SkipIcon} alt="Skip" className="action-icon" /> */}
+                            <p>Pass</p>
+                          </Button>
+                        </div>
+                        <div className="action-button-wrapper">
+                          <Button onClick={handleNextStepClick} ariaLabel="Next">
+                            {/* <img src={NextIcon} alt="Next" className="action-icon" /> */}
+                            <p>Next Step</p>
+                          </Button>
+                        </div>
+                      </div>
+                    )}
 
-                    <Button onClick={handleNextStepClick} ariaLabel="Next">
-                      <img src={NextIcon} alt="Next" className="action-icon" />
-                    </Button>
-                    <Button onClick={handleNextIdeaClick} ariaLabel="Next">
-                      <img src={NextIcon} alt="투표정보 가져오기" className="action-icon" />
-                    </Button>
-                  </div>
+                    {/* STEP_3일 때 */}
+                    {step === 'STEP_3' && (
+                      <div className="action-buttons-container two-per-line">
+                        <div className="action-button-wrapper">
+                          <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
+                            {/* <img src={ReadyIcon} alt="Ready" className="action-icon" /> */}
+                            <p>Ready</p>
+                          </Button>
+                        </div>
+                        <div className="action-button-wrapper">
+                          <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
+                            {/* <img src={SkipIcon} alt="Skip" className="action-icon" /> */}
+                            <p>Pass</p>
+                          </Button>
+                        </div>
+                        <div className="action-button-wrapper">
+                          <Button onClick={handleNextStepClick} ariaLabel="Next">
+                            {/* <img src={NextIcon} alt="Next" className="action-icon" /> */}
+                            <p>Next Step</p>
+                          </Button>
+                        </div>
+                        <div className="action-button-wrapper">
+                          <Button onClick={handleNextIdeaClick} ariaLabel="Next">
+                            {/* <img src={IdeaIcon} alt="투표정보 가져오기" className="action-icon" /> */}
+                            <p>Next Idea</p>
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
                 {role !== 'host' && ( // 호스트일 때만 버튼 표시
                   <div className="action-buttons-container">
                     <Button onClick={handleReadyButtonClick} ariaLabel="Ready">
-                      <img src={ReadyIcon} alt="Ready" className="action-icon" />
+                      {/* <img src={ReadyIcon} alt="Ready" className="action-icon" /> */}
+                      <p>Ready</p>
                     </Button>
                     <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
-                      <img src={SkipIcon} alt="Skip" className="action-icon" />
+                      {/* <img src={SkipIcon} alt="Skip" className="action-icon" /> */}
+                      <p>Pass</p>
                     </Button>
                   </div>
                 )}
 
               </div>
-              <WhiteBoard subject={subject} />
+              <WhiteBoard subject={subject} postItBig={postItBig}/>
             </div>
           </div>
         )}
       </div>
+      {isModalOpen && <Modal content={modalContent} onClose={closeModal} />}
     </div>
   );
 };

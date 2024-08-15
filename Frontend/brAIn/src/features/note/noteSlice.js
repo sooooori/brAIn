@@ -32,8 +32,12 @@ const noteSlice = createSlice({
         note.content = content;
       }
     },
+    resetNotes: (state) => {
+      state.notes = [];
+      state.ideas = [];
+    },
   },
 });
 
-export const { addNote, submitNote, deleteNote, updateNote, } = noteSlice.actions;
+export const { addNote, submitNote, deleteNote, updateNote,resetNotes } = noteSlice.actions;
 export default noteSlice.reducer;
