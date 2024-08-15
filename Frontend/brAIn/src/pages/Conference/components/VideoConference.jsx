@@ -220,7 +220,7 @@ const VideoConference = () => {
                         ) : null}
 
                         {subscribers.map((sub, i) => (
-                            <div key={i} className="stream-container" onClick={() => handleMainVideoStream(sub)} style={{ display: 'inline-block' }}>
+                            <div key={i} className="stream-container" style={{ display: 'inline-block' }}>
                                 <UserVideoComponent streamManager={sub} />
                             </div>
                         ))}
