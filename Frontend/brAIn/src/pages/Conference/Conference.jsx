@@ -693,22 +693,23 @@ const Conference = () => {
             <div className={`sidebar-container ${isPostItSidebarVisible ? 'visible' : ''}`}>
               {isPostItSidebarVisible ? (
                 <PostItSidebar
-                  isVisible={isPostItSidebarVisible}
+                  isVisible={isPostItSidebarVisible }
                   onClose={togglePostItSidebar}
                   onSubmitClick={attachPostitOnRoundBoard}
                   className={step === 'STEP_0' ? 'expanded' : ''}
                 />
               ) : (
 
-                <Button
+                (step=='STEP_0'|| step=='STEP_1')&&(<Button
                   type="fit"
+                  isVisible={(step=='STEP_0'|| step=='STEP_1')}
                   onClick={togglePostItSidebar}
                   buttonStyle="black"
                   ariaLabel="Toggle Post-It Sidebar"
                   className="toggle-postit-sidebar-button"
                 >
                   <img src={SidebarIcon} alt="Post-It Sidebar Toggle" className="sidebar-icon" />
-                </Button>
+                </Button>)
               )}
             </div>
             <div className="main-content">

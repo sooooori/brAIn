@@ -67,6 +67,25 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
     setEditingIndex(null);
   };
 
+
+  
+  // 파스텔 톤 색상 배열
+  const colors = [
+    '#F8CFCF', // 분홍색
+    '#FFFFC2', // 노란색
+    '#C9E4C5', // 녹색
+    '#D6C0EB', // 보라색
+    '#E0FFFF', // 라이트 시안색
+    '#F7B7A3', // 연한 오렌지색
+    '#D0E6F8'  // 파스텔 블루
+  ];
+
+  // 인덱스를 기반으로 색상 선택 함수
+  const getColorForIdea = (ideaIndex) => {
+    return colors[ideaIndex % colors.length];
+  };
+
+
   // 텍스트 필드에서 엔터 및 SHIFT + ENTER 키 이벤트 처리
   const handleKeyDown = (index, event) => {
     if (event.key === 'Enter') {
@@ -95,7 +114,8 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
       </div>
       <div className={`notes-list ${notesVisible ? 'visible' : ''}`}>
         {notes.map((note, index) => (
-          <div key={note.id} className="note">
+          <div key={note.id} className="note" style={{ backgroundColor: getColorForIdea(index) }}>
+          
             {editingIndex === index ? (
               <TextField
                 value={note.content}
@@ -107,7 +127,7 @@ const PostItSidebar = ({ isVisible, onClose, onSubmitClick }) => {
                 fullWidth
                 variant="outlined"
                 InputProps={{
-                  style: { fontSize: 14, lineHeight: '1.5', whiteSpace: 'normal' },
+                  style: { fontSize: 14, lineHeight: '1.5', whiteSpace: 'normal'},
                 }}
               />
             ) : (
