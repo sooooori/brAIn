@@ -232,13 +232,17 @@ const Conference = () => {
   // 라운드 및 단계 변경 시 패스 상태 초기화
   useEffect(() => {
     dispatch(resetPassStatus());
-  }, [round, step, dispatch]);
+  }, [round, step]);
 
   // 단계 변경 시 준비 상태 초기화
   useEffect(() => {
     dispatch(resetReadyStatus());
     setReadyCount(0);
   }, [step])
+
+  useEffect(()=>{
+    console.log("참가자수 : " + participantCount)
+  },[participantCount])
 
   // // 단계가 변경될 때마다 readyCount를 0으로 초기화
   // useEffect(() => {
@@ -296,6 +300,7 @@ const Conference = () => {
     else if (receivedMessage.messageType == 'SUBMIT_POST_IT') {
       roundRobinBoardUpdate(receivedMessage);
     } else if (receivedMessage.messageType === 'START_CONFERENCE') {
+    
       console.log("회의시작")
       // AI 닉네임 저장
       setAiName(receivedMessage.aiNickname);
@@ -306,7 +311,7 @@ const Conference = () => {
       dispatch(setCuruser(updatedUsers[0].nickname));
 
       dispatch(setCurStep('STEP_0'));
-
+      console.log(participantCount)
     } else if (receivedMessage.messageType === 'ENTER_CONFERENCES') {
       dispatch(setUserNick(receivedMessage.nickname));
 
@@ -358,12 +363,10 @@ const Conference = () => {
       setReadyCount((readyc) => readyc + 1);
 
       // AI 준비 상태 설정을 3초 지연
-      setTimeout(() => {
-        if (readyCount + 1 === participantCount) {
+      if (readyCount + 1 === participantCount) {
           console.log('AI 닉네임임 : ' + receivedMessage.aiNickname)
           dispatch(updateReadyStatus(receivedMessage.aiNickname));
-        }
-      }, 5000); // 5초 후 실행
+      }
     }
     else if (receivedMessage.messageType == 'NEXT_IDEA') {
       dispatch(nextItem());
@@ -432,9 +435,9 @@ const Conference = () => {
   };
 
   const handleStartMeeting = () => {
-    console.log('스타트미팅')
-    console.log(roomId);
-    console.log(client)
+    // console.log('스타트미팅')
+    // console.log(roomId);
+    // console.log(client)
     if (client) {
       client.publish({
         destination: `/app/start.conferences.${roomId}`,
