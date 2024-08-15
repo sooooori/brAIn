@@ -329,7 +329,11 @@ public class MessageService {
         ConferenceRoom conferenceRoom=conferenceRoomRepository.findById(roomId).get();
         String threadId = conferenceRoom.getThreadId();
         String assistantId=conferenceRoom.getAssistantId();
-        return aiService.makePostIt(threadId,assistantId);
+        String result = aiService.makePostIt(threadId,assistantId);
+        result = result.replace("\"", "");      // 직선 큰따옴표 제거
+        result = result.replace("\u201C", "");  // 왼쪽 큰따옴표 제거
+        result = result.replace("\u201D", "");  // 오른쪽 큰따옴표 제거
+        return result;
     }
 
     public boolean isAi(Integer roomId,String user) {
