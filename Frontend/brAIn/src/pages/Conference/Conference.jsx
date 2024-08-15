@@ -731,12 +731,15 @@ const Conference = () => {
                           <p>Ready</p>
                         </Button>
                       </div>
-                      <div className="action-button-wrapper">
-                        <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
-                          {/* <img src={SkipIcon} alt="Skip" className="action-icon" /> */}
-                          <p>Pass</p>
-                        </Button>
-                      </div>
+                      {/* STEP_0이 아닐 때 */}
+                      {step !== 'STEP_0' &&(
+                        <div className="action-button-wrapper">
+                          <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
+                            {/* <img src={SkipIcon} alt="Skip" className="action-icon" /> */}
+                            <p>Pass</p>
+                          </Button>
+                        </div>
+                      )}
                       <div className="action-button-wrapper">
                         <Button onClick={handleNextStepClick} ariaLabel="Next">
                           {/* <img src={NextIcon} alt="Next" className="action-icon" /> */}
@@ -785,12 +788,15 @@ const Conference = () => {
                         <p>Ready</p>
                       </Button>
                     </div>
-                    <div className='action-button-wrapper'>
-                      <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
-                        {/* <img src={SkipIcon} alt="Skip" className="action-icon" /> */}
-                        <p>Pass</p>
-                      </Button>
-                    </div>
+                    {/* STEP_0 아닐 때 */}
+                    {step !== 'STEP_0' && (
+                      <div className='action-button-wrapper'>
+                        <Button onClick={handlePassButtonClick} ariaLabel="Skip" disabled={curUser !== nickname}>
+                          {/* <img src={SkipIcon} alt="Skip" className="action-icon" /> */}
+                          <p>Pass</p>
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
 
