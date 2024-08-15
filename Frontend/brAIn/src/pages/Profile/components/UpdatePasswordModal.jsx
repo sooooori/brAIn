@@ -5,7 +5,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../../features/auth/authSlice';
-import axios from '../../../utils/Axios';
+// import axios from '../../../utils/Axios';
+import axios from 'axios';
 import Cookies from 'js-cookie';
 import './UpdatePasswordModal.css';
 

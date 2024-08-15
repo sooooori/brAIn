@@ -1,6 +1,7 @@
 package com.ssafy.brAIn.ai.service;
 
 import com.ssafy.brAIn.ai.response.AIAssistant;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -45,6 +46,8 @@ public class AIService {
                 .retrieve().bodyToMono(String.class)
                 .block();
     }
+
+
 
     public String makePostIt(String threadId, String assistantId) {
         String url="/postIt/make";

@@ -11,7 +11,8 @@ import './Home.css';
 import Button from '../../components/Button/Button';
 import { useNavigate } from 'react-router-dom';
 import { resetRoundBoard } from '../../actions/roundRobinBoardAction';
-import axios from '../../utils/Axios';
+// import axios from '../../utils/Axios';
+import axios from 'axios';
 import ConferenceHistoryModal from './components/ConferenceHistoryModal';
 
 const Home = () => {

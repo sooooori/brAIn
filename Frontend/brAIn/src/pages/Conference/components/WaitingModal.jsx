@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/Button/Button';
-import axios from '../../../utils/Axios';
+// import axios from '../../../utils/Axios';
+import axios from 'axios';
 import './WaitingModal.css';
 
 const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartMeeting, client }) => {
@@ -44,7 +45,7 @@ const WaitingModal = ({ isVisible, participantCount, secureId, onClose, onStartM
   }, [isVisible, secureId,participantCount]);
 
   // 수정
-  const shareUrl = `http://localhost/conferences/${secureId}`
+  const shareUrl = `https://i11b203.p.ssafy.io/conferences/${secureId}`
 
   const handleShareCode = () => {
     navigator.clipboard.writeText(shareUrl);

@@ -1,0 +1,58 @@
+/* UserVideo.css */
+
+/* 전체 비디오와 닉네임을 감싸는 컨테이너 */
+/*
+.streamcomponent {
+    width: 100px; 
+    height: 75px; 
+    overflow: hidden; 
+    position: relative; 
+    background: #f8f8f8; 
+    border: 1px solid #ccc; 
+    border-radius: 8px;
+}*/
+
+.streamcomponent {
+    flex: 0 0 auto; /* Prevent shrinking and ensure items stay in row */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+    padding: 10px;
+    height: 80px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    width: 160px; /* Narrow width */
+    min-width: 10px; /* Maintain width */
+    position: relative;
+  }
+  
+
+
+/* 비디오 스타일 */
+.streamcomponent video {
+    width: 120px; /* Adjust image size */
+    height: 60px; /* Adjust image size */
+    border-radius: 50%;
+    margin-bottom: 5px;
+}
+
+/* 닉네임 태그 
+.streamcomponent div {
+    position: absolute; 
+    bottom: 0; 
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    padding: 2px 5px; 
+    text-align: center; 
+    font-weight: bold; 
+    border-bottom-right-radius: 4px; 
+}*/
+
+/* 닉네임 태그의 p 태그 스타일 */
+.streamcomponent p {
+    margin: 0; /* 여백 제거 */
+}
