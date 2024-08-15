@@ -824,7 +824,11 @@ const Conference = () => {
                   </div>
                 )}
               </div>
-              <WhiteBoard subject={subject} postItBig={postItBig} />
+              <WhiteBoard
+                subject={subject}
+                roomId={roomId}
+                postItBig={postItBig}
+              />
             </div>
           </div>
         )}

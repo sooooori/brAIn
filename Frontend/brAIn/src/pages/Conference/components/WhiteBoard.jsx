@@ -6,14 +6,17 @@ import './WhiteBoard.css';
 import { useDispatch } from 'react-redux';
 import { addComments } from '../../../actions/commentsAction';
 import CommentBoard from './CommentBoard';
+import HistoryBoard from './HistoryBoard';
 
-const WhiteBoard = ({ subject, onSubmitClick, postItBig }) => {
+const WhiteBoard = ({ subject, onSubmitClick, postItBig, roomId }) => {
   const [ideas, setIdeas] = useState([]);
   const token = localStorage.getItem('accessToken'); // 인증 토큰 가져오기
   const step = useSelector((state) => state.conferenceInfo.curStep); // Redux에서 currentStep 가져오기
   const [inputValue, setInputValue] = useState('');
   const votes = useSelector((state) => state.commentBoard.vote);
   const curIndex = useSelector(state => state.commentBoard.curIndex);
+
+  const roomIdHistory = roomId;
 
   const dispatch = useDispatch();
 
@@ -100,6 +103,7 @@ const WhiteBoard = ({ subject, onSubmitClick, postItBig }) => {
   const isStepOne = step === 'STEP_1';
   const isStepTwo = step === 'STEP_2';
   const isStepThree = step === 'STEP_3';
+  const isStepFour = step === 'STEP_4';
 
   return (
     <div className="WhiteBoard">
@@ -112,13 +116,18 @@ const WhiteBoard = ({ subject, onSubmitClick, postItBig }) => {
           <div className="WhiteBoard-header">
             <h2>No.{curIndex + 1} 아이디어 : {votes[curIndex]} </h2>
           </div>)}
-        {/* step이 'STEP_0'일 때 WhiteBoard-body와 WhiteBoard-footer를 숨김 */}
+        {(isStepFour) && (
+          <div className='WhiteBoard-header'>
+            <h2>{subject} 요약본</h2>
+          </div>
+        )}
       </div>
       <div className='middle-content'>
+        {/* step이 'STEP_0'일 때 WhiteBoard-body와 WhiteBoard-footer를 숨김 */}
         {(isStepOne || isStepTwo) && (
           <div className="WhiteBoard-body">
             <div className="idea-board">
-              <PostItTest postItBig={postItBig} />
+              <PostItTest />
             </div>
           </div>
         )}
@@ -126,6 +135,15 @@ const WhiteBoard = ({ subject, onSubmitClick, postItBig }) => {
           <div className="WhiteBoard-body">
             <div className="idea-board">
               <CommentBoard />
+            </div>
+          </div>
+        )}
+        {isStepFour && (
+          <div className='WhiteBoard-body'>
+            <div className='idea-board'>
+              <HistoryBoard
+                roomIdHistory={roomIdHistory}
+              />
             </div>
           </div>
         )}
