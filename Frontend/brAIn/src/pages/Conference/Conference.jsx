@@ -355,7 +355,7 @@ const Conference = () => {
       dispatch(updateReadyStatus(receivedMessage.curUser));
 
       // READY 한 사람 수 증가
-      setReadyCount((prevCount) => prevCount + 1);
+      setReadyCount(readyCount + 1);
 
       // AI 준비 상태 설정을 3초 지연
       setTimeout(() => {
