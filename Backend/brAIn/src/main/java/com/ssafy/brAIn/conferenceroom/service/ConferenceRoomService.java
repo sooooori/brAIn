@@ -285,8 +285,10 @@ public class ConferenceRoomService {
         }
 
         // Step 7: AI를 이용한 전체 요약본 생성 및 추가
-        String summary = aiService.makeSummary(conferenceRoom.getThreadId(), conferenceRoom.getAssistantId());
+        String summary = aiService.makeSummary(conferenceRoom.getThreadId(), conferenceRoom.getAssistantId()).replace("\\n", System.lineSeparator());
         reportBuilder.append("Summary:\n").append(summary).append("\n\n\n");  // AI 요약본 추가
+        conferenceRoom.setConclusion(summary);
+        conferenceRoomRepository.save(conferenceRoom);
 
         // 최종 보고서 생성 및 캐시에 저장
         String reportContent = reportBuilder.toString();
