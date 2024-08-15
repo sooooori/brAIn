@@ -75,11 +75,11 @@ const Timer = ({ time, voteSent, passSent, nextIdea, timerStop, aiName, getAiPos
 
     }
 
-    else if (currentTime == 5 && curstep == 'STEP_1') {
-      if (curUser == aiName) {
-        getAiPostit();
-      }
-    }
+    // else if (currentTime == 5 && curstep == 'STEP_1') {
+    //   if (curUser == aiName) {
+    //     getAiPostit();
+    //   }
+    // }
 
     else if (currentTime <= 0 && curstep == 'STEP_1') {
       if (curUser === nickname) {

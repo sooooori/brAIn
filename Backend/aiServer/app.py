@@ -57,7 +57,7 @@ class EventHandler(AssistantEventHandler):
 def make_assistant(subject):
     assistant = client.beta.assistants.create(
         name="회의 참가자",
-        instructions= f"우리가 브레인 스토밍중인 주제는 {subject}입니다. 우리는 라운드로빈 방식으로 돌아가며 아이디어를 내고 있습니다",
+        instructions= f"우리가 브레인 스토밍중인 주제는 {subject}이야. 우리는 라운드로빈 방식으로 돌아가며 아이디어를 내고 있어",
         model="gpt-4o-mini",
     )
     print(json.dumps(json.loads(assistant.model_dump_json()), indent=2))
@@ -126,7 +126,7 @@ async def make_thread(request: SubjectRequest):
 
 @app.post('/postIt/add')
 async def add_postit(request: PostItRequest):
-    prompt = '다른 user의 아이디어입니다.' + request.postIt
+    prompt = '다른 user의 아이디어야.' + request.postIt
     client.beta.threads.messages.create(
         thread_id=request.threadId,
         role="user",
@@ -136,7 +136,7 @@ async def add_postit(request: PostItRequest):
 
 @app.post('/comment/add')
 async def add_comment(request: CommentRequest):
-    prompt = request.postIt + '에 대한 다른 user의 추가 코멘트입니다.' + request.comment
+    prompt = request.postIt + '에 대한 다른 user의 추가 코멘트야.' + request.comment
     client.beta.threads.messages.create(
         thread_id=request.threadId,
         role="user",
@@ -150,7 +150,12 @@ async def round_robin_make_idea(request: ThreadRequest):
     message = client.beta.threads.messages.create(
         thread_id=request.threadId,
         role="user",
-        content="너는 브레인 스토밍 회의에 참가한 사람이야. 주제에 관련한 아이디어를 하나만 추가로 내줘. 당신 또한 자신의 아이디어를 한 두문장으로만 나타내야해. 다른 사람의 아이디어에 코멘트를 달 필요는 없어. 다른 아이디어들과 겹치지 않게 부탁해. 이미 나온 내용이랑 너무 비슷하지 않았으면 좋겠어. 최대한 다른 내용을 작성해줘. 답변은 다른 user의 답변 맥락에 맞게 대답해줘. 답변은 핵심만 담아 한 문장으로 표현해줘. 최대한 평범하게 사람이 대화하는것 처럼 대답해줘."
+        content="너는 브레인 스토밍 회의에 참가한 사람이야. \
+            주제에 관련한 아이디어를 하나만 추가로 내줘. 당신 또한 자신의 아이디어를 핵심만 담아서 한 두문장으로만 나타내야해. \
+                다른 사람의 아이디어에 코멘트를 달 필요는 없어. 다른 아이디어들과 겹치지 않게 부탁해. \
+                    이미 나온 내용이랑 너무 비슷하지 않았으면 좋겠어. 최대한 다른 내용을 작성해줘. \
+                        앞의 사람들이 한 단어를 쓰려고 하지 않아도 돼. 쓰지 않으면 좋겠어.\
+                            최대한 평범하게 사람이 대화하는것 처럼 대답해줘."
     )
 
     with client.beta.threads.runs.stream(
@@ -164,6 +169,7 @@ async def round_robin_make_idea(request: ThreadRequest):
 
 @app.post('/summary/make')
 async def summary_ideas(request: ThreadRequest):
+    
     event_handler = EventHandler()
     message = client.beta.threads.messages.create(
         thread_id=request.threadId,
