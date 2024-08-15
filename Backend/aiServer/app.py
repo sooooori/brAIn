@@ -155,7 +155,8 @@ async def round_robin_make_idea(request: ThreadRequest):
                 다른 사람의 아이디어에 코멘트를 달 필요는 없어. 다른 아이디어들과 겹치지 않게 부탁해. \
                     이미 나온 내용이랑 너무 비슷하지 않았으면 좋겠어. 최대한 다른 내용을 작성해줘. \
                         앞의 사람들이 한 단어를 쓰려고 하지 않아도 돼. 쓰지 않으면 좋겠어.\
-                            최대한 평범하게 사람이 대화하는것 처럼 대답해줘."
+                            최대한 평범하게 사람이 대화하는것 처럼 대답해줘.\
+                                제발 공손하지 않게 해. 반말로."
     )
 
     with client.beta.threads.runs.stream(
@@ -192,8 +193,8 @@ async def run_client_operations(request: PersonaRequest):
     prompt = f"우리는 지금까지 나온 아이디어중에 {request.idea}라는 내용이 있습니다. 이러한 아이디어에 대한 사용자 페르소나를 만들어주겠습니까? 페르소나만 만들면 됩니다. 다른 산출물을 만들 필요는 없습니다. 나이, 직업, 관심사, 특징 및 행동을 정리하고 이로 인해 나올 수 있는 제품 및 방향성을 제공해주세요. 페르소나의 형식에 맞춰서 너가 전부 작성해주세요. 페르소나에 해당하는 내용만 보여주고 이외 내용은 포함하지 말아주세요."
     
     event_handler = EventHandler()
-    new_thread = client.beta.threads.create()
     def sync_operations():
+        new_thread = client.beta.threads.create()
         client.beta.threads.messages.create(
             thread_id=new_thread.id,
             role="user",
@@ -222,6 +223,7 @@ async def run_swot_analysis(request: SwotRequest):
     event_handler = EventHandler()
 
     def sync_operations():
+        new_thread = client.beta.threads.create()
         client.beta.threads.messages.create(
             thread_id=new_thread.id,
             role="user",
