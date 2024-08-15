@@ -58,7 +58,7 @@
   display: flex;
   flex-direction: column; /* 수직 정렬 */
   align-items: center; /* 가운데 정렬 */
-  gap: 50px; /* 요소 간 간격 */
+  gap: 35px; /* 요소 간 간격 */
   flex-shrink: 0; /* 패널 크기 유지 */
 }
 
@@ -83,20 +83,21 @@
 .action-buttons-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px; /* 버튼 간격을 줄여서 공간을 확보 */
-  max-width: 90%; /* 전체 버튼 컨테이너의 최대 너비를 설정하여 공간을 조절 */
+  gap: 5px; /* 버튼 간격 */
+  max-width: 100%; /* 최대 너비를 100%로 설정 */
   margin: 0 auto; /* 중앙 정렬 */
 }
 
+/* 버튼 래퍼 */
 .action-button-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1 1 30%; /* 버튼이 한 줄에 3개 배치되도록 설정, STEP_3일 때 */
+  flex: 1 1 48%; /* 버튼이 한 줄에 2개 배치되도록 설정, 여유 공간을 줄여 간격 최소화 */
 }
 
+/* 버튼 텍스트 스타일 */
 .action-button-wrapper p {
-  margin-top: 3px;
   font-size: large;
   font-weight: bold;
   text-align: center;
@@ -105,7 +106,7 @@
 
 /* STEP_3일 때: 버튼 2개씩 한 줄에 배치 */
 .action-buttons-container.two-per-line .action-button-wrapper {
-  flex: 1 1 45%; /* 버튼이 두 줄에 걸쳐 2개씩 배치되도록 설정 */
+  flex: 1 1 48%; /* 버튼이 두 줄에 걸쳐 2개씩 배치되도록 설정 */
 }
 
 /* STEP_3이 아닐 때: 버튼 3개씩 한 줄에 배치 */
@@ -115,8 +116,8 @@
 
 /* 전체 버튼 스타일 */
 .action-buttons-container Button {
-  width: 50px; /* 버튼 너비 조정 */
-  height: 50px; /* 버튼 높이 조정 */
+  width: 60px; /* 버튼 너비 */
+  height: 60px; /* 버튼 높이 */
   display: flex;
   align-items: center; /* 버튼 내 아이콘 중앙 정렬 */
   justify-content: center; /* 버튼 내 아이콘 중앙 정렬 */
@@ -124,7 +125,7 @@
   border: 2px solid #8a2be2; /* 보라색 테두리 */
   border-radius: 8px; /* 둥근 모서리 */
   cursor: pointer; /* 커서 포인터로 변경 */
-  margin: 5px; /* 버튼 간 여백 */
+  margin: 3px; /* 버튼 간 여백 */
   color: black;
 }
 

@@ -103,6 +103,7 @@
   margin-left: 10px; /* 버튼과 코드 사이의 간격 */
   min-width: 150px; /* 최소 너비를 설정하여 Copied! 메시지에도 크기 유지 */
   height: 45px;
+  font-weight: bold;
 }
 
 .waiting-modal-code {
