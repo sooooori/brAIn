@@ -7,12 +7,12 @@ import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
+import com.ssafy.brAIn.roundpostit.service.RoundPostItService;
 import com.ssafy.brAIn.stomp.dto.*;
-import com.ssafy.brAIn.stomp.request.RequestGroupPost;
-import com.ssafy.brAIn.stomp.request.RequestPass;
-import com.ssafy.brAIn.stomp.request.RequestStep;
+import com.ssafy.brAIn.stomp.request.*;
 import com.ssafy.brAIn.stomp.response.*;
 import com.ssafy.brAIn.stomp.service.MessageService;
+import com.ssafy.brAIn.util.RedisUtils;
 import com.ssafy.brAIn.vote.dto.VoteResponse;
 import com.sun.jdi.request.StepRequest;
 import org.springframework.amqp.core.MessagePostProcessor;
@@ -28,6 +28,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,16 +43,20 @@ public class MessageController {
     private final JWTUtilForRoom jwtUtilForRoom;
     private final AIService aiService;
     private final ConferenceRoomService conferenceRoomService;
+    private final RedisUtils redisUtils;
+    private final RoundPostItService roundPostItService;
 
     public MessageController(RabbitTemplate rabbitTemplate,
                              MessageService messageService,
                              JWTUtilForRoom jwtUtilForRoom,
-                             AIService aiService, ConferenceRoomService conferenceRoomService) {
+                             AIService aiService, ConferenceRoomService conferenceRoomService, RedisUtils redisUtils, RoundPostItService roundPostItService) {
         this.rabbitTemplate = rabbitTemplate;
         this.messageService = messageService;
         this.jwtUtilForRoom = jwtUtilForRoom;
         this.aiService = aiService;
         this.conferenceRoomService = conferenceRoomService;
+        this.redisUtils = redisUtils;
+        this.roundPostItService = roundPostItService;
     }
 
 
@@ -62,7 +67,11 @@ public class MessageController {
 
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
-        System.out.println(nickname+"님이 포스트잇을 제출했습니다.");
+
+        String curUser=messageService.getCurUser(Integer.parseInt(roomId));
+        if(!curUser.equals(nickname)) {
+            throw new AuthenticationCredentialsNotFoundException("자신의 차례에만 제출할 수 있습니다.");
+        }
         ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId);
         aiService.addPostIt(groupPost.getContent(), cr.getThreadId());
 
@@ -78,7 +87,7 @@ public class MessageController {
 
         //만약 다음 사람이 ai라면 추가적인 로직 필요
         String nextUser=messageService.NextOrder(Integer.parseInt(roomId),nickname);
-        messageService.updateCurOrder(Integer.parseInt(roomId),nextUser);
+        //messageService.updateCurOrder(Integer.parseInt(roomId),nextUser);
 
         boolean curUserIsLast=messageService.isLastOrder(Integer.parseInt(roomId),nickname);
 
@@ -95,6 +104,7 @@ public class MessageController {
         }
 
         messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,nextUser);
+
         //messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
         ResponseGroupPost aiResponseGroupPost=makeResponseGroupPost(aiGroupPost,Integer.parseInt(roomId),nextUser);
         rabbitTemplate.convertAndSend("amq.topic","room." + roomId, aiResponseGroupPost);
@@ -103,7 +113,7 @@ public class MessageController {
 
     private ResponseGroupPost makeResponseGroupPost(RequestGroupPost groupPost,Integer roomId,String nickname) {
         String nextUser=messageService.NextOrder(roomId,nickname);
-
+        messageService.updateCurOrder(roomId,nextUser);
         if (messageService.isLastOrder(roomId, nickname)) {
             System.out.println("마지막 사람만 이곳에 와야한다.");
 
@@ -173,7 +183,6 @@ public class MessageController {
     @MessageMapping("start.conferences.{roomId}")
     public void startConference(@DestinationVariable String roomId, StompHeaderAccessor accessor)  {
         String authorization = accessor.getFirstNativeHeader("Authorization");
-        System.out.println(authorization);
         String role=jwtUtilForRoom.getRole(authorization);
         System.out.println(role);
         if (!role.equals("CHIEF")) {
@@ -184,17 +193,25 @@ public class MessageController {
                 .map(Object::toString)
                 .toList();
 
+        for(String user:users){
+            System.out.println(user);
+        }
+
         //초기화
         messageService.initUserState(Integer.parseInt(roomId));
 
         //0단계 부터  시작.
         ConferenceRoom conferenceRoom = conferenceRoomService.findByRoomId(roomId).updateStep(Step.STEP_0);
-//        MessagePostProcessor messagePostProcessor = message -> {
-//            message.getMessageProperties().setHeader("Authorization", "회의 토큰");
-//            return message;
-//        };
+        conferenceRoomService.save(conferenceRoom);
 
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users));
+        // Redis에서 AI 닉네임 가져오기
+        String aiNickname = redisUtils.getAINickname(roomId);
+
+        // AI 닉네임을 로그로 확인하거나, 필요시 다른 로직에 사용
+        System.out.println("AI Nickname: " + aiNickname);
+
+
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new StartMessage(MessageType.START_CONFERENCE,users,aiNickname));
 
     }
 
@@ -216,16 +233,17 @@ public class MessageController {
     }
 
     //유저 준비 완료
-    @MessageMapping("state.user.{roomId}")
+    @MessageMapping("state.user.ready.{roomId}")
     public void readyState(@DestinationVariable String roomId, StompHeaderAccessor accessor) {
         String token=accessor.getFirstNativeHeader("Authorization");
         String nickname=jwtUtilForRoom.getNickname(token);
 
+        messageService.updateUserState(Integer.parseInt(roomId), nickname, UserState.READY);
 
+        // Redis에서 AI 닉네임 가져오기
+        String aiNickname = redisUtils.getAINickname(roomId);
 
-        messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.READY);
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY,nickname));
-
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseUserState(UserState.READY, nickname, aiNickname));
     }
 
     //유저 답변 패스(테스트 완)
@@ -249,9 +267,12 @@ public class MessageController {
                 return;
             }
             messageService.initUserState(Integer.parseInt(roomId));
+            messageService.updateCurOrder(Integer.parseInt(roomId),nextMember);
+            rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember, pass.getCurRound()+1));
+            return;
         }
         messageService.updateCurOrder(Integer.parseInt(roomId),nextMember);
-        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember));
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new ResponseRoundState(UserState.PASS,nickname,nextMember, pass.getCurRound()));
 
         //다음 사람이 ai가 아니라면 종료
         if(!messageService.isAi(Integer.parseInt(roomId),nextMember))return;
@@ -307,13 +328,19 @@ public class MessageController {
         }
 
         List<String> usersInRoom = messageService.getUsersInRoom(Integer.parseInt(roomId));
+        String ai=messageService.getAI(Integer.parseInt(roomId));
         for(int i=0;i<usersInRoom.size();i++){
+            if(usersInRoom.get(i).equals(ai))continue;
             List<String> step3ForUser=new ArrayList<>();
             for(int j=0;j<votes.size();j++){
                 step3ForUser.add(votes.get((i+j)%votes.size()).getPostIt());
             }
             Step3ForUser step3ForUserResponse=new Step3ForUser(MessageType.STEP3_FOR_USER,step3ForUser);
             System.out.println(usersInRoom.get(i));
+            for(int j=0;j<step3ForUser.size();j++){
+                System.out.print(step3ForUser.get(j)+" ");
+            }
+            System.out.println();
             rabbitTemplate.convertAndSend("room."+roomId+"."+usersInRoom.get(i),step3ForUserResponse);
         }
 
@@ -334,5 +361,42 @@ public class MessageController {
         ResponseMiddleVote voteResults = messageService.getFinalVote(Integer.parseInt(roomId), round);
         // 결과를 RabbitMQ로 전송(Subscribe)
         rabbitTemplate.convertAndSend("amq.topic", "room." + roomId, voteResults);
+    }
+
+    // 최종 결과물 반환 (임시)
+
+
+    @MessageMapping("next.idea.{roomId}")
+    public void nextIdea(@DestinationVariable String roomId, StompHeaderAccessor accessor, @RequestBody CurIndex curIndex) {
+        String token = accessor.getFirstNativeHeader("Authorization");
+
+        List<RoundPostIt> roundPostIts=roundPostItService.findByRoomId(Integer.parseInt(roomId)).stream()
+                        .filter(RoundPostIt::isLast9).toList();
+
+        if(roundPostIts.size()-1==curIndex.getCurIndex()){
+            rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new NextIdea(MessageType.END_IDEA));
+            return;
+        }
+        rabbitTemplate.convertAndSend("amq.topic","room."+roomId,new NextIdea(MessageType.NEXT_IDEA));
+
+    }
+
+    @MessageMapping("get.aiIdea.{roomId}")
+    public void getAiIdea(@DestinationVariable String roomId, RequestAi requestAi) {
+
+        System.out.println("ai가 메시지 보냄?");
+        String aiPostIt=messageService.receiveAImessage(Integer.parseInt(roomId));
+        System.out.println("aiPostIt:"+aiPostIt);
+
+        String ai=messageService.getAI(Integer.parseInt(roomId));
+        RequestGroupPost aiGroupPost=null;
+        aiGroupPost=new RequestGroupPost(requestAi.getRound(),aiPostIt);
+
+
+        messageService.sendPost(Integer.parseInt(roomId),aiGroupPost,ai);
+
+        //messageService.updateUserState(Integer.parseInt(roomId),nickname,UserState.SUBMIT);
+        ResponseGroupPost aiResponseGroupPost=makeResponseGroupPost(aiGroupPost,Integer.parseInt(roomId),ai);
+        rabbitTemplate.convertAndSend("amq.topic","room." + roomId, aiResponseGroupPost);
     }
 }

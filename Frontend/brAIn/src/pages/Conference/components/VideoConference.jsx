@@ -18,6 +18,7 @@ const VideoConference = () => {
     const [currentVideoDevice, setCurrentVideoDevice] = useState(undefined);
     const OV = new OpenVidu();
     const customAxios = axios.create();
+
     const username = "OPENVIDUAPP";
     const password = "ssafybrain"; // Replace with your actual OPENVIDU_SECRET
     const credentials = btoa(`${username}:${password}`);
@@ -161,39 +162,39 @@ const VideoConference = () => {
         return await createToken(sessionId);
     }
 
-async function createSession(sessionId) {
-    try {
-        console.log(headers)
-        const response = await customAxios.post(
-            `${APPLICATION_SERVER_URL}/sessions`,
-            { customSessionId: sessionId },
-            { headers }
-        );
-        return response.data.sessionId;
-    } catch (error) {
-        console.error('Error creating session:', error);
-        return sessionId;
+    async function createSession(sessionId) {
+        try {
+            console.log(headers)
+            const response = await customAxios.post(
+                `${APPLICATION_SERVER_URL}/sessions`,
+                { customSessionId: sessionId },
+                { headers }
+            );
+            return response.data.sessionId;
+        } catch (error) {
+            console.error('Error creating session:', error);
+            return sessionId;
+        }
     }
-}
 
-// Example function to create a token
-async function createToken(sessionId) {
-    try {
-        console.log(headers)
-        const response = await customAxios.post(
-            `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connection`,
-            {},
-            { headers }
-        );
-        return response.data.token;
-    } catch (error) {
-        console.error('Error creating token:', error);
+    // Example function to create a token
+    async function createToken(sessionId) {
+        try {
+            console.log(headers)
+            const response = await customAxios.post(
+                `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connection`,
+                {},
+                { headers }
+            );
+            return response.data.token;
+        } catch (error) {
+            console.error('Error creating token:', error);
+        }
     }
-}
 
     return (
         <div className="container">
-            {!session ? (
+            {/* {!session ? (
                 <div id="join">
                     <div id="img-div">
                         <img src="resources/images/openvidu_grey_bg_transp_cropped.png" alt="OpenVidu logo" />
@@ -207,29 +208,23 @@ async function createToken(sessionId) {
                         </form>
                     </div>
                 </div>
-            ) : null}
-
+            ) : null} */}
+            {/* ddd/safasfasf */}
             {session ? (
-                <div id="session">
-                    <div id="session-header">
-                        <h1 id="session-title">{mySessionId}</h1>
-                        <button className="btn btn-large btn-danger" onClick={leaveSession}>Leave session</button>
-                    </div>
+                <div id="session" style={{ width: '100%', overflowX: 'auto' }}>
+                    <div id="video-container" className="col-md-12" style={{ display: 'flex', flexDirection: 'row', overflowX: 'auto', marginTop: '40px' }}>
+                        {mainStreamManager ? (
+                            <div id="main-video" className="stream-container">
+                                <UserVideoComponent streamManager={mainStreamManager} />
+                            </div>
+                        ) : null}
 
-                    {mainStreamManager ? (
-                        <div id="main-video" className="col-md-6">
-                            <UserVideoComponent streamManager={mainStreamManager} />
-                        </div>
-                    ) : null}
-
-                    <div id="video-container" className="col-md-12">
                         {subscribers.map((sub, i) => (
-                            <div key={i} className="stream-container" onClick={() => handleMainVideoStream(sub)}>
+                            <div key={i} className="stream-container" style={{ display: 'inline-block' }}>
                                 <UserVideoComponent streamManager={sub} />
                             </div>
                         ))}
                     </div>
-
 
                 </div>
             ) : null}

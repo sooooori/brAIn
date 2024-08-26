@@ -7,6 +7,8 @@ const MemberList = () => {
     const curUser = useSelector((state) => state.user.currentUser);
     const nickname = useSelector((state) => state.user.nickname);
     const passStatus = useSelector((state) => state.user.passStatus);
+    const readyStatus = useSelector((state) => state.user.readyStatus);
+    const step = useSelector(state => state.conferenceInfo.curStep);
 
     const [currentPage, setCurrentPage] = useState(0);
     const usersPerPage = 6;
@@ -14,6 +16,10 @@ const MemberList = () => {
     useEffect(() => {
         console.log('Pass Status:', passStatus);
       }, [passStatus]);
+
+    useEffect(() => {
+        console.log('Ready Status', readyStatus);
+    }, [readyStatus]);
 
     const updateCurrentPage = useCallback(() => {
         if (users.length > 0 && curUser) {
@@ -60,12 +66,13 @@ const MemberList = () => {
                         <div
                             key={user.id || user.nickname}
                             className={`profile ${
-                                user.nickname === curUser ? 'highlighted' : ''}`}
+                                (user.nickname === curUser) && (step === 'STEP_1' || step === 'STEP_2') ? 'highlighted' : ''}`}
                         >
-                            {user.nickname === nickname && <p>Me</p>}
-                            {passStatus[user.nickname] && (
+                            {passStatus[user.nickname] ? (
                                 <span className="pass-indicator">PASS</span>
-                            )}
+                            ) : readyStatus[user.nickname] ? (
+                                <span className="ready-indicator">READY</span>
+                            ) : null}
 
                             <img
                                 src={`https://brain-content-profile.s3.ap-northeast-2.amazonaws.com/conference-image/${user.nickname.split(' ').pop()}.png`}

@@ -43,12 +43,24 @@
     align-items: center;
 }
 
-/* Adjust logo image size */
 .logo-img {
-    width: 80px;
+    width: 60px;
     height: auto;
     margin-right: 0.5rem;
-}
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease-in-out; /* Smooth transition for opacity */
+  }
+  
+  .logo-img.loaded {
+    opacity: 1; /* Visible when loaded */
+  }
+  
+  .logo-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 
 /* Navbar links styling */
 .navbar-links {
@@ -99,8 +111,8 @@
     background-color: darkorange;
 }
 
-.modal-content {
-    width: 250px; /* Increase the width of the modal */
+.profile-modal-content {
+    width: 300px; /* Increase the width of the modal */
 }
 
 /* Profile image styling */
@@ -121,7 +133,7 @@
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    padding: 1rem;
+    padding: 10;
     width: 250px; /* Increase the width of the popup */
     position: absolute;
     z-index: 1001;
@@ -165,6 +177,7 @@
     margin-top: 0;
     display: flex;
     justify-content: space-between;
+    text-align: center;
 }
 
 .user-buttons .button-profile-update, 

@@ -8,6 +8,9 @@ export const UPDATE_TIMER = 'UPDATE_TIMER';
 export const RESET_STATE = 'RESET_STATE';
 export const UPDATE_PASS_STATUS = 'UPDATE_PASS_STATUS';
 export const RESET_PASS_STATUS = 'RESET_PASS_STATUS';
+export const UPDATE_READY_STATUS = 'UPDATE_READY_STATUS';
+export const RESET_READY_STATUS = 'RESET_READY_STATUS';
+export const EXIT_USER='EXIT_USER';
 
 export const addUser = (user) => ({
     type: ADD_USER,
@@ -63,3 +66,42 @@ export const updatePassStatus = (nickname) => ({
 export const resetPassStatus = () => ({
     type: RESET_PASS_STATUS,
 });
+
+export const updateReadyStatus = (nickname) => ({
+    type: UPDATE_READY_STATUS,
+    payload: nickname,
+});
+
+export const resetReadyStatus = () => ({
+    type: RESET_READY_STATUS,
+});
+
+
+export const passStepUser = (stepPassUser) => async (dispatch, getState) => {
+    try {
+        const { client, roomId, round } = getState().conference;
+
+        if (client) {
+            // 1. 서버에 패스 정보를 전송합니다.
+            await client.publish({
+                destination: `/app/state.user.pass.${roomId}`,
+                headers: {
+                    Authorization: localStorage.getItem('roomToken'),
+                },
+                body: JSON.stringify({
+                    curRound: round,
+                    userNickname: stepPassUser, // 패스한 사용자의 닉네임
+                }),
+            });
+        }
+
+    } catch (error) {
+        console.error('Error during user pass:', error);
+        // 필요에 따라 오류 처리 로직을 추가할 수 있습니다.
+    }
+};
+
+export const exitUser=(exitUser,nextUser)=>({
+    type:EXIT_USER,
+    payload:{exitUser,nextUser}
+})

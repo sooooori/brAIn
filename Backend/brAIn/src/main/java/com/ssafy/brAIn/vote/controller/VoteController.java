@@ -1,7 +1,10 @@
 package com.ssafy.brAIn.vote.controller;
 
+import com.ssafy.brAIn.ai.service.AIService;
 import com.ssafy.brAIn.auth.jwt.JWTUtilForRoom;
+import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
+import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.service.MemberService;
 import com.ssafy.brAIn.util.RedisUtils;
@@ -31,6 +34,8 @@ public class VoteController {
     private final JWTUtilForRoom jwtUtilForRoom;
     private final MemberService memberService;
     private final RedisUtils redisUtils;
+    private final AIService aiService;
+    private final ConferenceRoomService conferenceRoomService;
 
     // 투표 결정(진행)
     @PostMapping
@@ -55,32 +60,44 @@ public class VoteController {
 
     // 타이머에 의해 투표 종료
     @PostMapping("/endByTimer")
-    public ResponseEntity<?> endVoteByTimer(@RequestBody VoteResultRequest voteResultRequest) {
-        voteService.endVoteByTimer(voteResultRequest);
+    public ResponseEntity<?> endVoteByTimer(@RequestBody VoteResultRequest voteResultRequest,@RequestHeader HttpHeaders headers) {
+        String token = headers.getFirst("AuthorizationRoom");
+        if(token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        Optional<Member> member = memberService.findByEmail(jwtUtilForRoom.getUsername(token));
+        voteService.endVoteByTimer(voteResultRequest,member.get().getId());
         return new ResponseEntity<>("Vote Finished", HttpStatus.OK);
     }
 
     // 투표 결과 집계
     @GetMapping("/results")
-    public ResponseEntity<List<VoteResponse>> voteResults(@RequestParam Integer roomId, @RequestParam String step) {
-
+    public ResponseEntity<List<VoteResponse>> voteResults(@RequestParam Integer roomId, @RequestParam String step, @RequestHeader HttpHeaders headers) {
+        String token = headers.getFirst("AuthorizationRoom");
+        if(token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
         List<VoteResponse> results = voteService.getVoteResults(roomId, step);
         for(VoteResponse voteResponse: results) {
             System.out.println(voteResponse);
         }
-
+        ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId+"");
+        //주석
+        //주주석
         VoteResultRequest voteResultRequest = new VoteResultRequest(roomId, step);
-        voteService.saveTop9RoundResults(results, voteResultRequest);
+        if(jwtUtilForRoom.getRole(token).equals("CHIEF")){
+            voteService.saveTop9RoundResults(results, voteResultRequest, roomId);
+        }
         return ResponseEntity.ok().body(results);
     }
 
     // 투표 결과 db 저장
-    @PostMapping("/saveResults")
-    public ResponseEntity<String> saveVoteResults(@RequestBody VoteResultRequest voteResultRequest) {
-        List<VoteResponse> results = voteService.getVoteResults(voteResultRequest.getConferenceId(), voteResultRequest.getStep());
-        voteService.saveTop9RoundResults(results, voteResultRequest);
-        return new ResponseEntity<>("Vote results saved successfully", HttpStatus.OK);
-    }
+//    @PostMapping("/saveResults")
+//    public ResponseEntity<String> saveVoteResults(@RequestBody VoteResultRequest voteResultRequest) {
+//        List<VoteResponse> results = voteService.getVoteResults(voteResultRequest.getConferenceId(), voteResultRequest.getStep());
+//        voteService.saveTop9RoundResults(results, voteResultRequest);
+//        return new ResponseEntity<>("Vote results saved successfully", HttpStatus.OK);
+//    }
 
     // Step 3
 

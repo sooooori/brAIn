@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.ssafy.brAIn.postit.entity.PostItKey;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ public class RedisUtils {
     @Qualifier("redisTemplate1")
     private final RedisTemplate<String, Object> redisTemplate1;
 
+    @Value("${spring.data.redis.expiretime}")
+    private Long redisExpireTime;
+
     public RedisUtils(RedisTemplate<String, Object> redisTemplate, RedisTemplate<String, Object> redisTemplate1) {
         this.redisTemplate = redisTemplate;
         this.redisTemplate1 = redisTemplate1;
@@ -35,7 +39,7 @@ public class RedisUtils {
     public void setData(String key,String content,Long expireTime) {
 
         redisTemplate.opsForList().rightPush(key, content);
-        redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
+        redisTemplate.expire(key, redisExpireTime, TimeUnit.SECONDS);
     }
 
     public void removeDataInList(String key,String content) {
@@ -49,6 +53,8 @@ public class RedisUtils {
     public void setSortedSet(String key, int score, String value) {
         ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
         zSetOps.add(key, value, score);
+        redisTemplate.expire(key, redisExpireTime, TimeUnit.SECONDS);
+
     }
 
     public List<Object> getSortedSet(String key) {
@@ -73,18 +79,22 @@ public class RedisUtils {
     }
 
     public void updateValue(String key, Object newValue) {
+
         redisTemplate.opsForValue().set(key, newValue);
+        redisTemplate.expire(key, redisExpireTime, TimeUnit.SECONDS);
+
     }
 
     public void setDataInSet(String key, Object newValue,Long expireTime) {
         redisTemplate.opsForSet().add(key, newValue);
-        redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
+        redisTemplate.expire(key, redisExpireTime, TimeUnit.SECONDS);
 
     }
 
     public void setDataInSetSerialize(String key, Object newValue,Long expireTime) {
         redisTemplate1.opsForSet().add(key, newValue);
-        redisTemplate1.expire(key, expireTime, TimeUnit.SECONDS);
+        redisTemplate.expire(key, redisExpireTime, TimeUnit.SECONDS);
+
     }
 
     public void removeDataInListSerialize(String key,Object content) {
@@ -104,7 +114,9 @@ public class RedisUtils {
     }
 
     public void save(String key, String value) {
+
         redisTemplate.opsForValue().set(key, value);
+        redisTemplate.expire(key, redisExpireTime, TimeUnit.SECONDS);
     }
 
 
@@ -112,6 +124,8 @@ public class RedisUtils {
     public void incrementSortedSetScore(String key, double score, String value) {
         ZSetOperations<String, Object> zSetOperations = redisTemplate.opsForZSet();
         zSetOperations.incrementScore(key, value, score);
+        redisTemplate.expire(key, redisExpireTime, TimeUnit.SECONDS);
+
     }
 
     public Set<String> keys(String pattern) {
@@ -177,7 +191,9 @@ public class RedisUtils {
                     PostItKey myObject = (PostItKey) obj;
                     if (((PostItKey)newValue).getKey().equals(myObject.getKey())) { // 식별자로 확인
                         redisTemplate1.opsForSet().remove(key,1, obj);
-                        redisTemplate1.opsForSet().add(key, newValue, TimeUnit.SECONDS);
+                        redisTemplate1.opsForSet().add(key, newValue);
+                        redisTemplate1.expire(key, redisExpireTime, TimeUnit.SECONDS);
+
                         break;
                     }
                 }
@@ -203,6 +219,35 @@ public class RedisUtils {
             //System.out.println("Sorted Set is empty or key does not exist.");
             throw new RuntimeException("Sorted Set is empty or key does not exist.");
         }
-
     }
+
+    public String getAINickname(String roomId) {
+        String key = roomId + ":ai:nickname";
+        return getData(key);
+    }
+
+    public void incr(String key) {
+        redisTemplate.opsForValue().increment(key);
+    }
+
+    public Double getFirstElementFromSortedSet(String key) {
+        ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
+        // 정렬된 집합의 첫 번째 요소를 가져오기 위해 rangeWithScores 사용
+        Set<ZSetOperations.TypedTuple<Object>> result = zSetOps.rangeWithScores(key, 0, 0);
+
+        if (result != null && !result.isEmpty()) {
+            ZSetOperations.TypedTuple<Object> firstElement = result.iterator().next();
+            Object value = firstElement.getValue();
+            Double score = firstElement.getScore();
+
+//        System.out.println("Value: " + value);
+//        System.out.println("Score: " + score);
+            return score;
+        } else {
+            // System.out.println("Sorted Set is empty or key does not exist.");
+            throw new RuntimeException("Sorted Set is empty or key does not exist.");
+        }
+    }
+
+
 }

@@ -14,6 +14,7 @@ services:
       - brain-net
 
   aiserver:
+    image: brAIn/aiserver
     build: ./Backend/aiServer
     ports:
       - "5000:5000"
@@ -23,6 +24,7 @@ services:
       - brain-net
 
   rabbitmq:
+    image: brAIn/rabbitmq
     build:
       context: .
       dockerfile: Dockerfile
@@ -44,6 +46,7 @@ services:
       - brain-net
 
   frontend:
+    image: brAIn/frontend
     build:
       context: ./Frontend/brAIn
     ports:
@@ -52,6 +55,7 @@ services:
       - brain-net
 
   backend:
+    image: brAIn/backend
     build:
       context: ./Backend/brAIn
     environment:
@@ -66,6 +70,7 @@ services:
       - "8080:8080"    # 스프링부트 포트 (필요에 따라 수정)
     networks:
       - brain-net
+    restart: always
 
 networks:
   brain-net:

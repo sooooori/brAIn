@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './ConferenceNavbar.css';
 import { Avatar, Popover, Box, CircularProgress } from '@mui/material';
 import exitIcon from '../../assets/svgs/exit_conference.svg'; // SVG 경로 수정
@@ -7,10 +7,14 @@ import settingsIcon from '../../assets/svgs/setting.svg'; // SVG 경로 수정
 import Button from '../Button/Button';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import {resetNotes} from '../../features/note/noteSlice'
+import { resetItems } from '../../actions/votedItemAction';
 
-const ConferenceNavbar = ({ secureId }) => {
+const ConferenceNavbar = ({client}) => {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const { secureId } = useParams();
   const [conferenceCode, setConferenceCode] = useState(null);
   const [conferenceSubject, setConferenceSubject] = useState(null);
   const [isSharing, setIsSharing] = useState(false);
@@ -18,7 +22,7 @@ const ConferenceNavbar = ({ secureId }) => {
   const [logoLoaded, setLogoLoaded] = useState(false);
   const open = Boolean(anchorEl);
   const id = open ? 'profile-popover' : undefined;
-
+  const { secureId: routeSecureId } = useParams();
   const role = useSelector((state) => state.conference.role);
   const user = useSelector((state) => state.auth.user);
 
@@ -27,7 +31,7 @@ const ConferenceNavbar = ({ secureId }) => {
       try {
         const token = localStorage.getItem('accessToken');
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/v1/conferences`, {
-          params: { secureId:secureId },
+          params: { secureId:routeSecureId },
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -40,7 +44,7 @@ const ConferenceNavbar = ({ secureId }) => {
     };
 
     fetchData();
-  }, [secureId]);
+  }, [routeSecureId]);
 
   const handleShareCode = () => {
     navigator.clipboard.writeText(conferenceCode);
@@ -57,7 +61,12 @@ const ConferenceNavbar = ({ secureId }) => {
   };
 
   const handleLeaveConference = () => {
-    navigate('/');
+
+    dispatch(resetNotes());
+    dispatch(resetItems());
+    navigate('/'); // Redirect to Home page
+
+    
   };
 
   const handleSettings = () => {
@@ -70,11 +79,11 @@ const ConferenceNavbar = ({ secureId }) => {
         {!logoLoaded && <CircularProgress size={24} className="logo-spinner" />}
         <img
           className={`logo-img ${logoLoaded ? 'loaded' : ''}`}
-          src="images/brAIn_2.png"
+          src="/images/brAIn_2.png"
           alt="brAIn"
           onLoad={() => setLogoLoaded(true)}
         />
-        <span>BrAIn</span>
+        <span className='service-name'>BrAIn</span>
       </div>
       <div className="conference-navbar-info">
         <h2 className="conference-navbar-subject">{conferenceSubject}</h2>

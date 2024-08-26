@@ -1,8 +1,10 @@
 package com.ssafy.brAIn.vote.service;
 
+import com.ssafy.brAIn.ai.service.AIService;
 import com.ssafy.brAIn.conferenceroom.entity.ConferenceRoom;
 import com.ssafy.brAIn.conferenceroom.entity.Step;
 import com.ssafy.brAIn.conferenceroom.repository.ConferenceRoomRepository;
+import com.ssafy.brAIn.conferenceroom.service.ConferenceRoomService;
 import com.ssafy.brAIn.exception.BadRequestException;
 import com.ssafy.brAIn.roundpostit.entity.RoundPostIt;
 import com.ssafy.brAIn.roundpostit.repository.RoundPostItRepository;
@@ -33,7 +35,11 @@ public class VoteService {
     private final RoundPostItRepository roundPostItRepository;
     private final ConferenceRoomRepository conferenceRoomRepository;
 
+
     private final RedisUtils redisUtils;
+
+    private final ConferenceRoomService conferenceRoomService;
+    private final AIService aiService;
 
 
     // 투표 진행 - 임시 저장
@@ -81,28 +87,25 @@ public class VoteService {
 
     // 타이머에 의해 투표 종료
     @Transactional
-    public void endVoteByTimer(VoteResultRequest voteResultRequest) {
-        String tempVotePattern = voteResultRequest.getConferenceId() + ":tempVotes:" + voteResultRequest.getStep() + ":*";
+    public void endVoteByTimer(VoteResultRequest voteResultRequest,Integer memberId) {
+        String tempVoteKey = voteResultRequest.getConferenceId() + ":tempVotes:" + voteResultRequest.getStep() + ":"+memberId;
         String voteKey = voteResultRequest.getConferenceId() + ":votes:" + voteResultRequest.getStep();
 
-        Set<String> tempVoteKeys = redisUtils.keys(tempVotePattern);
 
         // 모든 사용자별 임시 데이터를 실제 키로 이동
-        for (String tempVoteKey : tempVoteKeys) {
-            List<VoteResponse> tempResults = redisUtils.getSortedSetWithScores(tempVoteKey);
-            for (VoteResponse result : tempResults) {
-                redisUtils.incrementSortedSetScore(voteKey, result.getScore(), result.getPostIt());
-            }
 
-            // 임시 데이터 삭제
-            //redisUtils.deleteKey(tempVoteKey);
+        List<VoteResponse> tempResults = redisUtils.getSortedSetWithScores(tempVoteKey);
+        for (VoteResponse result : tempResults) {
+//                    System.out.println(result.getScore()+","+result.getPostIt());
+            redisUtils.incrementSortedSetScore(voteKey, result.getScore(), result.getPostIt());
         }
-        if(redisUtils.isKeyExists(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total")){
-            redisUtils.save(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total",
-                    (Integer.parseInt(redisUtils.getData(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total"))+1)+"");
-        }else{
-            redisUtils.save(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total",1+"");
-        }
+
+                // 임시 데이터 삭제
+                //redisUtils.deleteKey(tempVoteKey);
+
+
+        redisUtils.incr(voteResultRequest.getConferenceId()+":votes:"+voteResultRequest.getStep()+":total");
+
 
         log.info("Vote Finished");
     }
@@ -135,7 +138,7 @@ public class VoteService {
 
     // 투표 결과를 DB에 저장
     @Transactional
-    public void saveTop9RoundResults(List<VoteResponse> votes, VoteResultRequest voteResultRequest) throws ServerErrorException {
+    public void saveTop9RoundResults(List<VoteResponse> votes, VoteResultRequest voteResultRequest, Integer roomId) throws ServerErrorException {
         ConferenceRoom conferenceRoom = conferenceRoomRepository.findById(voteResultRequest.getConferenceId())
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 회의실 ID"));
 
@@ -145,13 +148,17 @@ public class VoteService {
                         log.info("Creating new RoundPostIt for content: {}", voteResponse.getPostIt());
                         return roundPostItRepository.save(
                                 RoundPostIt.builder()
-                                        .content(voteResponse.getPostIt())
                                         .conferenceRoom(conferenceRoom)
+                                        .content(voteResponse.getPostIt())
                                         .build()
                         );
                     });
 
             roundPostIt.selectedNine();
+            //ConferenceRoom cr = conferenceRoomService.findByRoomId(roomId+"");
+            //String persona = aiService.personaMake(voteResponse.getPostIt(), cr.getThreadId(), cr.getAssistantId()).block();
+            //roundPostIt.setPersona(persona);
+
             roundPostItRepository.save(roundPostIt);
 
             Optional<Vote> existingVote = voteRepository.findByRoundPostItAndConferenceRoom(roundPostIt, conferenceRoom);
@@ -255,4 +262,10 @@ public class VoteService {
             }
         }
     }
+
+    public boolean existsMiddleVoteInDB(Integer conferenceId) {
+        return voteRepository.existsByConferenceRoomId(conferenceId);
+    }
+
+
 }

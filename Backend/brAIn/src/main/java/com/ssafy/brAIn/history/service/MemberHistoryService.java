@@ -11,6 +11,7 @@ import com.ssafy.brAIn.history.model.Status;
 import com.ssafy.brAIn.history.repository.MemberHistoryRepository;
 import com.ssafy.brAIn.member.entity.Member;
 import com.ssafy.brAIn.member.repository.MemberRepository;
+import com.ssafy.brAIn.member.service.MemberService;
 import com.ssafy.brAIn.s3.S3Service;
 import com.ssafy.brAIn.util.RandomNicknameGenerator;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class MemberHistoryService {
     private final MemberHistoryRepository memberHistoryRepository;
     private final MemberRepository memberRepository;
     private final S3Service s3Service;
+    private final MemberService memberService;
 
 
     public List<MemberHistory> getHistoryByRoomId(int roomId) {
@@ -115,5 +117,12 @@ public class MemberHistoryService {
     public String getProfileImageUrlForNickname(String nickname) {
 
         return s3Service.getProfileImageUrl(nickname);
+    }
+
+    public String getNicknameByEmail(String email,Integer roomId){
+        Member member=memberService.findByEmail(email).get();
+
+        MemberHistoryId memberHistoryId=new MemberHistoryId(member.getId(),roomId);
+        return memberHistoryRepository.findById(memberHistoryId).get().getNickName();
     }
 }

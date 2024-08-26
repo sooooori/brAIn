@@ -6,10 +6,7 @@ import com.ssafy.brAIn.util.CommonUtils;
 import com.ssafy.brAIn.util.MeetingUrlGenerator;
 import jakarta.persistence.*;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,7 +39,8 @@ public class ConferenceRoom {
     @Column(name = "is_end")
     private Boolean isEnd;
 
-    @Column(name = "conclusion")
+    @Setter
+    @Column(name = "conclusion", columnDefinition = "TEXT")
     private String conclusion;
 
     @Temporal(TemporalType.TIMESTAMP)

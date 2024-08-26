@@ -93,6 +93,23 @@ public class MessageService {
         return false;
     }
 
+    public boolean isFirstOrder(Integer roomId, String nickname) {
+        System.out.println("isFirstOrder:" + nickname);
+
+        // 현재 유저의 순서를 가져옴
+        int order = redisUtils.getScoreFromSortedSet(roomId + ":order:cur", nickname).intValue();
+
+        // 첫 번째 유저의 순서를 가져옴 (첫 번째 유저의 점수를 가져옴)
+        int firstOrder = redisUtils.getFirstElementFromSortedSet(roomId + ":order:cur").intValue();
+
+        // 현재 유저의 순서가 첫 번째 유저의 순서와 동일한지 확인
+        if (order == firstOrder) {
+            return true;
+        }
+        return false;
+    }
+
+
     //유저의 2/3가 패스하면 종료되야 함.
     public boolean isStep1EndCondition(Integer roomId) {
         AtomicInteger count= new AtomicInteger();
@@ -312,8 +329,11 @@ public class MessageService {
         ConferenceRoom conferenceRoom=conferenceRoomRepository.findById(roomId).get();
         String threadId = conferenceRoom.getThreadId();
         String assistantId=conferenceRoom.getAssistantId();
-        return aiService.makePostIt(threadId,assistantId);
-
+        String result = aiService.makePostIt(threadId,assistantId);
+        result = result.replace("\"", "");      // 직선 큰따옴표 제거
+        result = result.replace("\u201C", "");  // 왼쪽 큰따옴표 제거
+        result = result.replace("\u201D", "");  // 오른쪽 큰따옴표 제거
+        return result;
     }
 
     public boolean isAi(Integer roomId,String user) {
@@ -326,6 +346,10 @@ public class MessageService {
         return redisUtils.getSortedSet(key).stream()
                 .map(Object::toString)
                 .toList();
+    }
+
+    public String getAI(Integer roomId) {
+        return redisUtils.getData(roomId + ":ai:nickname");
     }
 
 }
