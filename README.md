@@ -28,7 +28,7 @@
  <tr>
     <td align="center"><a href="https://github.com/sooooori"><img src="https://avatars.githubusercontent.com/sooooori" width="130px;" alt=""></a></td>
     <td align="center"><a href="https://github.com/ChaMinHyeuk"><img src="https://avatars.githubusercontent.com/ChaMinHyeuk" width="130px;" alt=""></a></td>
-    <td align="center"><a href="https://github.com/ssafy11"><img src="https://avatars.githubusercontent.com/ssafy11" width="130px;" alt=""></a></td>
+    <td align="center"><a href="https://github.com/hozzun"><img src="https://avatars.githubusercontent.com/ssafy11" width="130px;" alt=""></a></td>
     <td align="center"><a href="https://github.com/Do1K"><img src="https://avatars.githubusercontent.com/Do1K" width="130px;" alt=""></a></td>
     <td align="center"><a href="https://github.com/kw99j10"><img src="https://avatars.githubusercontent.com/kw99j10" width="130px;" alt=""></a></td>
     <td align="center"><img src="https://avatars.githubusercontent.com/bardisue" width="130px;" alt=""></a></td>
@@ -44,7 +44,7 @@
   <tr>
     <td align="center"><a href="https://github.com/sooooori"><b>김상수</b></a></td>
     <td align="center"><a href="https://github.com/ChaMinHyeuk"><b>차민혁</b></a></td>
-    <td align="center"><a href="https://github.com/ssafy11"><b>김호준</b></a></td>
+    <td align="center"><a href="https://github.com/hozzun"><b>김호준</b></a></td>
     <td align="center"><a href="https://github.com/Do1K"><b>강도원</b></a></td>
     <td align="center"><a href="https://github.com/kw99j10"><b>정경원</b></a></td>
     <td align="center"><a href="https://github.com/bardisue"><b>박병준</b></a></td>
