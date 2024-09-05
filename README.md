@@ -28,7 +28,7 @@
  <tr>
     <td align="center"><a href="https://github.com/sooooori"><img src="https://avatars.githubusercontent.com/sooooori" width="130px;" alt=""></a></td>
     <td align="center"><a href="https://github.com/ChaMinHyeuk"><img src="https://avatars.githubusercontent.com/ChaMinHyeuk" width="130px;" alt=""></a></td>
-    <td align="center"><a href="https://github.com/hozzun"><img src="https://avatars.githubusercontent.com/ssafy11" width="130px;" alt=""></a></td>
+    <td align="center"><a href="https://github.com/hozzun"><img src="https://avatars.githubusercontent.com/hozzun" width="130px;" alt=""></a></td>
     <td align="center"><a href="https://github.com/Do1K"><img src="https://avatars.githubusercontent.com/Do1K" width="130px;" alt=""></a></td>
     <td align="center"><a href="https://github.com/kw99j10"><img src="https://avatars.githubusercontent.com/kw99j10" width="130px;" alt=""></a></td>
     <td align="center"><img src="https://avatars.githubusercontent.com/bardisue" width="130px;" alt=""></a></td>
